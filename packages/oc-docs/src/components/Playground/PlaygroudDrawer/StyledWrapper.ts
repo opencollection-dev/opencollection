@@ -30,7 +30,7 @@ export const StyledDrawer = styled.div`
 `;
 
 export const StyledDragBar = styled.div`
-  height: 24px;
+  height: 40px;
   cursor: row-resize;
   display: flex;
   align-items: center;
@@ -40,6 +40,7 @@ export const StyledDragBar = styled.div`
   user-select: none;
   position: relative;
   touch-action: none;
+  flex-shrink: 0;
 
   &:hover {
     background-color: var(--bg-primary);

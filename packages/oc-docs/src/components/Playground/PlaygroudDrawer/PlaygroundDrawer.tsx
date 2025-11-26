@@ -19,7 +19,8 @@ interface PlaygroundDrawerProps {
   onCollectionUpdate?: (collection: OpenCollectionCollection) => void;
 }
 
-const MIN_HEIGHT = 300;
+const COLLAPSED_HEIGHT = 41;
+const COLLAPSE_THRESHOLD = () => window.innerHeight * 0.4;
 
 const getMaxHeight = () => window.innerHeight;
 const getDefaultHeight = () => window.innerHeight * 0.9;
@@ -41,6 +42,8 @@ const PlaygroundDrawer: React.FC<PlaygroundDrawerProps> = ({
   const drawerRef = useRef<HTMLDivElement>(null);
   const dragStartY = useRef<number>(0);
   const dragStartHeight = useRef<number>(0);
+  const lastExpandedHeight = useRef<number>(getDefaultHeight());
+  const previousSelectedItemRef = useRef<HttpRequest | null>(null);
 
   // Hydrate collection with UUIDs and preserve collapsed state
   useEffect(() => {
@@ -202,7 +205,9 @@ const PlaygroundDrawer: React.FC<PlaygroundDrawerProps> = ({
     if (isOpen) {
       // When opening, set to default height immediately
       setIsCollapsed(false);
-      setHeight(getDefaultHeight());
+      const defaultHeight = getDefaultHeight();
+      setHeight(defaultHeight);
+      lastExpandedHeight.current = defaultHeight;
       setViewMode('playground');
     } else {
       // When closing, reset height to 0
@@ -210,6 +215,19 @@ const PlaygroundDrawer: React.FC<PlaygroundDrawerProps> = ({
       setViewMode('playground');
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    const itemChanged = previousSelectedItemRef.current !== selectedItem;
+    previousSelectedItemRef.current = selectedItem;
+    
+    if (isOpen && isCollapsed && selectedItem && itemChanged) {
+      setIsCollapsed(false);
+      const targetHeight = lastExpandedHeight.current > COLLAPSE_THRESHOLD() 
+        ? lastExpandedHeight.current 
+        : getDefaultHeight();
+      setHeight(targetHeight);
+    }
+  }, [selectedItem, isOpen, isCollapsed]);
 
   const handleEnvironmentsClick = useCallback(() => {
     setViewMode('environments');
@@ -229,16 +247,16 @@ const PlaygroundDrawer: React.FC<PlaygroundDrawerProps> = ({
     // Calculate delta - dragging up (decreasing clientY) increases height
     const deltaY = dragStartY.current - e.clientY;
     const maxHeight = getMaxHeight();
-    const newHeight = Math.max(MIN_HEIGHT, Math.min(maxHeight, dragStartHeight.current + deltaY));
+    const collapseThreshold = COLLAPSE_THRESHOLD();
+    const newHeight = Math.max(COLLAPSED_HEIGHT, Math.min(maxHeight, dragStartHeight.current + deltaY));
     
     setHeight(newHeight);
     
-    // Auto-collapse if dragged too low
-    if (newHeight <= MIN_HEIGHT + 30) {
+    if (newHeight <= collapseThreshold) {
       setIsCollapsed(true);
-      setHeight(MIN_HEIGHT);
     } else {
       setIsCollapsed(false);
+      lastExpandedHeight.current = newHeight;
     }
   }, [isDragging]);
 
@@ -256,7 +274,10 @@ const PlaygroundDrawer: React.FC<PlaygroundDrawerProps> = ({
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
-  }, []);
+    if (isCollapsed) {
+      setHeight(COLLAPSED_HEIGHT);
+    }
+  }, [isCollapsed]);
 
   useEffect(() => {
     if (isDragging) {
@@ -272,12 +293,19 @@ const PlaygroundDrawer: React.FC<PlaygroundDrawerProps> = ({
   const handleToggleCollapse = useCallback(() => {
     if (isCollapsed) {
       setIsCollapsed(false);
-      setHeight(getDefaultHeight());
+      const targetHeight = lastExpandedHeight.current > COLLAPSE_THRESHOLD() 
+        ? lastExpandedHeight.current 
+        : getDefaultHeight();
+      setHeight(targetHeight);
     } else {
       setIsCollapsed(true);
-      setHeight(MIN_HEIGHT);
+      const collapseThreshold = COLLAPSE_THRESHOLD();
+      if (height > collapseThreshold) {
+        lastExpandedHeight.current = height;
+      }
+      setHeight(COLLAPSED_HEIGHT);
     }
-  }, [isCollapsed]);
+  }, [isCollapsed, height]);
 
   // Don't render if not open
   if (!isOpen) return null;
@@ -294,13 +322,13 @@ const PlaygroundDrawer: React.FC<PlaygroundDrawerProps> = ({
 
   return (
     <>
-      {/* Backdrop */}
+      {/* Backdrop - only show when not collapsed */}
       <StyledBackdrop
         style={{
-          opacity: isOpen ? 1 : 0,
-          pointerEvents: isOpen ? 'auto' : 'none',
-          backdropFilter: isOpen ? 'blur(2px)' : 'blur(0px)',
-          WebkitBackdropFilter: isOpen ? 'blur(2px)' : 'blur(0px)'
+          opacity: (isOpen && !isCollapsed) ? 1 : 0,
+          pointerEvents: (isOpen && !isCollapsed) ? 'auto' : 'none',
+          backdropFilter: (isOpen && !isCollapsed) ? 'blur(2px)' : 'blur(0px)',
+          WebkitBackdropFilter: (isOpen && !isCollapsed) ? 'blur(2px)' : 'blur(0px)'
         }}
         onClick={onClose}
       />
@@ -309,7 +337,7 @@ const PlaygroundDrawer: React.FC<PlaygroundDrawerProps> = ({
       <StyledDrawer
         ref={drawerRef}
         style={{
-          height: isCollapsed ? `${MIN_HEIGHT}px` : (isOpen ? `${getDefaultHeight()}px` : `${height}px`),
+          height: `${height}px`,
           maxHeight: `${getMaxHeight()}px`,
           boxShadow: isOpen ? '0 -4px 20px rgba(0, 0, 0, 0.15)' : '0 0 0 rgba(0, 0, 0, 0)'
         }}
@@ -331,6 +359,31 @@ const PlaygroundDrawer: React.FC<PlaygroundDrawerProps> = ({
               e.currentTarget.style.backgroundColor = 'var(--border-color)';
             }}
           />
+          
+          {isCollapsed && selectedItem && (
+            <div style={{
+              position: 'absolute',
+              left: '16px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontSize: '13px',
+              color: 'var(--text-primary)',
+              fontWeight: 500
+            }}>
+              <span style={{
+                color: (selectedItem.method && methodColors[selectedItem.method]) || '#6b7280',
+                fontWeight: 600,
+                fontSize: '11px'
+              }}>
+                {selectedItem.method}
+              </span>
+              <span>{selectedItem.name || ''}</span>
+            </div>
+          )}
+          
           <div style={{
             position: 'absolute',
             right: '16px',
