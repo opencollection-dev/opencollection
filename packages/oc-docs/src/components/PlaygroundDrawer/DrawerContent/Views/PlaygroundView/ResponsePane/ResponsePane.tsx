@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import CodeEditor from '../../../ui/CodeEditor/CodeEditor';
-import Tabs from '../../../ui/Tabs/Tabs';
+import Tabs from '../../../../../../ui/Tabs/Tabs';
+import { ResponseBodyTab, ResponseHeadersTab, TestResultsTab } from '../../Common';
 
 interface ResponsePaneProps {
   response: any;
@@ -10,14 +10,6 @@ interface ResponsePaneProps {
 const ResponsePane: React.FC<ResponsePaneProps> = ({ response, isLoading }) => {
   const [activeTab, setActiveTab] = useState('response');
 
-  const formatJson = (data: any) => {
-    try {
-      return JSON.stringify(data, null, 2);
-    } catch {
-      return String(data);
-    }
-  };
-
   const getStatusColor = (status?: number) => {
     if (!status) return '#6b7280';
     if (status >= 200 && status < 300) return 'rgb(29 122 91)';
@@ -26,81 +18,6 @@ const ResponsePane: React.FC<ResponsePaneProps> = ({ response, isLoading }) => {
     if (status >= 500) return 'rgb(220 38 38)';
     return 'rgb(107 114 128)';
   };
-
-  const renderResponseBody = () => {
-    const responseText = typeof response.data === 'string' ? response.data : formatJson(response.data);
-    const contentType = response.headers?.['content-type'] || response.headers?.['Content-Type'] || '';
-    let language = 'text';
-    
-    if (contentType.includes('application/json') || contentType.includes('text/json')) {
-      language = 'json';
-    } else if (contentType.includes('text/html')) {
-      language = 'html';
-    } else if (contentType.includes('text/xml') || contentType.includes('application/xml')) {
-      language = 'xml';
-    } else if (contentType.includes('text/css')) {
-      language = 'css';
-    } else if (contentType.includes('text/javascript') || contentType.includes('application/javascript')) {
-      language = 'javascript';
-    }
-    
-    return (
-      <div className="h-full py-4" style={{ display: 'flex', flexDirection: 'column' }}>
-        <CodeEditor
-          value={responseText}
-          onChange={() => {}} // Read-only
-          language={language}
-          height="100%"
-          readOnly={true}
-        />
-      </div>
-    );
-  };
-
-  const renderHeaders = () => (
-    <div className="h-full overflow-auto">
-      <div className="py-3">
-        {response.headers ? (
-          <div className="space-y-0">
-            {Object.entries(response.headers).map(([key, value], index) => (
-              <div 
-                key={key} 
-                className="flex items-center gap-4 py-1.5 border-b"
-                style={{ 
-                  borderColor: 'var(--border-color)',
-                  borderBottomWidth: index === Object.entries(response.headers).length - 1 ? '0' : '1px'
-                }}
-              >
-                <span 
-                  className="font-mono text-xs font-medium" 
-                  style={{ 
-                    color: 'var(--text-primary)', 
-                    minWidth: '180px',
-                    letterSpacing: '0.01em'
-                  }}
-                >
-                  {key}
-                </span>
-                <span 
-                  className="font-mono text-xs flex-1 break-all" 
-                  style={{ 
-                    color: 'var(--text-secondary)',
-                    letterSpacing: '0.01em'
-                  }}
-                >
-                  {String(value)}
-                </span>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12" style={{ color: 'var(--text-secondary)' }}>
-            <span className="text-xs">No response headers</span>
-          </div>
-        )}
-      </div>
-    </div>
-  );
 
   // Handle loading, empty, and error states
   if (isLoading) {
@@ -142,9 +59,39 @@ const ResponsePane: React.FC<ResponsePaneProps> = ({ response, isLoading }) => {
     );
   }
 
+  const renderResponseBody = () => <ResponseBodyTab response={response} />;
+  const renderHeaders = () => <ResponseHeadersTab headers={response.headers} />;
+  const renderTestResults = () => (
+    <TestResultsTab 
+      testResults={response.testResults} 
+      assertionResults={response.assertionResults} 
+    />
+  );
+
+  // Calculate content indicators
+  const headersCount = response.headers ? Object.keys(response.headers).length : 0;
+  const hasTestResults = response.testResults && response.testResults.results.length > 0;
+  const hasAssertionResults = response.assertionResults && response.assertionResults.results.length > 0;
+  const testsCount = hasTestResults || hasAssertionResults ? '•' : undefined;
+
   const tabs = [
-    { id: 'response', label: 'Response', content: renderResponseBody() },
-    { id: 'headers', label: 'Headers', content: renderHeaders() }
+    { 
+      id: 'response', 
+      label: 'Response', 
+      content: renderResponseBody() 
+    },
+    { 
+      id: 'headers', 
+      label: 'Headers', 
+      contentIndicator: headersCount || undefined,
+      content: renderHeaders() 
+    },
+    { 
+      id: 'tests', 
+      label: 'Tests', 
+      contentIndicator: testsCount,
+      content: renderTestResults() 
+    }
   ];
 
   const statusInfo = (
@@ -193,4 +140,4 @@ const ResponsePane: React.FC<ResponsePaneProps> = ({ response, isLoading }) => {
   );
 };
 
-export default ResponsePane; 
+export default ResponsePane;

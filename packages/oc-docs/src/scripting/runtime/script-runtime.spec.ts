@@ -5,7 +5,7 @@ describe('ScriptRuntime', () => {
   it('should handle script execution', async () => {
     const runtime = new ScriptRuntime();
 
-    let envVariables = {
+    let environmentVariables = {
         "env_var": "env_var_value"
     };
 
@@ -71,15 +71,16 @@ describe('ScriptRuntime', () => {
       collectionName: 'test-collection',
       collectionPath: '/test/path',
       variables: {
-        envVariables,
+        environmentVariables,
         runtimeVariables
       }
     };
 
-    // This should not throw an error and will show console output
-    await expect(runtime.runScript(options)).resolves.toBeUndefined();
+    // This should not throw an error and will return the bru object
+    const bru = await runtime.runScript(options);
+    expect(bru).toBeDefined();
 
-    expect(envVariables).to.eql({ "env_var": "env_var_updated" });
+    expect(environmentVariables).to.eql({ "env_var": "env_var_updated" });
     expect(runtimeVariables).to.eql({ 
       "runtime_var": "runtime_var_updated",
       "test_results": {

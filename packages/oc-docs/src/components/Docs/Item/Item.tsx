@@ -234,8 +234,37 @@ const Item = memo(({
               <div className="request-body-section">
                 <h3 className="section-title">Body</h3>
                 <CompactCodeView
-                  code={(endpoint.body as any).data || ''}
-                  language={(endpoint.body as any).type || 'json'}
+                  code={(() => {
+                    const bodyData = (endpoint.body as any).data;
+                    const bodyType = (endpoint.body as any).type;
+                    
+                    // Handle different body types
+                    if (bodyType === 'form-urlencoded' && Array.isArray(bodyData)) {
+                      // Convert FormUrlEncodedEntry[] to string
+                      return bodyData
+                        .filter((entry: any) => entry.disabled !== true)
+                        .map((entry: any) => `${encodeURIComponent(entry.name)}=${encodeURIComponent(entry.value)}`)
+                        .join('&');
+                    } else if (bodyType === 'multipart-form' && Array.isArray(bodyData)) {
+                      // Convert MultipartFormEntry[] to readable format
+                      return bodyData
+                        .filter((entry: any) => entry.disabled !== true)
+                        .map((entry: any) => `${entry.name}: ${entry.value}`)
+                        .join('\n');
+                    } else if (typeof bodyData === 'string') {
+                      // Handle string data (json, text, xml, etc.)
+                      return bodyData;
+                    } else {
+                      // Fallback: stringify objects
+                      return JSON.stringify(bodyData, null, 2);
+                    }
+                  })()}
+                  language={(() => {
+                    const bodyType = (endpoint.body as any).type;
+                    if (bodyType === 'form-urlencoded') return 'text';
+                    if (bodyType === 'multipart-form') return 'text';
+                    return bodyType || 'json';
+                  })()}
                 />
               </div>
             )}

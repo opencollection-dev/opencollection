@@ -122,7 +122,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
       <div className="p-4 pt-0">
         <div className="flex items-center">
           <h1 className="font-semibold truncate flex-1" style={{ color: 'var(--text-primary)' }}>
-            {collection?.name || 'API Collection'}
+            {collection?.info?.name || 'API Collection'}
           </h1>
         </div>
       </div>

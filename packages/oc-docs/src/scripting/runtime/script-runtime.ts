@@ -3,7 +3,7 @@ import Bru from '../utils/bru';
 import BrunoRequest from '../utils/bruno-request';
 import BrunoResponse from '../utils/bruno-response';
 import { executeQuickJsVmAsync } from '../sandbox/quickjs';
-import { createBruTestResultMethods, type BruTestResultMethods } from '../utils/test';
+import { AssertionResult, createBruTestResultMethods, type BruTestResultMethods } from '../utils/test';
 
 interface RunScriptOptions {
   script: string;
@@ -12,6 +12,7 @@ interface RunScriptOptions {
   collectionName?: string;
   collectionPath?: string;
   variables?: any;
+  assertionResults?: AssertionResult[];
 }
 
 class ScriptRuntime {
@@ -23,8 +24,9 @@ class ScriptRuntime {
     response,
     collectionName,
     collectionPath,
-    variables
-  }: RunScriptOptions) {
+    variables,
+    assertionResults
+  }: RunScriptOptions): Promise<Bru> {
     const bru = new Bru({ collectionPath, collectionName, variables });
     let req, res;
     if (request) {
@@ -35,7 +37,7 @@ class ScriptRuntime {
     }
 
     // extend bru with result getter methods
-    const { __brunoTestResults, test }: BruTestResultMethods = createBruTestResultMethods(bru, [], chai);
+    const { __brunoTestResults, test }: BruTestResultMethods = createBruTestResultMethods(bru, assertionResults || [], chai);
 
     interface ScriptContext {
       bru: any;
@@ -73,6 +75,8 @@ class ScriptRuntime {
       collectionPath
     });
 
+    // Return bru object so caller can access test results
+    return bru;
   }
 }
 

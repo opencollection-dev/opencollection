@@ -4,7 +4,7 @@ import type { OpenCollection as OpenCollectionCollection } from '@opencollection
 import type { Item as OpenCollectionItem, Folder } from '@opencollection/types/collection/item';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { OpenCollection as IOpenCollection } from '@opencollection/types';
-import PlaygroundDrawer from '../Playground/PlaygroudDrawer/PlaygroundDrawer';
+import PlaygroundDrawer from '../PlaygroundDrawer/PlaygroundDrawer';
 import Docs from '../Docs/Docs';
 import { parseYaml } from '../../utils/yamlUtils';
 import { hydrateWithUUIDs } from '../../utils/items';
@@ -99,7 +99,7 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
   filteredCollectionItems
 }) => {
   const selectedItemId = useAppSelector(selectSelectedItemId);
-  const [playgroundItem, setPlaygroundItem] = useState<HttpRequest | null>(null);
+  const [playgroundItem, setPlaygroundItem] = useState<HttpRequest | Folder | null>(null);
   const [showPlaygroundDrawer, setShowPlaygroundDrawer] = useState(false);
   const prevSelectedItemIdRef = useRef(selectedItemId);
   const playgroundItemUuidRef = useRef<string | undefined>(undefined);
@@ -120,14 +120,14 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
       }
 
       const item = findItemByUuid(playgroundCollection.items, selectedItemId);
-      if (item && item.type === 'http') {
-        setPlaygroundItem(item as HttpRequest);
+      if (item && (item.type === 'http' || item.type === 'folder')) {
+        setPlaygroundItem(item as HttpRequest | Folder);
         // Don't open drawer automatically - only open when "Try" is clicked
       }
     }
   }, [selectedItemId, playgroundCollection]);
 
-  const handlePlaygroundItemSelect = useCallback((item: HttpRequest) => {
+  const handlePlaygroundItemSelect = useCallback((item: HttpRequest | Folder) => {
     // Only update the playground item, don't affect the docs view
     setPlaygroundItem(item);
   }, []);
@@ -135,10 +135,6 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
   const handleOpenPlayground = useCallback(() => {
     setShowPlaygroundDrawer(true);
   }, []);
-  
-  const handleCollectionUpdate = useCallback((updatedCollection: OpenCollectionCollection) => {
-    dispatch(setPlaygroundCollection(updatedCollection));
-  }, [dispatch]);
 
   return (
     <div className="flex h-screen">
@@ -154,7 +150,6 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
         collection={playgroundCollection}
         selectedItem={playgroundItem}
         onSelectItem={handlePlaygroundItemSelect}
-        onCollectionUpdate={handleCollectionUpdate}
       />
     </div>
   );

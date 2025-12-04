@@ -1,18 +1,55 @@
 const _interpolate = (str: string, _vars: any) => str;
 const variableNameRegex = /^[\w-.]*$/;
 
+interface TestResultsResponse {
+  summary: {
+    total: number;
+    passed: number;
+    failed: number;
+    skipped: number;
+  };
+  results: Array<{
+    status: string;
+    description: string;
+    expected?: any;
+    actual?: any;
+    error?: string;
+  }>;
+}
+
+interface AssertionResultsResponse {
+  summary: {
+    total: number;
+    passed: number;
+    failed: number;
+    skipped: number;
+  };
+  results: Array<{
+    status: string;
+    lhsExpr?: string;
+    rhsExpr?: string;
+    operator?: string;
+    rhsOperand?: any;
+    error?: string;
+  }>;
+}
+
 class Bru {
   // variables
-  envVariables: any;
+  environmentVariables: any;
   runtimeVariables: any;
   globalEnvironmentVariables: any;
   
   collectionPath: any;
   collectionName: any;
 
+  // These methods are added dynamically by setupBruTestMethods
+  getTestResults?: () => Promise<TestResultsResponse>;
+  getAssertionResults?: () => Promise<AssertionResultsResponse>;
+
   constructor({ collectionPath, collectionName, variables }: any) {
-    const { envVariables, runtimeVariables, globalEnvironmentVariables } = variables || {};
-    this.envVariables = envVariables || {};
+    const { environmentVariables, runtimeVariables, globalEnvironmentVariables } = variables || {};
+    this.environmentVariables = environmentVariables || {};
     this.runtimeVariables = runtimeVariables || {};
     this.globalEnvironmentVariables = globalEnvironmentVariables || {};
     this.collectionPath = collectionPath;
@@ -26,7 +63,7 @@ class Bru {
 
     const combinedVars = {
       ...this.globalEnvironmentVariables,
-      ...this.envVariables,
+      ...this.environmentVariables,
       ...this.runtimeVariables
     };
 
@@ -39,7 +76,7 @@ class Bru {
   }
 
   getEnvName() {
-    return this.envVariables.__name__;
+    return this.environmentVariables.__name__;
   }
 
   getProcessEnv(_key: string) {
@@ -47,11 +84,11 @@ class Bru {
   }
 
   hasEnvVar(key: string) {
-    return Object.prototype.hasOwnProperty.call(this.envVariables, key);
+    return Object.prototype.hasOwnProperty.call(this.environmentVariables, key);
   }
 
   getEnvVar(key: string) {
-    return this.interpolate(this.envVariables[key]);
+    return this.interpolate(this.environmentVariables[key]);
   }
 
   setEnvVar(key: string, value: any, options: any = {}) {
@@ -70,11 +107,11 @@ class Bru {
       throw new Error(`Persistent environment variables must be strings. Received ${typeof value} for key "${key}".`);
     }
 
-    this.envVariables[key] = value;
+    this.environmentVariables[key] = value;
   }
 
   deleteEnvVar(key: string) {
-    delete this.envVariables[key];
+    delete this.environmentVariables[key];
   }
 
   getGlobalEnvVar(key: string) {

@@ -1,0 +1,12 @@
+export { default as HeadersTab } from './HeadersTab';
+export { default as VariablesTab } from './VariablesTab';
+export { default as AuthTab } from './AuthTab';
+export { default as ScriptsTab } from './ScriptsTab';
+export { default as ParamsTab } from './ParamsTab';
+export { default as BodyTab } from './BodyTab';
+export { default as TestsTab } from './TestsTab';
+export { default as AssertsTab } from './AssertsTab';
+export { default as TestResultsTab } from './TestResultsTab';
+export { default as ResponseBodyTab } from './ResponseBodyTab';
+export { default as ResponseHeadersTab } from './ResponseHeadersTab';
+export { default as RequestHeader } from './RequestHeader';

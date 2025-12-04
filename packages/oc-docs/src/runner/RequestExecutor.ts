@@ -2,11 +2,11 @@ import type { HttpRequest } from '@opencollection/types/requests/http';
 import { RunRequestResponse } from './index';
 
 export class RequestExecutor {
-  async executeRequest(request: HttpRequest): Promise<RunRequestResponse> {
+  async executeRequest(request: HttpRequest, options: { timeout?: number } = {}): Promise<RunRequestResponse> {
     const startTime = Date.now();
 
     try {
-      const fetchOptions = await this.buildFetchOptions(request);
+      const fetchOptions = await this.buildFetchOptions(request, options.timeout);
       const response = await fetch(request.url || '', fetchOptions);
       const endTime = Date.now();
 
@@ -23,17 +23,37 @@ export class RequestExecutor {
         url: response.url
       };
     } catch (error) {
+      const endTime = Date.now();
+      let errorMessage = 'Request failed';
+      let errorType = 'unknown';
+
+      if (error instanceof Error) {
+        errorMessage = error.message;
+        
+        // Categorize error types
+        if (error.name === 'AbortError' || error.message.includes('timeout')) {
+          errorType = 'timeout';
+          errorMessage = `Request timed out after ${endTime - startTime}ms`;
+        } else if (error.message.includes('fetch')) {
+          errorType = 'network';
+        } else if (error.message.includes('SSL') || error.message.includes('certificate')) {
+          errorType = 'ssl';
+        }
+      }
+
       return {
-        error: error instanceof Error ? error.message : 'Request failed'
+        error: errorMessage,
+        duration: endTime - startTime,
+        errorType
       };
     }
   }
 
-  private async buildFetchOptions(request: HttpRequest): Promise<RequestInit> {
+  private async buildFetchOptions(request: HttpRequest, timeout = 30000): Promise<RequestInit> {
     const options: RequestInit = {
       method: request.method || 'GET',
       headers: this.buildHeaders(request),
-      signal: AbortSignal.timeout(30000)
+      signal: AbortSignal.timeout(timeout)
     };
 
     if (request.body && ['POST', 'PUT', 'PATCH'].includes(request.method || '')) {

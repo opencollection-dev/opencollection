@@ -64,10 +64,10 @@ export const SidebarItem = styled.div`
     margin-bottom: 1px;
   }
 
-  &:hover, &.hovered {
-    background-color: rgba(0, 0, 0, 0.04);
-    color: #212121;
-  }
+  // &:hover, &.hovered {
+  //   background-color: rgba(0, 0, 0, 0.04);
+  //   color: #212121;
+  // }
 
   &.active {
     background-color: rgba(0, 0, 0, 0.08);
@@ -75,14 +75,14 @@ export const SidebarItem = styled.div`
     font-weight: 500;
   }
 
-  &.active:hover {
-    background-color: rgba(0, 0, 0, 0.1);
-  }
+  // &.active:hover {
+  //   background-color: rgba(0, 0, 0, 0.1);
+  // }
 
-  &.folder:hover {
-    background-color: transparent;
-    color: #212121;
-  }
+  // &.folder:hover {
+  //   background-color: transparent;
+  //   color: #212121;
+  // }
 
   & .method-badge {
     font-size: 10px;
