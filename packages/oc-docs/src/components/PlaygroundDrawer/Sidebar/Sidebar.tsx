@@ -9,10 +9,14 @@ import { SidebarContainer, SidebarItems, SidebarItem } from './StyledWrapper';
 export interface SidebarProps {
   collection: OpenCollection | null;
   selectedItemId: string | null;
-  onSelectItem: (uuid: string) => void;
-  onToggleFolder: (uuid: string) => void;
+  onSelectItem: (uuid: string) => void; // Now handles both requests and folders
+  onToggleFolder: (uuid: string) => void; // Only for expanding/collapsing folders
   onEnvironmentsClick?: () => void;
   isEnvironmentsSelected?: boolean;
+  onCollectionSettingsClick?: () => void;
+  isCollectionSettingsSelected?: boolean;
+  selectedEnvironment?: string;
+  onEnvironmentChange?: (environment: string) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -21,7 +25,11 @@ const Sidebar: React.FC<SidebarProps> = ({
   onSelectItem,
   onToggleFolder,
   onEnvironmentsClick,
-  isEnvironmentsSelected = false
+  isEnvironmentsSelected = false,
+  onCollectionSettingsClick,
+  isCollectionSettingsSelected = false,
+  selectedEnvironment = '',
+  onEnvironmentChange
 }) => {
   const renderFolderIcon = useCallback((isExpanded: boolean) => (
     <svg 
@@ -46,13 +54,24 @@ const Sidebar: React.FC<SidebarProps> = ({
   const renderItem = useCallback((item: OpenCollectionItem, level = 0): React.ReactNode => {
     
     const isFolder = item.type === 'folder';
-    // Use UUID for active state comparison
-    const isActive = !isFolder && !isEnvironmentsSelected && selectedItemId === (item as any).uuid;
+    // Use UUID for active state comparison - now folders can also be active
+    const isActive = !isEnvironmentsSelected && !isCollectionSettingsSelected && selectedItemId === (item as any).uuid;
     
     // Read isCollapsed from the item itself (defaults to true if not set)
     const isExpanded = isFolder ? !((item as any).isCollapsed ?? true) : false;
     
     const itemUuid = (item as any).uuid;
+    
+    const handleChevronClick = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (isFolder) {
+        onToggleFolder(itemUuid);
+      }
+    };
+    
+    const handleItemClick = () => {
+      onSelectItem(itemUuid);
+    };
     
     return (
       <div key={itemUuid} className="relative">
@@ -66,7 +85,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           style={{ 
             paddingLeft: `${level * 16 + 8}px`
           }}
-          onClick={() => isFolder ? onToggleFolder(itemUuid) : onSelectItem(itemUuid)}
+          onClick={handleItemClick}
         >
           
           {level > 0 && (
@@ -81,7 +100,10 @@ const Sidebar: React.FC<SidebarProps> = ({
           )}
           
           {isFolder ? (
-            <div className="mr-2 shrink-0">
+            <div 
+              className="mr-2 shrink-0 p-1 rounded hover:bg-gray-100 transition-colors"
+              onClick={handleChevronClick}
+            >
               {renderFolderIcon(isExpanded)}
             </div>
           ) : (
@@ -115,48 +137,69 @@ const Sidebar: React.FC<SidebarProps> = ({
         )}
       </div>
     );
-  }, [isEnvironmentsSelected, selectedItemId, onToggleFolder, onSelectItem, renderFolderIcon]);
+  }, [isEnvironmentsSelected, isCollectionSettingsSelected, selectedItemId, onToggleFolder, onSelectItem, renderFolderIcon]);
+
+  const envs = (collection as any).environments || collection?.config?.environments || [];
 
   return (
     <SidebarContainer className="h-full flex flex-col" style={{ width: 'var(--sidebar-width)' }}>
       {/* Collection name at top */}
       <div className="p-4 pb-0">
         <div className="flex items-center">
-          <h1 className="font-semibold truncate flex-1" style={{ color: 'var(--text-primary)' }}>
+          <h1 className={`cursor-pointer font-semibold truncate flex-1 ${isCollectionSettingsSelected ? 'active' : ''}`} style={{ color: 'var(--text-primary)' }} onClick={onCollectionSettingsClick}>
             {collection?.info?.name || 'API Collection'}
           </h1>
         </div>
       </div>
 
-      <div className="p-2">
-      {onEnvironmentsClick && (
-          <SidebarItem
-            className={`
-              flex items-center select-none text-sm cursor-pointer border border-gray-200 rounded-md p-2
-              ${isEnvironmentsSelected ? 'active' : ''}
-              transition-all duration-200
-            `}
-            onClick={onEnvironmentsClick}
-          >
-            <svg 
-              width="14" 
-              height="14" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke="currentColor" 
-              strokeWidth="2"
-              style={{ marginRight: '8px', flexShrink: 0 }}
-            >
-              <rect x="3" y="3" width="7" height="7"></rect>
-              <rect x="14" y="3" width="7" height="7"></rect>
-              <rect x="14" y="14" width="7" height="7"></rect>
-              <rect x="3" y="14" width="7" height="7"></rect>
-            </svg>
-            <div className="truncate flex-1">
-              Environments ({((collection as any).environments?.length || collection?.config?.environments?.length || 0)})
-            </div>
-          </SidebarItem>
-        )}
+      <div className="p-2 space-y-2">
+          <div className="space-y-2">
+            <div className="truncate flex-1 flex-row">
+                {envs.length > 0 && onEnvironmentChange && (
+                  <div className="px-2 w-full flex flex-row items-center justify-between">
+                    <select
+                      value={selectedEnvironment}
+                      onChange={(e) => onEnvironmentChange(e.target.value)}
+                      className="w-full text-xs font-medium cursor-pointer transition-all duration-200"
+                      style={{
+                        backgroundColor: 'var(--bg-secondary)',
+                        border: '1px solid var(--border-color)',
+                        borderRadius: '6px',
+                        color: 'var(--text-primary)',
+                        padding: '6px 26px 6px 10px',
+                        outline: 'none',
+                        appearance: 'none',
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg width='12' height='7' viewBox='0 0 12 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23777' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'right 8px center',
+                        paddingRight: '26px'
+                      }}
+                    >
+                      <option value="">No Environment</option>
+                      {envs.map((env: any) => (
+                        <option key={env.name} value={env.name}>
+                          {env.name}
+                        </option>
+                      ))}
+                    </select>
+                    <svg 
+                      width="14" 
+                      height="14" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      strokeWidth="2"
+                      style={{ marginLeft: '8px', flexShrink: 0 }}
+                      className={`cursor-pointer ${isEnvironmentsSelected ? 'active' : ''}`}
+                      onClick={onEnvironmentsClick}
+                    >
+                      <circle cx="12" cy="12" r="3"></circle>
+                      <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1m15.5-3.5L19 4.5M5 19.5L2.5 17M19 19.5L16.5 17M5 4.5L2.5 7"></path>
+                    </svg>
+                  </div>
+                  )}
+              </div>
+          </div>
       </div>
       
       <SidebarItems>

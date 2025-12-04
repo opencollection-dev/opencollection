@@ -24,17 +24,22 @@
 
 	<script>
     const sampleCollection = `
-name: "E-commerce API"
+info:
+  name: "E-commerce API"
+  summary: "Collection for testing the E-commerce API endpoints"
+  version: "1.0.0"
+
 docs: |
   Collection for testing the E-commerce API endpoints. The server automatically seeds 5 sample products (Smartphone X, Running Shoes, Coffee Maker, Laptop Pro, Wireless Earbuds) on startup if no products exist in the database.
 
   [<img src="https://fetch.usebruno.com/button.svg" alt="Fetch in Bruno" style="width: 130px; height: 30px;" width="128" height="32">](https://fetch.usebruno.com?url=git%40bitbucket.org%3Ausebruno%2Fdemo-api-collection.git "target=_blank rel=noopener noreferrer")
 
-environments:
-  - name: "dev"
-    variables:
-      - name: "baseUrl"
-        value: "http://localhost:3001/api"
+config:
+  environments:
+    - name: "dev"
+      variables:
+        - name: "baseUrl"
+          value: "http://localhost:3001/api"
 
 items:
   # Create Account folder
@@ -136,7 +141,7 @@ items:
           - name: "category"
             value: "electronics"
             type: "query"
-            enabled: false
+            disabled: true
         docs: "Retrieve a list of all products, optionally filtered by category. Default seeded categories include: Electronics, Sports, and Home."
         
       - type: "http"

@@ -1,24 +1,25 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { OpenCollection as OpenCollectionCollection } from '@opencollection/types';
-import { requestRunner } from '../../runner';
+import { requestRunner } from '../../../../../runner';
 import RequestHeader from './RequestPane/RequestHeader/RequestHeader';
 import QueryBar from './QueryBar/QueryBar';
 import RequestPane from './RequestPane/RequestPane';
 import ResponsePane from './ResponsePane/ResponsePane';
-import { useAppDispatch } from '../../store/hooks';
-import { updatePlaygroundItem } from '../../store/slices/playground';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
+import { updatePlaygroundItem, setPlaygroundResponse, selectPlaygroundResponse } from '../../../../../store/slices/playground';
 
 interface PlaygroundProps {
   item: HttpRequest;
   collection: OpenCollectionCollection;
+  selectedEnvironment?: string;
 }
 
-const Playground: React.FC<PlaygroundProps> = ({ item, collection }) => {
+const Playground: React.FC<PlaygroundProps> = ({ item, collection, selectedEnvironment = '' }) => {
   const dispatch = useAppDispatch();
   const [editableItem, setEditableItem] = useState<HttpRequest>(item);
-  const [selectedEnvironment, setSelectedEnvironment] = useState<string>('');
-  const [response, setResponse] = useState<any>(null);
+  const itemUuid = (item as any).uuid;
+  const response = useAppSelector(state => selectPlaygroundResponse(state, itemUuid));
   const [isLoading, setIsLoading] = useState(false);
   const [requestPaneWidth, setRequestPaneWidth] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
@@ -27,7 +28,7 @@ const Playground: React.FC<PlaygroundProps> = ({ item, collection }) => {
 
   useEffect(() => {
     setEditableItem(item);
-    setResponse(null);
+    // Don't clear response anymore - it's preserved in Redux by UUID
   }, [item]);
 
   // Save changes to Redux with debouncing
@@ -71,11 +72,14 @@ const Playground: React.FC<PlaygroundProps> = ({ item, collection }) => {
         runtimeVariables: {}
       });
 
-      setResponse(result);
+      dispatch(setPlaygroundResponse({ uuid: itemUuid, response: result }));
     } catch (error) {
-      setResponse({
-        error: error instanceof Error ? error.message : 'Unknown error occurred'
-      });
+      dispatch(setPlaygroundResponse({ 
+        uuid: itemUuid, 
+        response: {
+          error: error instanceof Error ? error.message : 'Unknown error occurred'
+        }
+      }));
     } finally {
       setIsLoading(false);
     }
@@ -115,12 +119,13 @@ const Playground: React.FC<PlaygroundProps> = ({ item, collection }) => {
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
   return (
-    <div className="request-runner-container h-full flex flex-col px-6 py-4" style={{ backgroundColor: 'var(--bg-primary)' }}>
+    <div className="request-runner-container h-full flex flex-col px-4" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <RequestHeader 
         item={editableItem} 
         collection={collection}
         selectedEnvironment={selectedEnvironment}
-        onEnvironmentChange={setSelectedEnvironment}
+        onEnvironmentChange={() => {}} // Environment is now managed by parent
+        readOnlyEnvironment={true}
       />
       
       <QueryBar 
@@ -130,7 +135,7 @@ const Playground: React.FC<PlaygroundProps> = ({ item, collection }) => {
         onItemChange={handleItemChange}
       />
       
-      <div className="flex flex-1 overflow-hidden pt-5">
+      <div className="flex flex-1 overflow-hidden pt-2">
         <div 
           className="shrink-0 overflow-hidden"
           style={{ 

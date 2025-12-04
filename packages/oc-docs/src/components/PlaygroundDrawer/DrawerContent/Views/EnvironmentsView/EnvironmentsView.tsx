@@ -2,18 +2,17 @@ import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import type { OpenCollection } from '@opencollection/types';
 import type { Environment } from '@opencollection/types/config/environments';
 import type { Variable } from '@opencollection/types/common/variables';
-import KeyValueTable, { KeyValueRow } from '../../../ui/KeyValueTable/KeyValueTable';
-import { SidebarContainer, SidebarItems, SidebarItem } from '../Sidebar/StyledWrapper';
+import KeyValueTable, { KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
+import { SidebarContainer, SidebarItems, SidebarItem } from '../../../Sidebar/StyledWrapper';
+import { useAppDispatch } from '../../../../../store/hooks';
+import { updateCollectionEnvironments } from '@slices/playground';
 
 interface EnvironmentsViewProps {
   collection: OpenCollection | null;
-  onCollectionUpdate?: (collection: OpenCollection) => void;
 }
 
-const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({
-  collection,
-  onCollectionUpdate
-}) => {
+const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection }) => {
+  const dispatch = useAppDispatch();
   const [selectedEnvironmentIndex, setSelectedEnvironmentIndex] = useState<number | null>(null);
 
   const environments = useMemo(() => {
@@ -96,10 +95,8 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({
       (updatedCollection as any).environments = updatedEnvironments;
     }
 
-    if (onCollectionUpdate) {
-      onCollectionUpdate(updatedCollection);
-    }
-  }, [selectedEnvironment, selectedEnvironmentIndex, collection, environments, rowToVariable, onCollectionUpdate]);
+    dispatch(updateCollectionEnvironments(updatedCollection));
+  }, [selectedEnvironment, selectedEnvironmentIndex, collection, environments, rowToVariable, dispatch]);
 
   useEffect(() => {
     if (selectedEnvironmentIndex === null && environments.length > 0) {
