@@ -16,6 +16,17 @@ function App() {
   const handleNavigation = (section) => {
     setActiveSection(section)
     window.history.pushState(null, null, `#${section}`)
+    
+    // Scroll to the section after a short delay to allow rendering
+    setTimeout(() => {
+      const element = document.getElementById(section)
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      } else {
+        // Scroll to top if no specific element found
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      }
+    }, 50)
   }
 
   return (

@@ -10,9 +10,9 @@ function CodeBlock({ code, language = 'json' }) {
   }, [code]);
 
   return (
-    <div className={`my-2`}>
-      <pre className="rounded-lg overflow-hidden text-2xs" style={{ fontSize: '0.7rem', fontFamily: 'monospace' }}>
-        <code ref={codeRef} className={`language-${language}`} style={{ fontSize: 'inherit', fontFamily: 'inherit' }}>
+    <div className="my-3">
+      <pre className={`language-${language}`}>
+        <code ref={codeRef} className={`language-${language}`}>
           {code}
         </code>
       </pre>

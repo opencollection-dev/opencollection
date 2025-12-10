@@ -14,14 +14,14 @@ function Assertions({ schema }) {
       expression: "response.status",
       operator: "equals",
       value: "200",
-      enabled: true,
+      disabled: false,
       description: "Response status should be 200"
     },
     {
       expression: "response.body.users.length",
       operator: "greaterThan",
       value: "0",
-      enabled: true,
+      disabled: false,
       description: "Should return at least one user"
     }
   ];

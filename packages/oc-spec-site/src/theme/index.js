@@ -59,22 +59,22 @@ export const theme = {
   },
   components: {
     table: {
-      wrapper: 'overflow-x-auto border border-gray-200 rounded-lg mb-3',
-      base: 'min-w-full divide-y divide-gray-200',
-      header: 'bg-gray-50',
-      headerCell: 'px-2 py-1.5 text-left text-2xs font-medium text-gray-500 uppercase tracking-wider',
-      body: 'bg-white divide-y divide-gray-200 text-xs',
-      row: 'hover:bg-gray-50',
-      cell: 'px-2 py-1.5'
+      wrapper: 'table-wrapper',
+      base: 'table-base',
+      header: 'table-header',
+      headerCell: 'table-header-cell',
+      body: 'table-body',
+      row: 'table-row',
+      cell: 'table-cell'
     },
     badge: {
-      base: 'inline-flex text-2xs leading-3 font-medium rounded px-1 py-0.5',
-      required: 'bg-red-100 text-red-800',
-      optional: 'bg-gray-100 text-gray-600'
+      base: 'badge-base',
+      required: 'badge-required',
+      optional: 'badge-optional'
     },
     property: {
-      name: 'font-mono text-blue-600 text-xs',
-      type: 'font-mono text-2xs text-red-600'
+      name: 'property-name',
+      type: 'property-type'
     }
   },
   sidebar: {

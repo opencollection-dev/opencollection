@@ -17,17 +17,26 @@ function BodyType({ bodyType, schema }) {
         type: "json",
         data: '{\n  "name": "John Doe",\n  "email": "john@example.com"\n}'
       },
-      'form-urlencoded': [
-        { name: "username", value: "john_doe", enabled: true },
-        { name: "password", value: "secret123", enabled: true }
-      ],
-      'multipart-form': [
-        { name: "file", type: "file", value: "/path/to/file.pdf", enabled: true },
-        { name: "description", type: "text", value: "File description", enabled: true }
-      ],
-      'file-body': [
-        { filePath: "/path/to/upload.jpg", contentType: "image/jpeg", selected: true }
-      ]
+      'form-urlencoded': {
+        type: "form-urlencoded",
+        data: [
+          { name: "username", value: "john_doe", disabled: false },
+          { name: "password", value: "secret123", disabled: false }
+        ]
+      },
+      'multipart-form': {
+        type: "multipart-form",
+        data: [
+          { name: "file", type: "file", value: "/path/to/file.pdf", disabled: false },
+          { name: "description", type: "text", value: "File description", disabled: false }
+        ]
+      },
+      'file-body': {
+        type: "file",
+        data: [
+          { filePath: "/path/to/upload.jpg", contentType: "image/jpeg", selected: true }
+        ]
+      }
     };
     
     return examples[type];
@@ -44,15 +53,27 @@ function BodyType({ bodyType, schema }) {
       );
     }
     
-    if (body.items) {
+    // For form-urlencoded, multipart-form, and file-body, show the main properties
+    // and then the nested data structure
+    if (body.properties && body.properties.data) {
+      const dataProperty = body.properties.data;
       return (
         <>
-          <p className={`${typography.body.default} ${spacing.element}`}>This body type is an array of items with the following structure:</p>
           <PropertyTable 
-            properties={body.items.properties}
-            order={Object.keys(body.items.properties)}
-            required={body.items.required}
+            properties={body.properties}
+            order={Object.keys(body.properties)}
+            required={body.required}
           />
+          {dataProperty.items && (
+            <>
+              <h4 className={`text-sm font-semibold mt-4 mb-2`}>Data Item Structure</h4>
+              <PropertyTable 
+                properties={dataProperty.items.properties}
+                order={Object.keys(dataProperty.items.properties)}
+                required={dataProperty.items.required}
+              />
+            </>
+          )}
         </>
       );
     }

@@ -44,7 +44,7 @@ function PropertyTable({ properties, order, required = [] }) {
                     </span>
                   )}
                 </td>
-                <td className={cn(table.cell, theme.typography.body.small)}>{description}</td>
+                <td className={cn(table.cell, 'description-text')}>{description}</td>
               </tr>
             );
           })}

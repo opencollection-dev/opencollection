@@ -11,17 +11,26 @@ function Variables({ schema }) {
   
   const example = {
     name: "apiEndpoint",
-    value: {
-      data: "https://api.example.com",
-      type: "string",
-      variants: [
-        { data: "https://api.dev.example.com", description: "Development endpoint" },
-        { data: "https://api.staging.example.com", description: "Staging endpoint" }
-      ]
-    },
+    value: [
+      {
+        title: "Production",
+        selected: true,
+        value: {
+          type: "string",
+          data: "https://api.example.com"
+        }
+      },
+      {
+        title: "Development",
+        selected: false,
+        value: {
+          type: "string",
+          data: "https://api.dev.example.com"
+        }
+      }
+    ],
     description: "API base endpoint URL",
-    disabled: false,
-    transient: false
+    disabled: false
   };
 
   return (

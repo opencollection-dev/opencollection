@@ -8,11 +8,20 @@ function Collection({ schema }) {
   const theme = useTheme();
   const { typography, spacing } = theme;
   
-  const example = `name: My API Collection
-description: A collection of API requests
-environments: []
+  const example = `opencollection: "1.0.0"
+
+info:
+  name: My API Collection
+  summary: A collection of API requests
+  version: "1.0.0"
+
+config:
+  environments: []
+
 items: []
-base: {}
+
+request: {}
+
 docs: Documentation for this collection`;
 
   return (
@@ -26,7 +35,7 @@ docs: Documentation for this collection`;
       <div className={spacing.section}>
         <PropertyTable 
           properties={properties}
-          order={['name', 'description', 'environments', 'items', 'base', 'docs']}
+          order={['opencollection', 'info', 'config', 'items', 'request', 'docs', 'bundled', 'extensions']}
         />
       </div>
       

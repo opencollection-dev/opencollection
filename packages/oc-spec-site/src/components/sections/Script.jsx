@@ -7,7 +7,7 @@ import { convertToYaml } from '../../utils/yamlConverter'
 function Script({ schema }) {
   const theme = useTheme();
   const { typography, spacing } = theme;
-  const script = schema.$defs.Script;
+  const scriptFile = schema.$defs.ScriptFile;
   
   const example = {
     type: "script",
@@ -16,14 +16,14 @@ function Script({ schema }) {
 
   return (
     <section>
-      <h2 className={typography.heading.h2}>Script</h2>
-      <p className={`${typography.body.default} ${spacing.element}`}>{script.description}</p>
+      <h2 className={typography.heading.h2}>Script File</h2>
+      <p className={`${typography.body.default} ${spacing.element}`}>{scriptFile.description}</p>
       
       <h3 className={`${typography.heading.h3} ${spacing.paragraph}`}>Properties</h3>
       <PropertyTable 
-        properties={script.properties}
-        order={Object.keys(script.properties)}
-        required={script.required}
+        properties={scriptFile.properties}
+        order={Object.keys(scriptFile.properties)}
+        required={scriptFile.required}
       />
       
       <h3 className={`${typography.heading.h3} ${spacing.paragraph}`}>Example</h3>

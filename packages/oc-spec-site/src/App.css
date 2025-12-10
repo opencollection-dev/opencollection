@@ -1,16 +1,206 @@
 /* Code blocks styling for Prism */
 pre[class*="language-"] {
-  @apply bg-gray-50 border border-gray-200 rounded-md p-4 overflow-x-auto text-sm;
+  @apply rounded-md overflow-x-auto;
   margin: 0;
+  padding: 0.875rem 1rem;
+  background: transparent;
+  border: 1px solid #e5e7eb;
+  font-family: 'SF Mono', 'Fira Code', Consolas, Monaco, monospace;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  tab-size: 2;
 }
 
 code[class*="language-"] {
-  @apply text-sm;
   background: none;
   padding: 0;
+  font-family: inherit;
+  font-size: inherit;
+  color: #4a5568;
+}
+
+/* Comments - Cool gray */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #8997aa;
+  font-style: italic;
+}
+
+/* Punctuation - Slate blue */
+.token.punctuation {
+  color: #6b7a8f;
+}
+
+.token.namespace {
+  opacity: 0.7;
+}
+
+/* YAML keys / Property - Muted azure */
+.token.key,
+.token.atrule,
+.token.attr-name,
+.token.property {
+  color: #4b7bbb;
+}
+
+/* Strings - Warm bronze */
+.token.string,
+.token.attr-value {
+  color: #a06e3b;
+}
+
+/* Numbers - Muted jade */
+.token.number {
+  color: #3d8b7c;
+}
+
+/* Booleans / Atom - Soft plum */
+.token.boolean,
+.token.constant {
+  color: #8169ad;
+}
+
+/* Null / Keywords - Muted ruby */
+.token.null,
+.token.keyword {
+  color: #b95d6a;
+}
+
+/* Tags / Definition - Deep moss */
+.token.tag,
+.token.selector,
+.token.function {
+  color: #566f4e;
+}
+
+/* Variables - Deep teal */
+.token.variable {
+  color: #3f7b6f;
+}
+
+/* Operators - Slate blue */
+.token.operator {
+  color: #6b7a8f;
+}
+
+/* Important and bold */
+.token.important,
+.token.bold {
+  font-weight: 600;
+}
+
+/* Italic */
+.token.italic {
+  font-style: italic;
+}
+
+/* Entity */
+.token.entity {
+  cursor: help;
+}
+
+/* YAML specific - anchors and aliases - Soft plum */
+.token.anchor,
+.token.alias {
+  color: #8169ad;
 }
 
 /* Inline code */
 code:not([class*="language-"]) {
-  @apply bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono;
+  @apply px-1.5 py-0.5 rounded text-xs font-mono;
+  background: #f3f4f6;
+  color: #4b7bbb;
+}
+
+/* Table styling with CodeMirror-inspired colors */
+.table-wrapper {
+  @apply overflow-x-auto rounded-md mb-3;
+  border: 1px solid #e5e7eb;
+}
+
+.table-base {
+  @apply min-w-full;
+  border-collapse: collapse;
+}
+
+.table-header {
+  background: #fafbfc;
+}
+
+.table-header-cell {
+  @apply px-1.5 py-1 text-left text-2xs font-medium uppercase tracking-wider;
+  color: #6b7a8f;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.table-body {
+  @apply bg-white;
+}
+
+.table-row {
+  transition: background-color 0.1s ease;
+}
+
+.table-row:hover {
+  background: #fafbfc;
+}
+
+.table-row:not(:last-child) {
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.table-cell {
+  @apply px-1.5;
+  padding-top: 0.15rem;
+  padding-bottom: 0.15rem;
+}
+
+/* Property name - Muted azure */
+.property-name {
+  @apply font-mono text-xs;
+  color: #4b7bbb;
+}
+
+/* Property type - Soft plum */
+.property-type {
+  @apply font-mono text-2xs;
+  color: #8169ad;
+}
+
+/* Badge base */
+.badge-base {
+  @apply inline-flex text-2xs leading-3 font-medium rounded px-1 py-0.5;
+}
+
+/* Required badge - Muted ruby */
+.badge-required {
+  background: rgba(185, 93, 106, 0.1);
+  color: #b95d6a;
+}
+
+/* Optional badge - Cool gray */
+.badge-optional {
+  background: rgba(137, 151, 170, 0.1);
+  color: #8997aa;
+}
+
+/* Description text */
+.description-text {
+  @apply text-2xs;
+  color: #4a5568;
+}
+
+/* Sidebar sequence numbers */
+.seq-number {
+  color: #8997aa;
+  margin-right: 0.2rem;
+  letter-spacing: -0.02em;
+}
+
+/* Section divider */
+.section-divider {
+  @apply mt-8 pt-6;
+  border-top: 1px solid #e5e7eb;
 }

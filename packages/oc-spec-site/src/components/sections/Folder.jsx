@@ -15,7 +15,7 @@ function Folder({ schema }) {
       <h3 className={`${typography.heading.h3} ${spacing.paragraph}`}>Properties</h3>
       <PropertyTable 
         properties={folder.properties}
-        order={Object.keys(folder.properties).filter(k => k !== 'Item')}
+        order={['info', 'items', 'request', 'docs']}
         required={folder.required}
       />
       

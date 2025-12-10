@@ -63,7 +63,8 @@ export function formatAuthTypeName(authType) {
     'auth-digest': 'Digest Authentication',
     'auth-apikey': 'API Key Authentication',
     'auth-ntlm': 'NTLM Authentication',
-    'auth-wsse': 'WSSE Authentication'
+    'auth-wsse': 'WSSE Authentication',
+    'auth-oauth2': 'OAuth 2.0 Authentication'
   };
   return names[authType] || authType;
 }
@@ -86,7 +87,8 @@ export function getAuthSchemaName(authType) {
     'auth-digest': 'AuthDigest',
     'auth-apikey': 'AuthApiKey',
     'auth-ntlm': 'AuthNTLM',
-    'auth-wsse': 'AuthWsse'
+    'auth-wsse': 'AuthWsse',
+    'auth-oauth2': 'AuthOAuth2'
   };
   return mapping[authType];
 }
