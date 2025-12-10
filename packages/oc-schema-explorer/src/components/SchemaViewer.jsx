@@ -54,8 +54,8 @@ const SchemaViewer = () => {
       <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
         <div className="px-4 py-3">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-semibold flex items-center gap-2">
-              <img src="/opencollection-logo.svg" alt="OpenCollection" className="h-10" />
+            <h1 className="text-2xl font-semibold flex items-center gap-2 dark:text-white">
+              <img src="/opencollection-logo.svg" alt="OpenCollection" className="h-10 dark:invert" />
             </h1>
             
             <div className="flex items-center gap-2">
@@ -99,7 +99,7 @@ const SchemaViewer = () => {
                   
                   <button
                     onClick={handleExport}
-                    className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
+                    className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors text-gray-700 dark:text-white"
                   >
                     <Download className="w-4 h-4 inline mr-1" />
                     Export

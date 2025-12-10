@@ -86,17 +86,17 @@ const SchemaPane = ({ pane, onClose, onNavigate, depth, rootSchema, allPanes }) 
     return (
       <div
         key={key}
-        className={`px-3 py-2 border-b border-gray-100 ${isClickable ? 'cursor-pointer' : ''} ${isInPath ? 'bg-blue-100 hover:bg-blue-100' : isClickable ? 'hover:bg-gray-50' : ''}`}
+        className={`px-3 py-2 border-b border-gray-100 dark:border-gray-700 ${isClickable ? 'cursor-pointer' : ''} ${isInPath ? 'bg-blue-50 dark:bg-gray-600 hover:bg-blue-50 dark:hover:bg-gray-600' : isClickable ? 'hover:bg-gray-50 dark:hover:bg-gray-800' : ''}`}
         onClick={() => isClickable && handlePropertyClick(key, value, propertyPath)}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             {typeIcons[propType] || typeIcons.any}
-            <span className="font-mono text-base">{key}</span>
+            <span className="font-mono text-base dark:text-gray-200">{key}</span>
             {isRequired && <span className="text-sm text-red-500">*</span>}
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">{propType}</span>
+            <span className="text-sm text-gray-500 dark:text-gray-400">{propType}</span>
             {resolvedValue.const !== undefined && (
               <span className="text-xs text-teal-600 flex items-center gap-1">
                 <Lock className="w-3 h-3" />
@@ -104,17 +104,17 @@ const SchemaPane = ({ pane, onClose, onNavigate, depth, rootSchema, allPanes }) 
               </span>
             )}
             {refName && (
-              <span className="text-sm text-blue-500">{refName}</span>
+              <span className="text-sm text-blue-500 dark:text-blue-400">{refName}</span>
             )}
-            {isClickable && <ArrowRight className="w-3 h-3 text-gray-400" />}
+            {isClickable && <ArrowRight className="w-3 h-3 text-gray-400 dark:text-gray-500" />}
           </div>
         </div>
-        {resolvedValue.enum && (
+            {resolvedValue.enum && (
           <div className="flex flex-wrap gap-1 mt-1 ml-6">
             {resolvedValue.enum.map((value, index) => (
               <span 
                 key={index} 
-                className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded"
+                className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded"
               >
                 {JSON.stringify(value)}
               </span>
@@ -122,7 +122,7 @@ const SchemaPane = ({ pane, onClose, onNavigate, depth, rootSchema, allPanes }) 
           </div>
         )}
         {resolvedValue.description && (
-          <p className="text-sm text-gray-600 mt-1 ml-6">{resolvedValue.description}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 ml-6">{resolvedValue.description}</p>
         )}
       </div>
     );
@@ -147,49 +147,49 @@ const SchemaPane = ({ pane, onClose, onNavigate, depth, rootSchema, allPanes }) 
   return (
     <div
       data-pane
-      className="flex-shrink-0 bg-white border-r border-gray-200 flex flex-col"
+      className="flex-shrink-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col"
       style={{ 
         width: '384px', // 24rem = 384px
         minWidth: '384px',
         marginLeft: depth > 0 ? '-1px' : '0' 
       }}
     >
-      <div className="px-4 py-3 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
+      <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 flex items-center justify-between">
         <div className="flex items-center gap-2 flex-1 min-w-0">
           {depth === 0 ? <Package className="w-4 h-4 text-indigo-500" /> : (typeIcons[type] || typeIcons.any)}
-          <h3 className="font-semibold text-base truncate">{name}</h3>
-          <span className="text-sm text-gray-500 bg-gray-200 px-2 py-0.5 rounded flex-shrink-0">{type}</span>
+          <h3 className="font-semibold text-base truncate dark:text-gray-200">{name}</h3>
+          <span className="text-sm text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded flex-shrink-0">{type}</span>
         </div>
         {depth > 0 && (
           <button
             onClick={onClose}
-            className="p-1 hover:bg-gray-200 rounded transition-colors ml-2"
+            className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors ml-2"
           >
-            <X className="w-4 h-4" />
+            <X className="w-4 h-4 text-gray-400 dark:text-gray-500" />
           </button>
         )}
       </div>
 
       <div className="flex-1 overflow-y-auto">
         {schema.title && (
-          <div className="px-4 py-3 border-b border-gray-100">
-            <h4 className="text-sm font-semibold text-gray-600 mb-1">Title</h4>
-            <p className="text-base">{schema.title}</p>
+          <div className="px-4 py-3 border-t border-b border-gray-200 dark:border-gray-600">
+            <h4 className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">Title</h4>
+            <p className="text-base dark:text-gray-200">{schema.title}</p>
           </div>
         )}
 
         {schema.description && (
-          <div className="px-4 py-3 border-b border-gray-100">
-            <h4 className="text-sm font-semibold text-gray-600 mb-1">Description</h4>
-            <p className="text-base text-gray-700">{schema.description}</p>
+          <div className={`px-4 py-3 border-b border-gray-100 dark:border-gray-700 ${!schema.title ? 'border-t border-gray-200 dark:border-gray-600' : ''}`}>
+            <h4 className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">Description</h4>
+            <p className="text-base text-gray-700 dark:text-gray-300">{schema.description}</p>
           </div>
         )}
 
 
         {type === 'object' && schema.properties && Object.keys(schema.properties).length > 0 && (
           <div>
-            <div className="px-4 py-2 bg-gray-50">
-              <h4 className="text-sm font-semibold text-gray-600">Properties</h4>
+            <div className={`px-4 py-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 ${!schema.title && !schema.description ? 'border-t border-gray-200 dark:border-gray-600' : ''}`}>
+              <h4 className="text-sm font-semibold text-gray-600 dark:text-gray-400">Properties</h4>
             </div>
             {Object.entries(schema.properties).map(([key, value]) => 
               renderPropertyRow(key, value, [...path, 'properties', key])
@@ -198,8 +198,8 @@ const SchemaPane = ({ pane, onClose, onNavigate, depth, rootSchema, allPanes }) 
         )}
 
         {type === 'array' && schema.items && (
-          <div className="px-4 py-3 border-b border-gray-100">
-            <h4 className="text-sm font-semibold text-gray-600 mb-2">Array Items</h4>
+          <div className={`px-4 py-3 border-b border-gray-100 dark:border-gray-700 ${!schema.title && !schema.description ? 'border-t border-gray-200 dark:border-gray-600' : ''}`}>
+            <h4 className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">Array Items</h4>
             {(() => {
               const itemsType = getSchemaType(schema.items);
               const hasOneOf = schema.items.oneOf;
@@ -208,12 +208,12 @@ const SchemaPane = ({ pane, onClose, onNavigate, depth, rootSchema, allPanes }) 
               const isClickable = schema.items.$ref || itemsType === 'object' || hasOneOf || hasAnyOf || hasAllOf;
               
               if (!isClickable) {
-                return <span className="text-base text-gray-600">Type: {itemsType}</span>;
+                return <span className="text-base text-gray-600 dark:text-gray-300">Type: {itemsType}</span>;
               }
               
               return (
                 <div
-                  className="flex items-center justify-between cursor-pointer hover:bg-gray-50 p-2 rounded"
+                  className="flex items-center justify-between cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded"
                   onClick={() => {
                     if (schema.items.$ref) {
                       const resolved = resolveRef(schema.items.$ref);
@@ -226,7 +226,7 @@ const SchemaPane = ({ pane, onClose, onNavigate, depth, rootSchema, allPanes }) 
                     }
                   }}
                 >
-                  <span className="text-base">
+                  <span className="text-base dark:text-gray-200">
                     Item Type: {
                       schema.items.$ref ? schema.items.$ref.split('/').pop() :
                       hasOneOf ? 'oneOf' :
@@ -235,7 +235,7 @@ const SchemaPane = ({ pane, onClose, onNavigate, depth, rootSchema, allPanes }) 
                       itemsType
                     }
                   </span>
-                  <ArrowRight className="w-3 h-3 text-gray-400" />
+                  <ArrowRight className="w-3 h-3 text-gray-400 dark:text-gray-500" />
                 </div>
               );
             })()}
@@ -243,11 +243,11 @@ const SchemaPane = ({ pane, onClose, onNavigate, depth, rootSchema, allPanes }) 
         )}
 
         {schema.enum && (
-          <div className="px-4 py-3 border-b border-gray-100">
-            <h4 className="text-sm font-semibold text-gray-600 mb-2">Enum Values</h4>
+          <div className={`px-4 py-3 border-b border-gray-100 dark:border-gray-700 ${!schema.title && !schema.description && !(type === 'object' && schema.properties) && !(type === 'array' && schema.items) ? 'border-t border-gray-200 dark:border-gray-600' : ''}`}>
+            <h4 className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">Enum Values</h4>
             <div className="space-y-1">
               {schema.enum.map((value, index) => (
-                <div key={index} className="text-base bg-gray-100 px-2 py-1 rounded font-mono">
+                <div key={index} className="text-base bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded font-mono dark:text-gray-200">
                   {JSON.stringify(value)}
                 </div>
               ))}
@@ -256,29 +256,29 @@ const SchemaPane = ({ pane, onClose, onNavigate, depth, rootSchema, allPanes }) 
         )}
 
         {schema.const !== undefined && (
-          <div className="px-4 py-3 border-b border-gray-100">
-            <h4 className="text-sm font-semibold text-gray-600 mb-1">Constant Value</h4>
-            <div className="text-base bg-gray-100 px-2 py-1 rounded font-mono">
+          <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+            <h4 className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">Constant Value</h4>
+            <div className="text-base bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded font-mono dark:text-gray-200">
               {JSON.stringify(schema.const)}
             </div>
           </div>
         )}
 
         {schema.default !== undefined && (
-          <div className="px-4 py-3 border-b border-gray-100">
-            <h4 className="text-sm font-semibold text-gray-600 mb-1">Default Value</h4>
-            <div className="text-base bg-gray-100 px-2 py-1 rounded font-mono">
+          <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+            <h4 className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">Default Value</h4>
+            <div className="text-base bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded font-mono dark:text-gray-200">
               {JSON.stringify(schema.default)}
             </div>
           </div>
         )}
 
         {renderConstraints().length > 0 && (
-          <div className="px-4 py-3 border-b border-gray-100">
-            <h4 className="text-sm font-semibold text-gray-600 mb-2">Constraints</h4>
+          <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+            <h4 className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">Constraints</h4>
             <div className="flex flex-wrap gap-2">
               {renderConstraints().map((constraint, index) => (
-                <span key={index} className="text-sm bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+                <span key={index} className="text-sm bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 px-2 py-1 rounded">
                   {constraint}
                 </span>
               ))}
@@ -288,8 +288,8 @@ const SchemaPane = ({ pane, onClose, onNavigate, depth, rootSchema, allPanes }) 
 
         {schema.oneOf && (
           <div>
-            <div className="px-4 py-2 bg-gray-50">
-              <h4 className="text-sm font-semibold text-gray-600 flex items-center gap-2">
+            <div className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+              <h4 className="text-sm font-semibold text-gray-600 dark:text-gray-400 flex items-center gap-2">
                 <Split className="w-4 h-4" />
                 One Of
               </h4>
@@ -302,7 +302,7 @@ const SchemaPane = ({ pane, onClose, onNavigate, depth, rootSchema, allPanes }) 
               return (
               <div
                 key={index}
-                className={`px-3 py-2 border-b border-gray-100 cursor-pointer ${isInPath ? 'bg-blue-100 hover:bg-blue-100' : 'hover:bg-gray-50'}`}
+                className={`px-3 py-2 border-b border-gray-100 dark:border-gray-700 cursor-pointer ${isInPath ? 'bg-blue-50 dark:bg-gray-600 hover:bg-blue-50 dark:hover:bg-gray-600' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`}
                 onClick={() => {
                   if (item.$ref) {
                     const resolved = resolveRef(item.$ref);
@@ -318,17 +318,17 @@ const SchemaPane = ({ pane, onClose, onNavigate, depth, rootSchema, allPanes }) 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     {typeIcons[getSchemaType(item)] || typeIcons.any}
-                    <span className="text-base">
+                    <span className="text-base dark:text-gray-200">
                       Option {index + 1}: {item.type || (item.$ref ? item.$ref.split('/').pop() : 'Schema')}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    {item.title && <span className="text-sm text-gray-500">{item.title}</span>}
-                    <ArrowRight className="w-3 h-3 text-gray-400" />
+                    {item.title && <span className="text-sm text-gray-500 dark:text-gray-400">{item.title}</span>}
+                    <ArrowRight className="w-3 h-3 text-gray-400 dark:text-gray-500" />
                   </div>
                 </div>
                 {item.description && (
-                  <p className="text-sm text-gray-600 mt-1 ml-6">{item.description}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 ml-6">{item.description}</p>
                 )}
               </div>
               );
@@ -338,8 +338,8 @@ const SchemaPane = ({ pane, onClose, onNavigate, depth, rootSchema, allPanes }) 
 
         {schema.anyOf && (
           <div>
-            <div className="px-4 py-2 bg-gray-50">
-              <h4 className="text-sm font-semibold text-gray-600 flex items-center gap-2">
+            <div className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+              <h4 className="text-sm font-semibold text-gray-600 dark:text-gray-400 flex items-center gap-2">
                 <Split className="w-4 h-4" />
                 Any Of
               </h4>
@@ -352,7 +352,7 @@ const SchemaPane = ({ pane, onClose, onNavigate, depth, rootSchema, allPanes }) 
               return (
               <div
                 key={index}
-                className={`px-3 py-2 border-b border-gray-100 cursor-pointer ${isInPath ? 'bg-blue-100 hover:bg-blue-100' : 'hover:bg-gray-50'}`}
+                className={`px-3 py-2 border-b border-gray-100 dark:border-gray-700 cursor-pointer ${isInPath ? 'bg-blue-50 dark:bg-gray-600 hover:bg-blue-50 dark:hover:bg-gray-600' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`}
                 onClick={() => {
                   if (item.$ref) {
                     const resolved = resolveRef(item.$ref);
@@ -368,17 +368,17 @@ const SchemaPane = ({ pane, onClose, onNavigate, depth, rootSchema, allPanes }) 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     {typeIcons[getSchemaType(item)] || typeIcons.any}
-                    <span className="text-base">
+                    <span className="text-base dark:text-gray-200">
                       Option {index + 1}: {item.type || (item.$ref ? item.$ref.split('/').pop() : 'Schema')}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    {item.title && <span className="text-sm text-gray-500">{item.title}</span>}
-                    <ArrowRight className="w-3 h-3 text-gray-400" />
+                    {item.title && <span className="text-sm text-gray-500 dark:text-gray-400">{item.title}</span>}
+                    <ArrowRight className="w-3 h-3 text-gray-400 dark:text-gray-500" />
                   </div>
                 </div>
                 {item.description && (
-                  <p className="text-sm text-gray-600 mt-1 ml-6">{item.description}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 ml-6">{item.description}</p>
                 )}
               </div>
               );
@@ -388,8 +388,8 @@ const SchemaPane = ({ pane, onClose, onNavigate, depth, rootSchema, allPanes }) 
 
         {schema.allOf && (
           <div>
-            <div className="px-4 py-2 bg-gray-50">
-              <h4 className="text-sm font-semibold text-gray-600 flex items-center gap-2">
+            <div className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+              <h4 className="text-sm font-semibold text-gray-600 dark:text-gray-400 flex items-center gap-2">
                 <Split className="w-4 h-4" />
                 All Of
               </h4>
@@ -402,7 +402,7 @@ const SchemaPane = ({ pane, onClose, onNavigate, depth, rootSchema, allPanes }) 
               return (
               <div
                 key={index}
-                className={`px-3 py-2 border-b border-gray-100 cursor-pointer ${isInPath ? 'bg-blue-100 hover:bg-blue-100' : 'hover:bg-gray-50'}`}
+                className={`px-3 py-2 border-b border-gray-100 dark:border-gray-700 cursor-pointer ${isInPath ? 'bg-blue-50 dark:bg-gray-600 hover:bg-blue-50 dark:hover:bg-gray-600' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`}
                 onClick={() => {
                   if (item.$ref) {
                     const resolved = resolveRef(item.$ref);
@@ -418,17 +418,17 @@ const SchemaPane = ({ pane, onClose, onNavigate, depth, rootSchema, allPanes }) 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     {typeIcons[getSchemaType(item)] || typeIcons.any}
-                    <span className="text-base">
+                    <span className="text-base dark:text-gray-200">
                       Schema {index + 1}: {item.type || (item.$ref ? item.$ref.split('/').pop() : 'Schema')}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    {item.title && <span className="text-sm text-gray-500">{item.title}</span>}
-                    <ArrowRight className="w-3 h-3 text-gray-400" />
+                    {item.title && <span className="text-sm text-gray-500 dark:text-gray-400">{item.title}</span>}
+                    <ArrowRight className="w-3 h-3 text-gray-400 dark:text-gray-500" />
                   </div>
                 </div>
                 {item.description && (
-                  <p className="text-sm text-gray-600 mt-1 ml-6">{item.description}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 ml-6">{item.description}</p>
                 )}
               </div>
               );
@@ -489,14 +489,14 @@ const SchemaExplorer = ({ schema, rootSchema }) => {
   return (
     <div className="flex flex-col flex-1 overflow-hidden">
       {/* Breadcrumb Navigation */}
-      <div className="px-4 py-2 bg-gray-50 border-b border-gray-200 flex items-center gap-2 overflow-x-auto flex-shrink-0 whitespace-nowrap">
+      <div className="px-4 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center gap-2 overflow-x-auto flex-shrink-0 whitespace-nowrap">
         {panes.map((pane, index) => (
           <React.Fragment key={index}>
-            {index > 0 && <span className="text-gray-400 flex-shrink-0">/</span>}
+            {index > 0 && <span className="text-gray-400 dark:text-gray-500 flex-shrink-0">/</span>}
             <button
               onClick={() => handleBreadcrumbClick(index)}
-              className={`text-base hover:text-blue-600 transition-colors flex-shrink-0 ${
-                index === panes.length - 1 ? 'text-gray-900 font-semibold' : 'text-gray-600'
+              className={`text-base hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex-shrink-0 ${
+                index === panes.length - 1 ? 'text-gray-900 dark:text-gray-100 font-semibold' : 'text-gray-600 dark:text-gray-400'
               }`}
             >
               {pane.name}

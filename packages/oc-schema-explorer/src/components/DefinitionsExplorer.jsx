@@ -18,20 +18,20 @@ const DefinitionPane = ({ definition, onClose, onNavigate, depth, allDefinitions
     return (
       <div
         key={key}
-        className={`px-3 py-2 border-b border-gray-100 ${isRef ? 'cursor-pointer' : ''} ${isInPath ? 'bg-blue-100 hover:bg-blue-100' : isRef ? 'hover:bg-gray-50' : ''}`}
+        className={`px-3 py-2 border-b border-gray-100 dark:border-gray-700 ${isRef ? 'cursor-pointer' : ''} ${isInPath ? 'bg-blue-50 dark:bg-gray-600 hover:bg-blue-50 dark:hover:bg-gray-600' : isRef ? 'hover:bg-gray-50 dark:hover:bg-gray-700' : ''}`}
         onClick={() => isRef && onNavigate(value.$ref, [...path, key])}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="font-mono text-sm">{key}</span>
+            <span className="font-mono text-sm dark:text-gray-200">{key}</span>
             {isRequired && <span className="text-xs text-red-500">*</span>}
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-500">{propType}</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400">{propType}</span>
             {isRef && (
               <>
-                <span className="text-xs text-blue-500">{value.$ref.split('/').pop()}</span>
-                <ArrowRight className="w-3 h-3 text-blue-500" />
+                <span className="text-xs text-blue-500 dark:text-blue-400">{value.$ref.split('/').pop()}</span>
+                <ArrowRight className="w-3 h-3 text-blue-500 dark:text-blue-400" />
               </>
             )}
           </div>
@@ -41,7 +41,7 @@ const DefinitionPane = ({ definition, onClose, onNavigate, depth, allDefinitions
             {value.enum.map((enumValue, index) => (
               <span 
                 key={index} 
-                className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded"
+                className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded"
               >
                 {JSON.stringify(enumValue)}
               </span>
@@ -49,7 +49,7 @@ const DefinitionPane = ({ definition, onClose, onNavigate, depth, allDefinitions
           </div>
         )}
         {value.description && (
-          <p className="text-xs text-gray-600 mt-1">{value.description}</p>
+          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{value.description}</p>
         )}
       </div>
     );
@@ -57,42 +57,42 @@ const DefinitionPane = ({ definition, onClose, onNavigate, depth, allDefinitions
 
   return (
     <div
-      className="flex-shrink-0 w-80 bg-white border-r border-gray-200 flex flex-col"
+      className="flex-shrink-0 w-80 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col"
       style={{ marginLeft: depth > 0 ? '-1px' : '0' }}
     >
-      <div className="px-4 py-3 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
+      <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <FileText className="w-4 h-4 text-gray-600" />
-          <h3 className="font-semibold text-sm">{name}</h3>
-          <span className="text-xs text-gray-500 bg-gray-200 px-2 py-0.5 rounded">{type}</span>
+          <FileText className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+          <h3 className="font-semibold text-sm dark:text-gray-200">{name}</h3>
+          <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-600 px-2 py-0.5 rounded">{type}</span>
         </div>
         <button
           onClick={onClose}
-          className="p-1 hover:bg-gray-200 rounded transition-colors"
+          className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
         >
-          <X className="w-4 h-4" />
+          <X className="w-4 h-4 text-gray-400 dark:text-gray-500" />
         </button>
       </div>
 
       <div className="flex-1 overflow-y-auto">
         {schema.title && (
-          <div className="px-4 py-3 border-b border-gray-100">
-            <h4 className="text-xs font-semibold text-gray-600 mb-1">Title</h4>
-            <p className="text-sm">{schema.title}</p>
+          <div className="px-4 py-3 border-t border-b border-gray-200 dark:border-gray-600">
+            <h4 className="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Title</h4>
+            <p className="text-sm dark:text-gray-200">{schema.title}</p>
           </div>
         )}
 
         {schema.description && (
-          <div className="px-4 py-3 border-b border-gray-100">
-            <h4 className="text-xs font-semibold text-gray-600 mb-1">Description</h4>
-            <p className="text-sm text-gray-700">{schema.description}</p>
+          <div className={`px-4 py-3 border-b border-gray-100 dark:border-gray-700 ${!schema.title ? 'border-t border-gray-200 dark:border-gray-600' : ''}`}>
+            <h4 className="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Description</h4>
+            <p className="text-sm text-gray-700 dark:text-gray-300">{schema.description}</p>
           </div>
         )}
 
         {schema.properties && Object.keys(schema.properties).length > 0 && (
           <div>
-            <div className="px-4 py-2 bg-gray-50">
-              <h4 className="text-xs font-semibold text-gray-600">Properties</h4>
+            <div className={`px-4 py-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 ${!schema.title && !schema.description ? 'border-t border-gray-200 dark:border-gray-600' : ''}`}>
+              <h4 className="text-xs font-semibold text-gray-600 dark:text-gray-400">Properties</h4>
             </div>
             {Object.entries(schema.properties).map(([key, value]) => 
               renderPropertyRow(key, value, [name, 'properties'])
@@ -101,11 +101,11 @@ const DefinitionPane = ({ definition, onClose, onNavigate, depth, allDefinitions
         )}
 
         {schema.enum && (
-          <div className="px-4 py-3 border-b border-gray-100">
-            <h4 className="text-xs font-semibold text-gray-600 mb-2">Enum Values</h4>
+          <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+            <h4 className="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2">Enum Values</h4>
             <div className="space-y-1">
               {schema.enum.map((value, index) => (
-                <div key={index} className="text-sm bg-gray-100 px-2 py-1 rounded font-mono">
+                <div key={index} className="text-sm bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded font-mono dark:text-gray-200">
                   {JSON.stringify(value)}
                 </div>
               ))}
@@ -115,8 +115,8 @@ const DefinitionPane = ({ definition, onClose, onNavigate, depth, allDefinitions
 
         {schema.oneOf && (
           <div>
-            <div className="px-4 py-2 bg-gray-50">
-              <h4 className="text-xs font-semibold text-gray-600 flex items-center gap-2">
+            <div className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+              <h4 className="text-xs font-semibold text-gray-600 dark:text-gray-400 flex items-center gap-2">
                 <Split className="w-3 h-3" />
                 One Of
               </h4>
@@ -124,15 +124,15 @@ const DefinitionPane = ({ definition, onClose, onNavigate, depth, allDefinitions
             {schema.oneOf.map((item, index) => (
               <div
                 key={index}
-                className="px-3 py-2 border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
+                className="px-3 py-2 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
                 onClick={() => item.$ref && onNavigate(item.$ref, [name, 'oneOf', index])}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-sm">Option {index + 1}</span>
+                  <span className="text-sm dark:text-gray-200">Option {index + 1}</span>
                   {item.$ref && (
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-blue-500">{item.$ref.split('/').pop()}</span>
-                      <ArrowRight className="w-3 h-3 text-blue-500" />
+                      <span className="text-xs text-blue-500 dark:text-blue-400">{item.$ref.split('/').pop()}</span>
+                      <ArrowRight className="w-3 h-3 text-blue-500 dark:text-blue-400" />
                     </div>
                   )}
                 </div>
@@ -142,21 +142,21 @@ const DefinitionPane = ({ definition, onClose, onNavigate, depth, allDefinitions
         )}
 
         {schema.items && (
-          <div className="px-4 py-3 border-b border-gray-100">
-            <h4 className="text-xs font-semibold text-gray-600 mb-1">Array Items</h4>
+          <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+            <h4 className="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Array Items</h4>
             {schema.items.$ref ? (
               <div
-                className="flex items-center justify-between cursor-pointer hover:bg-gray-50 p-2 rounded"
+                className="flex items-center justify-between cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded"
                 onClick={() => onNavigate(schema.items.$ref, [name, 'items'])}
               >
-                <span className="text-sm">Item Type</span>
+                <span className="text-sm dark:text-gray-200">Item Type</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-blue-500">{schema.items.$ref.split('/').pop()}</span>
-                  <ArrowRight className="w-3 h-3 text-blue-500" />
+                  <span className="text-xs text-blue-500 dark:text-blue-400">{schema.items.$ref.split('/').pop()}</span>
+                  <ArrowRight className="w-3 h-3 text-blue-500 dark:text-blue-400" />
                 </div>
               </div>
             ) : (
-              <span className="text-sm text-gray-600">Type: {getSchemaType(schema.items)}</span>
+              <span className="text-sm text-gray-600 dark:text-gray-300">Type: {getSchemaType(schema.items)}</span>
             )}
           </div>
         )}

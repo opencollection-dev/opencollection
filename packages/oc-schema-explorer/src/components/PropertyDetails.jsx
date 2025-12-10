@@ -5,7 +5,7 @@ import { getSchemaType } from '../utils/schemaParser';
 const PropertyDetails = ({ selected, onOpenDefinition }) => {
   if (!selected || !selected.schema) {
     return (
-      <div className="flex items-center justify-center h-full text-gray-500">
+      <div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
         <p>Select a property to view details</p>
       </div>
     );
@@ -39,16 +39,16 @@ const PropertyDetails = ({ selected, onOpenDefinition }) => {
   };
 
   return (
-    <div className="p-4 space-y-4 overflow-auto">
+    <div className="p-4 space-y-4 overflow-auto bg-white dark:bg-gray-800 h-full">
       <div className="space-y-2">
-        <h2 className="text-xl font-semibold flex items-center gap-2">
+        <h2 className="text-xl font-semibold flex items-center gap-2 dark:text-gray-200">
           <FileText className="w-5 h-5" />
           {name}
         </h2>
         
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-500">Type:</span>
-          <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm">
+          <span className="text-sm text-gray-500 dark:text-gray-400">Type:</span>
+          <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-50 dark:bg-gray-600 text-blue-800 dark:text-blue-200 rounded text-sm">
             {type}
           </span>
         </div>
@@ -56,27 +56,27 @@ const PropertyDetails = ({ selected, onOpenDefinition }) => {
 
       {schema.title && (
         <div className="space-y-1">
-          <h3 className="text-sm font-semibold text-gray-600">Title</h3>
-          <p className="text-sm">{schema.title}</p>
+          <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-400">Title</h3>
+          <p className="text-sm dark:text-gray-200">{schema.title}</p>
         </div>
       )}
 
       {schema.description && (
         <div className="space-y-1">
-          <h3 className="text-sm font-semibold text-gray-600 flex items-center gap-1">
+          <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-400 flex items-center gap-1">
             <Info className="w-4 h-4" />
             Description
           </h3>
-          <p className="text-sm text-gray-700">{schema.description}</p>
+          <p className="text-sm text-gray-700 dark:text-gray-300">{schema.description}</p>
         </div>
       )}
 
       {schema.$ref && (
         <div className="space-y-1">
-          <h3 className="text-sm font-semibold text-gray-600">Reference</h3>
+          <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-400">Reference</h3>
           <button
             onClick={() => onOpenDefinition && onOpenDefinition(schema.$ref, name)}
-            className="inline-flex items-center gap-2 text-sm bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1.5 rounded transition-colors"
+            className="inline-flex items-center gap-2 text-sm bg-blue-50 dark:bg-gray-600 hover:bg-blue-100 dark:hover:bg-gray-500 text-blue-700 dark:text-blue-200 px-3 py-1.5 rounded transition-colors"
           >
             <code>{schema.$ref}</code>
             <ExternalLink className="w-3 h-3" />
@@ -86,10 +86,10 @@ const PropertyDetails = ({ selected, onOpenDefinition }) => {
 
       {schema.enum && (
         <div className="space-y-1">
-          <h3 className="text-sm font-semibold text-gray-600">Enum Values</h3>
+          <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-400">Enum Values</h3>
           <div className="space-y-1">
             {schema.enum.map((value, index) => (
-              <div key={index} className="text-sm bg-gray-100 px-2 py-1 rounded font-mono">
+              <div key={index} className="text-sm bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded font-mono dark:text-gray-200">
                 {renderValue(value)}
               </div>
             ))}
@@ -99,8 +99,8 @@ const PropertyDetails = ({ selected, onOpenDefinition }) => {
 
       {schema.const !== undefined && (
         <div className="space-y-1">
-          <h3 className="text-sm font-semibold text-gray-600">Constant Value</h3>
-          <div className="text-sm bg-gray-100 px-2 py-1 rounded font-mono">
+          <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-400">Constant Value</h3>
+          <div className="text-sm bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded font-mono dark:text-gray-200">
             {renderValue(schema.const)}
           </div>
         </div>
@@ -108,8 +108,8 @@ const PropertyDetails = ({ selected, onOpenDefinition }) => {
 
       {schema.default !== undefined && (
         <div className="space-y-1">
-          <h3 className="text-sm font-semibold text-gray-600">Default Value</h3>
-          <div className="text-sm bg-gray-100 px-2 py-1 rounded font-mono">
+          <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-400">Default Value</h3>
+          <div className="text-sm bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded font-mono dark:text-gray-200">
             {renderValue(schema.default)}
           </div>
         </div>
@@ -117,13 +117,13 @@ const PropertyDetails = ({ selected, onOpenDefinition }) => {
 
       {renderConstraints().length > 0 && (
         <div className="space-y-1">
-          <h3 className="text-sm font-semibold text-gray-600 flex items-center gap-1">
+          <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-400 flex items-center gap-1">
             <AlertCircle className="w-4 h-4" />
             Constraints
           </h3>
           <div className="flex flex-wrap gap-2">
             {renderConstraints().map((constraint, index) => (
-              <span key={index} className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+              <span key={index} className="text-xs bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 px-2 py-1 rounded">
                 {constraint}
               </span>
             ))}
@@ -133,10 +133,10 @@ const PropertyDetails = ({ selected, onOpenDefinition }) => {
 
       {schema.required && schema.required.length > 0 && (
         <div className="space-y-1">
-          <h3 className="text-sm font-semibold text-gray-600">Required Properties</h3>
+          <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-400">Required Properties</h3>
           <div className="flex flex-wrap gap-2">
             {schema.required.map((prop, index) => (
-              <span key={index} className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">
+              <span key={index} className="text-xs bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 px-2 py-1 rounded">
                 {prop}
               </span>
             ))}
@@ -148,10 +148,10 @@ const PropertyDetails = ({ selected, onOpenDefinition }) => {
 
       {schema.examples && schema.examples.length > 0 && (
         <div className="space-y-1">
-          <h3 className="text-sm font-semibold text-gray-600">Examples</h3>
+          <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-400">Examples</h3>
           <div className="space-y-2">
             {schema.examples.map((ex, index) => (
-              <pre key={index} className="text-sm bg-gray-100 p-2 rounded overflow-auto">
+              <pre key={index} className="text-sm bg-gray-100 dark:bg-gray-700 p-2 rounded overflow-auto dark:text-gray-200">
                 {typeof ex === 'object' ? JSON.stringify(ex, null, 2) : renderValue(ex)}
               </pre>
             ))}
