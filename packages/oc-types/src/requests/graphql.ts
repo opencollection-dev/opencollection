@@ -3,6 +3,7 @@
  */
 
 import type { Auth } from '../common/auth';
+import type { Action } from '../common/actions';
 import type { Description } from '../common/description';
 import type { Assertion } from '../common/assertions';
 import type { Scripts } from '../common/scripts';
@@ -48,6 +49,7 @@ export interface GraphQLRequestRuntime {
   variables?: Variable[];
   scripts?: Scripts;
   assertions?: Assertion[];
+  actions?: Action[];
   auth?: Auth;
 }
 

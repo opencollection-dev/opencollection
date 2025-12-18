@@ -886,6 +886,72 @@
       "required": ["expression", "operator"],
       "additionalProperties": false
     },
+    "Action": {
+      "description": "Runtime action",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ActionSetVariable"
+        }
+      ]
+    },
+    "ActionSetVariable": {
+      "type": "object",
+      "description": "Set a variable using a selector result",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "set-variable"
+        },
+        "description": {
+          "$ref": "#/$defs/Description"
+        },
+        "phase": {
+          "type": "string",
+          "enum": ["before-request", "after-response"],
+          "description": "When to execute the action relative to the request"
+        },
+        "selector": {
+          "type": "object",
+          "description": "Selector used by an action",
+          "properties": {
+            "expression": {
+              "type": "string",
+              "description": "Selector expression to evaluate"
+            },
+            "method": {
+              "type": "string",
+              "const": "jsonq",
+              "description": "Selector evaluation method"
+            }
+          },
+          "required": ["expression", "method"],
+          "additionalProperties": false
+        },
+        "variable": {
+          "type": "object",
+          "description": "Target variable details for an action",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Variable name to set"
+            },
+            "scope": {
+              "type": "string",
+              "enum": ["runtime", "request", "folder", "collection", "environment"],
+              "description": "Scope in which to set the variable"
+            }
+          },
+          "required": ["name", "scope"],
+          "additionalProperties": false
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Whether the action is disabled"
+        }
+      },
+      "required": ["type", "selector", "variable"],
+      "additionalProperties": false
+    },
     "Auth": {
       "description": "Authentication",
       "oneOf": [
@@ -1743,6 +1809,13 @@
             "$ref": "#/$defs/Assertion"
           }
         },
+        "actions": {
+          "type": "array",
+          "description": "Array of runtime actions",
+          "items": {
+            "$ref": "#/$defs/Action"
+          }
+        },
         "auth": {
           "$ref": "#/$defs/Auth"
         }
@@ -1869,6 +1942,13 @@
           "description": "Array of assertions for response validation",
           "items": {
             "$ref": "#/$defs/Assertion"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "description": "Array of runtime actions",
+          "items": {
+            "$ref": "#/$defs/Action"
           }
         },
         "auth": {

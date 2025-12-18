@@ -1,6 +1,6 @@
 {
   "name": "@opencollection/types",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "TypeScript types for OpenCollection schema",
   "author": "Bruno Software Inc.",
   "main": "dist/opencollection.js",
