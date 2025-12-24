@@ -136,20 +136,7 @@
           "$ref": "#/$defs/Protobuf"
         },
         "proxy": {
-          "oneOf": [
-            {
-              "type": "boolean",
-              "const": false
-            },
-            {
-              "$ref": "#/$defs/Proxy"
-            },
-            {
-              "type": "string",
-              "const": "inherit"
-            }
-          ],
-          "description": "Proxy configuration for the collection"
+          "$ref": "#/$defs/Proxy"
         },
         "clientCertificates": {
           "type": "array",
@@ -184,7 +171,25 @@
     },
     "Proxy": {
       "type": "object",
-      "description": "Proxy configuration",
+      "description": "Proxy configuration for the collection",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Is the proxy enabled"
+        },
+        "inherit": {
+          "type": "boolean",
+          "description": "Whether to inherit system proxy settings"
+        },
+        "config": {
+          "$ref": "#/$defs/ProxyConnectionConfig"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ProxyConnectionConfig": {
+      "type": "object",
+      "description": "Proxy connection details",
       "properties": {
         "protocol": {
           "type": "string",
@@ -215,7 +220,6 @@
           "description": "Bypass proxy string"
         }
       },
-      "required": ["protocol", "hostname", "port"],
       "additionalProperties": false
     },
     "ProxyAuth": {

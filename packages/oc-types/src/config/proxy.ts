@@ -9,10 +9,16 @@ export interface ProxyAuth {
 
 export type ProxyAuthConfig = false | ProxyAuth;
 
-export interface Proxy {
-  protocol: string;
-  hostname: string;
-  port: number;
+export interface ProxyConnectionConfig {
+  protocol?: string;
+  hostname?: string;
+  port?: number;
   auth?: ProxyAuthConfig;
   bypassProxy?: string;
+}
+
+export interface Proxy {
+  enabled?: boolean;
+  inherit?: boolean;
+  config?: ProxyConnectionConfig;
 }

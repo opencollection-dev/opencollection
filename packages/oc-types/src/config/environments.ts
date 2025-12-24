@@ -1,12 +1,10 @@
 /**
- * Environment and collection-level configuration types
+ * Environment configuration types
  */
 
 import type { Description } from '../common/description';
 import type { Variable, SecretVariable } from '../common/variables';
 import type { ClientCertificate } from './certificates';
-import type { Protobuf } from './protobuf';
-import type { Proxy } from './proxy';
 
 export interface Environment {
   name: string;
@@ -16,11 +14,4 @@ export interface Environment {
   clientCertificates?: ClientCertificate[];
   extends?: string;
   dotEnvFilePath?: string;
-}
-
-export interface CollectionConfig {
-  environments?: Environment[];
-  protobuf?: Protobuf;
-  proxy?: false | Proxy | 'inherit';
-  clientCertificates?: ClientCertificate[];
 }

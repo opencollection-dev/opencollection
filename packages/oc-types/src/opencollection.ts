@@ -5,7 +5,7 @@
 import type { Documentation } from './common/documentation';
 import type { RequestDefaults } from './common/request-defaults';
 import type { Info } from './common/info';
-import type { CollectionConfig } from './config/environments';
+import type { CollectionConfig } from './config/collection';
 import type { Item } from './collection/item';
 
 export type Extensions = Record<string, unknown>;
