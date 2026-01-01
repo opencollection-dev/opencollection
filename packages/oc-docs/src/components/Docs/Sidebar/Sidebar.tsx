@@ -140,7 +140,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
       {/* OpenCollection Logo */}
       <div className="p-2" style={{ borderColor: 'var(--border-color)' }}>
         <a 
-          href="https://opencollection.dev" 
+          href="https://opencollection.com" 
           target="_blank" 
           rel="noopener noreferrer"
           className="block opacity-50 hover:opacity-70 transition-opacity"
