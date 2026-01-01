@@ -21,7 +21,6 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
 
   const handleUrlChange = (newUrl: string) => {
     setUrl(newUrl);
-    // Update URL in new schema structure
     const updatedItem = {
       ...item,
       http: {
@@ -32,18 +31,29 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
     onItemChange(updatedItem);
   };
 
-  const getMethodColor = (method: string) => {
-    const colors: { [key: string]: string } = {
-      'GET': '#059669',      // muted green
-      'POST': '#d97706',     // muted orange
-      'PUT': '#2563eb',      // muted blue
-      'PATCH': '#7c3aed',    // muted purple
-      'DELETE': '#dc2626',   // muted red
-      'HEAD': '#64748b',     // muted gray
-      'OPTIONS': '#64748b'   // muted gray
+  const handleMethodChange = (newMethod: string) => {
+    setMethod(newMethod);
+    const updatedItem = {
+      ...item,
+      http: {
+        ...item.http,
+        method: newMethod
+      }
     };
-    return colors[method] || '#64748b';
+    onItemChange(updatedItem);
   };
+
+  const HTTP_METHODS: Record<string, string> = {
+    'GET': '#059669',
+    'POST': '#d97706',
+    'PUT': '#2563eb',
+    'PATCH': '#7c3aed',
+    'DELETE': '#dc2626',
+    'HEAD': '#64748b',
+    'OPTIONS': '#64748b'
+  };
+
+  const getMethodColor = (method: string) => HTTP_METHODS[method] || '#64748b';
 
   return (
     <StyledWrapper 
@@ -52,19 +62,32 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
         height: '36px'
       }}
     >
-      <div className="relative flex items-center">
-        <div
-          className="h-full pl-3 text-xs font-semibold flex items-center"
-          style={{
-            color: getMethodColor(method),
-            fontWeight: 600,
-            letterSpacing: '0.02em',
-            pointerEvents: 'none',
-            userSelect: 'none'
-          }}
+      <div className="method-select-wrapper">
+        <select
+          className="method-select h-full"
+          value={method}
+          onChange={(e) => handleMethodChange(e.target.value)}
+          style={{ color: getMethodColor(method) }}
         >
-          {method}
-        </div>
+          {Object.keys(HTTP_METHODS).map((m) => (
+            <option key={m} value={m} style={{ color: getMethodColor(m) }}>
+              {m}
+            </option>
+          ))}
+        </select>
+        <svg
+          className="method-select-icon"
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#64748b"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
       </div>
 
       <input

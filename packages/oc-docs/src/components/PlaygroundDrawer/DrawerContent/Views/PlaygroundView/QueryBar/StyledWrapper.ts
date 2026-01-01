@@ -37,6 +37,30 @@ export const StyledWrapper = styled.div`
     }
   }
 
+  .method-select-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  select.method-select {
+    appearance: none;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 0 24px 0 12px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .method-select-icon {
+    position: absolute;
+    right: 8px;
+    pointer-events: none;
+  }
+
   button.send {
     background-color: var(--primary-color);
     font-size: 11px;
