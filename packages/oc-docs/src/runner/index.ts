@@ -83,7 +83,7 @@ export class RequestRunner {
     
     try {
       const environmentVariables = this.getEnvironmentVariables(environment);
-      const processEnvVars = process?.env || {};
+      const processEnvVars = typeof process !== 'undefined' && process.env ? process.env : {};
       
       const processedRequest = await this.preprocessRequest(item, collection);
 
