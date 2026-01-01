@@ -62,8 +62,6 @@ const Item = memo(({
   const itemId = getItemId(item);
   const sectionId = generateSectionId(item, parentPath);
 
-  const baseContainerClass = 'item-container';
-
   if (isFolder(item)) {
     const folderItem = item as any;
     const folderName = getItemName(folderItem) || 'Untitled Folder';
@@ -76,7 +74,6 @@ const Item = memo(({
       <StyledWrapper
         key={itemId}
         id={`section-${sectionId}`}
-        className={baseContainerClass}
       >
         <div className="item-header-minimal">
           <div className="item-title-section">
@@ -144,7 +141,6 @@ const Item = memo(({
       <StyledWrapper
         key={itemId}
         id={`section-${sectionId}`}
-        className={baseContainerClass}
       >
         <div className="item-header-minimal">
           <div className="item-title-section">
@@ -192,7 +188,6 @@ const Item = memo(({
     return (
       <StyledWrapper
         key={itemId}
-        className={baseContainerClass}
         id={`section-${sectionId}`}
       >
         <div className="item-header-minimal">
@@ -318,7 +313,6 @@ const Item = memo(({
     <StyledWrapper
       key={itemId}
       id={`section-${sectionId}`}
-      className={baseContainerClass}
     >
       <div className="item-header-minimal">
         <h1 className="item-title">{getItemName(item) || 'Untitled Item'}</h1>
