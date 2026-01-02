@@ -22,7 +22,7 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, 'src/standalone.ts'),
       name: 'OpenCollectionPlayground',
-      fileName: (format) => `playground.${format === 'es' ? 'esm' : format}.js`,
+      fileName: (format) => format === 'umd' ? 'docs.js' : 'docs.esm.js',
       formats: ['umd', 'es']
     },
     cssCodeSplit: false,
@@ -36,7 +36,7 @@ export default defineConfig({
         // Ensure CSS is extracted properly
         assetFileNames: (assetInfo) => {
           if (assetInfo.name && assetInfo.name.endsWith('.css')) {
-            return 'core.css';
+            return 'docs.css';
           }
           return assetInfo.name || 'asset';
         }
