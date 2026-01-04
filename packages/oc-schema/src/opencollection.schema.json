@@ -767,6 +767,10 @@
               "description": {
                 "$ref": "#/$defs/Description"
               },
+              "contentType": {
+                "type": "string",
+                "description": "The MIME type of the form part"
+              },
               "disabled": {
                 "type": "boolean",
                 "description": "Whether the form part is disabled"

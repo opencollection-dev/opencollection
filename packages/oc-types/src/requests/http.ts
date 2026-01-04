@@ -52,6 +52,7 @@ export interface MultipartFormEntry {
   type: 'text' | 'file';
   value: string | string[];
   description?: Description;
+  contentType?: string;
   disabled?: boolean;
 }
 
