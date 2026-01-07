@@ -433,14 +433,25 @@ export const getTestsScript = (scripts: Scripts | Record<string, string> | null 
 
 /**
  * Get docs from an item (at root level in new schema)
+ * Handles both string format and object format { content, type }
  */
 export const getItemDocs = (item: OpenCollectionItem | null | undefined): string | undefined => {
   if (!item) return undefined;
-  
+
   if ('docs' in item) {
-    return (item as any).docs;
+    const docs = (item as any).docs;
+
+    // Handle object format: { content: string, type: string }
+    if (docs && typeof docs === 'object' && 'content' in docs) {
+      return docs.content;
+    }
+
+    // Handle string format
+    if (typeof docs === 'string') {
+      return docs;
+    }
   }
-  
+
   return undefined;
 };
 
