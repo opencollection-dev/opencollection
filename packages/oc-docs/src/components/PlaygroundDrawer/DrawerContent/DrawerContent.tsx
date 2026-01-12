@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import type { OpenCollection as OpenCollectionCollection } from '@opencollection/types';
 import type { Item as OpenCollectionItem, Folder } from '@opencollection/types/collection/item';
 import type { HttpRequest } from '@opencollection/types/requests/http';
@@ -32,6 +32,17 @@ const DrawerContent: React.FC<DrawerContentProps> = ({ collection, selectedItem,
   const viewMode = useAppSelector(selectViewMode);
   const selectedItemId = useAppSelector(selectSelectedItemId);
   const selectedEnvironment = useAppSelector(selectSelectedEnvironment);
+
+  const environments = useMemo(() => {
+    if (!collection) return [];
+    return (collection as any).environments || collection?.config?.environments || [];
+  }, [collection]);
+
+  useEffect(() => {
+    if (!selectedEnvironment && environments.length > 0) {
+      dispatch(setSelectedEnvironment(environments[0].name));
+    }
+  }, [selectedEnvironment, environments, dispatch]);
 
   const handleToggleFolder = useCallback((uuid: string) => {
     dispatch(toggleFolderCollapse(uuid));
