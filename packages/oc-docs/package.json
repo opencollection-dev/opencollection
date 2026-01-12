@@ -34,6 +34,7 @@
     "standalone.d.ts"
   ],
   "scripts": {
+    "predev": "npm run build:lib-bundle",
     "dev": "vite",
     "server": "node server.js",
     "dev:all": "concurrently \"npm run dev\" \"npm run server\"",
