@@ -36,6 +36,9 @@ export class RequestExecutor {
         if (error.name === 'AbortError' || error.message.includes('timeout')) {
           errorType = 'timeout';
           errorMessage = `Request timed out after ${endTime - startTime}ms`;
+        } else if (error.name === 'TypeError' && error.message.includes('fetch')) {
+          errorType = 'cors';
+          errorMessage = 'CORS error: Failed to fetch. The server either does not include the required CORS headers for this origin or cannot be reached.';
         } else if (error.message.includes('fetch')) {
           errorType = 'network';
         } else if (error.message.includes('SSL') || error.message.includes('certificate')) {
