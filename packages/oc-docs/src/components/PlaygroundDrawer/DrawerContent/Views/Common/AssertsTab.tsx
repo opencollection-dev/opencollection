@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
 import type { Assertion } from '@opencollection/types/common/assertions';
-import KeyValueTable, { type KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
+import EditableTable, { type EditableTableColumn, type EditableTableRow } from '../../../../../ui/EditableTable';
 
 /**
  * Assertion operators based on Bruno's implementation
@@ -90,6 +90,13 @@ const UNARY_OPERATORS = [
   'isArray'
 ];
 
+interface AssertionRow extends EditableTableRow {
+  expression: string;
+  operator: string;
+  value: string;
+  enabled: boolean;
+}
+
 interface AssertsTabProps {
   assertions: Assertion[];
   onAssertionsChange: (assertions: Assertion[]) => void;
@@ -97,48 +104,112 @@ interface AssertsTabProps {
   description?: string;
 }
 
+const generateUid = () => `assertion_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
 export const AssertsTab: React.FC<AssertsTabProps> = ({
   assertions,
   onAssertionsChange,
   title = "Assertions",
   description
 }) => {
-  // Convert assertions to KeyValueRow format with operator column
-  const assertionsData: KeyValueRow[] = (assertions || []).map((assertion, index) => {
-    return {
-      id: `assertion-${index}`,
-      name: assertion.expression || '',
-      value: assertion.value || '',
+  const assertionsData: AssertionRow[] = useMemo(() => {
+    return (assertions || []).map((assertion) => ({
+      uid: (assertion as any).uid || generateUid(),
+      expression: assertion.expression || '',
       operator: assertion.operator || 'eq',
+      value: assertion.value || '',
       enabled: !assertion.disabled
-    };
-  });
+    }));
+  }, [assertions]);
 
-  const handleAssertionsChange = (rows: KeyValueRow[]) => {
-    const updatedAssertions: Assertion[] = rows.map(row => {
+  const handleAssertionsChange = useCallback((rows: AssertionRow[]) => {
+    const updatedAssertions = rows.map(row => {
       const isUnary = UNARY_OPERATORS.includes(row.operator);
-      
+
       return {
-        expression: row.name, // Required field
-        operator: row.operator, // Required field
+        uid: row.uid,
+        expression: row.expression,
+        operator: row.operator,
         value: isUnary ? undefined : row.value,
         disabled: !row.enabled
       };
     });
-    onAssertionsChange(updatedAssertions);
-  };
+    onAssertionsChange(updatedAssertions as Assertion[]);
+  }, [onAssertionsChange]);
 
-  const handleOperatorChange = (index: number, newOperator: string) => {
-    const updatedRows = [...assertionsData];
-    updatedRows[index] = { ...updatedRows[index], operator: newOperator };
-    
-    // If switching to unary operator, clear the value
-    if (UNARY_OPERATORS.includes(newOperator)) {
-      updatedRows[index].value = '';
+  const columns: EditableTableColumn<AssertionRow>[] = useMemo(() => [
+    {
+      key: 'expression',
+      name: 'Expression',
+      isKeyField: true,
+      placeholder: 'e.g., res.status',
+      width: '35%'
+    },
+    {
+      key: 'operator',
+      name: 'Operator',
+      width: '150px',
+      render: ({ row, value, onChange }) => (
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          style={{
+            width: '100%',
+            padding: '4px 8px',
+            fontSize: '13px',
+            border: '1px solid var(--border-color)',
+            borderRadius: '4px',
+            backgroundColor: 'var(--bg-secondary)',
+            color: 'var(--text-primary)',
+            cursor: 'pointer'
+          }}
+        >
+          {ASSERTION_OPERATORS.map(op => (
+            <option key={op.value} value={op.value}>
+              {op.label}
+            </option>
+          ))}
+        </select>
+      )
+    },
+    {
+      key: 'value',
+      name: 'Expected Value',
+      placeholder: 'Expected value',
+      render: ({ row, value, isLastEmptyRow, onChange }) => {
+        const isUnary = UNARY_OPERATORS.includes(row.operator);
+        if (isUnary) {
+          return (
+            <span style={{ color: 'var(--text-secondary)', fontSize: '13px', padding: '4px 0' }}>
+              (no value needed)
+            </span>
+          );
+        }
+        return (
+          <input
+            type="text"
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck={false}
+            className="cell-input"
+            value={value}
+            placeholder={isLastEmptyRow ? 'Expected value' : ''}
+            onChange={(e) => onChange(e.target.value)}
+            style={{
+              width: '100%',
+              outline: 'none',
+              backgroundColor: 'transparent',
+              color: 'var(--text-primary)',
+              padding: '4px 0',
+              border: 'none',
+              fontSize: '13px'
+            }}
+          />
+        );
+      }
     }
-    
-    handleAssertionsChange(updatedRows);
-  };
+  ], []);
 
   return (
     <div className="space-y-3">
@@ -152,43 +223,14 @@ export const AssertsTab: React.FC<AssertsTabProps> = ({
           </span>
         )}
       </div>
-      <KeyValueTable
-        data={assertionsData}
+      <EditableTable
+        columns={columns}
+        rows={assertionsData}
         onChange={handleAssertionsChange}
-        keyPlaceholder="Expression (e.g., res.status)"
-        valuePlaceholder="Expected value"
-        showEnabled={true}
-        additionalColumns={[
-          {
-            key: 'operator',
-            label: 'Operator',
-            render: (row, index) => {
-              const isUnary = UNARY_OPERATORS.includes(row.operator);
-              return (
-                <select
-                  value={row.operator}
-                  onChange={(e) => handleOperatorChange(index, e.target.value)}
-                  className="text-input"
-                  style={{
-                    padding: '4px 8px',
-                    fontSize: '13px',
-                    border: '1px solid var(--border-color)',
-                    borderRadius: '4px',
-                    backgroundColor: 'var(--bg-secondary)',
-                    color: 'var(--text-primary)',
-                    cursor: 'pointer'
-                  }}
-                >
-                  {ASSERTION_OPERATORS.map(op => (
-                    <option key={op.value} value={op.value}>
-                      {op.label}
-                    </option>
-                  ))}
-                </select>
-              );
-            }
-          }
-        ]}
+        defaultRow={{ expression: '', operator: 'eq', value: '', enabled: true }}
+        showCheckbox={true}
+        showDelete={true}
+        checkboxKey="enabled"
       />
       <div className="text-xs mt-2" style={{ color: 'var(--text-secondary)' }}>
         Use expressions like <code>res.status</code>, <code>res.body.id</code>, or <code>res.headers['content-type']</code>
@@ -198,4 +240,3 @@ export const AssertsTab: React.FC<AssertsTabProps> = ({
 };
 
 export default AssertsTab;
-

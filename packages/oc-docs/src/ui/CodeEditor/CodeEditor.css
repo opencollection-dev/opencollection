@@ -1,0 +1,30 @@
+/* CodeEditor variable highlighting styles for Monaco */
+
+.code-editor-container {
+  position: relative;
+}
+
+/* Valid variable highlighting - uses shared CSS variables */
+.monaco-variable-valid {
+  color: var(--variable-valid-color, #059669) !important;
+  background-color: var(--variable-valid-bg, rgba(5, 150, 105, 0.1));
+  border-radius: 2px;
+}
+
+/* Invalid variable highlighting - uses shared CSS variables */
+.monaco-variable-invalid {
+  color: var(--variable-invalid-color, #dc2626) !important;
+  background-color: var(--variable-invalid-bg, rgba(220, 38, 38, 0.1));
+  border-radius: 2px;
+}
+
+/* Dark theme adjustments - Monaco dark theme */
+.vs-dark .monaco-variable-valid {
+  color: var(--variable-valid-color-dark, #34d399) !important;
+  background-color: var(--variable-valid-bg-dark, rgba(52, 211, 153, 0.15));
+}
+
+.vs-dark .monaco-variable-invalid {
+  color: var(--variable-invalid-color-dark, #f87171) !important;
+  background-color: var(--variable-invalid-bg-dark, rgba(248, 113, 113, 0.15));
+}

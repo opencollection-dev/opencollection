@@ -2,10 +2,18 @@ import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import type { OpenCollection } from '@opencollection/types';
 import type { Environment } from '@opencollection/types/config/environments';
 import type { Variable } from '@opencollection/types/common/variables';
-import KeyValueTable, { KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
+import EditableTable, { type EditableTableColumn, type EditableTableRow } from '../../../../../ui/EditableTable';
 import { SidebarContainer, SidebarItems, SidebarItem } from '../../../Sidebar/StyledWrapper';
 import { useAppDispatch } from '../../../../../store/hooks';
 import { updateCollectionEnvironments } from '@slices/playground';
+
+interface VariableRow extends EditableTableRow {
+  name: string;
+  value: string;
+  enabled: boolean;
+}
+
+const generateUid = () => `envvar_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
 interface EnvironmentsViewProps {
   collection: OpenCollection | null;
@@ -16,7 +24,6 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection }) => {
   const [selectedEnvironmentIndex, setSelectedEnvironmentIndex] = useState<number | null>(null);
 
   const environments = useMemo(() => {
-    // TODO: Remove this
     const envs = (collection as any).environments || collection?.config?.environments || [];
     return [...envs];
   }, [collection]);
@@ -26,7 +33,7 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection }) => {
     return { ...environments[selectedEnvironmentIndex] };
   }, [environments, selectedEnvironmentIndex]);
 
-  const variableToRow = useCallback((variable: Variable, index: number): KeyValueRow => {
+  const variableToRow = useCallback((variable: Variable): VariableRow => {
     let value = '';
     if (variable.value) {
       if (typeof variable.value === 'string') {
@@ -44,33 +51,34 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection }) => {
         }
       }
     }
-    
+
     return {
-      id: `var-${index}`,
+      uid: (variable as any).uid || generateUid(),
       name: variable.name || '',
-      value: value,
+      value,
       enabled: !variable.disabled
     };
   }, []);
 
-  const rowToVariable = useCallback((row: KeyValueRow): Variable => {
+  const rowToVariable = useCallback((row: VariableRow): Variable => {
     return {
+      uid: row.uid,
       name: row.name,
       value: row.value,
       disabled: !row.enabled
-    };
+    } as Variable;
   }, []);
 
   const variablesAsRows = useMemo(() => {
     if (!selectedEnvironment?.variables) return [];
-    return selectedEnvironment.variables.map((variable: Variable, index: number) => variableToRow(variable, index));
+    return selectedEnvironment.variables.map((variable: Variable) => variableToRow(variable));
   }, [selectedEnvironment, variableToRow]);
 
-  const handleVariablesChange = useCallback((rows: KeyValueRow[]) => {
+  const handleVariablesChange = useCallback((rows: VariableRow[]) => {
     if (!selectedEnvironment || !collection || selectedEnvironmentIndex === null) return;
 
     const updatedVariables: Variable[] = rows.map(rowToVariable);
-    
+
     const updatedEnvironments = environments.map((env, index) => {
       if (index === selectedEnvironmentIndex) {
         return {
@@ -90,13 +98,28 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection }) => {
         environments: updatedEnvironments
       }
     };
-    
+
     if ((collection as any).environments) {
       (updatedCollection as any).environments = updatedEnvironments;
     }
 
     dispatch(updateCollectionEnvironments(updatedCollection));
   }, [selectedEnvironment, selectedEnvironmentIndex, collection, environments, rowToVariable, dispatch]);
+
+  const columns: EditableTableColumn<VariableRow>[] = useMemo(() => [
+    {
+      key: 'name',
+      name: 'Variable Name',
+      isKeyField: true,
+      placeholder: 'Variable Name',
+      width: '35%'
+    },
+    {
+      key: 'value',
+      name: 'Variable Value',
+      placeholder: 'Variable Value'
+    }
+  ], []);
 
   useEffect(() => {
     if (selectedEnvironmentIndex === null && environments.length > 0) {
@@ -198,22 +221,23 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection }) => {
               </h2>
               {selectedEnvironment.description && (
                 <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
-                  {typeof selectedEnvironment.description === 'string' 
-                    ? selectedEnvironment.description 
+                  {typeof selectedEnvironment.description === 'string'
+                    ? selectedEnvironment.description
                     : selectedEnvironment.description.content}
                 </p>
               )}
             </div>
-            
+
             <div style={{ flex: 1, minHeight: 0 }}>
-              <KeyValueTable
-                data={variablesAsRows}
+              <EditableTable
+                columns={columns}
+                rows={variablesAsRows}
                 onChange={handleVariablesChange}
-                keyPlaceholder="Variable Name"
-                valuePlaceholder="Variable Value"
-                showEnabled={true}
-                disableNewRow={true}
-                disableDelete={true}
+                defaultRow={{ name: '', value: '', enabled: true }}
+                showCheckbox={true}
+                showDelete={false}
+                showAddRow={false}
+                checkboxKey="enabled"
               />
             </div>
           </div>
@@ -234,4 +258,3 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection }) => {
 };
 
 export default EnvironmentsView;
-

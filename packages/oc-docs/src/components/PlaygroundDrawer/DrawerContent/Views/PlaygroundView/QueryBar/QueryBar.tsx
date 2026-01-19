@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import { StyledWrapper } from './StyledWrapper';
 import { getHttpMethod, getRequestUrl } from '../../../../../../utils/schemaHelpers';
+import { SingleLineEditor } from '../../../../../../ui/SingleLineEditor';
 
 interface QueryBarProps {
   item: HttpRequest;
@@ -19,7 +20,7 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
     setMethod(getHttpMethod(item));
   }, [item]);
 
-  const handleUrlChange = (newUrl: string) => {
+  const handleUrlChange = useCallback((newUrl: string) => {
     setUrl(newUrl);
     const updatedItem = {
       ...item,
@@ -29,7 +30,7 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
       }
     };
     onItemChange(updatedItem);
-  };
+  }, [item, onItemChange]);
 
   const handleMethodChange = (newMethod: string) => {
     setMethod(newMethod);
@@ -42,6 +43,12 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
     };
     onItemChange(updatedItem);
   };
+
+  const handleRun = useCallback(() => {
+    if (url.trim() && !isLoading) {
+      onSendRequest();
+    }
+  }, [url, isLoading, onSendRequest]);
 
   const HTTP_METHODS: Record<string, string> = {
     'GET': '#059669',
@@ -90,22 +97,12 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
         </svg>
       </div>
 
-      <input
-        type="text"
+      <SingleLineEditor
         value={url}
-        onChange={(e) => handleUrlChange(e.target.value)}
+        onChange={handleUrlChange}
         placeholder="Enter request URL"
-        className="flex-1 px-3 text-xs font-normal"
-        style={{
-          fontFamily: 'var(--font-mono)',
-          fontSize: '12px',
-          fontWeight: 400
-        }}
-        onKeyPress={(e) => {
-          if (e.key === 'Enter' && url.trim() && !isLoading) {
-            onSendRequest();
-          }
-        }}
+        className="url-editor"
+        onRun={handleRun}
       />
 
       <button

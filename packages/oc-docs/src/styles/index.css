@@ -42,6 +42,18 @@
   --info-color: #3b82f6;
   --error-color: #ef4444;
   
+  /* Variable highlighting colors - light theme */
+  --variable-valid-color: #059669;
+  --variable-valid-bg: rgba(5, 150, 105, 0.1);
+  --variable-invalid-color: #dc2626;
+  --variable-invalid-bg: rgba(220, 38, 38, 0.1);
+
+  /* Variable highlighting colors - dark theme */
+  --variable-valid-color-dark: #34d399;
+  --variable-valid-bg-dark: rgba(52, 211, 153, 0.15);
+  --variable-invalid-color-dark: #f87171;
+  --variable-invalid-bg-dark: rgba(248, 113, 113, 0.15);
+  
   /* Method colors */
   --method-get-bg: #61affe;
   --method-post-bg: #49cc90;

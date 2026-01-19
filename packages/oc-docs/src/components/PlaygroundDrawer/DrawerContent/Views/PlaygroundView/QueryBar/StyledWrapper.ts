@@ -61,6 +61,33 @@ export const StyledWrapper = styled.div`
     pointer-events: none;
   }
 
+  /* URL editor with variable highlighting */
+  .url-editor {
+    flex: 1;
+    height: 100%;
+    padding: 0 12px;
+    
+    .single-line-editor-container {
+      height: 100%;
+    }
+    
+    .cm-editor {
+      height: 100%;
+    }
+    
+    .cm-scroller {
+      padding: 0;
+    }
+    
+    .cm-content {
+      padding: 8px 0;
+    }
+    
+    .cm-line {
+      padding: 0;
+    }
+  }
+
   button.send {
     background-color: var(--primary-color);
     font-size: 11px;
