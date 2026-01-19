@@ -1,12 +1,20 @@
-import React from 'react';
-import KeyValueTable, { type KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
+import React, { useMemo } from 'react';
+import EditableTable, { type EditableTableColumn, type EditableTableRow } from '../../../../../ui/EditableTable';
+
+interface VariableRow extends EditableTableRow {
+  name: string;
+  value: string;
+  enabled: boolean;
+}
 
 interface VariablesTabProps {
-  variables: Array<{ name?: string; value?: any; disabled?: boolean }>;
-  onVariablesChange: (variables: KeyValueRow[]) => void;
+  variables: Array<{ name?: string; value?: any; disabled?: boolean; uid?: string }>;
+  onVariablesChange: (variables: VariableRow[]) => void;
   title?: string;
   description?: string;
 }
+
+const generateUid = () => `var_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
 export const VariablesTab: React.FC<VariablesTabProps> = ({
   variables,
@@ -14,12 +22,29 @@ export const VariablesTab: React.FC<VariablesTabProps> = ({
   title = "Variables",
   description
 }) => {
-  const variablesData: KeyValueRow[] = (variables || []).map((variable, index) => ({
-    id: `variable-${index}`,
-    name: variable.name || '',
-    value: typeof variable.value === 'string' ? variable.value : '',
-    enabled: !variable.disabled
-  }));
+  const variablesData: VariableRow[] = useMemo(() => {
+    return (variables || []).map((variable) => ({
+      uid: (variable as any).uid || generateUid(),
+      name: variable.name || '',
+      value: typeof variable.value === 'string' ? variable.value : '',
+      enabled: !variable.disabled
+    }));
+  }, [variables]);
+
+  const columns: EditableTableColumn<VariableRow>[] = useMemo(() => [
+    {
+      key: 'name',
+      name: 'Name',
+      isKeyField: true,
+      placeholder: 'Variable name',
+      width: '35%'
+    },
+    {
+      key: 'value',
+      name: 'Value',
+      placeholder: 'Variable value'
+    }
+  ], []);
 
   return (
     <div className="space-y-3">
@@ -33,12 +58,14 @@ export const VariablesTab: React.FC<VariablesTabProps> = ({
           </span>
         )}
       </div>
-      <KeyValueTable
-        data={variablesData}
+      <EditableTable
+        columns={columns}
+        rows={variablesData}
         onChange={onVariablesChange}
-        keyPlaceholder="Variable name"
-        valuePlaceholder="Variable value"
-        showEnabled={true}
+        defaultRow={{ name: '', value: '', enabled: true }}
+        showCheckbox={true}
+        showDelete={true}
+        checkboxKey="enabled"
       />
     </div>
   );

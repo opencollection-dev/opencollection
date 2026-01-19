@@ -151,3 +151,19 @@
   background-color: transparent;
 }
 
+.key-value-table .highlighted-value-input {
+  width: 100%;
+  height: 100%;
+  padding: 5px 8px;
+  font-size: 12px;
+  font-family: inherit;
+}
+
+.key-value-table .highlighted-value-input .highlighted-input-backdrop {
+  padding: 5px 8px;
+}
+
+.key-value-table .highlighted-value-input .highlighted-input-field {
+  padding: 5px 8px;
+}
+

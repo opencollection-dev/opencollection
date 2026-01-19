@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { OpenCollection } from '@opencollection/types';
 import Tabs from '../../../../../ui/Tabs/Tabs';
-import { type KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
+import { type EditableTableRow } from '../../../../../ui/EditableTable';
 import { HeadersTab, VariablesTab, AuthTab, ScriptsTab } from '../Common';
 import { useAppDispatch } from '../../../../../store/hooks';
 import { updateCollectionSettings } from '@slices/playground';
@@ -15,13 +15,14 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
   const dispatch = useAppDispatch();
   const [activeTab, setActiveTab] = useState('headers');
 
-  const handleHeadersChange = (headers: KeyValueRow[]) => {
+  const handleHeadersChange = (headers: EditableTableRow[]) => {
     const updatedHeaders = headers.map(h => ({
+      uid: h.uid,
       name: h.name,
       value: h.value,
       disabled: !h.enabled
     }));
-    
+
     const updatedCollection = {
       ...collection,
       request: {
@@ -32,13 +33,14 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
     dispatch(updateCollectionSettings(updatedCollection));
   };
 
-  const handleVariablesChange = (variables: KeyValueRow[]) => {
+  const handleVariablesChange = (variables: EditableTableRow[]) => {
     const updatedVariables = variables.map(v => ({
+      uid: v.uid,
       name: v.name,
       value: v.value,
       disabled: !v.enabled
     }));
-    
+
     const updatedCollection = {
       ...collection,
       request: {

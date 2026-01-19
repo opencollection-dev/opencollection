@@ -1,4 +1,5 @@
 import React from 'react';
+import { HighlightedInput } from '../../../../../ui/HighlightedInput';
 
 interface AuthTabProps {
   auth: any;
@@ -25,24 +26,20 @@ export const AuthTab: React.FC<AuthTabProps> = ({
 }) => {
   const authType = typeof auth === 'object' && auth !== null ? auth.type : auth === 'inherit' ? 'inherit' : 'none';
 
-  // Helper function to update auth in the correct location
   const updateItemAuth = (newAuth: any) => {
     if (!onItemChange || !item) return;
-    
-    // Check if item has 'request' property (Collection/Folder) or auth directly (HttpRequest)
+
     if ('request' in item && item.request !== undefined) {
-      // Collection or Folder: auth is nested in request
-      onItemChange({ 
-        ...item, 
+      onItemChange({
+        ...item,
         request: {
           ...item.request,
           auth: newAuth
         }
       });
     } else {
-      // HttpRequest: auth is directly on item
-      onItemChange({ 
-        ...item, 
+      onItemChange({
+        ...item,
         auth: newAuth
       });
     }
@@ -132,17 +129,15 @@ export const AuthTab: React.FC<AuthTabProps> = ({
                   <label className="w-24 text-sm" style={{ color: 'var(--text-primary)' }}>
                     Username:
                   </label>
-                  <input
-                    type="text"
+                  <HighlightedInput
                     value={auth.username || ''}
-                    onChange={(e) => {
-                      updateItemAuth({ type: 'basic', username: e.target.value, password: auth.password });
+                    onChange={(value) => {
+                      updateItemAuth({ type: 'basic', username: value, password: auth.password });
                     }}
-                    className="flex-1 px-2 py-1 text-sm border rounded"
+                    className="flex-1 px-2 py-1 text-sm border rounded auth-field-input"
                     style={{
                       backgroundColor: 'var(--bg-secondary)',
-                      borderColor: 'var(--border-color)',
-                      color: 'var(--text-primary)'
+                      borderColor: 'var(--border-color)'
                     }}
                     placeholder="Enter username"
                   />
@@ -151,17 +146,15 @@ export const AuthTab: React.FC<AuthTabProps> = ({
                   <label className="w-24 text-sm" style={{ color: 'var(--text-primary)' }}>
                     Password:
                   </label>
-                  <input
-                    type="password"
+                  <HighlightedInput
                     value={auth.password || ''}
-                    onChange={(e) => {
-                      updateItemAuth({ type: 'basic', password: e.target.value, username: auth.username });
+                    onChange={(value) => {
+                      updateItemAuth({ type: 'basic', password: value, username: auth.username });
                     }}
-                    className="flex-1 px-2 py-1 text-sm border rounded"
+                    className="flex-1 px-2 py-1 text-sm border rounded auth-field-input"
                     style={{
                       backgroundColor: 'var(--bg-secondary)',
-                      borderColor: 'var(--border-color)',
-                      color: 'var(--text-primary)'
+                      borderColor: 'var(--border-color)'
                     }}
                     placeholder="Enter password"
                   />
@@ -174,17 +167,15 @@ export const AuthTab: React.FC<AuthTabProps> = ({
                 <label className="w-24 text-sm" style={{ color: 'var(--text-primary)' }}>
                   Token:
                 </label>
-                <input
-                  type="text"
+                <HighlightedInput
                   value={auth.token || ''}
-                  onChange={(e) => {
-                    updateItemAuth({ type: 'bearer', token: e.target.value });
+                  onChange={(value) => {
+                    updateItemAuth({ type: 'bearer', token: value });
                   }}
-                  className="flex-1 px-2 py-1 text-sm border rounded"
+                  className="flex-1 px-2 py-1 text-sm border rounded auth-field-input"
                   style={{
                     backgroundColor: 'var(--bg-secondary)',
-                    borderColor: 'var(--border-color)',
-                    color: 'var(--text-primary)'
+                    borderColor: 'var(--border-color)'
                   }}
                   placeholder="Enter bearer token"
                 />
@@ -197,17 +188,15 @@ export const AuthTab: React.FC<AuthTabProps> = ({
                   <label className="w-24 text-sm" style={{ color: 'var(--text-primary)' }}>
                     Key:
                   </label>
-                  <input
-                    type="text"
+                  <HighlightedInput
                     value={auth.key || ''}
-                    onChange={(e) => {
-                      updateItemAuth({ ...auth, type: 'apikey', key: e.target.value });
+                    onChange={(value) => {
+                      updateItemAuth({ ...auth, type: 'apikey', key: value });
                     }}
-                    className="flex-1 px-2 py-1 text-sm border rounded"
+                    className="flex-1 px-2 py-1 text-sm border rounded auth-field-input"
                     style={{
                       backgroundColor: 'var(--bg-secondary)',
-                      borderColor: 'var(--border-color)',
-                      color: 'var(--text-primary)'
+                      borderColor: 'var(--border-color)'
                     }}
                     placeholder="Enter API key name"
                   />
@@ -216,17 +205,15 @@ export const AuthTab: React.FC<AuthTabProps> = ({
                   <label className="w-24 text-sm" style={{ color: 'var(--text-primary)' }}>
                     Value:
                   </label>
-                  <input
-                    type="text"
+                  <HighlightedInput
                     value={auth.value || ''}
-                    onChange={(e) => {
-                      updateItemAuth({ ...auth, type: 'apikey', value: e.target.value });
+                    onChange={(value) => {
+                      updateItemAuth({ ...auth, type: 'apikey', value: value });
                     }}
-                    className="flex-1 px-2 py-1 text-sm border rounded"
+                    className="flex-1 px-2 py-1 text-sm border rounded auth-field-input"
                     style={{
                       backgroundColor: 'var(--bg-secondary)',
-                      borderColor: 'var(--border-color)',
-                      color: 'var(--text-primary)'
+                      borderColor: 'var(--border-color)'
                     }}
                     placeholder="Enter API key value"
                   />

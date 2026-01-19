@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import type { Folder } from '@opencollection/types/collection/item';
 import type { OpenCollection } from '@opencollection/types';
 import Tabs from '../../../../../ui/Tabs/Tabs';
-import { type KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
+import { type EditableTableRow } from '../../../../../ui/EditableTable';
 import { HeadersTab, VariablesTab, AuthTab, ScriptsTab } from '../Common';
 import { useAppDispatch } from '../../../../../store/hooks';
 import { updateFolderInCollection } from '@slices/playground';
@@ -22,13 +22,14 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({
   const dispatch = useAppDispatch();
   const [activeTab, setActiveTab] = useState('headers');
 
-  const handleHeadersChange = (headers: KeyValueRow[]) => {
+  const handleHeadersChange = (headers: EditableTableRow[]) => {
     const updatedHeaders = headers.map(h => ({
+      uid: h.uid,
       name: h.name,
       value: h.value,
       disabled: !h.enabled
     }));
-    
+
     const updatedFolder = {
       ...folder,
       request: {
@@ -36,7 +37,7 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({
         headers: updatedHeaders
       }
     };
-    
+
     const uuid = (folder as any).uuid;
     if (uuid) {
       dispatch(updateFolderInCollection({ uuid, folder: updatedFolder }));
@@ -44,13 +45,14 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({
     onFolderChange(updatedFolder);
   };
 
-  const handleVariablesChange = (variables: KeyValueRow[]) => {
+  const handleVariablesChange = (variables: EditableTableRow[]) => {
     const updatedVariables = variables.map(v => ({
+      uid: v.uid,
       name: v.name,
       value: v.value,
       disabled: !v.enabled
     }));
-    
+
     const updatedFolder = {
       ...folder,
       request: {
@@ -58,7 +60,7 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({
         variables: updatedVariables
       }
     };
-    
+
     const uuid = (folder as any).uuid;
     if (uuid) {
       dispatch(updateFolderInCollection({ uuid, folder: updatedFolder }));

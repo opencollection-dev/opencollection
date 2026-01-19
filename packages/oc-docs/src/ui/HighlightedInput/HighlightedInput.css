@@ -1,0 +1,89 @@
+/* HighlightedInput styles for variable highlighting */
+
+.highlighted-input-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.highlighted-input-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: inherit;
+  white-space: pre;
+  overflow: hidden;
+  pointer-events: none;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  color: transparent;
+  display: flex;
+  align-items: center;
+}
+
+.highlighted-input-field {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  color: transparent;
+  caret-color: var(--text-primary, #333);
+}
+
+.highlighted-input-field::placeholder {
+  color: transparent;
+}
+
+/* Text styles */
+.highlighted-text-plain {
+  color: var(--text-primary, #333);
+}
+
+.highlighted-text-placeholder {
+  color: var(--text-secondary, #888);
+}
+
+/* Variable highlighting */
+.highlighted-variable {
+  border-radius: 3px;
+  padding: 0 1px;
+}
+
+.highlighted-variable.variable-valid {
+  color: var(--variable-valid-color, #059669);
+  background-color: var(--variable-valid-bg, rgba(5, 150, 105, 0.1));
+}
+
+.highlighted-variable.variable-invalid {
+  color: var(--variable-invalid-color, #dc2626);
+  background-color: var(--variable-invalid-bg, rgba(220, 38, 38, 0.1));
+}
+
+/* Ensure cursor is visible */
+.highlighted-input-container:focus-within .highlighted-input-field {
+  color: transparent;
+}
+
+/* Auth field input styling */
+.auth-field-input {
+  height: 32px;
+}
+
+.auth-field-input .highlighted-input-backdrop,
+.auth-field-input .highlighted-input-field {
+  padding: 4px 8px;
+}

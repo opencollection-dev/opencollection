@@ -1,0 +1,253 @@
+/* EditableTable styles - inspired by Bruno's EditableTable */
+
+.editable-table-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.editable-table-container {
+  overflow-y: auto;
+  border-radius: var(--oc-radius, 3px);
+  border: 1px solid var(--border-color, #e8e8e8);
+}
+
+.editable-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 13px;
+  font-weight: normal;
+}
+
+/* Header styling */
+.editable-table thead {
+  color: var(--text-secondary, #6e6e6e);
+  background: var(--table-header-bg, #fafafa);
+  user-select: none;
+}
+
+.editable-table thead td {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border-color, #e8e8e8);
+  border-right: 1px solid var(--border-color, #e8e8e8);
+  vertical-align: middle;
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.editable-table thead td:last-child {
+  border-right: none;
+}
+
+/* Checkbox column in header */
+.editable-table-wrapper.has-checkbox thead td:first-child {
+  width: 32px;
+  border-right: none;
+  text-align: center;
+}
+
+/* Body styling */
+.editable-table tbody tr {
+  transition: background 0.1s ease;
+}
+
+.editable-table tbody tr:hover {
+  background-color: var(--table-row-odd-bg, #fafafa);
+}
+
+.editable-table tbody tr.hovered {
+  background-color: var(--table-row-odd-bg, #fafafa);
+}
+
+.editable-table tbody tr.dragging {
+  opacity: 0.5;
+}
+
+.editable-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.editable-table tbody td {
+  padding: 2px 10px;
+  border-bottom: 1px solid var(--border-color, #e8e8e8);
+  border-right: 1px solid var(--border-color, #e8e8e8);
+  vertical-align: middle;
+  height: 32px;
+}
+
+.editable-table tbody td:last-child {
+  border-right: none;
+}
+
+/* Checkbox column in body */
+.editable-table-wrapper.has-checkbox tbody td:first-child {
+  width: 32px;
+  border-right: none;
+  text-align: center;
+  vertical-align: middle;
+  position: relative;
+}
+
+/* Checkbox input */
+.editable-table .checkbox-input {
+  cursor: pointer;
+  width: 14px;
+  height: 14px;
+  accent-color: var(--primary-color, #d97706);
+  vertical-align: middle;
+  margin: 0;
+}
+
+.editable-table .checkbox-input:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Cell content */
+.editable-table .cell-content {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+
+/* Cell input */
+.editable-table .cell-input {
+  width: 100%;
+  outline: none;
+  background-color: transparent;
+  color: var(--text-primary, #333);
+  padding: 4px 0;
+  border: none;
+  border-radius: 2px;
+  font-size: 13px;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.editable-table .cell-input:focus {
+  outline: none;
+}
+
+.editable-table .cell-input::placeholder {
+  color: var(--text-secondary, #888);
+  opacity: 0.7;
+}
+
+.editable-table .cell-input:read-only {
+  color: var(--text-secondary, #6e6e6e);
+}
+
+/* Cell error icon */
+.editable-table .cell-error {
+  flex-shrink: 0;
+  color: var(--error-color, #ef4444);
+  cursor: help;
+  display: flex;
+  align-items: center;
+}
+
+/* Actions column */
+.editable-table .col-actions {
+  width: 50px;
+  text-align: center;
+}
+
+/* Delete button */
+.editable-table .delete-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  color: var(--text-secondary, #888);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.editable-table .delete-button:hover {
+  color: var(--error-color, #ef4444);
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* Drag handle */
+.editable-table .drag-handle {
+  position: absolute;
+  left: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 2px;
+  cursor: grab;
+  color: var(--text-secondary, #888);
+  z-index: 10;
+}
+
+.editable-table .drag-handle:active {
+  cursor: grabbing;
+}
+
+/* Empty row styling */
+.editable-table tbody tr.empty-row {
+  opacity: 0.7;
+}
+
+.editable-table tbody tr.empty-row:hover {
+  opacity: 1;
+}
+
+/* HighlightedInput integration */
+.editable-table .highlighted-input-container {
+  height: 28px;
+}
+
+.editable-table .highlighted-input-backdrop,
+.editable-table .highlighted-input-field {
+  padding: 4px 0;
+  font-size: 13px;
+}
+
+/* SingleLineEditor integration */
+.editable-table .single-line-editor {
+  height: 28px;
+}
+
+.editable-table .single-line-editor-container .cm-editor {
+  font-size: 13px;
+}
+
+/* Select styling */
+.editable-table select {
+  background-color: transparent;
+  color: var(--text-primary, #333);
+  border: none;
+  outline: none;
+  padding: 4px 8px;
+  font-size: 13px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.editable-table select option {
+  background-color: var(--background-color, #fff);
+  color: var(--text-primary, #333);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .editable-table tbody td {
+    padding: 2px 6px;
+  }
+
+  .editable-table thead td {
+    padding: 4px 6px;
+    font-size: 11px;
+  }
+
+  .editable-table .cell-input {
+    font-size: 12px;
+  }
+}

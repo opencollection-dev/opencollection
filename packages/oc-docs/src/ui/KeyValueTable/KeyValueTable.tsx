@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import HighlightedInput from '../HighlightedInput/HighlightedInput';
 import './KeyValueTable.css';
 
 export interface KeyValueRow {
@@ -23,6 +24,8 @@ interface KeyValueTableProps {
   className?: string;
   disableNewRow?: boolean;
   disableDelete?: boolean;
+  /** Enable variable highlighting for {{variables}} in value fields */
+  enableVariableHighlighting?: boolean;
 }
 
 const generateId = () => `row_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -36,7 +39,8 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
   additionalColumns = [],
   className = '',
   disableNewRow = false,
-  disableDelete = false
+  disableDelete = false,
+  enableVariableHighlighting = false
 }) => {
   const isEditingRef = useRef(false);
   const focusRef = useRef<{ index: number; field: 'name' | 'value' } | null>(null);
@@ -247,20 +251,29 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                     />
                   </td>
                   <td className="col-value">
-                    <input
-                      ref={(el) => {
-                        inputRefs.current[`${index}-value`] = el;
-                      }}
-                      type="text"
-                      className="text-input"
-                      value={row.value}
-                      placeholder={isLastEmptyRow ? valuePlaceholder : ''}
-                      onChange={(e) => handleFieldChange(index, 'value', e.target.value)}
-                      autoComplete="off"
-                      autoCorrect="off"
-                      autoCapitalize="off"
-                      spellCheck={false}
-                    />
+                    {enableVariableHighlighting ? (
+                      <HighlightedInput
+                        value={row.value}
+                        onChange={(value) => handleFieldChange(index, 'value', value)}
+                        placeholder={isLastEmptyRow ? valuePlaceholder : ''}
+                        className="text-input highlighted-value-input"
+                      />
+                    ) : (
+                      <input
+                        ref={(el) => {
+                          inputRefs.current[`${index}-value`] = el;
+                        }}
+                        type="text"
+                        className="text-input"
+                        value={row.value}
+                        placeholder={isLastEmptyRow ? valuePlaceholder : ''}
+                        onChange={(e) => handleFieldChange(index, 'value', e.target.value)}
+                        autoComplete="off"
+                        autoCorrect="off"
+                        autoCapitalize="off"
+                        spellCheck={false}
+                      />
+                    )}
                   </td>
                   {additionalColumns.map(col => (
                     <td key={col.key} className={`col-${col.key}`}>
@@ -303,6 +316,8 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
     </div>
   );
 };
+
+KeyValueTable.displayName = 'KeyValueTable';
 
 export default KeyValueTable;
 

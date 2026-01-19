@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { Assertion } from '@opencollection/types/common/assertions';
 import Tabs from '../../../../../../ui/Tabs/Tabs';
-import { KeyValueRow } from '../../../../../../ui/KeyValueTable/KeyValueTable';
+import { type EditableTableRow } from '../../../../../../ui/EditableTable';
 import { HeadersTab, ParamsTab, BodyTab, AuthTab, ScriptsTab, TestsTab, AssertsTab, VariablesTab } from '../../Common';
-import { 
-  getHttpParams, 
-  getHttpHeaders, 
-  getHttpBody, 
-  getRequestAuth, 
-  getRequestVariables, 
+import {
+  getHttpParams,
+  getHttpHeaders,
+  getHttpBody,
+  getRequestAuth,
+  getRequestVariables,
   getRequestAssertions,
   getRequestScripts,
   scriptsArrayToObject,
@@ -24,34 +24,36 @@ interface RequestPaneProps {
 const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
   const [activeTab, setActiveTab] = useState('params');
 
-  const handleParamsChange = (params: KeyValueRow[]) => {
+  const handleParamsChange = (params: EditableTableRow[]) => {
     const updatedParams = params.map(p => ({
+      uid: p.uid,
       name: p.name,
       value: p.value,
       disabled: !p.enabled,
       type: 'query' as const
     }));
-    onItemChange({ 
-      ...item, 
-      http: { 
-        ...item.http, 
-        params: updatedParams 
-      } 
+    onItemChange({
+      ...item,
+      http: {
+        ...item.http,
+        params: updatedParams
+      }
     });
   };
 
-  const handleHeadersChange = (headers: KeyValueRow[]) => {
+  const handleHeadersChange = (headers: EditableTableRow[]) => {
     const updatedHeaders = headers.map(h => ({
+      uid: h.uid,
       name: h.name,
       value: h.value,
       disabled: !h.enabled
     }));
-    onItemChange({ 
-      ...item, 
-      http: { 
-        ...item.http, 
-        headers: updatedHeaders 
-      } 
+    onItemChange({
+      ...item,
+      http: {
+        ...item.http,
+        headers: updatedHeaders
+      }
     });
   };
 
@@ -60,35 +62,36 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
     const updatedScriptsObj = { ...scriptsObj, [scriptType]: value };
     onItemChange({
       ...item,
-      runtime: { 
-        ...item.runtime, 
-        scripts: scriptsObjectToArray(updatedScriptsObj) 
+      runtime: {
+        ...item.runtime,
+        scripts: scriptsObjectToArray(updatedScriptsObj)
       }
     });
   };
 
   const handleAssertionsChange = (assertions: Assertion[]) => {
-    onItemChange({ 
-      ...item, 
-      runtime: { 
-        ...item.runtime, 
-        assertions 
-      } 
+    onItemChange({
+      ...item,
+      runtime: {
+        ...item.runtime,
+        assertions
+      }
     });
   };
 
-  const handleRequestVariablesChange = (variables: KeyValueRow[]) => {
+  const handleRequestVariablesChange = (variables: EditableTableRow[]) => {
     const updatedVariables = variables.map(v => ({
+      uid: v.uid,
       name: v.name,
       value: v.value,
       disabled: !v.enabled
     }));
-    onItemChange({ 
-      ...item, 
-      runtime: { 
-        ...item.runtime, 
-        variables: updatedVariables 
-      } 
+    onItemChange({
+      ...item,
+      runtime: {
+        ...item.runtime,
+        variables: updatedVariables
+      }
     });
   };
 
@@ -164,7 +167,6 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
     />
   );
 
-  // Calculate content indicators
   const hasBody = body && (
     (body as any).data || 
     (Array.isArray(body) && body.length > 0)

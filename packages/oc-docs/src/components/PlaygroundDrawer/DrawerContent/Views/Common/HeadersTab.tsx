@@ -1,12 +1,21 @@
-import React from 'react';
-import KeyValueTable, { type KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
+import React, { useMemo } from 'react';
+import EditableTable, { type EditableTableColumn, type EditableTableRow } from '../../../../../ui/EditableTable';
+import HighlightedInput from '../../../../../ui/HighlightedInput/HighlightedInput';
+
+interface HeaderRow extends EditableTableRow {
+  name: string;
+  value: string;
+  enabled: boolean;
+}
 
 interface HeadersTabProps {
-  headers: Array<{ name?: string; value?: string; disabled?: boolean }>;
-  onHeadersChange: (headers: KeyValueRow[]) => void;
+  headers: Array<{ name?: string; value?: string; disabled?: boolean; uid?: string }>;
+  onHeadersChange: (headers: HeaderRow[]) => void;
   title?: string;
   description?: string;
 }
+
+const generateUid = () => `header_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
 export const HeadersTab: React.FC<HeadersTabProps> = ({
   headers,
@@ -14,12 +23,36 @@ export const HeadersTab: React.FC<HeadersTabProps> = ({
   title = "Headers",
   description
 }) => {
-  const headersData: KeyValueRow[] = (headers || []).map((header, index) => ({
-    id: `header-${index}`,
-    name: header.name || '',
-    value: header.value || '',
-    enabled: !header.disabled
-  }));
+  const headersData: HeaderRow[] = useMemo(() => {
+    return (headers || []).map((header) => ({
+      uid: (header as any).uid || generateUid(),
+      name: header.name || '',
+      value: header.value || '',
+      enabled: !header.disabled
+    }));
+  }, [headers]);
+
+  const columns: EditableTableColumn<HeaderRow>[] = useMemo(() => [
+    {
+      key: 'name',
+      name: 'Name',
+      isKeyField: true,
+      placeholder: 'Header name',
+      width: '35%'
+    },
+    {
+      key: 'value',
+      name: 'Value',
+      placeholder: 'Header value',
+      render: ({ row, value, isLastEmptyRow, onChange }) => (
+        <HighlightedInput
+          value={value}
+          onChange={onChange}
+          placeholder={isLastEmptyRow ? 'Header value' : ''}
+        />
+      )
+    }
+  ], []);
 
   return (
     <div className="space-y-3">
@@ -33,12 +66,14 @@ export const HeadersTab: React.FC<HeadersTabProps> = ({
           </span>
         )}
       </div>
-      <KeyValueTable
-        data={headersData}
+      <EditableTable
+        columns={columns}
+        rows={headersData}
         onChange={onHeadersChange}
-        keyPlaceholder="Header name"
-        valuePlaceholder="Header value"
-        showEnabled={true}
+        defaultRow={{ name: '', value: '', enabled: true }}
+        showCheckbox={true}
+        showDelete={true}
+        checkboxKey="enabled"
       />
     </div>
   );

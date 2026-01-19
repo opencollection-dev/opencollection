@@ -8,6 +8,7 @@ import RequestPane from './RequestPane/RequestPane';
 import ResponsePane from './ResponsePane/ResponsePane';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { updatePlaygroundItem, setPlaygroundResponse, selectPlaygroundResponse } from '../../../../../store/slices/playground';
+import { VariablesProvider } from '../../../../../ui/HighlightedInput';
 
 interface PlaygroundProps {
   item: HttpRequest;
@@ -119,56 +120,58 @@ const Playground: React.FC<PlaygroundProps> = ({ item, collection, selectedEnvir
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
   return (
-    <div className="request-runner-container h-full flex flex-col px-4" style={{ backgroundColor: 'var(--bg-primary)' }}>
-      <RequestHeader 
-        item={editableItem} 
-        collection={collection}
-        selectedEnvironment={selectedEnvironment}
-        onEnvironmentChange={() => {}} // Environment is now managed by parent
-        readOnlyEnvironment={true}
-      />
-      
-      <QueryBar 
-        item={editableItem}
-        onSendRequest={handleSendRequest}
-        isLoading={isLoading}
-        onItemChange={handleItemChange}
-      />
-      
-      <div className="flex flex-1 overflow-hidden pt-2">
-        <div 
-          className="shrink-0 overflow-hidden"
-          style={{ 
-            width: `${requestPaneWidth}%`,
-            borderColor: 'var(--border-color)'
-          }}
-        >
-          <RequestPane item={editableItem} onItemChange={handleItemChange} />
-        </div>
+    <VariablesProvider collection={collection} selectedEnvironment={selectedEnvironment}>
+      <div className="request-runner-container h-full flex flex-col px-4" style={{ backgroundColor: 'var(--bg-primary)' }}>
+        <RequestHeader 
+          item={editableItem} 
+          collection={collection}
+          selectedEnvironment={selectedEnvironment}
+          onEnvironmentChange={() => {}} // Environment is now managed by parent
+          readOnlyEnvironment={true}
+        />
         
-        <div 
-          className="cursor-col-resize shrink-0 relative hover:bg-opacity-10"
-          style={{ 
-            width: '1px',
-            backgroundColor: 'var(--border-color)',
-            margin: '0 16px',
-            transition: 'background-color 0.2s'
-          }}
-          onMouseDown={handleMouseDown}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--border-color)';
-          }}
-        >
-        </div>
+        <QueryBar 
+          item={editableItem}
+          onSendRequest={handleSendRequest}
+          isLoading={isLoading}
+          onItemChange={handleItemChange}
+        />
         
-        <div className="flex-1 overflow-hidden">
-          <ResponsePane response={response} isLoading={isLoading} />
+        <div className="flex flex-1 overflow-hidden pt-2">
+          <div 
+            className="shrink-0 overflow-hidden"
+            style={{ 
+              width: `${requestPaneWidth}%`,
+              borderColor: 'var(--border-color)'
+            }}
+          >
+            <RequestPane item={editableItem} onItemChange={handleItemChange} />
+          </div>
+          
+          <div 
+            className="cursor-col-resize shrink-0 relative hover:bg-opacity-10"
+            style={{ 
+              width: '1px',
+              backgroundColor: 'var(--border-color)',
+              margin: '0 16px',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseDown={handleMouseDown}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--border-color)';
+            }}
+          >
+          </div>
+          
+          <div className="flex-1 overflow-hidden">
+            <ResponsePane response={response} isLoading={isLoading} />
+          </div>
         </div>
       </div>
-    </div>
+    </VariablesProvider>
   );
 };
 
