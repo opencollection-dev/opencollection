@@ -157,7 +157,7 @@ export class RequestExecutor {
   private buildUrlEncodedBody(data: any[]): string {
     const params = new URLSearchParams();
     data.forEach(item => {
-      if (item.enabled !== false && item.disabled !== true && item.name) {
+      if (item.disabled !== true && item.name) {
         params.append(item.name, item.value || '');
       }
     });
@@ -167,7 +167,7 @@ export class RequestExecutor {
   private buildFormDataBody(data: any[]): FormData {
     const formData = new FormData();
     data.forEach(item => {
-      if (item.enabled !== false && item.disabled !== true && item.name) {
+      if (item.disabled !== true && item.name) {
         if (item.type === 'file' && item.value instanceof File) {
           formData.append(item.name, item.value);
         } else {

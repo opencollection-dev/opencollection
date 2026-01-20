@@ -117,7 +117,7 @@ export const BodyTab: React.FC<BodyTabProps> = ({
             id: `form-${index}`,
             name: field.name || '',
             value: field.value || '',
-            enabled: field.disabled !== true && field.enabled !== false
+            enabled: field.disabled !== true
           }));
 
           return (
