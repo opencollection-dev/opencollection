@@ -138,6 +138,11 @@ export class RequestExecutor {
         case 'xml':
         case 'sparql':
           return body.data;
+        case 'form-urlencoded':
+          if ('data' in body && Array.isArray(body.data)) {
+            return this.buildUrlEncodedBody(body.data);
+          }
+          return null;
         default:
           return null;
       }
@@ -155,7 +160,7 @@ export class RequestExecutor {
   private buildUrlEncodedBody(data: any[]): string {
     const params = new URLSearchParams();
     data.forEach(item => {
-      if (item.enabled !== false && item.name) {
+      if (item.disabled !== true && item.name) {
         params.append(item.name, item.value || '');
       }
     });
@@ -165,7 +170,7 @@ export class RequestExecutor {
   private buildFormDataBody(data: any[]): FormData {
     const formData = new FormData();
     data.forEach(item => {
-      if (item.enabled !== false && item.name) {
+      if (item.disabled !== true && item.name) {
         if (item.type === 'file' && item.value instanceof File) {
           formData.append(item.name, item.value);
         } else {

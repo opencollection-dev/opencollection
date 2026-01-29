@@ -110,13 +110,14 @@ export const BodyTab: React.FC<BodyTabProps> = ({
           language={body.type === 'json' ? 'json' : body.type === 'xml' ? 'xml' : 'text'}
           height="300px"
         />
-      ) : Array.isArray(body) ? (
+      ) : Array.isArray(body) || (body?.type === 'form-urlencoded' && Array.isArray(body?.data)) ? (
         (() => {
-          const formBodyData: KeyValueRow[] = (body as any[]).map((field: any, index: number) => ({
+          const formDataArray = Array.isArray(body) ? body : (body?.data || []);
+          const formBodyData: KeyValueRow[] = (formDataArray as any[]).map((field: any, index: number) => ({
             id: `form-${index}`,
             name: field.name || '',
             value: field.value || '',
-            enabled: field.enabled !== false
+            enabled: field.disabled !== true
           }));
 
           return (
