@@ -687,6 +687,44 @@ tr.themed-row:nth-child(even) {
   border-color: var(--prose-hr-color) !important;
 }
 
+.markdown-documentation table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  margin: 1em 0 !important;
+  font-size: 0.875em !important;
+}
+
+.markdown-documentation th,
+.markdown-documentation td {
+  padding: 0.5em 0.75em !important;
+  border: 1px solid var(--border-color) !important;
+  text-align: left !important;
+}
+
+.markdown-documentation th {
+  background-color: var(--table-header-bg) !important;
+  font-weight: 600 !important;
+  color: var(--text-primary) !important;
+}
+
+.markdown-documentation tr:nth-child(even) {
+  background-color: var(--table-row-even-bg) !important;
+}
+
+.markdown-documentation strong {
+  font-weight: 600 !important;
+  color: var(--text-primary) !important;
+}
+
+.markdown-documentation em {
+  font-style: italic !important;
+}
+
+.markdown-documentation del {
+  text-decoration: line-through !important;
+  color: var(--text-secondary) !important;
+}
+
 /* Console animations */
 .console-container {
   transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;

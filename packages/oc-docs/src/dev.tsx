@@ -52,7 +52,22 @@ request:
   auth:
     type: "bearer"
     token: "{{bearer_auth_token}}"
-docs: "# bruno-testbench 🐶\\n\\nThis is a test collection that I am using to test various functionalities around bruno"
+docs:
+  content: |
+    # Bruno Testbench 🐶
+
+    This is a comprehensive API collection for testing OpenCollection features.
+
+    ## Getting Started
+
+    1. Select an environment (Local or Prod)
+    2. Try out the various API endpoints
+    3. Check the response examples
+
+    ## Authentication
+
+    Most endpoints require authentication. Use the bearer token provided in the environment variables.
+  type: "text/markdown"
 
 items:
   - name: "echo json"
@@ -87,6 +102,78 @@ items:
           expect(res.getStatus()).to.be.oneOf([200, 201]);
           expect(res.getBody().test).to.be.a("string");
         });
+    examples:
+      - name: "Create User"
+        request:
+          body:
+            type: "json"
+            data: |
+              {
+                "name": "John Doe",
+                "email": "john@example.com"
+              }
+        response:
+          status: 201
+          statusText: "Created"
+          headers:
+            - name: "Content-Type"
+              value: "application/json"
+          body:
+            type: "json"
+            data: |
+              {
+                "id": 1,
+                "name": "John Doe",
+                "email": "john@example.com"
+              }
+      - name: "Update User"
+        request:
+          body:
+            type: "json"
+            data: |
+              {
+                "name": "Jane Doe",
+                "email": "jane@example.com"
+              }
+        response:
+          status: 200
+          statusText: "OK"
+          headers:
+            - name: "Content-Type"
+              value: "application/json"
+          body:
+            type: "json"
+            data: |
+              {
+                "id": 1,
+                "name": "Jane Doe",
+                "email": "jane@example.com"
+              }
+      - name: "Empty Response"
+        response:
+          status: 200
+          statusText: "OK"
+          headers:
+            - name: "Content-Type"
+              value: "application/json"
+          body:
+            type: "json"
+            data: |
+              {}
+      - name: "Validation Error"
+        response:
+          status: 400
+          statusText: "Bad Request"
+          headers:
+            - name: "Content-Type"
+              value: "application/json"
+          body:
+            type: "json"
+            data: |
+              {
+                "error": "Invalid request body",
+                "code": "VALIDATION_ERROR"
+              }
 
   - name: "auth"
     type: "folder"
@@ -143,7 +230,7 @@ const DevApp: React.FC = () => {
   return (
     <Provider store={store}>
       <div style={{ height: '100vh', width: '100vw' }}>
-        <OpenCollection 
+        <OpenCollection
           collection={sampleCollectionYaml}
           logo="/src/assets/opencollection-logo.svg"
         />

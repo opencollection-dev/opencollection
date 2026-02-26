@@ -8,13 +8,12 @@ import PlaygroundDrawer from '../PlaygroundDrawer/PlaygroundDrawer';
 import Docs from '../Docs/Docs';
 import { parseYaml } from '../../utils/yamlUtils';
 import { hydrateWithUUIDs } from '../../utils/items';
-import { getItemType, isFolder, isHttpRequest } from '../../utils/schemaHelpers';
+import { getItemType, isFolder } from '../../utils/schemaHelpers';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   selectDocsCollection,
   setDocsCollection,
   clearDocsCollection,
-  selectItem,
   selectSelectedItemId
 } from '@slices/docs';
 import {
@@ -233,22 +232,6 @@ const OpenCollectionContent: React.FC<OpenCollectionProps> = ({
   const isLoading = collectionStatus === 'loading' || isInitialLoad;
   const error = collectionError;
 
-  // Set initial page to first root-level request when collection loads
-  useEffect(() => {
-    if (docsCollection && selectedItemId === null) {
-      const items = docsCollection.items;
-
-      const firstRequest = items?.find((item) => isHttpRequest(item));
-      if (firstRequest && (firstRequest as any).uuid) {
-        dispatch(selectItem((firstRequest as any).uuid));
-      } else if (items && items.length > 0) {
-        const firstItem = items[0];
-        if (firstItem && (firstItem as any).uuid) {
-          dispatch(selectItem((firstItem as any).uuid));
-        }
-      }
-    }
-  }, [docsCollection, selectedItemId, dispatch]);
 
   if (isLoading) {
     return <div className="flex items-center justify-center h-screen">Loading...</div>;
