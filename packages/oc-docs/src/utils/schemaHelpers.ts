@@ -12,7 +12,7 @@
  */
 
 import type { Item as OpenCollectionItem, Folder } from '@opencollection/types/collection/item';
-import type { HttpRequest, HttpRequestHeader } from '@opencollection/types/requests/http';
+import type { HttpRequest, HttpRequestHeader, HttpRequestExample } from '@opencollection/types/requests/http';
 import type { GraphQLRequest } from '@opencollection/types/requests/graphql';
 import type { GrpcRequest } from '@opencollection/types/requests/grpc';
 import type { WebSocketRequest } from '@opencollection/types/requests/websocket';
@@ -460,22 +460,30 @@ export const getItemDocs = (item: OpenCollectionItem | null | undefined): string
  */
 export const getRequestSettings = (item: RequestItem | null | undefined): any => {
   if (!item) return {};
-  
+
   // New schema: settings block
   if ('settings' in item && (item as any).settings) {
     return (item as any).settings;
   }
-  
+
   // Backwards compatibility: pick settings fields from root
   const settings: any = {};
   const settingsFields = ['timeout', 'followRedirects', 'maxRedirects', 'encodeUrl'];
-  
+
   for (const field of settingsFields) {
     if (field in item && (item as any)[field] !== undefined) {
       settings[field] = (item as any)[field];
     }
   }
-  
+
   return settings;
+};
+
+/**
+ * Get examples from an HTTP request
+ */
+export const getRequestExamples = (item: HttpRequest | null | undefined): HttpRequestExample[] => {
+  if (!item?.examples) return [];
+  return item.examples;
 };
 

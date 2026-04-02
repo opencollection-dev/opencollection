@@ -1,11 +1,13 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useRef } from 'react';
 import type { OpenCollection as OpenCollectionCollection } from '@opencollection/types';
+import type { StructuredText } from '@opencollection/types/common/description';
 import Sidebar from './Sidebar/Sidebar';
 import Item from './Item/Item';
 import { getItemId, generateSafeId } from '../../utils/itemUtils';
 import { isFolder } from '../../utils/schemaHelpers';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { selectSelectedItemId, selectItem } from '../../store/slices/docs';
+import { useMarkdownRenderer } from '../../hooks';
 
 interface DocsProps {
   docsCollection: OpenCollectionCollection | null;
@@ -20,9 +22,16 @@ const Docs: React.FC<DocsProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const selectedItemId = useAppSelector(selectSelectedItemId);
+  const md = useMarkdownRenderer();
+  const isInitialMount = useRef(true);
 
-  // Scroll to selected item when it changes
+  // Scroll to selected item when it changes (but not on initial load)
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
     if (selectedItemId && filteredCollectionItems.length > 0) {
       // Find the item by UUID to get its safe ID for scrolling
       const findItemForScroll = (items: any[]): any => {
@@ -103,6 +112,31 @@ const Docs: React.FC<DocsProps> = ({
         className="playground-content h-full overflow-y-auto flex-1"
       >
         <div className="all-endpoints-view h-full overflow-y-auto" style={{ padding: '2rem', maxWidth: '100%' }}>
+          {/* Collection-level documentation/introduction */}
+          {docsCollection?.docs && (
+            <div
+              className="collection-docs mb-10"
+              style={{
+                maxWidth: '80rem',
+                marginLeft: 0,
+                marginRight: 'auto',
+                paddingBottom: '1.5rem',
+                borderBottom: '1px solid var(--border-color)'
+              }}
+            >
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: md.render(
+                    typeof docsCollection.docs === 'string'
+                      ? docsCollection.docs
+                      : (docsCollection.docs as StructuredText)?.content || ''
+                  )
+                }}
+                className="markdown-documentation"
+              />
+            </div>
+          )}
+
           {/* Render all collection items */}
           {allItems.map((item, index) => {
             const itemId = getItemId(item);

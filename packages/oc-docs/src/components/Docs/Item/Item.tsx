@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from 'react';
+import React, { memo } from 'react';
 import 'prismjs/components/prism-bash';
 import 'prismjs/components/prism-http';
 import 'prismjs/components/prism-graphql';
@@ -21,6 +21,7 @@ import {
   getRequestVariables,
   getRequestAssertions,
   getRequestScripts,
+  getRequestExamples,
   scriptsArrayToObject,
   isFolder,
   isHttpRequest
@@ -33,6 +34,7 @@ import {
 import { CodeSnippets } from '../CodeSnippets/CodeSnippets';
 import { StyledWrapper } from './StyledWrapper';
 import { Scripts } from './Scripts/Scripts';
+import { Examples } from './Examples/Examples';
 import { useMarkdownRenderer } from '../../../hooks';
 
 const methodColors: Record<string, string> = {
@@ -169,6 +171,8 @@ const Item = memo(({
     const httpItem = item as HttpRequest;
     const scripts = scriptsArrayToObject(getRequestScripts(httpItem));
 
+    const examples = getRequestExamples(httpItem);
+
     const endpoint = {
       id: itemId,
       name: getItemName(httpItem) || 'Untitled',
@@ -182,7 +186,8 @@ const Item = memo(({
       vars: getRequestVariables(httpItem),
       assertions: getRequestAssertions(httpItem),
       tests: '',
-      script: scripts
+      script: scripts,
+      examples
     };
 
     return (
@@ -305,6 +310,14 @@ const Item = memo(({
             />
           </div>
         </div>
+
+        {endpoint.examples && endpoint.examples.length > 0 && (
+          <Examples
+            examples={endpoint.examples}
+            method={endpoint.method}
+            url={endpoint.url}
+          />
+        )}
       </StyledWrapper>
     );
   }
