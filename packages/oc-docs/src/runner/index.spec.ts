@@ -143,6 +143,59 @@ describe('RequestRunner', () => {
       // Restore original fetch
       global.fetch = originalFetch;
     });
+
+    it('should strip JSON comments from body before sending', async () => {
+      // Mock fetch to capture what body was sent
+      let sentBody: string | undefined;
+      global.fetch = vi.fn().mockImplementation((_url: string, init: RequestInit) => {
+        sentBody = init.body as string;
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          url: 'https://example.com/api',
+          headers: new Headers({
+            'content-type': 'application/json'
+          }),
+          text: async () => JSON.stringify({ success: true })
+        });
+      });
+
+      // Test RequestExecutor directly — this is where stripJsonComments is applied
+      const { RequestExecutor } = await import('./RequestExecutor');
+      const executor = new RequestExecutor();
+
+      const requestWithComments: any = {
+        http: {
+          method: 'POST',
+          url: 'https://example.com/api',
+          headers: [
+            { name: 'Content-Type', value: 'application/json' }
+          ],
+          body: {
+            type: 'json',
+            data: '{\n  "filters": {\n    "estado": "A",\n    // This comment should be stripped\n    "valor": "N"\n  }\n}'
+          }
+        }
+      };
+
+      await executor.executeRequest(requestWithComments, { timeout: 5000 });
+
+      // The body sent should be valid JSON (no comments)
+      expect(sentBody).toBeDefined();
+      expect(() => JSON.parse(sentBody!)).not.toThrow();
+
+      // The comment should have been stripped
+      expect(sentBody).not.toContain('//');
+      expect(sentBody).not.toContain('This comment should be stripped');
+
+      // The actual data should still be there
+      const parsed = JSON.parse(sentBody!);
+      expect(parsed.filters.estado).toBe('A');
+      expect(parsed.filters.valor).toBe('N');
+
+      global.fetch = originalFetch;
+    });
+
   });
 });
-
