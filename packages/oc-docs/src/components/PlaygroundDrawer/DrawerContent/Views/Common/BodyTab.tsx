@@ -107,7 +107,7 @@ export const BodyTab: React.FC<BodyTabProps> = ({
               });
             }
           }}
-          language={body.type === 'json' ? 'json' : body.type === 'xml' ? 'xml' : 'text'}
+          language={body.type === 'json' ? 'jsonc' : body.type === 'xml' ? 'xml' : 'text'}
           height="300px"
         />
       ) : Array.isArray(body) || (body?.type === 'form-urlencoded' && Array.isArray(body?.data)) ? (

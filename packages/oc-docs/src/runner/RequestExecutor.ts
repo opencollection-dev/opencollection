@@ -1,6 +1,7 @@
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import { RunRequestResponse } from './index';
 import { getHttpMethod, getRequestUrl, getHttpHeaders, getHttpBody, getRequestAuth } from '../utils/schemaHelpers';
+import stripJsonComments from 'strip-json-comments';
 
 export class RequestExecutor {
   async executeRequest(request: HttpRequest, options: { timeout?: number } = {}): Promise<RunRequestResponse> {
@@ -133,7 +134,7 @@ export class RequestExecutor {
     if ('type' in body) {
       switch (body.type) {
         case 'json':
-          return body.data;
+          return stripJsonComments(body.data).replace(/,(\s*[\]}])/g, '$1');
         case 'text':
         case 'xml':
         case 'sparql':
