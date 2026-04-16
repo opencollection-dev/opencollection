@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://schema.opencollection.com/json/draft-07/opencollection/v1.0.0",
+  "$id": "https://schema.opencollection.com/opencollection/v1.0.0.json",
   "type": "object",
   "properties": {
     "info": {

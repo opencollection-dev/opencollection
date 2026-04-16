@@ -15,7 +15,7 @@ function Introduction() {
       </p>
       <div className="space-y-2">
         <p>Version: <code className={typography.code.inline}>v1.0.0</code></p>
-        <p>Schema: <code className={`${typography.code.inline} break-all`}>https://schema.opencollection.com/json/draft-07/opencollection/v1.0.0</code></p>
+        <p>Schema: <code className={`${typography.code.inline} break-all`}>https://schema.opencollection.com/opencollection/v1.0.0.json</code></p>
       </div>
     </section>
   )
