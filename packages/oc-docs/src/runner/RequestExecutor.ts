@@ -1,6 +1,7 @@
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import { RunRequestResponse } from './index';
-import { getHttpMethod, getRequestUrl, getHttpHeaders, getHttpBody, getRequestAuth } from '../utils/schemaHelpers';
+import { getHttpMethod, getRequestUrl, getHttpHeaders, getHttpBody, getRequestAuth, getHttpParams } from '../utils/schemaHelpers';
+import { applyPathParams } from '../utils/pathParams';
 import stripJsonComments from 'strip-json-comments';
 
 export class RequestExecutor {
@@ -9,7 +10,9 @@ export class RequestExecutor {
 
     try {
       const fetchOptions = await this.buildFetchOptions(request, options.timeout);
-      const requestUrl = getRequestUrl(request);
+      // Substitute `:name` path params (e.g. /posts/:postId -> /posts/1) before
+      // sending. Values are already variable-interpolated by this point.
+      const requestUrl = applyPathParams(getRequestUrl(request), getHttpParams(request));
       const response = await fetch(requestUrl, fetchOptions);
       const endTime = Date.now();
 

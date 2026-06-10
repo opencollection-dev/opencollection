@@ -4,7 +4,7 @@ import type { Item as OpenCollectionItem, Folder } from '@opencollection/types/c
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { RootState } from '../store';
 import { hydrateWithUUIDs, findAndUpdateItem } from '../../utils/items';
-import { isFolder, getItemType } from '../../utils/schemaHelpers';
+import { isFolder } from '../../utils/schemaHelpers';
 
 export type ViewMode = 'playground' | 'environments' | 'folder-settings' | 'collection-settings';
 
