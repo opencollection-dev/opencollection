@@ -1,6 +1,6 @@
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import { RunRequestResponse } from './index';
-import { getHttpMethod, getRequestUrl, getHttpHeaders, getHttpBody, getRequestAuth, getHttpParams } from '../utils/schemaHelpers';
+import { getHttpMethod, getRequestUrl, getHttpHeaders, getHttpBody, getRequestAuth, getHttpParams, getRequestSettings } from '../utils/schemaHelpers';
 import { applyPathParams } from '../utils/pathParams';
 import stripJsonComments from 'strip-json-comments';
 
@@ -11,8 +11,11 @@ export class RequestExecutor {
     try {
       const fetchOptions = await this.buildFetchOptions(request, options.timeout);
       // Substitute `:name` path params (e.g. /posts/:postId -> /posts/1) before
-      // sending. Values are already variable-interpolated by this point.
-      const requestUrl = applyPathParams(getRequestUrl(request), getHttpParams(request));
+      // sending. Values are already variable-interpolated by this point. Honour
+      // the request's encodeUrl setting — only an explicit `false` disables
+      // encoding (undefined / 'inherit' keep the safe default of encoding).
+      const encodeUrl = getRequestSettings(request)?.encodeUrl !== false;
+      const requestUrl = applyPathParams(getRequestUrl(request), getHttpParams(request), { encode: encodeUrl });
       const response = await fetch(requestUrl, fetchOptions);
       const endTime = Date.now();
 

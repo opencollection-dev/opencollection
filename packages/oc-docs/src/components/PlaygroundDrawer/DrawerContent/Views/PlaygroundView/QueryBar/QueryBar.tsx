@@ -27,7 +27,6 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
     // remove on delete).
     const currentParams = getHttpParams(item);
     const syncedParams = syncPathParams(currentParams, newUrl);
-    console.log('syncedParams', syncedParams);
 
     const updatedItem = {
       ...item,
