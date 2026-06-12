@@ -26,10 +26,10 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
 
   const handleParamsChange = (params: KeyValueRow[]) => {
     const updatedParams = params.map(p => ({
-      name: p.name,
-      value: p.value,
-      disabled: !p.enabled,
-      type: 'query' as const
+      name: p?.name,
+      value: p?.value,
+      disabled: !p?.enabled,
+      type: p?.type
     }));
     onItemChange({ 
       ...item, 
