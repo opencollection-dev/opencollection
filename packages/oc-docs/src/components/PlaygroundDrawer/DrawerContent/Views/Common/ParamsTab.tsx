@@ -92,7 +92,7 @@ export const ParamsTab: React.FC<ParamsTabProps> = ({
   // and merge them back with the untouched sibling rows before bubbling up.
   const handleQueryChange = useCallback(
     (rows: KeyValueRow[]) => {
-      const queryRows = rows?.map((row) => ({ ...row, type: 'query' }));
+      const queryRows = (rows ?? []).map((row) => ({ ...row, type: 'query' }));
       onParamsChange([...queryRows, ...pathData]);
     },
     [onParamsChange, pathData]
@@ -100,7 +100,7 @@ export const ParamsTab: React.FC<ParamsTabProps> = ({
 
   const handlePathChange = useCallback(
     (rows: KeyValueRow[]) => {
-      const pathRows = rows?.map((row) => ({ ...row, type: 'path' }));
+      const pathRows = (rows ?? []).map((row) => ({ ...row, type: 'path' }));
       onParamsChange([...queryData, ...pathRows]);
     },
     [onParamsChange, queryData]
