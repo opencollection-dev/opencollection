@@ -23,12 +23,12 @@ export const SidebarContainer = styled.div`
   }
 
   &:hover ::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.12);
+    background-color: var(--oc-scrollbar-color);
   }
 
   & .logo {
     padding: 0 8px 12px 8px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    border-bottom: 1px solid var(--oc-border-border1);
     margin-bottom: 6px;
   }
 
@@ -67,18 +67,18 @@ export const SidebarItem = styled.div`
   }
 
   &:hover, &.hovered {
-    background-color: rgba(0, 0, 0, 0.04);
+    background-color: color-mix(in srgb, var(--oc-text) 4%, transparent);
     color: var(--text-primary);
   }
 
   &.active {
-    background-color: rgba(217, 119, 6, 0.08);
+    background-color: color-mix(in srgb, var(--oc-colors-accent) 8%, transparent);
     color: var(--text-primary);
     font-weight: 500;
   }
 
   &.active:hover {
-    background-color: rgba(217, 119, 6, 0.1);
+    background-color: color-mix(in srgb, var(--oc-colors-accent) 10%, transparent);
   }
 
   &.folder {
