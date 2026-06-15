@@ -104,7 +104,7 @@ const PlaygroundDrawer: React.FC<PlaygroundDrawerProps> = ({
         style={{
           height: `${height}px`,
           maxHeight: `${getMaxHeight()}px`,
-          boxShadow: isOpen ? '0 -4px 20px rgba(0, 0, 0, 0.15)' : '0 0 0 rgba(0, 0, 0, 0)'
+          boxShadow: isOpen ? '0 -4px 20px color-mix(in srgb, black 15%, transparent)' : '0 0 0 transparent'
         }}
       >
         <DrawerDragBar isCollapsed={isCollapsed} selectedItem={selectedItem} onClose={onClose} />
