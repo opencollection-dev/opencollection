@@ -34,7 +34,7 @@ export const StyledWrapper = styled.div`
 
   .breadcrumb-link:hover {
     color: var(--text-secondary);
-    background-color: rgba(0, 0, 0, 0.04);
+    background-color: color-mix(in srgb, var(--oc-text) 4%, transparent);
   }
 
   .breadcrumb-icon {
@@ -63,13 +63,13 @@ export const StyledWrapper = styled.div`
   }
 
   .item-type-badge.folder {
-    background-color: rgba(99, 102, 241, 0.1);
-    color: #6366f1;
+    background-color: color-mix(in srgb, var(--oc-colors-text-purple) 10%, transparent);
+    color: var(--oc-colors-text-purple);
   }
 
   .item-type-badge.script {
-    background-color: rgba(16, 185, 129, 0.1);
-    color: #10b981;
+    background-color: color-mix(in srgb, var(--oc-colors-text-green) 10%, transparent);
+    color: var(--oc-colors-text-green);
   }
 
   .item-title {
@@ -119,7 +119,7 @@ export const StyledWrapper = styled.div`
   .item-docs ul { list-style: disc inside; }
   .item-docs ol { list-style: decimal inside; }
   .item-docs li { margin: 0.2rem 0; }
-  .item-docs blockquote { margin: 0.75rem 0; padding: 0.625rem 1rem; border-left: 3px solid var(--prose-blockquote-border); color: var(--text-secondary); background-color: rgba(217, 119, 6, 0.04); border-radius: 0 6px 6px 0; }
+  .item-docs blockquote { margin: 0.75rem 0; padding: 0.625rem 1rem; border-left: 3px solid var(--prose-blockquote-border); color: var(--text-secondary); background-color: color-mix(in srgb, var(--oc-colors-accent) 4%, transparent); border-radius: 0 6px 6px 0; }
 
   /* ============================================================
      CONTENT LAYOUT
@@ -150,13 +150,13 @@ export const StyledWrapper = styled.div`
     border-radius: 0 6px 6px 0;
     border: 1px solid var(--border-color);
     border-left: none;
-    background-color: white;
+    background-color: var(--oc-background-base);
     overflow: hidden;
   }
 
   .badge-url { font-size: 0.8125rem; font-family: var(--font-mono); color: var(--text-secondary); font-weight: 400; padding: 0.25rem 0.625rem; display: inline-flex; align-items: center; }
-  .badge-try { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.625rem; margin-left: auto; font-size: 0.75rem; font-weight: 500; color: var(--primary-color); background-color: rgba(217, 119, 6, 0.06); border: none; border-left: 1px solid var(--border-color); cursor: pointer; transition: all 0.15s ease; }
-  .badge-try:hover { background-color: rgba(217, 119, 6, 0.12); }
+  .badge-try { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.625rem; margin-left: auto; font-size: 0.75rem; font-weight: 500; color: var(--primary-color); background-color: color-mix(in srgb, var(--oc-colors-accent) 6%, transparent); border: none; border-left: 1px solid var(--border-color); cursor: pointer; transition: all 0.15s ease; }
+  .badge-try:hover { background-color: color-mix(in srgb, var(--oc-colors-accent) 12%, transparent); }
 
   /* ============================================================
      SECTION TITLE TABS (Body / Scripts switcher)
