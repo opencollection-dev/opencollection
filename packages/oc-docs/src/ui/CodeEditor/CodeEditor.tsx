@@ -1,5 +1,6 @@
 import React from 'react';
 import Editor from '@monaco-editor/react';
+import { useAppSelector } from '../../store/hooks';
 
 interface CodeEditorProps {
   value: string;
@@ -9,14 +10,15 @@ interface CodeEditorProps {
   height?: string;
 }
 
-const CodeEditor: React.FC<CodeEditorProps> = ({ 
-  value, 
-  onChange, 
-  language = 'json', 
-  readOnly = false, 
+const CodeEditor: React.FC<CodeEditorProps> = ({
+  value,
+  onChange,
+  language = 'json',
+  readOnly = false,
   height = '300px'
 }) => {
-  
+  const mode = useAppSelector((s) => s.theme.mode);
+
   const handleChange = (newValue: string | undefined) => {
     onChange(newValue || '');
   };
@@ -34,7 +36,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
         language={language}
         value={value}
         onChange={handleChange}
-        theme="vs"
+        theme={mode === 'dark' ? 'vs-dark' : 'vs'}
         options={{
           readOnly,
           minimap: { enabled: false },
