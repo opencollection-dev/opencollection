@@ -56,11 +56,11 @@ const TestResultsTab: React.FC<TestResultsTabProps> = ({ testResults, assertionR
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pass':
-        return 'rgb(34 197 94)'; // green-500
+        return 'var(--oc-colors-text-green)';
       case 'fail':
-        return 'rgb(239 68 68)'; // red-500
+        return 'var(--oc-colors-text-danger)';
       case 'skip':
-        return 'rgb(156 163 175)'; // gray-400
+        return 'var(--oc-colors-text-muted)';
       default:
         return 'var(--text-secondary)';
     }
@@ -129,7 +129,7 @@ const TestResultsTab: React.FC<TestResultsTabProps> = ({ testResults, assertionR
                       </div>
                       {result.error && (
                         <div className="text-xs mt-1 font-mono" style={{ 
-                          color: 'rgb(239 68 68)',
+                          color: 'var(--oc-colors-text-danger)',
                         }}>
                           {result.error}
                         </div>
@@ -194,7 +194,7 @@ const TestResultsTab: React.FC<TestResultsTabProps> = ({ testResults, assertionR
                         )}
                       </div>
                       {result.error && (
-                        <div className="text-xs mt-1 font-mono" style={{ color: 'rgb(239 68 68)' }}>
+                        <div className="text-xs mt-1 font-mono" style={{ color: 'var(--oc-colors-text-danger)' }}>
                           {result.error}
                         </div>
                       )}
