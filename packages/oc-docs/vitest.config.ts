@@ -11,7 +11,11 @@ export default defineConfig({
     testTimeout: 30000,
     hookTimeout: 30000,
     teardownTimeout: 10000,
-    isolate: true
+    isolate: true,
+    // Unit tests live in src/ as *.test.ts(x). The e2e/ specs are Playwright
+    // tests (run via `npm run test:e2e`) and must not be collected by Vitest.
+    include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    exclude: ['node_modules', 'dist', 'dist-standalone', 'e2e/**']
   },
   resolve: {
     alias: {

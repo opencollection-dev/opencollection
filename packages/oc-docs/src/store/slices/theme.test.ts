@@ -1,5 +1,11 @@
 import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
-import reducer, { setTheme, toggleTheme, readPersistedMode, THEME_STORAGE_KEY } from './theme';
+import reducer, {
+  setTheme,
+  toggleTheme,
+  readPersistedMode,
+  persistThemeMode,
+  THEME_STORAGE_KEY,
+} from './theme';
 
 beforeAll(() => {
   let store: Record<string, string> = {};
@@ -14,8 +20,14 @@ beforeAll(() => {
 describe('themeSlice', () => {
   beforeEach(() => localStorage.clear());
 
-  it('defaults to light', () => {
+  it('defaults to light when nothing persisted', () => {
     expect(reducer(undefined, { type: '@@INIT' })).toEqual({ mode: 'light' });
+  });
+
+  it('setTheme sets the mode (pure, no side effects)', () => {
+    expect(reducer({ mode: 'light' }, setTheme('dark')).mode).toBe('dark');
+    // reducer must not touch localStorage
+    expect(localStorage.getItem(THEME_STORAGE_KEY)).toBeNull();
   });
 
   it('toggle flips mode', () => {
@@ -23,8 +35,8 @@ describe('themeSlice', () => {
     expect(reducer({ mode: 'dark' }, toggleTheme()).mode).toBe('light');
   });
 
-  it('setTheme persists to localStorage', () => {
-    reducer({ mode: 'light' }, setTheme('dark'));
+  it('persistThemeMode writes the mode to localStorage', () => {
+    persistThemeMode('dark');
     expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('dark');
   });
 

@@ -31,7 +31,6 @@ import {
   setGitCollectionUrl
 } from '@slices/app';
 import { createOpenCollectionStore, type AppStore } from '../../store/store';
-import { setTheme, readPersistedMode } from '@slices/theme';
 import { applyTheme } from '../../theme/applyTheme';
 
 // Set data-theme on the root element before the component first paints to avoid a flash.
@@ -181,12 +180,6 @@ const OpenCollectionContent: React.FC<OpenCollectionProps> = ({
   const collectionStatus = useAppSelector(selectCollectionStatus);
   const collectionError = useAppSelector(selectCollectionError);
   const selectedItemId = useAppSelector((state) => state.docs.selectedItemId);
-
-  // Initialize the store's theme state from the persisted value once on mount,
-  // so the toggle UI reflects the real current mode.
-  useEffect(() => {
-    dispatch(setTheme(readPersistedMode()));
-  }, [dispatch]);
 
   useEffect(() => {
     gitCollectionUrl && dispatch(setGitCollectionUrl(gitCollectionUrl));

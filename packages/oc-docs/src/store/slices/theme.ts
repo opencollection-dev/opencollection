@@ -12,7 +12,12 @@ export const readPersistedMode = (): ThemeMode => {
   }
 };
 
-const persist = (mode: ThemeMode) => {
+/**
+ * Side effect: mirror the active mode to localStorage + the root `data-theme`
+ * attribute. Kept out of the reducers (which must stay pure) — call this from
+ * the store subscription instead (see store.ts).
+ */
+export const persistThemeMode = (mode: ThemeMode) => {
   try {
     localStorage.setItem(THEME_STORAGE_KEY, mode);
   } catch {
@@ -27,7 +32,9 @@ interface ThemeState {
   mode: ThemeMode;
 }
 
-const initialState: ThemeState = { mode: 'light' };
+// Seed from the persisted value so the very first render (Monaco theme, toggle
+// icon, anything reading s.theme.mode) is already correct — no light->dark flash.
+const initialState: ThemeState = { mode: readPersistedMode() };
 
 const themeSlice = createSlice({
   name: 'theme',
@@ -35,11 +42,9 @@ const themeSlice = createSlice({
   reducers: {
     setTheme(state, action: PayloadAction<ThemeMode>) {
       state.mode = action.payload;
-      persist(state.mode);
     },
     toggleTheme(state) {
       state.mode = state.mode === 'light' ? 'dark' : 'light';
-      persist(state.mode);
     }
   }
 });
