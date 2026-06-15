@@ -1,3 +1,4 @@
+@import './theme.generated.css';
 @import "tailwindcss";
 
 :root {
