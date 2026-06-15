@@ -2,7 +2,7 @@ import React from 'react';
 
 const FetchInBrunoButton: React.FC = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="142" height="36" viewBox="0 0 146 36" role="img" aria-label="Fetch in Bruno">
-    <rect x="2" y="2" width="142" height="32" rx="16" fill="#fffbf7" stroke="#de8116" strokeWidth="1" strokeLinejoin="round" strokeLinecap="round" />
+    <rect x="2" y="2" width="142" height="32" rx="16" fill="#fffbf7" stroke="var(--oc-brand)" strokeWidth="1" strokeLinejoin="round" strokeLinecap="round" />
     <g transform="translate(10, 1)">
       <svg width="24" viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg">
         <g>
@@ -24,7 +24,7 @@ const FetchInBrunoButton: React.FC = () => (
         </g>
       </svg>
     </g>
-    <text x="39" y="23" fontFamily="system-ui, -apple-system, sans-serif" fontSize="13" fontWeight="600" fill="#d97706">Fetch In Bruno</text>
+    <text x="39" y="23" fontFamily="system-ui, -apple-system, sans-serif" fontSize="13" fontWeight="600" fill="var(--oc-brand)">Fetch In Bruno</text>
   </svg>
 );
 
