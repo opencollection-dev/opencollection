@@ -2,80 +2,52 @@
 @import "tailwindcss";
 
 :root {
-  /* Core theme colors */
-  --primary-color: #d97706;
-  --secondary-color: #0ea5e9;
+  /* ----------------------------------------------------------------
+     Legacy abstract color vars — now aliased to theme tokens.
+     These names are consumed across components; the values follow the
+     active [data-theme] so light/dark both work. See theme.generated.css.
+     ---------------------------------------------------------------- */
+
+  /* Brand / accent */
+  --primary-color: var(--oc-brand);
 
   /* Radius */
-  --oc-radius: 6px;
+  --oc-radius: var(--oc-border-radius-base);
 
-  /* Tabs */
-  --oc-tabs-color: #8c8c8c;
-  --oc-tabs-active-color: #1a1a1a !important;
+  /* Tabs (no matching theme token for inactive tab text) */
+  --oc-tabs-color: var(--oc-colors-text-muted);
 
-  /* Background colors */
-  --oc-sidebar-bg: #fafafa;
-  --background-light: #ffffff;
-  --content-bg: #ffffff;
+  /* Surfaces / backgrounds */
+  --background-color: var(--oc-bg);
+  --content-bg: var(--oc-background-base);
 
   /* Text colors */
-  --oc-text-primary: #1a1a1a;
-  --text-light: #1a1a1a;
+  --text-primary: var(--oc-text);
+  --text-secondary: var(--oc-colors-text-subtext2);
+  --text-tertiary: var(--oc-colors-text-subtext0);
 
   /* Border colors */
-  --border-light: #e5e5e5;
+  --border-color: var(--oc-border-border1);
 
-  /* Code colors - light theme inspired by Stripe */
-  --code-bg-light: #f6f8fa;
-  --code-text-light: #30313d;
+  /* Code colors */
+  --code-bg: var(--oc-background-crust); /* approx: old #f6f8fa */
+  --code-text: var(--oc-text);
 
-  /* Sidebar colors */
-  --sidebar-bg-light: #fafafa;
-  --sidebar-color-light: #1a1a1a;
+  /* Prose */
+  --prose-links: var(--oc-text-link); /* approx: old brand-orange link */
+  --prose-links-hover: var(--oc-text-link); /* approx: no separate hover token */
+  --prose-blockquote-border: var(--oc-brand);
+  --prose-code-bg: var(--oc-background-surface0);
+  --prose-code-text: var(--oc-colors-accent);
 
-  /* Table colors */
-  --table-header-bg-light: #fafafa;
-  --table-row-odd-bg-light: #ffffff;
-  --table-row-even-bg-light: #fafafa;
+  /* Table */
+  --table-header-bg: var(--oc-background-mantle);
+  --table-row-odd-bg: var(--oc-background-base);
+  --table-row-even-bg: var(--oc-background-mantle);
 
-  /* Status colors */
-  --success-color: #16a34a;
-  --warning-color: #ca8a04;
-  --info-color: #2563eb;
-  --error-color: #dc2626;
-
-  /* Method colors */
-  --method-get-bg: #2563eb;
-  --method-post-bg: #16a34a;
-  --method-put-bg: #d97706;
-  --method-delete-bg: #dc2626;
-  --method-patch-bg: #9333ea;
-  --method-options-bg: #6b7280;
-
-  /* Input and badge colors */
-  --input-bg-light: #fafafa;
-  --badge-bg-light: #f5f5f5;
-  --badge-text-light: #3d3d3d;
-
-  /* Apple colors for method badges */
-  --apple-blue-100: #eff6ff;
-  --apple-blue-900: #1e40af;
-  --apple-green-100: #f0fdf4;
-  --apple-green-900: #166534;
-  --apple-orange-100: #fffbeb;
-  --apple-orange-900: #92400e;
-  --apple-red-100: #fef2f2;
-  --apple-red-900: #991b1b;
-  --apple-purple-100: #faf5ff;
-  --apple-purple-900: #581c87;
-  --apple-gray-100: #f3f4f6;
-  --apple-gray-900: #1f2937;
-
-  /* Prose colors */
-  --prose-links: #d97706;
-  --prose-links-hover: #b45309;
-  --prose-blockquote-border: #d97706;
-  --prose-hr-color: #e5e5e5;
+  /* Input / badge */
+  --input-bg: var(--oc-background-mantle);
+  --badge-bg: var(--oc-background-surface0);
 
   /* Layout dimensions */
   --sidebar-width: 260px;
@@ -95,23 +67,6 @@
   /* Fonts */
   --font-mono: "JetBrains Mono", "SF Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
-
-  /* Theme variables */
-  --background-color: var(--background-light);
-  --text-primary: var(--text-light);
-  --text-secondary: #6b6b6b;
-  --text-tertiary: #a1a1a1;
-  --border-color: var(--border-light);
-  --code-bg: var(--code-bg-light);
-  --code-text: var(--code-text-light);
-  --prose-code-bg: #f5f5f5;
-  --prose-code-text: #d97706;
-  --table-header-bg: var(--table-header-bg-light);
-  --table-row-odd-bg: var(--table-row-odd-bg-light);
-  --table-row-even-bg: var(--table-row-even-bg-light);
-  --input-bg: var(--input-bg-light);
-  --badge-bg: var(--badge-bg-light);
-  --badge-text: var(--badge-text-light);
 }
 
 /* ================================================================
@@ -162,7 +117,7 @@ html, body {
   height: var(--header-height);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: color-mix(in srgb, var(--oc-bg) 90%, transparent);
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -188,7 +143,7 @@ html, body {
     max-width: var(--sidebar-width);
     overflow-y: auto;
     background-color: var(--oc-sidebar-bg);
-    color: var(--sidebar-color-light);
+    color: var(--oc-sidebar-color);
     padding: 14px 0 0 0;
   }
 
@@ -273,7 +228,7 @@ html, body {
 
   .mobile-tab.active {
     background-color: var(--primary-color);
-    color: white;
+    color: var(--oc-colors-text-white);
   }
 
   .mobile-tab:not(.active) {
@@ -305,34 +260,34 @@ html, body {
 }
 
 .method-badge.get {
-  background-color: rgba(37, 99, 235, 0.1);
-  color: #2563eb;
+  background-color: color-mix(in srgb, var(--oc-request-methods-get) 10%, transparent);
+  color: var(--oc-request-methods-get);
 }
 
 .method-badge.post {
-  background-color: rgba(22, 163, 74, 0.1);
-  color: #16a34a;
+  background-color: color-mix(in srgb, var(--oc-request-methods-post) 10%, transparent);
+  color: var(--oc-request-methods-post);
 }
 
 .method-badge.put {
-  background-color: rgba(217, 119, 6, 0.1);
-  color: #d97706;
+  background-color: color-mix(in srgb, var(--oc-request-methods-put) 10%, transparent);
+  color: var(--oc-request-methods-put);
 }
 
 .method-badge.delete {
-  background-color: rgba(220, 38, 38, 0.1);
-  color: #dc2626;
+  background-color: color-mix(in srgb, var(--oc-request-methods-delete) 10%, transparent);
+  color: var(--oc-request-methods-delete);
 }
 
 .method-badge.patch {
-  background-color: rgba(147, 51, 234, 0.1);
-  color: #9333ea;
+  background-color: color-mix(in srgb, var(--oc-request-methods-patch) 10%, transparent);
+  color: var(--oc-request-methods-patch);
 }
 
 .method-badge.options,
 .method-badge.head {
-  background-color: rgba(107, 114, 128, 0.1);
-  color: #6b7280;
+  background-color: color-mix(in srgb, var(--oc-request-methods-options) 10%, transparent);
+  color: var(--oc-request-methods-options);
 }
 
 /* ================================================================
@@ -368,38 +323,38 @@ html, body {
 .code-snippets-wrapper .compact-code-view,
 .code-example-card .compact-code-view {
   background-color: var(--code-bg);
-  border: 1px solid #ebeef1;
+  border: 1px solid var(--oc-border-border1);
 }
 
 .code-snippets-wrapper .code-header,
 .code-example-card .code-header {
-  border-bottom: 1px solid #ebeef1;
-  background-color: #ebeef1;
+  border-bottom: 1px solid var(--oc-border-border1);
+  background-color: var(--oc-background-surface0);
 }
 
 .code-snippets-wrapper .code-tab,
 .code-example-card .code-tab {
-  color: #687385;
+  color: var(--oc-colors-text-muted);
 }
 .code-snippets-wrapper .code-tab:hover,
 .code-example-card .code-tab:hover {
-  color: #30313d;
-  background-color: rgba(0, 0, 0, 0.04);
+  color: var(--oc-text);
+  background-color: color-mix(in srgb, var(--oc-text) 4%, transparent);
 }
 .code-snippets-wrapper .code-tab.active,
 .code-example-card .code-tab.active {
-  color: #30313d;
-  background-color: white;
+  color: var(--oc-text);
+  background-color: var(--oc-bg);
 }
 
 .code-snippets-wrapper .copy-button,
 .code-example-card .copy-button {
-  color: #687385;
+  color: var(--oc-colors-text-muted);
 }
 .code-snippets-wrapper .copy-button:hover,
 .code-example-card .copy-button:hover {
-  color: #30313d;
-  background-color: rgba(0, 0, 0, 0.04);
+  color: var(--oc-text);
+  background-color: color-mix(in srgb, var(--oc-text) 4%, transparent);
 }
 
 .code-snippets-wrapper .code-content,
@@ -579,12 +534,12 @@ tr.themed-row:nth-child(even) {
 }
 
 .oc-playground ::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: var(--oc-scrollbar-color);
   border-radius: 20px;
 }
 
 .oc-playground ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: color-mix(in srgb, var(--oc-text) 20%, transparent);
 }
 
 /* ================================================================
@@ -605,11 +560,11 @@ tr.themed-row:nth-child(even) {
 
 .btn-primary {
   background-color: var(--primary-color);
-  color: white;
+  color: var(--oc-colors-text-white);
 }
 
 .btn-primary:hover {
-  background-color: #b45309;
+  background-color: var(--oc-primary-strong); /* approx: old #b45309 */
 }
 
 .btn-secondary {
@@ -618,7 +573,7 @@ tr.themed-row:nth-child(even) {
 }
 
 .btn-secondary:hover {
-  background-color: #ebebeb;
+  background-color: var(--oc-background-surface1); /* approx: old #ebebeb */
 }
 
 /* ================================================================
@@ -800,7 +755,7 @@ tr.themed-row:nth-child(even) {
   font-style: normal !important;
   margin: 0.75em 0 !important;
   color: var(--text-secondary) !important;
-  background-color: rgba(217, 119, 6, 0.04) !important;
+  background-color: color-mix(in srgb, var(--oc-brand) 4%, transparent) !important;
   border-radius: 0 6px 6px 0 !important;
 }
 
@@ -969,16 +924,16 @@ tr.themed-row:nth-child(even) {
 .skeleton {
   background: linear-gradient(
     90deg,
-    rgba(0, 0, 0, 0.06) 25%,
-    rgba(0, 0, 0, 0.1) 37%,
-    rgba(0, 0, 0, 0.06) 63%
+    color-mix(in srgb, var(--oc-text) 6%, transparent) 25%,
+    color-mix(in srgb, var(--oc-text) 10%, transparent) 37%,
+    color-mix(in srgb, var(--oc-text) 6%, transparent) 63%
   );
   background-size: 400% 100%;
   animation: skeleton 1.4s ease infinite;
 }
 
 @keyframes sectionHighlight {
-  0% { background-color: rgba(217, 119, 6, 0.04); }
+  0% { background-color: color-mix(in srgb, var(--oc-brand) 4%, transparent); }
   100% { background-color: transparent; }
 }
 
@@ -1052,7 +1007,7 @@ tr.themed-row:nth-child(even) {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.1);
+  background: color-mix(in srgb, var(--oc-text) 10%, transparent);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1078,7 +1033,7 @@ tr.themed-row:nth-child(even) {
 
 .folder-item-card:hover {
   border-color: var(--primary-color);
-  background-color: rgba(217, 119, 6, 0.02);
+  background-color: color-mix(in srgb, var(--oc-brand) 2%, transparent);
 }
 
 .folder-item-card:hover .item-card-arrow {
