@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 export const StyledWrapper = styled.div`
   background-color: var(--code-bg);
-  border: 1px solid #ebeef1;
+  border: 1px solid var(--oc-border-border1);
   border-radius: 8px;
 
   .code-copy-floating {
@@ -16,8 +16,8 @@ export const StyledWrapper = styled.div`
     padding: 0.3rem;
     border-radius: 4px;
     border: none;
-    color: #687385;
-    background-color: rgba(0, 0, 0, 0.04);
+    color: var(--oc-colors-text-muted);
+    background-color: var(--oc-background-surface0);
     cursor: pointer;
     opacity: 0;
     transition: all 0.15s ease;
@@ -28,8 +28,8 @@ export const StyledWrapper = styled.div`
   }
 
   .code-copy-floating:hover {
-    color: #30313d;
-    background-color: rgba(0, 0, 0, 0.08);
+    color: var(--oc-text);
+    background-color: var(--oc-background-surface1);
   }
 
   .code-content {
@@ -47,16 +47,16 @@ export const StyledWrapper = styled.div`
   }
 
   .code-content::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: color-mix(in srgb, var(--oc-text) 10%, transparent);
     border-radius: 4px;
   }
 
   .code-content:hover::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: color-mix(in srgb, var(--oc-text) 20%, transparent);
   }
 
   .code-content::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: color-mix(in srgb, var(--oc-text) 30%, transparent);
   }
 
   .code-content pre {
