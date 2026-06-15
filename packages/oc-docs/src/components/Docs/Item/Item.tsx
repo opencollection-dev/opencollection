@@ -38,13 +38,13 @@ import { Examples } from './Examples/ExamplesView/ExamplesView';
 import { useMarkdownRenderer } from '../../../hooks';
 
 const methodColors: Record<string, string> = {
-  GET: '#10b981',
-  POST: '#3b82f6',
-  PUT: '#f59e0b',
-  PATCH: '#a855f7',
-  DELETE: '#ef4444',
-  HEAD: '#8b5cf6',
-  OPTIONS: '#06b6d4'
+  GET: 'var(--oc-request-methods-get)',
+  POST: 'var(--oc-request-methods-post)',
+  PUT: 'var(--oc-request-methods-put)',
+  PATCH: 'var(--oc-request-methods-patch)',
+  DELETE: 'var(--oc-request-methods-delete)',
+  HEAD: 'var(--oc-request-methods-head)',
+  OPTIONS: 'var(--oc-request-methods-options)'
 };
 
 const Item = memo(({
