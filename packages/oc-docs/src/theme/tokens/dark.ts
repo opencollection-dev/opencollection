@@ -322,7 +322,7 @@ export const dark: Theme = {
   notifications: {
     bg: colors.GRAY_3,
     list: {
-      bg: '3D3D3D',
+      bg: '#3D3D3D', // diverges from Bruno dark.js (missing '#' typo upstream); corrected so it emits a valid CSS var
       borderRight: '#4f4f4f',
       borderBottom: '#545454',
       hoverBg: '#434343',
