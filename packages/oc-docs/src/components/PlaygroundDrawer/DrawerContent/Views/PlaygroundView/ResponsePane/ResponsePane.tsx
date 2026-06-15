@@ -11,12 +11,12 @@ const ResponsePane: React.FC<ResponsePaneProps> = ({ response, isLoading }) => {
   const [activeTab, setActiveTab] = useState('response');
 
   const getStatusColor = (status?: number) => {
-    if (!status) return '#6b7280';
-    if (status >= 200 && status < 300) return 'rgb(29 122 91)';
-    if (status >= 300 && status < 400) return 'rgb(234 179 8)';
-    if (status >= 400 && status < 500) return 'rgb(239 68 68)';
-    if (status >= 500) return 'rgb(220 38 38)';
-    return 'rgb(107 114 128)';
+    if (!status) return 'var(--oc-request-tab-panel-response-status)';
+    if (status >= 200 && status < 300) return 'var(--oc-request-tab-panel-response-ok)';
+    if (status >= 300 && status < 400) return 'var(--oc-colors-text-warning)';
+    if (status >= 400 && status < 500) return 'var(--oc-request-tab-panel-response-error)';
+    if (status >= 500) return 'var(--oc-request-tab-panel-response-error)';
+    return 'var(--oc-request-tab-panel-response-status)';
   };
 
   // Handle loading, empty, and error states
