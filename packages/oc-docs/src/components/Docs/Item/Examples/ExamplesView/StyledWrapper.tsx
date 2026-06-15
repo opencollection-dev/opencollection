@@ -6,25 +6,25 @@ const StyledWrapper = styled.div`
   .section-title {
     font-size: 0.75rem;
     font-weight: 600;
-    color: var(--text-secondary, #6b7280);
+    color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 0.5rem;
   }
 
   .examples-container {
-    border: 1px solid var(--border-color, #e5e7eb);
+    border: 1px solid var(--border-color);
     border-radius: 0.5rem;
     overflow: hidden;
-    background-color: var(--bg-primary, #ffffff);
+    background-color: var(--oc-background-base);
   }
 
   .example-tabs {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: var(--bg-secondary, #f9fafb);
-    border-bottom: 1px solid var(--border-color, #e5e7eb);
+    background-color: var(--oc-background-mantle);
+    border-bottom: 1px solid var(--border-color);
   }
 
   .example-tabs-left {
@@ -43,8 +43,8 @@ const StyledWrapper = styled.div`
     justify-content: space-between;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
-    background-color: var(--bg-primary, #ffffff);
-    border-bottom: 1px solid var(--border-color, #e5e7eb);
+    background-color: var(--oc-background-base);
+    border-bottom: 1px solid var(--border-color);
     font-family: var(--font-mono, 'SF Mono', 'Consolas', monospace);
     font-size: 0.75rem;
   }
@@ -63,17 +63,17 @@ const StyledWrapper = styled.div`
     font-size: 0.65rem;
     font-weight: 600;
     text-transform: uppercase;
-    color: #ffffff;
+    color: var(--oc-colors-text-white);
   }
 
-  .example-method.get { background-color: #10b981; }
-  .example-method.post { background-color: #3b82f6; }
-  .example-method.put { background-color: #f59e0b; }
-  .example-method.patch { background-color: #a855f7; }
-  .example-method.delete { background-color: #ef4444; }
+  .example-method.get { background-color: var(--oc-request-methods-get); }
+  .example-method.post { background-color: var(--oc-request-methods-post); }
+  .example-method.put { background-color: var(--oc-request-methods-put); }
+  .example-method.patch { background-color: var(--oc-request-methods-patch); }
+  .example-method.delete { background-color: var(--oc-request-methods-delete); }
 
   .example-url {
-    color: var(--text-primary, #111827);
+    color: var(--text-primary);
     word-break: break-all;
   }
 
@@ -86,19 +86,19 @@ const StyledWrapper = styled.div`
     border: none;
     border-bottom: 2px solid transparent;
     background-color: transparent;
-    color: var(--text-secondary, #6b7280);
+    color: var(--text-secondary);
     white-space: nowrap;
   }
 
   .example-tab:hover {
-    color: var(--text-primary, #111827);
-    background-color: var(--bg-primary, #ffffff);
+    color: var(--text-primary);
+    background-color: var(--oc-background-base);
   }
 
   .example-tab.active {
-    color: var(--primary-color, #3b82f6);
-    border-bottom-color: var(--primary-color, #3b82f6);
-    background-color: var(--bg-primary, #ffffff);
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+    background-color: var(--oc-background-base);
   }
 
   .example-content {
@@ -116,7 +116,7 @@ const StyledWrapper = styled.div`
   .content-section {
     display: flex;
     flex-direction: column;
-    border-right: 1px solid var(--border-color, #e5e7eb);
+    border-right: 1px solid var(--border-color);
     min-height: 150px;
   }
 
@@ -127,7 +127,7 @@ const StyledWrapper = styled.div`
   @media (max-width: 768px) {
     .content-section {
       border-right: none;
-      border-bottom: 1px solid var(--border-color, #e5e7eb);
+      border-bottom: 1px solid var(--border-color);
     }
 
     .content-section:last-child {
@@ -146,14 +146,14 @@ const StyledWrapper = styled.div`
     align-items: center;
     justify-content: space-between;
     padding: 0.5rem 1rem;
-    border-bottom: 1px solid var(--border-color, #e5e7eb);
+    border-bottom: 1px solid var(--border-color);
     min-height: 40px;
   }
 
   .content-label {
     font-size: 0.7rem;
     font-weight: 600;
-    color: var(--text-secondary, #6b7280);
+    color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
@@ -168,39 +168,39 @@ const StyledWrapper = styled.div`
   }
 
   .status-badge.success {
-    background-color: #dcfce7;
-    color: #166534;
+    background-color: var(--oc-status-success-background);
+    color: var(--oc-status-success-text);
   }
 
   .status-badge.redirect {
-    background-color: #fef3c7;
-    color: #92400e;
+    background-color: var(--oc-status-warning-background);
+    color: var(--oc-status-warning-text);
   }
 
   .status-badge.client-error {
-    background-color: #fee2e2;
-    color: #991b1b;
+    background-color: var(--oc-status-danger-background);
+    color: var(--oc-status-danger-text);
   }
 
   .status-badge.server-error {
-    background-color: #fecaca;
-    color: #7f1d1d;
+    background-color: var(--oc-status-danger-background);
+    color: var(--oc-status-danger-text);
   }
 
   .content-toggle {
     display: flex;
     align-items: center;
-    background-color: var(--bg-primary, #ffffff);
+    background-color: var(--oc-background-base);
     border-radius: 0.25rem;
     padding: 0.125rem;
-    border: 1px solid var(--border-color, #e5e7eb);
+    border: 1px solid var(--border-color);
   }
 
   .toggle-btn {
     padding: 0.25rem 0.5rem;
     font-size: 0.65rem;
     font-weight: 500;
-    color: var(--text-secondary, #6b7280);
+    color: var(--text-secondary);
     background: none;
     border: none;
     cursor: pointer;
@@ -209,12 +209,12 @@ const StyledWrapper = styled.div`
   }
 
   .toggle-btn:hover {
-    color: var(--text-primary, #111827);
+    color: var(--text-primary);
   }
 
   .toggle-btn.active {
-    color: var(--text-primary, #111827);
-    background-color: var(--bg-secondary, #f3f4f6);
+    color: var(--text-primary);
+    background-color: var(--oc-background-surface0);
   }
 
   .toggle-btn.disabled {
@@ -229,22 +229,22 @@ const StyledWrapper = styled.div`
     padding: 0.25rem 0.5rem;
     font-size: 0.65rem;
     font-weight: 500;
-    color: var(--text-secondary, #6b7280);
-    background: var(--bg-primary, #ffffff);
-    border: 1px solid var(--border-color, #e5e7eb);
+    color: var(--text-secondary);
+    background: var(--oc-background-base);
+    border: 1px solid var(--border-color);
     border-radius: 0.25rem;
     cursor: pointer;
     transition: all 0.15s ease;
   }
 
   .copy-curl-btn:hover {
-    color: var(--text-primary, #111827);
-    border-color: var(--text-secondary, #6b7280);
+    color: var(--text-primary);
+    border-color: var(--text-secondary);
   }
 
   .copy-curl-btn.copied {
-    color: #16a34a;
-    border-color: #16a34a;
+    color: var(--oc-colors-text-green);
+    border-color: var(--oc-colors-text-green);
   }
 
   .copy-curl-btn:disabled {
@@ -261,10 +261,10 @@ const StyledWrapper = styled.div`
     top: 100%;
     right: 0;
     margin-top: 0.25rem;
-    background: var(--bg-primary, #ffffff);
-    border: 1px solid var(--border-color, #e5e7eb);
+    background: var(--oc-background-base);
+    border: 1px solid var(--border-color);
     border-radius: 0.375rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--oc-shadow-md);
     z-index: 10;
     min-width: 120px;
     overflow: hidden;
@@ -278,7 +278,7 @@ const StyledWrapper = styled.div`
     padding: 0.5rem 0.75rem;
     font-size: 0.75rem;
     font-weight: 500;
-    color: var(--text-primary, #111827);
+    color: var(--text-primary);
     background: none;
     border: none;
     cursor: pointer;
@@ -287,17 +287,17 @@ const StyledWrapper = styled.div`
   }
 
   .copy-menu-item:hover {
-    background-color: var(--bg-secondary, #f9fafb);
+    background-color: var(--oc-background-mantle);
   }
 
   .copy-menu-item.copied {
-    color: #16a34a;
+    color: var(--oc-colors-text-green);
   }
 
   .body-content {
     padding: 0.75rem 1rem;
     overflow-x: auto;
-    background-color: var(--code-bg, #f8fafc);
+    background-color: var(--code-bg);
     flex: 1;
     position: relative;
   }
@@ -311,11 +311,11 @@ const StyledWrapper = styled.div`
     justify-content: center;
     width: 28px;
     height: 28px;
-    background: var(--bg-primary, #ffffff);
-    border: 1px solid var(--border-color, #e5e7eb);
+    background: var(--oc-background-base);
+    border: 1px solid var(--border-color);
     border-radius: 0.25rem;
     cursor: pointer;
-    color: var(--text-secondary, #6b7280);
+    color: var(--text-secondary);
     transition: all 0.15s ease;
     opacity: 0;
   }
@@ -325,13 +325,13 @@ const StyledWrapper = styled.div`
   }
 
   .body-copy-btn:hover {
-    color: var(--text-primary, #111827);
-    border-color: var(--text-secondary, #6b7280);
+    color: var(--text-primary);
+    border-color: var(--text-secondary);
   }
 
   .body-copy-btn.copied {
-    color: #16a34a;
-    border-color: #16a34a;
+    color: var(--oc-colors-text-green);
+    border-color: var(--oc-colors-text-green);
     opacity: 1;
   }
 
@@ -343,7 +343,7 @@ const StyledWrapper = styled.div`
     line-height: 1.5;
     white-space: pre-wrap;
     word-break: break-word;
-    color: var(--code-text, #1e293b);
+    color: var(--code-text);
   }
 
   .headers-table {
@@ -356,15 +356,15 @@ const StyledWrapper = styled.div`
     padding: 0.5rem 1rem;
     text-align: left;
     font-weight: 500;
-    color: var(--text-secondary, #6b7280);
-    background-color: var(--bg-secondary, #f9fafb);
-    border-bottom: 1px solid var(--border-color, #e5e7eb);
+    color: var(--text-secondary);
+    background-color: var(--oc-background-mantle);
+    border-bottom: 1px solid var(--border-color);
   }
 
   .headers-table td {
     padding: 0.5rem 1rem;
-    border-bottom: 1px solid var(--border-color, #e5e7eb);
-    color: var(--text-primary, #111827);
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
     font-family: var(--font-mono, monospace);
   }
 
@@ -375,7 +375,7 @@ const StyledWrapper = styled.div`
   .no-content {
     padding: 1rem;
     text-align: center;
-    color: var(--text-secondary, #6b7280);
+    color: var(--text-secondary);
     font-size: 0.75rem;
     flex: 1;
     display: flex;
