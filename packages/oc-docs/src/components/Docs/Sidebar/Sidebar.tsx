@@ -5,6 +5,7 @@ import type { HttpRequest } from '@opencollection/types/requests/http';
 import Method from '../Method/Method';
 import OpenCollectionLogo from '../../../assets/opencollection-logo.svg';
 import { SidebarContainer, SidebarItems, SidebarItem } from './StyledWrapper';
+import ThemeToggle from '../../ThemeToggle/ThemeToggle';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { toggleItem, selectItem, selectSelectedItemId, selectDocsCollection } from '../../../store/slices/docs';
 import { getItemType, getItemName, getHttpMethod, isFolder, isHttpRequest } from '../../../utils/schemaHelpers';
@@ -143,6 +144,11 @@ const Sidebar: React.FC<SidebarProps> = () => {
         )}
       </SidebarItems>
       
+      {/* Theme toggle */}
+      <div style={{ padding: '6px 8px' }}>
+        <ThemeToggle />
+      </div>
+
       {/* OpenCollection Logo */}
       <div className="p-2" style={{ borderColor: 'var(--border-color)' }}>
         <a 
