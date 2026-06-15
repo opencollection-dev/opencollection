@@ -6,7 +6,7 @@ export const StyledBackdrop = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: color-mix(in srgb, black 30%, transparent);
   z-index: 9998;
   will-change: opacity, backdrop-filter;
   transition: none !important;
@@ -17,7 +17,7 @@ export const StyledDrawer = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: #ffffff;
+  background-color: var(--oc-background-base);
   border-top: 1px solid var(--border-color);
   z-index: 9999;
   display: flex;
@@ -35,7 +35,7 @@ export const StyledDragBar = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f8f9fa;
+  background-color: var(--oc-background-mantle);
   border-bottom: 1px solid var(--border-color);
   user-select: none;
   position: relative;
