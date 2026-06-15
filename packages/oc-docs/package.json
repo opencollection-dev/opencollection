@@ -34,7 +34,7 @@
     "standalone.d.ts"
   ],
   "scripts": {
-    "gen:theme": "tsx scripts/generate-theme-css.ts",
+    "gen:theme": "vite-node scripts/generate-theme-css.ts",
     "predev": "npm run gen:theme && npm run build:lib-bundle",
     "dev": "vite",
     "server": "node server.js",
@@ -109,7 +109,6 @@
     "rollup": "^4.50.2",
     "tailwindcss": "^4.0.9",
     "terser": "^5.44.0",
-    "tsx": "^4.22.4",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.24.1",
     "vite": "^6.2.0",

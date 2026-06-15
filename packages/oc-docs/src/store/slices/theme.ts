@@ -43,7 +43,7 @@ export const persistThemeMode = (mode: ThemeMode) => {
   }
 };
 
-interface ThemeState {
+export interface ThemeState {
   mode: ThemeMode;
 }
 
