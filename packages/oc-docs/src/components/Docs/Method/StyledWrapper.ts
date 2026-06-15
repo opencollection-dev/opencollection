@@ -15,32 +15,37 @@ export const StyledWrapper = styled.div`
   letter-spacing: 0.05em;
 
   &.get {
-    background-color: rgba(37, 99, 235, 0.1);
-    color: #2563eb;
+    background-color: color-mix(in srgb, var(--oc-request-methods-get) 10%, transparent);
+    color: var(--oc-request-methods-get);
   }
 
   &.post {
-    background-color: rgba(22, 163, 74, 0.1);
-    color: #16a34a;
+    background-color: color-mix(in srgb, var(--oc-request-methods-post) 10%, transparent);
+    color: var(--oc-request-methods-post);
   }
 
   &.put {
-    background-color: rgba(217, 119, 6, 0.1);
-    color: #d97706;
+    background-color: color-mix(in srgb, var(--oc-request-methods-put) 10%, transparent);
+    color: var(--oc-request-methods-put);
   }
 
   &.delete {
-    background-color: rgba(220, 38, 38, 0.1);
-    color: #dc2626;
+    background-color: color-mix(in srgb, var(--oc-request-methods-delete) 10%, transparent);
+    color: var(--oc-request-methods-delete);
   }
 
   &.patch {
-    background-color: rgba(147, 51, 234, 0.1);
-    color: #9333ea;
+    background-color: color-mix(in srgb, var(--oc-request-methods-patch) 10%, transparent);
+    color: var(--oc-request-methods-patch);
   }
 
-  &.options, &.head {
-    background-color: rgba(107, 114, 128, 0.1);
-    color: #6b7280;
+  &.options {
+    background-color: color-mix(in srgb, var(--oc-request-methods-options) 10%, transparent);
+    color: var(--oc-request-methods-options);
+  }
+
+  &.head {
+    background-color: color-mix(in srgb, var(--oc-request-methods-head) 10%, transparent);
+    color: var(--oc-request-methods-head);
   }
 `;
