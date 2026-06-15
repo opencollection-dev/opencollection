@@ -7,7 +7,7 @@
 .key-value-table-container {
   overflow-y: auto;
   border-radius: 8px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--oc-table-border);
 }
 
 .key-value-table {
@@ -18,7 +18,7 @@
 }
 
 .key-value-table thead {
-  background-color: var(--bg-secondary);
+  background-color: var(--oc-table-striped);
   position: sticky;
   top: 0;
   z-index: 1;
@@ -31,9 +31,9 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.3px;
-  color: var(--text-secondary);
-  border-bottom: 1px solid var(--border-color);
-  border-right: 1px solid var(--border-color);
+  color: var(--oc-table-thead-color);
+  border-bottom: 1px solid var(--oc-table-border);
+  border-right: 1px solid var(--oc-table-border);
   user-select: none;
 }
 
@@ -63,7 +63,7 @@
 }
 
 .key-value-table tbody tr:hover {
-  background-color: var(--bg-secondary);
+  background-color: var(--oc-table-striped);
 }
 
 .key-value-table tbody tr:last-child td {
@@ -72,8 +72,8 @@
 
 .key-value-table tbody td {
   padding: 4px 0;
-  border-bottom: 1px solid var(--border-color);
-  border-right: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--oc-table-border);
+  border-right: 1px solid var(--oc-table-border);
 }
 
 .key-value-table tbody td:last-child {
@@ -94,7 +94,7 @@
   width: 14px;
   height: 14px;
   cursor: pointer;
-  accent-color: var(--primary-color);
+  accent-color: var(--oc-colors-accent);
 }
 
 .key-value-table .text-input {
@@ -102,7 +102,7 @@
   border: 1px solid transparent;
   outline: none;
   background-color: transparent;
-  color: var(--text-primary);
+  color: var(--oc-table-input-color);
   padding: 5px 8px;
   font-size: 12px;
   border-radius: 4px;
@@ -115,7 +115,7 @@
 }
 
 .key-value-table .text-input::placeholder {
-  color: var(--text-tertiary);
+  color: var(--oc-colors-text-subtext0);
   opacity: 0.6;
 }
 
@@ -124,7 +124,7 @@
   align-items: center;
   justify-content: center;
   padding: 4px;
-  color: var(--text-secondary);
+  color: var(--oc-colors-text-subtext2);
   background: transparent;
   border: none;
   cursor: pointer;
@@ -133,8 +133,8 @@
 }
 
 .key-value-table .delete-button:hover {
-  color: #ef4444;
-  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--oc-colors-text-danger);
+  background-color: color-mix(in srgb, var(--oc-colors-text-danger) 10%, transparent);
 }
 
 .key-value-table .delete-button svg {
