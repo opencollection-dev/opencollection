@@ -3,13 +3,28 @@ import type { ThemeMode } from '../../theme/types';
 
 export const THEME_STORAGE_KEY = 'oc-docs.theme';
 
+const systemPrefersDark = (): boolean => {
+  try {
+    return (
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches
+    );
+  } catch {
+    return false;
+  }
+};
+
 export const readPersistedMode = (): ThemeMode => {
+  // An explicit user choice always wins.
   try {
     const v = localStorage.getItem(THEME_STORAGE_KEY);
-    return v === 'dark' ? 'dark' : 'light';
+    if (v === 'dark' || v === 'light') return v;
   } catch {
-    return 'light';
+    /* ignore */
   }
+  // Nothing persisted yet -> follow the OS preference, default light.
+  return systemPrefersDark() ? 'dark' : 'light';
 };
 
 /**

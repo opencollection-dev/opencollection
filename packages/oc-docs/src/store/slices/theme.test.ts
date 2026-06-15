@@ -40,9 +40,22 @@ describe('themeSlice', () => {
     expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('dark');
   });
 
-  it('readPersistedMode returns stored value or light', () => {
-    expect(readPersistedMode()).toBe('light');
+  it('readPersistedMode returns the explicitly stored value', () => {
     localStorage.setItem(THEME_STORAGE_KEY, 'dark');
     expect(readPersistedMode()).toBe('dark');
+    localStorage.setItem(THEME_STORAGE_KEY, 'light');
+    expect(readPersistedMode()).toBe('light');
+  });
+
+  it('falls back to the OS preference when nothing is persisted', () => {
+    // No window/matchMedia (node) -> default light.
+    expect(readPersistedMode()).toBe('light');
+
+    // OS prefers dark -> dark.
+    vi.stubGlobal('window', { matchMedia: (q: string) => ({ matches: q.includes('dark'), media: q }) });
+    expect(readPersistedMode()).toBe('dark');
+
+    // Restore (leave the localStorage stub from beforeAll intact).
+    vi.stubGlobal('window', undefined);
   });
 });

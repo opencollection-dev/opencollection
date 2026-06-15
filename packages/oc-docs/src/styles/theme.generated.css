@@ -6,6 +6,7 @@
   --oc-breakpoint-large: 1024px;
 }
 
+:root,
 [data-theme="light"] {
   --oc-mode: light;
   --oc-brand: hsl(33, 80%, 46%);

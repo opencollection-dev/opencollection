@@ -1,5 +1,8 @@
 import { test, expect } from '@playwright/test';
 
+// Default theme follows the OS preference; pin it so "starts light" is deterministic.
+test.use({ colorScheme: 'light' });
+
 test('toggle switches data-theme and persists across reload', async ({ page }) => {
   await page.goto('/');
   const html = page.locator('html');
