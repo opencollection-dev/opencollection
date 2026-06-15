@@ -117,8 +117,8 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection }) => {
         alignItems: 'center',
         justifyContent: 'center',
         height: '100%',
-        color: '#6c757d',
-        backgroundColor: '#ffffff',
+        color: 'var(--oc-colors-text-muted)',
+        backgroundColor: 'var(--oc-background-base)',
         flexDirection: 'column',
         gap: '16px'
       }}>
@@ -186,7 +186,7 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection }) => {
         overflow: 'auto',
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: '#ffffff',
+        backgroundColor: 'var(--oc-background-base)',
         minHeight: 0,
         padding: '24px'
       }}>
@@ -223,7 +223,7 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection }) => {
             alignItems: 'center',
             justifyContent: 'center',
             height: '100%',
-            color: '#6c757d'
+            color: 'var(--oc-colors-text-muted)'
           }}>
             <p>Select an environment to view its variables</p>
           </div>
