@@ -44,16 +44,16 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
   };
 
   const HTTP_METHODS: Record<string, string> = {
-    'GET': '#059669',
-    'POST': '#d97706',
-    'PUT': '#2563eb',
-    'PATCH': '#7c3aed',
-    'DELETE': '#dc2626',
-    'HEAD': '#64748b',
-    'OPTIONS': '#64748b'
+    'GET': 'var(--oc-request-methods-get)',
+    'POST': 'var(--oc-request-methods-post)',
+    'PUT': 'var(--oc-request-methods-put)',
+    'PATCH': 'var(--oc-request-methods-patch)',
+    'DELETE': 'var(--oc-request-methods-delete)',
+    'HEAD': 'var(--oc-request-methods-head)',
+    'OPTIONS': 'var(--oc-request-methods-options)'
   };
 
-  const getMethodColor = (method: string) => HTTP_METHODS[method] || '#64748b';
+  const getMethodColor = (method: string) => HTTP_METHODS[method] || 'var(--oc-colors-text-muted)';
 
   return (
     <StyledWrapper 
@@ -81,7 +81,7 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
           height="12"
           viewBox="0 0 24 24"
           fill="none"
-          stroke="#64748b"
+          stroke="var(--oc-colors-text-muted)"
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
