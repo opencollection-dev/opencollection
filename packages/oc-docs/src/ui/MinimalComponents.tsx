@@ -62,29 +62,29 @@ interface StatusBadgeProps {
 
 export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, text }) => {
   const statusConfig = {
-    active: { 
-      bg: '#d1fae5', 
-      color: '#059669', 
-      border: '#10b981',
-      label: 'Active' 
+    active: {
+      bg: 'var(--oc-status-success-background)',
+      color: 'var(--oc-status-success-text)',
+      border: 'var(--oc-status-success-border)',
+      label: 'Active'
     },
-    inactive: { 
-      bg: '#f1f5f9', 
-      color: '#64748b', 
-      border: '#cbd5e1',
-      label: 'Inactive' 
+    inactive: {
+      bg: 'var(--oc-background-surface0)',
+      color: 'var(--oc-colors-text-muted)',
+      border: 'var(--oc-border-border2)',
+      label: 'Inactive'
     },
-    warning: { 
-      bg: '#fef3c7', 
-      color: '#d97706', 
-      border: '#f59e0b',
-      label: 'Warning' 
+    warning: {
+      bg: 'var(--oc-status-warning-background)',
+      color: 'var(--oc-status-warning-text)',
+      border: 'var(--oc-status-warning-border)',
+      label: 'Warning'
     },
-    error: { 
-      bg: '#fee2e2', 
-      color: '#dc2626', 
-      border: '#ef4444',
-      label: 'Error' 
+    error: {
+      bg: 'var(--oc-status-danger-background)',
+      color: 'var(--oc-status-danger-text)',
+      border: 'var(--oc-status-danger-border)',
+      label: 'Error'
     }
   };
 
