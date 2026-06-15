@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
@@ -41,5 +42,11 @@ export default defineConfig({
   assetsInclude: ['**/*.wasm'],
   optimizeDeps: {
     exclude: ['quickjs-emscripten']
+  },
+  test: {
+    // Unit tests live in src/ as *.test.ts(x). The e2e/ specs are Playwright
+    // tests (run via `npm run test:e2e`) and must not be collected by Vitest.
+    include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    exclude: ['node_modules', 'dist', 'dist-standalone', 'e2e/**']
   }
 });
