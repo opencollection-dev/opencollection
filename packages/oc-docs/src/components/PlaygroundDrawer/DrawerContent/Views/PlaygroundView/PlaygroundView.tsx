@@ -156,7 +156,7 @@ const Playground: React.FC<PlaygroundProps> = ({ item, collection, selectedEnvir
           }}
           onMouseDown={handleMouseDown}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
+            e.currentTarget.style.backgroundColor = 'var(--oc-border-border2)';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.backgroundColor = 'var(--border-color)';
