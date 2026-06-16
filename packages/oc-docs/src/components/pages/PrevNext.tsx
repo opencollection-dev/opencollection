@@ -53,8 +53,18 @@ const Card: React.FC<{ dir: 'prev' | 'next'; neighbor: SeqNeighbor }> = ({ dir, 
   <Link to={toPath(neighbor.slug)} style={cardStyle(dir)} data-testid={`${dir}-link`}>
     <span style={labelStyle}>{dir === 'prev' ? '‹ Previous' : 'Next ›'}</span>
     <span className="flex items-center gap-2" style={nameStyle}>
-      {neighbor.name}
-      <MethodTag method={neighbor.method} />
+      {/* Mirror the badge: method before name on prev, after name on next. */}
+      {dir === 'prev' ? (
+        <>
+          <MethodTag method={neighbor.method} />
+          {neighbor.name}
+        </>
+      ) : (
+        <>
+          {neighbor.name}
+          <MethodTag method={neighbor.method} />
+        </>
+      )}
     </span>
   </Link>
 );
