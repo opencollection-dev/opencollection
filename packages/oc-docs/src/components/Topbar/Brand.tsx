@@ -19,6 +19,12 @@ const renderLogo = (logo: React.ReactNode, collectionName: string): React.ReactN
   return logo;
 };
 
+/** Display version with a leading "v" (idempotent: "1.0.0" → "v1.0.0", "v2" → "v2"). */
+const formatVersion = (version: string): string => {
+  const trimmed = version.trim();
+  return /^v/i.test(trimmed) ? trimmed : `v${trimmed}`;
+};
+
 const Brand: React.FC<BrandProps> = ({ collectionName, version, logo }) => {
   const hasLogo = logo != null && logo !== '';
   return (
@@ -31,7 +37,7 @@ const Brand: React.FC<BrandProps> = ({ collectionName, version, logo }) => {
         <span className="oc-topbar__brand-name" title={collectionName}>
           {collectionName}
         </span>
-        {version && <span className="oc-topbar__brand-version">{version}</span>}
+        {version && <span className="oc-topbar__brand-version">{formatVersion(version)}</span>}
       </span>
     </div>
   );

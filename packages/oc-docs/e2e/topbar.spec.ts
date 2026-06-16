@@ -14,7 +14,7 @@ test.describe('Topbar — mounted app', () => {
     const header = page.locator('header.oc-topbar');
     await expect(header).toBeVisible();
     await expect(header.locator('.oc-topbar__brand-name')).toContainText('Bruno Testbench');
-    await expect(header.locator('.oc-topbar__brand-version')).toContainText('1.0.0');
+    await expect(header.locator('.oc-topbar__brand-version')).toHaveText('v1.0.0');
 
     // Sticky: header stays at the top after the page scrolls.
     await page.mouse.wheel(0, 600);
