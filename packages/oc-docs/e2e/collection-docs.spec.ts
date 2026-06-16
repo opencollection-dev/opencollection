@@ -1,6 +1,9 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Collection-level documentation', () => {
+// TODO(BRU-3188): obsoleted by page-based nav — collection docs now render in the
+// overview page body, currently a placeholder. Unskip when BRU-3571 lands the overview.
+
+test.describe.skip('Collection-level documentation', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('.collection-docs');

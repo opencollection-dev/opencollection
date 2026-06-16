@@ -11,7 +11,10 @@ function endpointSection(page: Page, name: string) {
   });
 }
 
-test.describe('HTTP method badges and URLs', () => {
+// TODO(BRU-3188): obsoleted by page-based nav — these assert the old single-scroll
+// `.endpoint-section` + rich request bodies, which are now placeholders. Unskip and
+// rewrite against the request PAGE when BRU-3569 lands the shared section library.
+test.describe.skip('HTTP method badges and URLs', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('.endpoint-section');
@@ -49,7 +52,10 @@ test.describe('HTTP method badges and URLs', () => {
   });
 });
 
-test.describe('Request headers table', () => {
+// TODO(BRU-3188): obsoleted by page-based nav — these assert the old single-scroll
+// `.endpoint-section` + rich request bodies, which are now placeholders. Unskip and
+// rewrite against the request PAGE when BRU-3569 lands the shared section library.
+test.describe.skip('Request headers table', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('.endpoint-section');
@@ -84,7 +90,10 @@ test.describe('Request headers table', () => {
   });
 });
 
-test.describe('Request body rendering', () => {
+// TODO(BRU-3188): obsoleted by page-based nav — these assert the old single-scroll
+// `.endpoint-section` + rich request bodies, which are now placeholders. Unskip and
+// rewrite against the request PAGE when BRU-3569 lands the shared section library.
+test.describe.skip('Request body rendering', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('.endpoint-section');
@@ -157,7 +166,10 @@ test.describe('Request body rendering', () => {
   });
 });
 
-test.describe('Query parameters table', () => {
+// TODO(BRU-3188): obsoleted by page-based nav — these assert the old single-scroll
+// `.endpoint-section` + rich request bodies, which are now placeholders. Unskip and
+// rewrite against the request PAGE when BRU-3569 lands the shared section library.
+test.describe.skip('Query parameters table', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('.endpoint-section');
@@ -191,7 +203,10 @@ test.describe('Query parameters table', () => {
   });
 });
 
-test.describe('Request documentation', () => {
+// TODO(BRU-3188): obsoleted by page-based nav — these assert the old single-scroll
+// `.endpoint-section` + rich request bodies, which are now placeholders. Unskip and
+// rewrite against the request PAGE when BRU-3569 lands the shared section library.
+test.describe.skip('Request documentation', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('.endpoint-section');
@@ -230,7 +245,10 @@ test.describe('Request documentation', () => {
   });
 });
 
-test.describe('Code snippets', () => {
+// TODO(BRU-3188): obsoleted by page-based nav — these assert the old single-scroll
+// `.endpoint-section` + rich request bodies, which are now placeholders. Unskip and
+// rewrite against the request PAGE when BRU-3569 lands the shared section library.
+test.describe.skip('Code snippets', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('.endpoint-section');
@@ -263,7 +281,10 @@ test.describe('Code snippets', () => {
   });
 });
 
-test.describe('Examples for new request types', () => {
+// TODO(BRU-3188): obsoleted by page-based nav — these assert the old single-scroll
+// `.endpoint-section` + rich request bodies, which are now placeholders. Unskip and
+// rewrite against the request PAGE when BRU-3569 lands the shared section library.
+test.describe.skip('Examples for new request types', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('.examples-container');

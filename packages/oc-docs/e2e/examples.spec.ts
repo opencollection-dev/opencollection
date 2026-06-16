@@ -1,6 +1,9 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Request/response examples', () => {
+// TODO(BRU-3188): obsoleted by page-based nav — examples render inside the request
+// page body, now a placeholder. Unskip when BRU-3569 lands the request sections.
+
+test.describe.skip('Request/response examples', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('.examples-container');
@@ -56,7 +59,7 @@ test.describe('Request/response examples', () => {
   });
 });
 
-test.describe('Multiple examples per request (tabs)', () => {
+test.describe.skip('Multiple examples per request (tabs)', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('.examples-container');
@@ -118,7 +121,7 @@ test.describe('Multiple examples per request (tabs)', () => {
   });
 });
 
-test.describe('Body/Headers toggle within examples', () => {
+test.describe.skip('Body/Headers toggle within examples', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('.examples-container');

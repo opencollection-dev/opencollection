@@ -3,7 +3,7 @@
  */
 
 import type { Item as OpenCollectionItem } from '@opencollection/types/collection/item';
-import { getItemName, getItemType, isFolder } from './schemaHelpers';
+import { getItemName, isFolder } from './schemaHelpers';
 
 /**
  * Generate a safe HTML ID from an item name or ID
@@ -29,6 +29,14 @@ export const getItemId = (item: any): string => {
   if (!item) return 'unnamed-item';
   return item.id || item.uid || getItemName(item) || item.name || 'unnamed-item';
 };
+
+/**
+ * Read the runtime uuid hydrated onto an item (see hydrateWithUUIDs). The uuid
+ * is not part of the schema type, so this typed accessor keeps callers free of
+ * `as any` casts. Returns undefined before hydration.
+ */
+export const getItemUuid = (item: OpenCollectionItem | null | undefined): string | undefined =>
+  (item as { uuid?: string } | null | undefined)?.uuid;
 
 /**
  * Generate a section ID for use in HTML elements

@@ -65,10 +65,22 @@ const docsSlice = createSlice({
     selectItem: (state: DocsState, action: PayloadAction<string | null>) => {
       state.selectedItemId = action.payload;
     },
+    // Expand-only: force the given folders open (used to reveal the active
+    // item's ancestors on navigation/deep-link). Never collapses, so it does
+    // not fight a folder the user manually closed.
+    expandFolders: (state: DocsState, action: PayloadAction<string[]>) => {
+      if (!state.collection?.items || action.payload.length === 0) return;
+      const targets = new Set(action.payload);
+      for (const uuid of targets) {
+        findAndUpdateItem(state.collection.items, uuid, (item) => {
+          (item as { isCollapsed?: boolean }).isCollapsed = false;
+        });
+      }
+    },
   }
 });
 
-export const { setDocsCollection, clearDocsCollection, toggleItem, selectItem } = docsSlice.actions;
+export const { setDocsCollection, clearDocsCollection, toggleItem, selectItem, expandFolders } = docsSlice.actions;
 export default docsSlice.reducer;
 
 export const selectDocsCollection = (state: RootState) => state.docs.collection;
