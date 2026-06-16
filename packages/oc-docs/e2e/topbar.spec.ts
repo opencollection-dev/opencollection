@@ -22,6 +22,23 @@ test.describe('Topbar — mounted app', () => {
     expect(box?.y ?? -1).toBeLessThanOrEqual(1);
   });
 
+  test('CTA stays pinned to the right with empty slots (desktop)', async ({ page }) => {
+    await page.setViewportSize(DESKTOP);
+    await page.goto('/');
+
+    const header = page.locator('header.oc-topbar');
+    const cta = page.getByTestId('open-in-bruno');
+    const brand = header.locator('.oc-topbar__brand');
+
+    const headerBox = await header.boundingBox();
+    const ctaBox = await cta.boundingBox();
+    const brandBox = await brand.boundingBox();
+
+    // CTA hugs the right edge (within the 20px bar padding), not the brand.
+    expect((headerBox!.x + headerBox!.width) - (ctaBox!.x + ctaBox!.width)).toBeLessThanOrEqual(24);
+    expect(ctaBox!.x).toBeGreaterThan(brandBox!.x + brandBox!.width + 100);
+  });
+
   test('Open-in-Bruno CTA deep-links via bruno://', async ({ page }) => {
     await page.setViewportSize(DESKTOP);
     await page.goto('/');

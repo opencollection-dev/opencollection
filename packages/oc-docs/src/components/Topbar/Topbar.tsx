@@ -73,14 +73,16 @@ const Topbar: React.FC<TopbarProps> = ({
 
         <Brand collectionName={collectionName} version={version} logo={logo} />
 
-        {/* Inline search (tablet/desktop). On mobile it relocates to a row. */}
-        {hasSearch && !isMobile && (
+        {/* Flex-1 middle: inline search on tablet/desktop, else a spacer that
+            keeps the right-hand controls + CTA pinned to the right edge —
+            including when the search/env slots are empty. */}
+        {hasSearch && !isMobile ? (
           <div className="oc-topbar__search">
             <div className="oc-topbar__search-inner">{searchSlot}</div>
           </div>
+        ) : (
+          <div className="oc-topbar__spacer" />
         )}
-
-        {isMobile && <div className="oc-topbar__spacer" />}
 
         {/* Mobile search toggle reveals the full-width search row below. */}
         {hasSearch && isMobile && (
