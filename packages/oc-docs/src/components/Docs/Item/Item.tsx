@@ -5,7 +5,7 @@ import 'prismjs/components/prism-graphql';
 import 'prismjs/components/prism-json';
 import 'prismjs/components/prism-xml-doc';
 import 'prismjs/components/prism-python';
-import type { HttpRequest } from '@opencollection/types/requests/http';
+import type { HttpRequest, HttpRequestParam } from '@opencollection/types/requests/http';
 import type { Variable } from '@opencollection/types/common/variables';
 import { generateSectionId, getItemId } from '../../../utils/itemUtils';
 import {
@@ -24,7 +24,6 @@ import {
   getRequestExamples,
   scriptsArrayToObject,
   isFolder,
-  isHttpRequest
 } from '../../../utils/schemaHelpers';
 import {
   MinimalDataTable,
@@ -209,6 +208,14 @@ const Item = memo(({
       examples
     };
 
+    // Query and path params share one `params` array (distinguished by `type`);
+    // split in a single pass so each renders in its own labelled table.
+    const queryParams: HttpRequestParam[] = [];
+    const pathParams: HttpRequestParam[] = [];
+    for (const param of endpoint.params || []) {
+      (param?.type === 'path' ? pathParams : queryParams).push(param);
+    }
+
     return (
       <StyledWrapper
         key={itemId}
@@ -254,14 +261,25 @@ const Item = memo(({
 
         <div className="item-content-main">
           <div className="request-details">
-            {endpoint.params && endpoint.params.length > 0 && (
+            {queryParams.length > 0 && (
               <MinimalDataTable
-                data={endpoint.params}
+                data={queryParams}
                 title="Query Parameters"
                 columns={[
                   { key: 'name', label: 'Name', width: '35%' },
                   { key: 'value', label: 'Value', width: '45%' },
                   { key: 'enabled', label: '', width: '20%', render: (val: any) => val === false ? <StatusBadge status="inactive" text="Disabled" /> : null }
+                ]}
+              />
+            )}
+
+            {pathParams.length > 0 && (
+              <MinimalDataTable
+                data={pathParams}
+                title="Path Parameters"
+                columns={[
+                  { key: 'name', label: 'Name', width: '40%' },
+                  { key: 'value', label: 'Value', width: '60%' }
                 ]}
               />
             )}

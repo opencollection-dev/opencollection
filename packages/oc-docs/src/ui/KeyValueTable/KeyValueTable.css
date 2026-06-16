@@ -114,6 +114,21 @@
   outline: none;
 }
 
+/* Read-only key cell: matches the .text-input box model for column alignment,
+   but renders as static, non-editable text. */
+.key-value-table .text-readonly {
+  display: block;
+  width: 100%;
+  border: 1px solid transparent;
+  padding: 5px 8px;
+  font-size: 12px;
+  color: var(--text-primary);
+  font-family: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .key-value-table .text-input::placeholder {
   color: var(--oc-colors-text-subtext0);
   opacity: 0.6;

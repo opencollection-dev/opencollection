@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import { StyledWrapper } from './StyledWrapper';
-import { getHttpMethod, getRequestUrl } from '../../../../../../utils/schemaHelpers';
+import { getHttpMethod, getRequestUrl, getHttpParams } from '../../../../../../utils/schemaHelpers';
+import { syncPathParams } from '../../../../../../utils/pathParams';
 import { methodColorVars, getMethodColorVar } from '../../../../../../theme/methodColors';
 
 interface QueryBarProps {
@@ -22,11 +23,18 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
 
   const handleUrlChange = (newUrl: string) => {
     setUrl(newUrl);
+
+    // Keep the path params in sync with the URL's `:name` segments (add on type,
+    // remove on delete).
+    const currentParams = getHttpParams(item);
+    const syncedParams = syncPathParams(currentParams, newUrl);
+
     const updatedItem = {
       ...item,
       http: {
         ...item.http,
-        url: newUrl
+        url: newUrl,
+        ...(syncedParams !== currentParams ? { params: syncedParams } : {})
       }
     };
     onItemChange(updatedItem);

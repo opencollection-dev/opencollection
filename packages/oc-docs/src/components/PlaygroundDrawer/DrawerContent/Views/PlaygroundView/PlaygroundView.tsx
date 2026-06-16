@@ -83,7 +83,7 @@ const Playground: React.FC<PlaygroundProps> = ({ item, collection, selectedEnvir
     } finally {
       setIsLoading(false);
     }
-  }, [collection, editableItem, runner, selectedEnvironment]);
+  }, [collection, editableItem, runner, selectedEnvironment, itemUuid]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     setIsDragging(true);
