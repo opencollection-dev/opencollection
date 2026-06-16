@@ -62,7 +62,7 @@ const AppShell: React.FC<AppShellProps> = ({ logo }) => {
 
       <div className="flex flex-1 min-h-0">
         <aside
-          className="oc-sidebar h-full overflow-y-auto flex-shrink-0 hidden md:block"
+          className="oc-sidebar h-full overflow-hidden flex-shrink-0 hidden md:flex"
           style={{
             width: 'var(--sidebar-width)',
             borderRight: '1px solid var(--oc-border-border1, var(--border-color))',

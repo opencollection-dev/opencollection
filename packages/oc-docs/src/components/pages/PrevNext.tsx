@@ -2,6 +2,10 @@
  * Prev/Next pagination chrome (BRU-3188) — owned by this lane, rendered by
  * PageLayout. Walks the collection's hierarchy + seq order (the sequence is
  * built in navModel), so reordering folders/requests is reflected here.
+ *
+ * Both cards share the same anatomy (label + name + method badge); only the
+ * alignment flips. Each card fills its half of the row so the pair spans the
+ * full content width.
  */
 
 import React from 'react';
@@ -11,17 +15,19 @@ import { getMethodColorVar } from '../../theme/methodColors';
 
 const toPath = (slug: string) => `/${slug}`;
 
-const cardStyle: React.CSSProperties = {
+const cardStyle = (dir: 'prev' | 'next'): React.CSSProperties => ({
   display: 'flex',
   flexDirection: 'column',
-  gap: 4,
+  gap: 6,
+  width: '100%',
+  minHeight: 60,
   padding: '12px 16px',
-  borderRadius: 8,
+  borderRadius: 10,
   border: '1px solid var(--oc-border-border1, var(--border-color))',
   textDecoration: 'none',
-  minWidth: 0,
-  maxWidth: '48%',
-};
+  alignItems: dir === 'next' ? 'flex-end' : 'flex-start',
+  textAlign: dir === 'next' ? 'right' : 'left',
+});
 
 const labelStyle: React.CSSProperties = {
   fontSize: '0.7rem',
@@ -43,38 +49,31 @@ const MethodTag: React.FC<{ method?: string }> = ({ method }) =>
     </span>
   ) : null;
 
+const Card: React.FC<{ dir: 'prev' | 'next'; neighbor: SeqNeighbor }> = ({ dir, neighbor }) => (
+  <Link to={toPath(neighbor.slug)} style={cardStyle(dir)} data-testid={`${dir}-link`}>
+    <span style={labelStyle}>{dir === 'prev' ? '‹ Previous' : 'Next ›'}</span>
+    <span className="flex items-center gap-2" style={nameStyle}>
+      {neighbor.name}
+      <MethodTag method={neighbor.method} />
+    </span>
+  </Link>
+);
+
 const PrevNext: React.FC<{ prev?: SeqNeighbor; next?: SeqNeighbor }> = ({ prev, next }) => {
   if (!prev && !next) return null;
 
   return (
     <nav
-      className="oc-prevnext flex items-stretch justify-between gap-4"
+      className="oc-prevnext flex items-stretch gap-4"
       aria-label="Pagination"
       data-testid="prevnext"
     >
-      {prev ? (
-        <Link to={toPath(prev.slug)} style={{ ...cardStyle, alignItems: 'flex-start' }} data-testid="prev-link">
-          <span style={labelStyle}>‹ Previous</span>
-          <span style={nameStyle}>{prev.name}</span>
-        </Link>
-      ) : (
-        <span />
-      )}
-
-      {next ? (
-        <Link
-          to={toPath(next.slug)}
-          style={{ ...cardStyle, alignItems: 'flex-end', textAlign: 'right' }}
-          data-testid="next-link"
-        >
-          <span style={labelStyle}>Next ›</span>
-          <span className="flex items-center gap-2" style={nameStyle}>
-            {next.name} <MethodTag method={next.method} />
-          </span>
-        </Link>
-      ) : (
-        <span />
-      )}
+      <div className="flex" style={{ flex: 1 }}>
+        {prev && <Card dir="prev" neighbor={prev} />}
+      </div>
+      <div className="flex justify-end" style={{ flex: 1 }}>
+        {next && <Card dir="next" neighbor={next} />}
+      </div>
     </nav>
   );
 };

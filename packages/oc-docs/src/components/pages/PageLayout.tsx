@@ -29,7 +29,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({ node, prev, next, children }) =
       style={{
         maxWidth: '80rem',
         margin: '0 auto',
-        padding: 'clamp(16px, 4vw, 40px)',
+        padding: 'clamp(16px, 4vw, 40px) clamp(16px, 4vw, 40px) 20px',
         gap: 24,
       }}
     >
