@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 export const StyledWrapper = styled.div`
   background-color: var(--code-bg);
-  border: 1px solid #ebeef1;
+  border: 1px solid var(--oc-table-border);
   border-radius: 8px;
 
   /* The copy button owns its own look (see CopyButton); here we only place it

@@ -696,6 +696,7 @@ tr.themed-row:nth-child(even) {
 
 .markdown-documentation p {
   margin-bottom: 0.75rem !important;
+  color: var(--text-primary);
 }
 
 .markdown-documentation a {
