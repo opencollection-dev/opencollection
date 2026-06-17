@@ -89,7 +89,8 @@ export const StyledWrapper = styled.header`
     flex: 1 1 auto;
   }
 
-  /* ---- Icon buttons (hamburger / search toggle / overflow) ---- */
+  /* ---- Icon buttons (hamburger / search toggle / overflow) ----
+     Ghost style: no border; a hover/active background provides the affordance. */
   .oc-topbar__icon-btn {
     display: inline-flex;
     align-items: center;
@@ -100,10 +101,10 @@ export const StyledWrapper = styled.header`
     flex: none;
     background: transparent;
     color: var(--oc-colors-text-muted, var(--oc-text));
-    border: 1px solid var(--oc-border-border1);
+    border: none;
     border-radius: var(--oc-border-radius-base);
     cursor: pointer;
-    transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+    transition: background-color 0.12s ease, color 0.12s ease;
 
     svg {
       width: 16px;
@@ -118,7 +119,6 @@ export const StyledWrapper = styled.header`
     &[aria-expanded='true'] {
       background: var(--oc-background-surface0);
       color: var(--oc-text);
-      border-color: var(--oc-border-border2, var(--oc-border-border1));
     }
   }
 
