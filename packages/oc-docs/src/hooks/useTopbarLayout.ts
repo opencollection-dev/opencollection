@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 /**
  * Responsive modes for the Topbar.
  * - `mobile`  (<768): single condensed row; hamburger + search-icon + overflow.
- * - `tablet`  (768–1023): sidebar is inline, search narrows, CTA is icon-only.
+ * - `tablet`  (768–1023): hamburger, search collapses to an icon, env inline.
  * - `desktop` (>=1024): full bar with centered search.
  *
  * Breakpoints mirror the theme tokens `--oc-breakpoint-tablet` (768) and

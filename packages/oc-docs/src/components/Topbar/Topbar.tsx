@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { StyledWrapper } from './StyledWrapper';
 import Brand from './Brand';
-import OpenInBrunoButton from './OpenInBrunoButton';
 import MobileOverflow from './MobileOverflow';
-import { SearchIcon, HamburgerIcon, IconButton } from './icons';
-import { useTopbarLayout, showsHamburger } from './useTopbarLayout';
-import { useCanRunBrunoApp } from './useCanRunBrunoApp';
+import { OpenInBrunoButton } from '../OpenInBrunoButton';
+import { IconButton } from '../IconButton';
+import { SearchIcon, HamburgerIcon } from '../../assets/icons';
+import { useTopbarLayout, showsHamburger } from '../../hooks/useTopbarLayout';
+import { useCanRunBrunoApp } from '../../hooks/useCanRunBrunoApp';
 
 export interface TopbarProps {
   collectionName: string;

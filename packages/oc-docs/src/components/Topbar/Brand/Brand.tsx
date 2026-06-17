@@ -1,5 +1,6 @@
 import React from 'react';
-import InitialsAvatar from './InitialsAvatar';
+import { InitialsAvatar } from '../../InitialsAvatar';
+import { StyledWrapper } from './StyledWrapper';
 
 export interface BrandProps {
   collectionName: string;
@@ -28,7 +29,7 @@ const formatVersion = (version: string): string => {
 const Brand: React.FC<BrandProps> = ({ collectionName, version, logo }) => {
   const hasLogo = logo != null && logo !== '';
   return (
-    <div className="oc-topbar__brand">
+    <StyledWrapper className="oc-topbar__brand">
       {/* Explicit logo overrides; otherwise fall back to the initials avatar. */}
       <span className="oc-topbar__brand-logo">
         {hasLogo ? renderLogo(logo, collectionName) : <InitialsAvatar collectionName={collectionName} />}
@@ -39,7 +40,7 @@ const Brand: React.FC<BrandProps> = ({ collectionName, version, logo }) => {
         </span>
         {version && <span className="oc-topbar__brand-version">{formatVersion(version)}</span>}
       </span>
-    </div>
+    </StyledWrapper>
   );
 };
 

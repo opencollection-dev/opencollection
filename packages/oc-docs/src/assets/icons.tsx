@@ -1,78 +1,55 @@
 import React from 'react';
 
-/**
- * Line icons use `currentColor` so they inherit the control's themed text color.
- * The Bruno mascot keeps its fixed brand fills — it is a brand mark, not a
- * themeable UI surface (same treatment as the OpenCollection logo asset).
+/*
+ * Shared icon glyphs. NOTE (reconciliation): PR #45 also introduces
+ * src/assets/icons.tsx with its own glyph set (GlobeIcon, BookIcon, …) and the
+ * same `baseIconProps` constant. When the two branches merge this file will
+ * conflict at the file level (both add it) — resolution is mechanical: keep one
+ * copy of `baseIconProps` and the union of both icon sets (names don't overlap).
  */
 
-interface IconProps {
-  className?: string;
-}
+/** Shared stroke styling. `currentColor` lets the icon inherit the surrounding
+ * theme colour, so it adapts when the theme changes. */
+const baseIconProps: React.SVGProps<SVGSVGElement> = {
+  width: 20,
+  height: 20,
+  viewBox: '0 0 24 24',
+  fill: 'none',
+  stroke: 'currentColor',
+  strokeWidth: 2,
+  strokeLinecap: 'round',
+  strokeLinejoin: 'round',
+  'aria-hidden': true
+};
 
-export interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  /** Accessible label — icon buttons have no visible text. */
-  label: string;
-}
-
-/**
- * Square icon button used across the Topbar (hamburger, search toggle, overflow
- * trigger). Styling lives in StyledWrapper under `.oc-topbar__icon-btn`; extra
- * ARIA props (aria-expanded, aria-haspopup) pass through via spread.
- */
-export const IconButton: React.FC<IconButtonProps> = ({ label, children, ...rest }) => (
-  <button type="button" className="oc-topbar__icon-btn" aria-label={label} {...rest}>
-    {children}
-  </button>
-);
-
-export const SearchIcon: React.FC<IconProps> = ({ className }) => (
-  <svg
-    className={className}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
+/** Magnifying glass — Topbar search toggle. */
+export const SearchIcon: React.FC = () => (
+  <svg {...baseIconProps}>
     <circle cx="11" cy="11" r="7" />
     <path d="m21 21-4.3-4.3" />
   </svg>
 );
 
-export const HamburgerIcon: React.FC<IconProps> = ({ className }) => (
-  <svg
-    className={className}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
+/** Three bars — Topbar sidebar (hamburger) toggle. */
+export const HamburgerIcon: React.FC = () => (
+  <svg {...baseIconProps}>
     <path d="M3 6h18M3 12h18M3 18h18" />
   </svg>
 );
 
-export const OverflowIcon: React.FC<IconProps> = ({ className }) => (
-  <svg
-    className={className}
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    aria-hidden="true"
-  >
+/** Vertical ellipsis — Topbar mobile overflow trigger. */
+export const OverflowIcon: React.FC = () => (
+  <svg width={20} height={20} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
     <circle cx="12" cy="5" r="1.6" />
     <circle cx="12" cy="12" r="1.6" />
     <circle cx="12" cy="19" r="1.6" />
   </svg>
 );
 
-/** Bruno mascot — fixed brand colors, used inside the Open-in-Bruno CTA. */
-export const BrunoGlyph: React.FC<IconProps> = ({ className }) => (
-  <svg className={className} viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+/** Bruno mascot — fixed brand colours (a brand mark, not a themeable surface).
+ * Used inside the Open-in-Bruno CTA. */
+export const BrunoGlyph: React.FC = () => (
+  <svg viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <g>
       <path
         fill="#F4AA41"

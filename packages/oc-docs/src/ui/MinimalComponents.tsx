@@ -104,30 +104,6 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, text }) => {
   );
 };
 
-interface IconButtonProps {
-  icon: React.ReactNode;
-  onClick?: () => void;
-  tooltip?: string;
-  size?: 'small' | 'medium' | 'large';
-}
-
-export const IconButton: React.FC<IconButtonProps> = ({
-  icon,
-  onClick,
-  tooltip,
-  size = 'medium'
-}) => {
-  return (
-    <button
-      className={`icon-button icon-button-${size}`}
-      onClick={onClick}
-      title={tooltip}
-    >
-      {icon}
-    </button>
-  );
-};
-
 interface TabGroupProps {
   tabs: Array<{ id: string; label: string }>;
   defaultTab?: string;

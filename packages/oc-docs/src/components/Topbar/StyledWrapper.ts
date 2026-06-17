@@ -1,13 +1,13 @@
 import styled from '@emotion/styled';
 
 /**
- * Topbar styling. Square bar (radius 0, bottom border only), rounded inner
- * controls (6px). Color surfaces map to `--oc-*` theme tokens so the bar honors
- * light/dark automatically; the popover elevation uses a neutral overlay shadow.
+ * Topbar bar styling. Square bar (radius 0, bottom border only). Color surfaces
+ * map to `--oc-*` theme tokens so the bar honors light/dark automatically.
  *
  * Which controls render per breakpoint is decided in JSX (`Topbar` +
  * `useTopbarLayout`), not via CSS. `data-mode` (mobile | tablet | desktop) is
- * exposed on the host element for debugging and e2e targeting.
+ * exposed on the host element for debugging and e2e targeting. Brand, icon
+ * buttons and the overflow popover own their own styles in their components.
  */
 export const StyledWrapper = styled.header`
   position: sticky;
@@ -28,57 +28,6 @@ export const StyledWrapper = styled.header`
     box-sizing: border-box;
   }
 
-  /* ---- Brand ---- */
-  .oc-topbar__brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    min-width: 0; /* allow truncation */
-    flex-shrink: 0;
-  }
-
-  .oc-topbar__brand-logo {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 26px;
-    height: 26px;
-    flex: none;
-    overflow: hidden;
-    border-radius: var(--oc-border-radius-base);
-
-    img,
-    svg {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-  }
-
-  .oc-topbar__brand-text {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    line-height: 1.1;
-  }
-
-  .oc-topbar__brand-name {
-    font-size: var(--oc-font-size-md);
-    font-weight: 600;
-    color: var(--oc-text);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .oc-topbar__brand-version {
-    font-size: var(--oc-font-size-xs);
-    color: var(--oc-colors-text-muted, var(--oc-text));
-    opacity: 0.7;
-    white-space: nowrap;
-  }
-
-  /* ---- Slots ---- */
   .oc-topbar__search {
     display: flex;
     align-items: center;
@@ -103,40 +52,7 @@ export const StyledWrapper = styled.header`
     flex: 1 1 auto;
   }
 
-  /* ---- Icon buttons (hamburger / search toggle / overflow) ----
-     Ghost style: no border; a hover/active background provides the affordance. */
-  .oc-topbar__icon-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    padding: 0;
-    flex: none;
-    background: transparent;
-    color: var(--oc-colors-text-muted, var(--oc-text));
-    border: none;
-    border-radius: var(--oc-border-radius-base);
-    cursor: pointer;
-    transition: background-color 0.12s ease, color 0.12s ease;
-
-    svg {
-      width: 16px;
-      height: 16px;
-    }
-
-    &:hover {
-      background: var(--oc-background-surface0);
-      color: var(--oc-text);
-    }
-
-    &[aria-expanded='true'] {
-      background: var(--oc-background-surface0);
-      color: var(--oc-text);
-    }
-  }
-
-  /* ---- Mobile search row (revealed under the bar) ---- */
+  /* Search row revealed under the bar when the icon is toggled (below desktop). */
   .oc-topbar__search-row {
     display: flex;
     align-items: center;
@@ -146,28 +62,5 @@ export const StyledWrapper = styled.header`
     .oc-topbar__search-inner {
       max-width: none;
     }
-  }
-
-  /* ---- Mobile overflow popover ---- */
-  .oc-topbar__overflow {
-    position: relative;
-    flex: none;
-  }
-
-  .oc-topbar__overflow-popover {
-    position: absolute;
-    top: calc(100% + 6px);
-    right: 0;
-    z-index: 40;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    min-width: 220px;
-    padding: 12px;
-    box-sizing: border-box;
-    background: var(--oc-background-base);
-    border: 1px solid var(--oc-border-border1);
-    border-radius: var(--oc-border-radius-base);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   }
 `;

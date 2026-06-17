@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { OverflowIcon, IconButton } from './icons';
+import { OverflowIcon } from '../../../assets/icons';
+import { IconButton } from '../../IconButton';
+import { StyledWrapper } from './StyledWrapper';
 
 export interface MobileOverflowProps {
   /** Secondary controls (the same envSwitcherSlot node, relocated here). */
@@ -37,7 +39,7 @@ const MobileOverflow: React.FC<MobileOverflowProps> = ({ children }) => {
   }, [open]);
 
   return (
-    <div className="oc-topbar__overflow" ref={containerRef}>
+    <StyledWrapper className="oc-topbar__overflow" ref={containerRef}>
       <IconButton
         label="More options"
         aria-haspopup="menu"
@@ -51,7 +53,7 @@ const MobileOverflow: React.FC<MobileOverflowProps> = ({ children }) => {
           {children}
         </div>
       )}
-    </div>
+    </StyledWrapper>
   );
 };
 

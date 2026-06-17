@@ -76,7 +76,7 @@ test.describe('Topbar — mounted app', () => {
 test.describe('Topbar — harness (slots filled)', () => {
   test('desktop renders search + env slots inline', async ({ page }) => {
     await page.setViewportSize(DESKTOP);
-    await page.goto('/topbar-harness.html');
+    await page.goto('/?view=topbar-harness');
 
     await expect(page.getByTestId('search-slot-input')).toBeVisible();
     await expect(page.getByTestId('env-switcher-slot')).toBeVisible();
@@ -85,7 +85,7 @@ test.describe('Topbar — harness (slots filled)', () => {
 
   test('tablet: hamburger + inline env, search collapsed to icon, no CTA', async ({ page }) => {
     await page.setViewportSize(TABLET);
-    await page.goto('/topbar-harness.html');
+    await page.goto('/?view=topbar-harness');
 
     await expect(page.getByRole('button', { name: /toggle sidebar/i })).toBeVisible();
     await expect(page.getByTestId('env-switcher-slot')).toBeVisible();
@@ -97,7 +97,7 @@ test.describe('Topbar — harness (slots filled)', () => {
 
   test('tablet: search icon expands the search row', async ({ page }) => {
     await page.setViewportSize(TABLET);
-    await page.goto('/topbar-harness.html');
+    await page.goto('/?view=topbar-harness');
 
     await expect(page.getByTestId('search-slot-input')).toHaveCount(0);
     await page.getByRole('button', { name: /^search$/i }).click();
@@ -106,7 +106,7 @@ test.describe('Topbar — harness (slots filled)', () => {
 
   test('mobile: search icon expands the search row', async ({ page }) => {
     await page.setViewportSize(MOBILE);
-    await page.goto('/topbar-harness.html');
+    await page.goto('/?view=topbar-harness');
 
     // Inline search is hidden on mobile until the toggle is pressed.
     await expect(page.getByTestId('search-slot-input')).toHaveCount(0);
@@ -116,7 +116,7 @@ test.describe('Topbar — harness (slots filled)', () => {
 
   test('mobile: overflow popover hosts the env-switcher slot', async ({ page }) => {
     await page.setViewportSize(MOBILE);
-    await page.goto('/topbar-harness.html');
+    await page.goto('/?view=topbar-harness');
 
     await expect(page.getByTestId('env-switcher-slot')).toHaveCount(0);
     await page.getByRole('button', { name: /more options/i }).click();
@@ -125,7 +125,7 @@ test.describe('Topbar — harness (slots filled)', () => {
 
   test('mobile: hamburger invokes onToggleSidebar', async ({ page }) => {
     await page.setViewportSize(MOBILE);
-    await page.goto('/topbar-harness.html');
+    await page.goto('/?view=topbar-harness');
 
     await page.getByRole('button', { name: /toggle sidebar/i }).click();
     const calls = await page.evaluate(
