@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { OverflowIcon } from './icons';
+import { OverflowIcon, IconButton } from './icons';
 
 export interface MobileOverflowProps {
   /** Secondary controls (the same envSwitcherSlot node, relocated here). */
@@ -19,7 +19,7 @@ const MobileOverflow: React.FC<MobileOverflowProps> = ({ children }) => {
   useEffect(() => {
     if (!open) return;
 
-    const onPointerDown = (event: MouseEvent) => {
+    const onPointerDown = (event: PointerEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setOpen(false);
       }
@@ -28,26 +28,24 @@ const MobileOverflow: React.FC<MobileOverflowProps> = ({ children }) => {
       if (event.key === 'Escape') setOpen(false);
     };
 
-    document.addEventListener('mousedown', onPointerDown);
+    document.addEventListener('pointerdown', onPointerDown);
     document.addEventListener('keydown', onKeyDown);
     return () => {
-      document.removeEventListener('mousedown', onPointerDown);
+      document.removeEventListener('pointerdown', onPointerDown);
       document.removeEventListener('keydown', onKeyDown);
     };
   }, [open]);
 
   return (
     <div className="oc-topbar__overflow" ref={containerRef}>
-      <button
-        type="button"
-        className="oc-topbar__icon-btn"
-        aria-label="More options"
+      <IconButton
+        label="More options"
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((prev) => !prev)}
       >
         <OverflowIcon />
-      </button>
+      </IconButton>
       {open && (
         <div className="oc-topbar__overflow-popover" role="menu">
           {children}

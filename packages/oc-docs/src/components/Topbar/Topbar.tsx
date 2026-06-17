@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyledWrapper } from './StyledWrapper';
 import Brand from './Brand';
 import OpenInBrunoButton from './OpenInBrunoButton';
 import MobileOverflow from './MobileOverflow';
-import { SearchIcon, HamburgerIcon } from './icons';
+import { SearchIcon, HamburgerIcon, IconButton } from './icons';
 import { useTopbarLayout, showsHamburger } from './useTopbarLayout';
 
 export interface TopbarProps {
@@ -48,27 +48,23 @@ const Topbar: React.FC<TopbarProps> = ({
   const isDesktop = mode === 'desktop';
   const hasSearch = searchSlot != null;
   const hasSecondary = envSwitcherSlot != null;
+  const hasCta = openInBrunoHref != null || onOpenInBruno != null;
 
-  const cta = (
-    <OpenInBrunoButton
-      href={openInBrunoHref}
-      onClick={onOpenInBruno}
-      iconOnly={!isDesktop}
-    />
-  );
+  // Collapse the revealed mobile search row when leaving the mobile layout,
+  // so it doesn't reappear (with stale aria state) on the next mobile resize.
+  useEffect(() => {
+    if (!isMobile) setMobileSearchOpen(false);
+  }, [isMobile]);
+
+  const searchInner = <div className="oc-topbar__search-inner">{searchSlot}</div>;
 
   return (
     <StyledWrapper className="oc-topbar" data-mode={mode}>
       <div className="oc-topbar__bar">
         {showsHamburger(mode) && (
-          <button
-            type="button"
-            className="oc-topbar__icon-btn"
-            aria-label="Toggle sidebar"
-            onClick={onToggleSidebar}
-          >
+          <IconButton label="Toggle sidebar" onClick={onToggleSidebar}>
             <HamburgerIcon />
-          </button>
+          </IconButton>
         )}
 
         <Brand collectionName={collectionName} version={version} logo={logo} />
@@ -77,24 +73,20 @@ const Topbar: React.FC<TopbarProps> = ({
             keeps the right-hand controls + CTA pinned to the right edge —
             including when the search/env slots are empty. */}
         {hasSearch && !isMobile ? (
-          <div className="oc-topbar__search">
-            <div className="oc-topbar__search-inner">{searchSlot}</div>
-          </div>
+          <div className="oc-topbar__search">{searchInner}</div>
         ) : (
           <div className="oc-topbar__spacer" />
         )}
 
         {/* Mobile search toggle reveals the full-width search row below. */}
         {hasSearch && isMobile && (
-          <button
-            type="button"
-            className="oc-topbar__icon-btn"
-            aria-label="Search"
+          <IconButton
+            label="Search"
             aria-expanded={mobileSearchOpen}
             onClick={() => setMobileSearchOpen((prev) => !prev)}
           >
             <SearchIcon />
-          </button>
+          </IconButton>
         )}
 
         {/* Secondary controls: inline on tablet/desktop, overflow popover on mobile. */}
@@ -103,13 +95,13 @@ const Topbar: React.FC<TopbarProps> = ({
         )}
         {hasSecondary && isMobile && <MobileOverflow>{envSwitcherSlot}</MobileOverflow>}
 
-        {cta}
+        {hasCta && (
+          <OpenInBrunoButton href={openInBrunoHref} onClick={onOpenInBruno} iconOnly={!isDesktop} />
+        )}
       </div>
 
       {hasSearch && isMobile && mobileSearchOpen && (
-        <div className="oc-topbar__search-row">
-          <div className="oc-topbar__search-inner">{searchSlot}</div>
-        </div>
+        <div className="oc-topbar__search-row">{searchInner}</div>
       )}
     </StyledWrapper>
   );

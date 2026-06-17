@@ -58,41 +58,22 @@ const OpenInBrunoButton: React.FC<OpenInBrunoButtonProps> = ({
   label = 'Open in Bruno',
 }) => {
   const className = iconOnly ? 'is-icon' : 'is-full';
-  const ariaLabel = iconOnly ? label : undefined;
-
-  const content = (
-    <>
-      <BrunoGlyph />
-      {!iconOnly && <span>{label}</span>}
-    </>
-  );
-
-  if (href) {
-    return (
-      <Base
-        as="a"
-        className={className}
-        href={href}
-        aria-label={ariaLabel}
-        title={label}
-        data-testid="open-in-bruno"
-      >
-        {content}
-      </Base>
-    );
-  }
+  // A real deep link renders an anchor (right-click-copy, accessible); without
+  // one it falls back to a button driven by onClick.
+  const tagProps = href
+    ? ({ as: 'a' as const, href })
+    : ({ as: 'button' as const, type: 'button' as const, onClick });
 
   return (
     <Base
-      as="button"
-      type="button"
+      {...tagProps}
       className={className}
-      onClick={onClick}
-      aria-label={ariaLabel}
+      aria-label={iconOnly ? label : undefined}
       title={label}
       data-testid="open-in-bruno"
     >
-      {content}
+      <BrunoGlyph />
+      {!iconOnly && <span>{label}</span>}
     </Base>
   );
 };

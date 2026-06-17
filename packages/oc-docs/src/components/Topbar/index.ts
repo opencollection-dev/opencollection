@@ -6,6 +6,8 @@ export { default as Brand } from './Brand';
 export type { BrandProps } from './Brand';
 export { default as InitialsAvatar } from './InitialsAvatar';
 export type { InitialsAvatarProps } from './InitialsAvatar';
+export { IconButton } from './icons';
+export type { IconButtonProps } from './icons';
 export { getInitials } from './getInitials';
 export { buildBrunoDeepLink } from './buildBrunoDeepLink';
 export {

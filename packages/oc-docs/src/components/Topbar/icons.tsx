@@ -10,6 +10,22 @@ interface IconProps {
   className?: string;
 }
 
+export interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  /** Accessible label — icon buttons have no visible text. */
+  label: string;
+}
+
+/**
+ * Square icon button used across the Topbar (hamburger, search toggle, overflow
+ * trigger). Styling lives in StyledWrapper under `.oc-topbar__icon-btn`; extra
+ * ARIA props (aria-expanded, aria-haspopup) pass through via spread.
+ */
+export const IconButton: React.FC<IconButtonProps> = ({ label, children, ...rest }) => (
+  <button type="button" className="oc-topbar__icon-btn" aria-label={label} {...rest}>
+    {children}
+  </button>
+);
+
 export const SearchIcon: React.FC<IconProps> = ({ className }) => (
   <svg
     className={className}

@@ -2,11 +2,12 @@ import styled from '@emotion/styled';
 
 /**
  * Topbar styling. Square bar (radius 0, bottom border only), rounded inner
- * controls (6px). All colors map to `--oc-*` theme tokens — no hardcoded hex —
- * so the bar honors light/dark automatically.
+ * controls (6px). Color surfaces map to `--oc-*` theme tokens so the bar honors
+ * light/dark automatically; the popover elevation uses a neutral overlay shadow.
  *
- * Responsiveness is driven by `data-mode` (mobile | tablet | desktop) set from
- * `useTopbarLayout`, keeping the markup and CSS in sync from a single source.
+ * Which controls render per breakpoint is decided in JSX (`Topbar` +
+ * `useTopbarLayout`), not via CSS. `data-mode` (mobile | tablet | desktop) is
+ * exposed on the host element for debugging and e2e targeting.
  */
 export const StyledWrapper = styled.header`
   position: sticky;

@@ -22,7 +22,7 @@ const Badge = styled.span`
   background: linear-gradient(135deg, var(--oc-brand), var(--oc-primary-subtle));
   color: var(--oc-button2-color-primary-text);
   font-family: var(--font-sans);
-  font-size: 11px;
+  font-size: var(--oc-font-size-xs);
   font-weight: 700;
   line-height: 1;
   letter-spacing: 0.02em;

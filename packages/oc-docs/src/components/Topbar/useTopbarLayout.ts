@@ -35,8 +35,12 @@ export const useTopbarLayout = (): TopbarLayoutMode => {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const onResize = () => setMode(layoutModeForWidth(window.innerWidth));
-    onResize();
+    // Bail out when the band is unchanged so dragging the window edge doesn't
+    // trigger a render on every resize tick (only on actual band crossings).
+    const onResize = () => {
+      const next = layoutModeForWidth(window.innerWidth);
+      setMode((prev) => (prev === next ? prev : next));
+    };
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, []);
