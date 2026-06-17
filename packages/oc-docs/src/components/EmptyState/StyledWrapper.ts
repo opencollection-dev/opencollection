@@ -24,7 +24,7 @@ export const EmptyStateWrapper = styled.div`
     height: 3rem;
     margin-bottom: 1.25rem;
     border-radius: 50%;
-    background: var(--badge-bg);
+    background: var(--oc-border-border0);
     color: var(--text-tertiary);
   }
 
