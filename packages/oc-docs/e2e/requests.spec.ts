@@ -1,5 +1,11 @@
 import { test, expect, type Page } from '@playwright/test';
 
+// Skipped: the BRU-2571 Overview revamp renders only the Overview at `/` and
+// disabled the all-endpoints view in Docs.tsx, so `.endpoint-section` (and the
+// method badges, headers, bodies, params, docs and code snippets nested in it)
+// no longer exist on the page. Re-enable these specs (drop the `.skip`) once the
+// endpoints view is restored or relocated.
+
 /**
  * Helper to locate an endpoint section by its h1 title.
  * Using heading role avoids case-insensitive hasText matching
@@ -11,7 +17,7 @@ function endpointSection(page: Page, name: string) {
   });
 }
 
-test.describe('HTTP method badges and URLs', () => {
+test.describe.skip('HTTP method badges and URLs', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('.endpoint-section');
@@ -49,7 +55,7 @@ test.describe('HTTP method badges and URLs', () => {
   });
 });
 
-test.describe('Request headers table', () => {
+test.describe.skip('Request headers table', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('.endpoint-section');
@@ -84,7 +90,7 @@ test.describe('Request headers table', () => {
   });
 });
 
-test.describe('Request body rendering', () => {
+test.describe.skip('Request body rendering', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('.endpoint-section');
@@ -157,7 +163,7 @@ test.describe('Request body rendering', () => {
   });
 });
 
-test.describe('Query parameters table', () => {
+test.describe.skip('Query parameters table', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('.endpoint-section');
@@ -191,7 +197,7 @@ test.describe('Query parameters table', () => {
   });
 });
 
-test.describe('Request documentation', () => {
+test.describe.skip('Request documentation', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('.endpoint-section');
@@ -230,7 +236,7 @@ test.describe('Request documentation', () => {
   });
 });
 
-test.describe('Code snippets', () => {
+test.describe.skip('Code snippets', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('.endpoint-section');
@@ -263,7 +269,7 @@ test.describe('Code snippets', () => {
   });
 });
 
-test.describe('Examples for new request types', () => {
+test.describe.skip('Examples for new request types', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('.examples-container');

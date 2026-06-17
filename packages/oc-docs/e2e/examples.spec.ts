@@ -1,6 +1,11 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Request/response examples', () => {
+// Skipped: the BRU-2571 Overview revamp renders only the Overview at `/` and
+// disabled the all-endpoints view in Docs.tsx, so `.examples-container` and the
+// per-endpoint example tabs no longer exist on the page. Re-enable these specs
+// (drop the `.skip`) once the endpoints view is restored or relocated.
+
+test.describe.skip('Request/response examples', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('.examples-container');
@@ -56,7 +61,7 @@ test.describe('Request/response examples', () => {
   });
 });
 
-test.describe('Multiple examples per request (tabs)', () => {
+test.describe.skip('Multiple examples per request (tabs)', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('.examples-container');
@@ -118,7 +123,7 @@ test.describe('Multiple examples per request (tabs)', () => {
   });
 });
 
-test.describe('Body/Headers toggle within examples', () => {
+test.describe.skip('Body/Headers toggle within examples', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('.examples-container');
