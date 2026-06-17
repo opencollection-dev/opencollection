@@ -36,8 +36,10 @@ export const computeCanRunBrunoApp = ({
   return anyHoverFine && !isMobileOS;
 };
 
+const POINTER_QUERY = '(any-hover: hover) and (any-pointer: fine)';
+
 const readDeviceEnv = (): DeviceEnv => ({
-  anyHoverFine: window.matchMedia('(any-hover: hover) and (any-pointer: fine)').matches,
+  anyHoverFine: window.matchMedia(POINTER_QUERY).matches,
   userAgent: navigator.userAgent,
   platform: navigator.platform,
   maxTouchPoints: navigator.maxTouchPoints,
@@ -45,18 +47,21 @@ const readDeviceEnv = (): DeviceEnv => ({
 
 /**
  * Hook form. Defaults to `false` until the first client measure (SSR/no-window
- * safe and avoids flashing the CTA on touch devices). Re-evaluates on resize so
- * attaching a trackpad / external mouse can light the CTA up.
+ * safe and avoids flashing the CTA on touch devices). Re-evaluates when the
+ * pointer capability changes (e.g. attaching a trackpad / external mouse) by
+ * listening to the media query itself — a `resize` event would NOT fire on
+ * device attach.
  */
 export const useCanRunBrunoApp = (): boolean => {
   const [canRun, setCanRun] = useState(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
+    const mql = window.matchMedia(POINTER_QUERY);
     const update = () => setCanRun(computeCanRunBrunoApp(readDeviceEnv()));
     update();
-    window.addEventListener('resize', update);
-    return () => window.removeEventListener('resize', update);
+    mql.addEventListener('change', update);
+    return () => mql.removeEventListener('change', update);
   }, []);
 
   return canRun;

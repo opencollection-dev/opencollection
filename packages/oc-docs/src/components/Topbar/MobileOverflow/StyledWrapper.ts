@@ -19,6 +19,6 @@ export const StyledWrapper = styled.div`
     background: var(--oc-background-base);
     border: 1px solid var(--oc-border-border1);
     border-radius: var(--oc-border-radius-base);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--oc-shadow-md);
   }
 `;
