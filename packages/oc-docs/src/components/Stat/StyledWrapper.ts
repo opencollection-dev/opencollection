@@ -20,6 +20,6 @@ export const StatWrapper = styled.div`
     font-size: 0.78125rem;
     line-height: 1;
     letter-spacing: normal;
-    color: var(--text-secondary);
+    color: var(--oc-colors-text-subtext0);
   }
 `;

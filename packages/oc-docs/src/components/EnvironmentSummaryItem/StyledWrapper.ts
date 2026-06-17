@@ -24,7 +24,7 @@ export const EnvironmentSummaryItemWrapper = styled.li`
   }
 
   .environment-summary-name {
-    color: var(--text-primary);
+    color: var(--oc-text);
   }
 
   .environment-summary-spacer {
