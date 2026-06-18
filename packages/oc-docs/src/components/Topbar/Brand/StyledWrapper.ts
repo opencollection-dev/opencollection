@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 export const StyledWrapper = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   min-width: 0; /* allow truncation */
   flex-shrink: 0;
 

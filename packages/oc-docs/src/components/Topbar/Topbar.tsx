@@ -71,7 +71,7 @@ const Topbar: React.FC<TopbarProps> = ({
     <StyledWrapper className="oc-topbar" data-mode={mode}>
       <div className="oc-topbar__bar">
         {showsHamburger(mode) && (
-          <IconButton label="Toggle sidebar" onClick={onToggleSidebar}>
+          <IconButton className="oc-topbar__menu" label="Toggle sidebar" onClick={onToggleSidebar}>
             <HamburgerIcon />
           </IconButton>
         )}

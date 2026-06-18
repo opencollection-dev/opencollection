@@ -3,7 +3,9 @@ import styled from '@emotion/styled';
 /**
  * Ghost icon button: no border; a hover/active background provides the
  * affordance. Colours map to `--oc-*` theme tokens. The `svg` is sized here so
- * any glyph passed as a child renders at a consistent 16px.
+ * any glyph passed as a child renders at a consistent 18px. Glyph colour is the
+ * base text token (matches the design's solid icon buttons); callers can
+ * override per-glyph (e.g. a muted search icon) via inline style on the child.
  */
 export const StyledButton = styled.button`
   display: inline-flex;
@@ -14,15 +16,15 @@ export const StyledButton = styled.button`
   padding: 0;
   flex: none;
   background: transparent;
-  color: var(--oc-colors-text-muted, var(--oc-text));
+  color: var(--oc-text);
   border: none;
   border-radius: var(--oc-border-radius-base);
   cursor: pointer;
   transition: background-color 0.12s ease, color 0.12s ease;
 
   svg {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
   }
 
   &:hover {

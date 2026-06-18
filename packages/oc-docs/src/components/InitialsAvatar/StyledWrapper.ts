@@ -1,8 +1,10 @@
 import styled from '@emotion/styled';
 
 /**
- * 26×26 rounded badge over the Bruno amber gradient. Both gradient stops are
- * theme tokens (--oc-brand → --oc-primary-subtle), so it adapts to light/dark.
+ * 26×26 rounded badge with the collection initials. The amber gradient is a
+ * FIXED brand mark (same treatment as the Bruno mascot) — it stays identical in
+ * light and dark, matching the design, so it is intentionally not theme-tokened.
+ * Mono font + tight tracking match the design's letterforms.
  */
 export const Badge = styled.span`
   display: inline-flex;
@@ -12,12 +14,12 @@ export const Badge = styled.span`
   height: 26px;
   flex: none;
   border-radius: var(--oc-border-radius-base);
-  background: linear-gradient(135deg, var(--oc-brand), var(--oc-primary-subtle));
-  color: var(--oc-button2-color-primary-text);
-  font-family: var(--font-sans);
+  background: linear-gradient(135deg, #d37f17 0%, #dc9741 100%);
+  color: #fff;
+  font-family: var(--font-mono);
   font-size: var(--oc-font-size-xs);
   font-weight: 700;
   line-height: 1;
-  letter-spacing: 0.02em;
+  letter-spacing: -0.02em;
   user-select: none;
 `;

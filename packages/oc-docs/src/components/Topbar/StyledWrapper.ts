@@ -28,6 +28,17 @@ export const StyledWrapper = styled.header`
     box-sizing: border-box;
   }
 
+  /* Mobile tightens the horizontal inset + gap (matches design). */
+  &[data-mode='mobile'] .oc-topbar__bar {
+    gap: 8px;
+    padding: 0 12px;
+  }
+
+  /* Pull the hamburger toward the edge so the brand isn't over-indented. */
+  .oc-topbar__menu {
+    margin-left: -4px;
+  }
+
   .oc-topbar__search {
     display: flex;
     align-items: center;
