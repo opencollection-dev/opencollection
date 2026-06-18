@@ -13,6 +13,6 @@ export * from './locators';
 export const gotoOverview = async (page: Page): Promise<void> => {
   await test.step('Open the docs and wait for the Overview to render', async () => {
     await page.goto('/');
-    await page.locator('.oc-overview').waitFor({ state: 'visible' });
+    await page.getByTestId('overview').waitFor({ state: 'visible' });
   });
 };

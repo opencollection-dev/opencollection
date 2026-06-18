@@ -6,6 +6,8 @@ export const SECRET_MASK = '•'.repeat(12);
 
 interface SecretValueProps {
   value: string;
+  /** Test hook (`data-testid`); the text gets `${testId}-text`, the toggle `${testId}-toggle`. */
+  testId?: string;
 }
 
 const EyeIcon: React.FC<{ off?: boolean }> = ({ off }) => (
@@ -28,19 +30,22 @@ const EyeIcon: React.FC<{ off?: boolean }> = ({ off }) => (
  * A masked, reveal-on-demand value (used for passwords/tokens in read-only config).
  * The masked form is a fixed length so the secret's true length is not exposed.
  */
-export const SecretValue: React.FC<SecretValueProps> = ({ value }) => {
+export const SecretValue: React.FC<SecretValueProps> = ({ value, testId }) => {
   const [revealed, setRevealed] = useState(false);
 
   return (
-    <SecretValueWrapper className="secret-value">
+    <SecretValueWrapper className="secret-value" data-testid={testId}>
       {/* While masked, hide the placeholder dots from assistive tech so they aren't
           read out as "bullet" repeatedly; the toggle's label conveys it's hidden. */}
-      <span className="secret-value-text" aria-hidden={!revealed}>{revealed ? value : SECRET_MASK}</span>
+      <span className="secret-value-text" aria-hidden={!revealed} data-testid={testId ? `${testId}-text` : undefined}>
+        {revealed ? value : SECRET_MASK}
+      </span>
       <button
         type="button"
         className="secret-value-toggle"
         aria-label={revealed ? 'Hide value' : 'Show value'}
         aria-pressed={revealed}
+        data-testid={testId ? `${testId}-toggle` : undefined}
         onClick={() => setRevealed((prev) => !prev)}
       >
         <EyeIcon off={revealed} />

@@ -66,7 +66,7 @@ export const Overview: React.FC<OverviewProps> = ({ collection }) => {
         </header>
 
         <div className="overview-stats-row">
-          <CollectionStats stats={stats} />
+          <CollectionStats stats={stats} testId="overview-stats" itemTestId="overview-stat" />
         </div>
 
         <div className="overview-body">
@@ -114,6 +114,7 @@ export const Overview: React.FC<OverviewProps> = ({ collection }) => {
                   auth={collection.request?.auth}
                   scripts={scripts}
                   authModeLabels={AUTH_MODE_LABELS}
+                  testId="overview-config"
                 />
               ) : (
                 <EmptyState
