@@ -10,6 +10,8 @@ interface CopyButtonProps {
   copiedLabel?: string;
   /** How long (ms) the confirmation state persists. */
   resetAfterMs?: number;
+  /** Test hook (`data-testid`); useful here since the accessible name flips on copy. */
+  testId?: string;
   className?: string;
 }
 
@@ -36,6 +38,7 @@ export const CopyButton: React.FC<CopyButtonProps> = ({
   label = 'Copy',
   copiedLabel = 'Copied',
   resetAfterMs = 2000,
+  testId,
   className
 }) => {
   const [copied, setCopied] = useState(false);
@@ -67,6 +70,7 @@ export const CopyButton: React.FC<CopyButtonProps> = ({
       className={['copy-button', className].filter(Boolean).join(' ')}
       onClick={handleCopy}
       aria-label={copied ? copiedLabel : label}
+      data-testid={testId}
     >
       {copied ? <CheckGlyph /> : <CopyGlyph />}
     </CopyButtonWrapper>

@@ -8,6 +8,8 @@ interface EmptyStateProps {
   heading: React.ReactNode;
   /** Supporting description shown beneath the heading. */
   subheading: React.ReactNode;
+  /** Test hook (`data-testid`); the heading gets `${testId}-heading`. */
+  testId?: string;
   className?: string;
 }
 
@@ -16,12 +18,12 @@ interface EmptyStateProps {
  * circular icon badge, a heading and a subheading. Icon-agnostic and fully
  * prop-driven, so it can be reused for any empty section across pages.
  */
-export const EmptyState: React.FC<EmptyStateProps> = ({ icon, heading, subheading, className }) => (
-  <EmptyStateWrapper className={className}>
+export const EmptyState: React.FC<EmptyStateProps> = ({ icon, heading, subheading, testId, className }) => (
+  <EmptyStateWrapper className={className} data-testid={testId}>
     <span className="empty-state-icon" aria-hidden="true">
       {icon}
     </span>
-    <p className="empty-state-heading">{heading}</p>
+    <p className="empty-state-heading" data-testid={testId ? `${testId}-heading` : undefined}>{heading}</p>
     <p className="empty-state-subheading">{subheading}</p>
   </EmptyStateWrapper>
 );

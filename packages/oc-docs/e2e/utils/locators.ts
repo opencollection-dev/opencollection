@@ -3,16 +3,16 @@ import type { Page } from '@playwright/test';
 /**
  * Locators for the collection Overview page, grouped by UI area.
  *
- * Mirrors the `buildCommonLocators` pattern from the bruno tests: a single
- * builder returns thunks organised by section, so specs read declaratively and
- * every selector lives in one place. Prefers semantic role/text queries and
- * falls back to the components' own stable class hooks.
+ * Selection is driven by `data-testid` hooks set from the Overview composition root
+ * (so specs are decoupled from styling/markup churn). The only exceptions are the
+ * rendered-markdown internals (table, headings, strong/code/blockquote), which are
+ * generated HTML with no place for a test id and so are matched by role/tag/text.
  */
 export const buildOverviewLocators = (page: Page) => {
-  const root = () => page.locator('.oc-overview');
-  const stat = (label: string) => root().locator('.collection-stats .stat').filter({ hasText: label });
-  const environment = (name: string) => root().locator('.environment-summary-item').filter({ hasText: name });
-  const configuration = () => root().locator('.collection-configuration');
+  const root = () => page.getByTestId('overview');
+  const stat = (label: string) => page.getByTestId('overview-stat').filter({ hasText: label });
+  const environment = (name: string) => page.getByTestId('overview-environment').filter({ hasText: name });
+  const configuration = () => page.getByTestId('overview-config');
 
   return {
     /** The Overview page root. */
@@ -20,50 +20,51 @@ export const buildOverviewLocators = (page: Page) => {
 
     /** Headline: version label + collection name. */
     header: {
-      version: () => root().locator('.overview-version'),
-      title: () => root().locator('.overview-headline').getByRole('heading', { level: 1 })
+      version: () => page.getByTestId('overview-version'),
+      title: () => page.getByTestId('overview-title')
     },
 
     /** Stat counters (Requests / Folders / Environments). */
     stats: {
-      all: () => root().locator('.collection-stats .stat'),
+      all: () => page.getByTestId('overview-stat'),
       item: stat,
-      value: (label: string) => stat(label).locator('.stat-value')
+      value: (label: string) => stat(label).getByTestId('overview-stat-value')
     },
 
     /** An uppercase section heading (e.g. "Environments", "Collection Configuration"). */
-    sectionLabel: (name: string) => root().getByRole('heading', { level: 2, name }),
+    sectionLabel: (name: string) => page.getByTestId('overview-section-label').filter({ hasText: name }),
 
     /** Environments list. */
     environments: {
-      list: () => root().locator('.environment-summary'),
-      items: () => root().locator('.environment-summary-item'),
+      list: () => page.getByTestId('overview-environments'),
+      items: () => page.getByTestId('overview-environment'),
       item: environment,
-      variableCount: (name: string) => environment(name).locator('.environment-summary-vars')
+      variableCount: (name: string) => environment(name).getByTestId('overview-environment-vars')
     },
 
-    /** Rendered markdown documentation. */
+    /** Rendered markdown documentation (body internals matched by role/tag — generated HTML). */
     docs: {
-      content: () => root().locator('.overview-markdown'),
-      heading: (name: string) => root().locator('.overview-markdown').getByRole('heading', { name }),
-      table: () => root().locator('.overview-markdown table')
+      content: () => page.getByTestId('overview-docs'),
+      heading: (name: string) => page.getByTestId('overview-docs').getByRole('heading', { name }),
+      table: () => page.getByTestId('overview-docs').getByRole('table')
     },
 
     /** Collection configuration: headers, auth, scripts and tests. */
     configuration: {
       root: configuration,
-      subHeading: (name: string) => configuration().getByRole('heading', { level: 3, name, exact: true }),
-      row: (key: string) => configuration().locator('.config-row').filter({ hasText: key }),
-      rowValue: (key: string) => configuration().locator('.config-row').filter({ hasText: key }).locator('.config-value-cell'),
-      emptyMessages: () => configuration().locator('.config-empty-message'),
-      copyButtons: () => configuration().locator('.copy-button'),
-      secret: () => configuration().locator('.secret-value-text'),
-      revealSecretButton: () => configuration().locator('.secret-value-toggle')
+      subHeading: (name: string) => configuration().getByTestId('overview-config-subheading').filter({ hasText: name }),
+      row: (key: string) => configuration().getByTestId('overview-config-row').filter({ hasText: key }),
+      rowValue: (key: string) =>
+        configuration().getByTestId('overview-config-row').filter({ hasText: key }).getByTestId('overview-config-row-value'),
+      emptyMessages: () => configuration().getByTestId('overview-config-empty'),
+      copyButtons: () => configuration().getByTestId('overview-config-copy'),
+      secret: () => configuration().getByTestId('overview-config-secret-text'),
+      revealSecretButton: () => configuration().getByTestId('overview-config-secret-toggle')
     },
 
     /** Dashed empty-state placeholders (shown when a whole section has no data). */
     emptyState: {
-      headings: () => root().locator('.empty-state-heading')
+      headings: () => root().getByTestId('overview-empty-heading')
     }
   };
 };

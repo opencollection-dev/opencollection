@@ -63,25 +63,30 @@ export const Overview: React.FC<OverviewProps> = ({ collection }) => {
 
   return (
     <PageWrapper>
-      <OverviewWrapper className="oc-overview">
+      <OverviewWrapper className="oc-overview" data-testid="overview">
         <header className="overview-headline">
           <div>
-            {version && <div className="overview-version">{version}</div>}
-            <Heading>{name}</Heading>
+            {version && <div className="overview-version" data-testid="overview-version">{version}</div>}
+            <Heading testId="overview-title">{name}</Heading>
           </div>
         </header>
 
         <div className="overview-stats-row">
-          <CollectionStats stats={stats} />
+          <CollectionStats stats={stats} testId="overview-stats" itemTestId="overview-stat" />
         </div>
 
         <div className="overview-body">
           <div className="overview-col-left">
-            <Section label="Environments">
+            <Section label="Environments" testId="overview-section-label">
               {hasEnvironments ? (
-                <EnvironmentSummary environments={environments} />
+                <EnvironmentSummary
+                  environments={environments}
+                  testId="overview-environments"
+                  itemTestId="overview-environment"
+                />
               ) : (
                 <EmptyState
+                  testId="overview-empty"
                   icon={<GlobeIcon />}
                   heading="No environments yet"
                   subheading="This collection has no environments configured. Add one in Bruno to manage base URLs and variables."
@@ -89,14 +94,16 @@ export const Overview: React.FC<OverviewProps> = ({ collection }) => {
               )}
             </Section>
 
-            <Section label="Overview">
+            <Section label="Overview" testId="overview-section-label">
               {hasOverview ? (
                 <div
                   className="overview-markdown markdown-documentation"
+                  data-testid="overview-docs"
                   dangerouslySetInnerHTML={{ __html: docsHtml }}
                 />
               ) : (
                 <EmptyState
+                  testId="overview-empty"
                   icon={<BookIcon />}
                   heading="No overview content yet"
                   subheading="This collection has no description or readme. Add one in Bruno to introduce your API to readers — what it does, who it's for, and how to authenticate."
@@ -106,16 +113,18 @@ export const Overview: React.FC<OverviewProps> = ({ collection }) => {
           </div>
 
           <div className="overview-col-right">
-            <Section label="Collection Configuration">
+            <Section label="Collection Configuration" testId="overview-section-label">
               {hasConfig ? (
                 <CollectionConfiguration
                   headers={collection.request?.headers}
                   auth={collection.request?.auth}
                   scripts={scripts}
                   authModeLabels={AUTH_MODE_LABELS}
+                  testId="overview-config"
                 />
               ) : (
                 <EmptyState
+                  testId="overview-empty"
                   icon={<BookIcon />}
                   heading="No configuration set"
                   subheading="This collection has no shared headers, auth, scripts, variables, or tests. Configure them in Bruno and they'll appear here."

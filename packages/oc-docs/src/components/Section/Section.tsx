@@ -6,6 +6,8 @@ interface SectionProps {
   /** Heading shown above the content (rendered through `SectionLabel`). */
   label: React.ReactNode;
   children: React.ReactNode;
+  /** Test hook (`data-testid`) applied to the section's label heading. */
+  testId?: string;
   className?: string;
 }
 
@@ -14,9 +16,9 @@ interface SectionProps {
  * Owns the spacing between consecutive sections, so callers can stack them
  * without managing margins. Reusable across pages.
  */
-export const Section: React.FC<SectionProps> = ({ label, children, className }) => (
+export const Section: React.FC<SectionProps> = ({ label, children, testId, className }) => (
   <SectionWrapper className={className}>
-    <SectionLabel>{label}</SectionLabel>
+    <SectionLabel testId={testId}>{label}</SectionLabel>
     {children}
   </SectionWrapper>
 );

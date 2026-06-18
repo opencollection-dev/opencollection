@@ -26,12 +26,14 @@ interface CodeProps {
   showLineNumbers?: boolean;
   /** Show the copy-to-clipboard button (read-only viewer). */
   showCopy?: boolean;
+  /** Test hook (`data-testid`) applied to the copy button (read-only viewer). */
+  copyTestId?: string;
   /** Editor height in editable mode. */
   height?: string;
   className?: string;
 }
 
-type CodeViewerProps = Pick<CodeProps, 'code' | 'language' | 'showLineNumbers' | 'showCopy' | 'className'>;
+type CodeViewerProps = Pick<CodeProps, 'code' | 'language' | 'showLineNumbers' | 'showCopy' | 'copyTestId' | 'className'>;
 
 /**
  * Read-only, Prism-highlighted code. Lightweight and SSR-safe (highlighting runs
@@ -43,6 +45,7 @@ const CodeViewer: React.FC<CodeViewerProps> = ({
   language = 'text',
   showLineNumbers = false,
   showCopy = true,
+  copyTestId,
   className
 }) => {
   const preRef = useRef<HTMLPreElement>(null);
@@ -65,7 +68,7 @@ const CodeViewer: React.FC<CodeViewerProps> = ({
   return (
     <StyledWrapper className={wrapperClassName}>
       <div className="relative">
-        {showCopy && <CopyButton text={code} label="Copy code" className="code-copy-floating" />}
+        {showCopy && <CopyButton text={code} label="Copy code" className="code-copy-floating" testId={copyTestId} />}
 
         {showLineNumbers ? (
           <div className="code-content-numbered">
@@ -97,6 +100,7 @@ export const Code: React.FC<CodeProps> = ({
   onChange,
   showLineNumbers = false,
   showCopy = true,
+  copyTestId,
   height = '200px',
   className
 }) => {
@@ -114,6 +118,7 @@ export const Code: React.FC<CodeProps> = ({
       language={language}
       showLineNumbers={showLineNumbers}
       showCopy={showCopy}
+      copyTestId={copyTestId}
       className={className}
     />
   );
