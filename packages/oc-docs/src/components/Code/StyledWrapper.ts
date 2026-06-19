@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 export const StyledWrapper = styled.div`
+  max-width: 100%;
   background-color: var(--code-bg);
   border: 1px solid var(--oc-table-border);
   border-radius: 8px;
