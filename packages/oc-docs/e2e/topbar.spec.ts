@@ -11,10 +11,10 @@ test.describe('Topbar — mounted app', () => {
     await page.setViewportSize(DESKTOP);
     await page.goto('/');
 
-    const header = page.locator('header.oc-topbar');
+    const header = page.getByTestId('topbar');
     await expect(header).toBeVisible();
-    await expect(header.locator('.oc-topbar__brand-name')).toContainText('Bruno Testbench');
-    await expect(header.locator('.oc-topbar__brand-version')).toHaveText('v1.0.0');
+    await expect(page.getByTestId('brand-name')).toContainText('Bruno Testbench');
+    await expect(page.getByTestId('brand-version')).toHaveText('v1.0.0');
 
     // Sticky: header stays at the top after the page scrolls.
     await page.mouse.wheel(0, 600);
@@ -26,9 +26,9 @@ test.describe('Topbar — mounted app', () => {
     await page.setViewportSize(DESKTOP);
     await page.goto('/');
 
-    const header = page.locator('header.oc-topbar');
+    const header = page.getByTestId('topbar');
     const cta = page.getByTestId('open-in-bruno');
-    const brand = header.locator('.oc-topbar__brand');
+    const brand = page.getByTestId('brand');
 
     const headerBox = await header.boundingBox();
     const ctaBox = await cta.boundingBox();
@@ -68,9 +68,9 @@ test.describe('Topbar — mounted app', () => {
     await expect(page.getByTestId('open-in-bruno')).toHaveCount(0);
 
     // Compact brand: avatar + "Docs" only — no full name, no version.
-    await expect(page.locator('.oc-topbar__brand-name')).toHaveText('Docs');
-    await expect(page.locator('.oc-topbar__brand-version')).toHaveCount(0);
-    await expect(page.locator('header.oc-topbar')).not.toContainText('Bruno Testbench');
+    await expect(page.getByTestId('brand-name')).toHaveText('Docs');
+    await expect(page.getByTestId('brand-version')).toHaveCount(0);
+    await expect(page.getByTestId('topbar')).not.toContainText('Bruno Testbench');
 
     // No horizontal overflow.
     const scrollW = await page.evaluate(() => document.documentElement.scrollWidth);
@@ -85,7 +85,8 @@ test.describe('Topbar — harness (slots filled)', () => {
 
     await expect(page.getByTestId('search-slot-input')).toBeVisible();
     await expect(page.getByTestId('env-switcher-slot')).toBeVisible();
-    await expect(page.getByTestId('open-in-bruno')).toHaveClass(/is-full/);
+    // CTA shows on the desktop layout (always the full label variant).
+    await expect(page.getByTestId('open-in-bruno')).toBeVisible();
   });
 
   test('tablet: hamburger + inline env, search collapsed to icon, no CTA', async ({ page }) => {

@@ -68,7 +68,7 @@ const Topbar: React.FC<TopbarProps> = ({
   const searchInner = <div className="oc-topbar__search-inner">{searchSlot}</div>;
 
   return (
-    <StyledWrapper className="oc-topbar" data-mode={mode}>
+    <StyledWrapper className="oc-topbar" data-mode={mode} data-testid="topbar">
       <div className="oc-topbar__bar">
         {showsHamburger(mode) && (
           <IconButton className="oc-topbar__menu" label="Toggle sidebar" onClick={onToggleSidebar}>
