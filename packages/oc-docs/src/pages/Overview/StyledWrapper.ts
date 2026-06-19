@@ -6,7 +6,6 @@ import styled from '@emotion/styled';
  * Content styling lives in the individual components; this owns page-level layout.
  */
 export const OverviewWrapper = styled.div`
-  max-width: 1100px;
   color: var(--text-primary);
   padding-bottom: 2rem;
 
@@ -39,7 +38,10 @@ export const OverviewWrapper = styled.div`
 
   @media (max-width: 1100px) {
     .overview-body {
-      grid-template-columns: 1fr;
+      /* minmax(0, 1fr) (not 1fr) so the column can shrink below its content's
+         intrinsic width, letting code blocks / tables scroll instead of
+         overflowing the page on small screens. */
+      grid-template-columns: minmax(0, 1fr);
       gap: 2rem;
     }
   }

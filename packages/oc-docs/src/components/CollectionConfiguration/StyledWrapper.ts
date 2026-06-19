@@ -50,6 +50,7 @@ export const CollectionConfigurationWrapper = styled.div`
     margin: 0;
     flex: 1;
     min-width: 0;
+    overflow-wrap: anywhere;
     /* Single source of truth for value typography — every value rendered in the
        cell (plain, variable, muted, and the masked SecretValue) inherits it. */
     font-family: 'Fira Code', var(--font-mono);

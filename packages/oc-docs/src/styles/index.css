@@ -801,10 +801,16 @@ tr.themed-row:nth-child(even) {
   background-color: var(--border-color) !important;
 }
 
+.markdown-documentation .md-table-scroll {
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  margin: 1em 0 !important;
+}
+
 .markdown-documentation table {
   width: 100% !important;
   border-collapse: collapse !important;
-  margin: 1em 0 !important;
+  margin: 0 !important;
   font-size: 0.875em !important;
   border: 1px solid var(--border-color) !important;
   border-radius: 6px !important;
