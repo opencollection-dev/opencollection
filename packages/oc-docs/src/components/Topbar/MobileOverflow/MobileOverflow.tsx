@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { OverflowIcon } from '../../../assets/icons';
-import { IconButton } from '../../IconButton';
+import IconButton from '../../IconButton/IconButton';
 import { StyledWrapper } from './StyledWrapper';
 
 export interface MobileOverflowProps {

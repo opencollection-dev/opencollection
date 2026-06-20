@@ -13,7 +13,7 @@ import 'prismjs/components/prism-xml-doc';
 import 'prismjs/components/prism-http';
 import 'prismjs/components/prism-graphql';
 import OpenCollection from './components/OpenCollection/OpenCollection';
-import { Topbar } from './components/Topbar';
+import Topbar from './components/Topbar/Topbar';
 import { createOpenCollectionStore } from './store/store';
 import { sampleCollectionYaml } from './sampleCollection';
 

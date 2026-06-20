@@ -1,5 +1,5 @@
 import React from 'react';
-import { InitialsAvatar } from '../../InitialsAvatar';
+import InitialsAvatar from '../../InitialsAvatar/InitialsAvatar';
 import { StyledWrapper } from './StyledWrapper';
 
 export interface BrandProps {
