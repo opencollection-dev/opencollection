@@ -5,8 +5,8 @@
     "paths": {
       "@pages/*": ["pages/*"],
       "@components/*": ["components/*"],
-      "@fixtures": ["fixtures/index.ts"],
-      "@fixtures/*": ["fixtures/*"]
+      "@fixtures": ["playwright/pages.fixture.ts"],
+      "@fixtures/*": ["playwright/*"]
     },
     "noEmit": true
   },

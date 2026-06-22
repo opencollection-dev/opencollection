@@ -10,10 +10,9 @@ e2e/
 ├── tsconfig.json          # extends the root; defines the @pages / @components / @fixtures aliases
 ├── config/
 │   └── app.config.ts      # baseURL + webServer command (one env today; BASE_URL overrides)
-├── fixtures/
-│   ├── index.ts           # the project `test` — base test + every page-object fixture (mergeTests)
-│   ├── layout.fixture.ts
-│   └── collection.fixture.ts
+├── playwright/            # Playwright test harness (named to match the OSS codebase;
+│   └── pages.fixture.ts   #   `fixtures/` is reserved for static test data)
+│                          #   the project `test` — base test + all page-object fixtures (@fixtures)
 ├── pages/                 # one class per route/screen — *.page.ts, extend BasePage
 │   ├── base.page.ts
 │   ├── layout.page.ts     # app-wide chrome (mount root, theme)
@@ -113,7 +112,7 @@ test.describe('Requests', () => {
 1. Add `pages/<name>.page.ts` extending `BasePage`.
 2. Split its UI into `components/<name>/*.component.ts` (extend `BaseComponent`) and
    compose them as `readonly` fields.
-3. Add `fixtures/<name>.fixture.ts` and merge it in `fixtures/index.ts` via `mergeTests()`.
+3. Add a fixture for it in `playwright/pages.fixture.ts` (all page objects share that file).
 4. Add specs under `tests/<feature>/`.
 
 ## Locator strategy

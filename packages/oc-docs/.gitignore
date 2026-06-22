@@ -1,5 +1,4 @@
 src/scripting/sandbox/quickjs/bundled-libraries.iife.js
 
 # Playwright
-test-results/
 playwright-report/
