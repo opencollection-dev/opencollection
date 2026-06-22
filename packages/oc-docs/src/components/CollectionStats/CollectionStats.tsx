@@ -1,6 +1,6 @@
 import React from 'react';
-import { Stat } from '../Stat';
-import type { StatItem } from '../Stat';
+import { Stat } from '../Stat/Stat';
+import type { StatItem } from '../Stat/Stat';
 import { CollectionStatsWrapper } from './StyledWrapper';
 
 interface CollectionStatsProps {

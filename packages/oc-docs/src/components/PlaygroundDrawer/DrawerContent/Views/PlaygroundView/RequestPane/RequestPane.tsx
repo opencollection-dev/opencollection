@@ -3,7 +3,14 @@ import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { Assertion } from '@opencollection/types/common/assertions';
 import Tabs from '../../../../../../ui/Tabs/Tabs';
 import { KeyValueRow } from '../../../../../../ui/KeyValueTable/KeyValueTable';
-import { HeadersTab, ParamsTab, BodyTab, AuthTab, ScriptsTab, TestsTab, AssertsTab, VariablesTab } from '../../Common';
+import HeadersTab from '../../Common/HeadersTab';
+import ParamsTab from '../../Common/ParamsTab';
+import BodyTab from '../../Common/BodyTab';
+import AuthTab from '../../Common/AuthTab';
+import ScriptsTab from '../../Common/ScriptsTab';
+import TestsTab from '../../Common/TestsTab';
+import AssertsTab from '../../Common/AssertsTab';
+import VariablesTab from '../../Common/VariablesTab';
 import { 
   getHttpParams, 
   getHttpHeaders, 

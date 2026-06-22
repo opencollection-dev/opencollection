@@ -1,6 +1,6 @@
 import React from 'react';
 import { TabGroup } from '../../../ui/MinimalComponents';
-import { Code } from '../../Code';
+import { Code } from '../../Code/Code';
 import { StyledWrapper } from './StyledWrapper';
 import { generateCurlCommand, generateJavaScriptCode, generatePythonCode } from './generateCodeSnippets';
 

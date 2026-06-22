@@ -1,9 +1,9 @@
 import React from 'react';
 import type { HttpRequestHeader } from '@opencollection/types/requests/http';
 import type { Auth } from '@opencollection/types/common/auth';
-import { Code } from '../Code';
-import { SecretValue } from '../SecretValue';
-import { SubHeading } from '../SubHeading';
+import { Code } from '../Code/Code';
+import { SecretValue } from '../SecretValue/SecretValue';
+import { SubHeading } from '../SubHeading/SubHeading';
 import { CollectionConfigurationWrapper } from './StyledWrapper';
 
 interface CollectionScripts {

@@ -7,13 +7,13 @@ import { hasCollectionConfiguration } from '../../utils/collectionConfiguration'
 import { scriptsArrayToObject } from '../../utils/schemaHelpers';
 import { formatCollectionVersion } from '../../utils/common';
 import { AUTH_MODE_LABELS } from '../../constants';
-import { CollectionStats } from '../../components/CollectionStats';
-import { EnvironmentSummary } from '../../components/EnvironmentSummary';
-import { CollectionConfiguration } from '../../components/CollectionConfiguration';
-import { EmptyState } from '../../components/EmptyState';
-import { PageWrapper } from '../../components/PageWrapper';
-import { Heading } from '../../components/Heading';
-import { Section } from '../../components/Section';
+import { CollectionStats } from '../../components/CollectionStats/CollectionStats';
+import { EnvironmentSummary } from '../../components/EnvironmentSummary/EnvironmentSummary';
+import { CollectionConfiguration } from '../../components/CollectionConfiguration/CollectionConfiguration';
+import { EmptyState } from '../../components/EmptyState/EmptyState';
+import { PageWrapper } from '../../components/PageWrapper/PageWrapper';
+import { Heading } from '../../components/Heading/Heading';
+import { Section } from '../../components/Section/Section';
 import { GlobeIcon, BookIcon } from '../../assets/icons';
 import { OverviewWrapper } from './StyledWrapper';
 

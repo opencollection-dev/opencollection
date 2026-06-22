@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import Tabs from '../../../../../../ui/Tabs/Tabs';
-import { ResponseBodyTab, ResponseHeadersTab, TestResultsTab } from '../../Common';
+import ResponseBodyTab from '../../Common/ResponseBodyTab';
+import ResponseHeadersTab from '../../Common/ResponseHeadersTab';
+import TestResultsTab from '../../Common/TestResultsTab';
 
 interface ResponsePaneProps {
   response: any;

@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, useEffect, useMemo, useRef } from 'react';
-import { CopyButton } from '../CopyButton';
+import { CopyButton } from '../CopyButton/CopyButton';
 import { StyledWrapper } from './StyledWrapper';
 
 import Prism from 'prismjs';

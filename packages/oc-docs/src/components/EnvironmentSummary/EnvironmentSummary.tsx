@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Environment } from '@opencollection/types/config/environments';
-import { EnvironmentSummaryItem } from '../EnvironmentSummaryItem';
+import { EnvironmentSummaryItem } from '../EnvironmentSummaryItem/EnvironmentSummaryItem';
 import { EnvironmentSummaryWrapper } from './StyledWrapper';
 
 interface EnvironmentSummaryProps {
