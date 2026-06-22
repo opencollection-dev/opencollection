@@ -10,6 +10,10 @@
 
   /* Brand / accent */
   --primary-color: var(--oc-brand);
+  /* Brand at text contrast — links/labels/ghost-buttons (design: --brand-text). */
+  --primary-text: var(--oc-primary-text);
+  /* Subtle primary tint for variable chips & inherited values (design: --brand-soft). */
+  --brand-soft: color-mix(in srgb, var(--primary-color) 8%, transparent);
 
   /* Radius */
   --oc-radius: var(--oc-border-radius-base);
@@ -30,9 +34,13 @@
   --text-primary: var(--oc-text);
   --text-secondary: var(--oc-colors-text-subtext2);
   --text-tertiary: var(--oc-colors-text-subtext0);
+  /* Subtext-1 (#838383) — sits between --text-secondary (#666) and --text-tertiary (#9B9B9B). */
+  --text-muted: var(--oc-colors-text-muted);
 
   /* Border colors */
   --border-color: var(--oc-border-border1);
+  /* Stronger border (#cccccc) for hover/dividers needing more contrast (design: --border-2). */
+  --border-strong: var(--oc-border-border2);
 
   /* Code colors */
   --code-bg: var(--oc-background-crust); /* approx: old #f6f8fa */

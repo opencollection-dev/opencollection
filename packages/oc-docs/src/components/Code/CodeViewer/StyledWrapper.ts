@@ -1,10 +1,9 @@
 import styled from '@emotion/styled';
 
 export const StyledWrapper = styled.div`
-  max-width: 100%;
-  background-color: var(--code-bg);
-  border: 1px solid var(--oc-table-border);
-  border-radius: 8px;
+  background-color: var(--oc-background-base);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
 
   .code-copy-floating {
     position: absolute;
@@ -20,7 +19,7 @@ export const StyledWrapper = styled.div`
   }
 
   .code-content {
-    background-color: var(--code-bg);
+    background-color: var(--oc-background-base);
     color: var(--text-primary);
   }
 
@@ -42,29 +41,33 @@ export const StyledWrapper = styled.div`
   }
 
   .code-content pre {
-    font-size: 13px;
+    font-size: 0.75rem;
     color: var(--text-primary);
     line-height: 1.65;
   }
   .code-content code {
     color: var(--text-primary);
-    font-size: 13px;
+    font-size: 0.75rem;
   }
 
   .code-content-numbered {
     display: flex;
     align-items: stretch;
-    background-color: var(--oc-bg);
+    background-color: var(--oc-background-base);
   }
+  /* Design: 8px vertical padding; each number padded 12px left / 10px right so the
+     gutter lines up with the code rows. Dim, 70% opacity. */
   .code-line-numbers {
     flex-shrink: 0;
-    padding: 1rem 0 1rem 1rem;
+    padding: 0.5rem 0;
     text-align: right;
     user-select: none;
     color: var(--text-tertiary);
+    opacity: 0.7;
   }
   .code-line-numbers span {
     display: block;
+    padding: 0 0.625rem 0 0.75rem;
     font-family: 'Fira Code', var(--font-mono);
     font-weight: 400;
     font-size: 0.75rem;
@@ -74,8 +77,8 @@ export const StyledWrapper = styled.div`
   .code-content--numbered {
     flex: 1;
     min-width: 0;
-    padding: 1rem 1rem 1rem 0.75rem;
-    background-color: var(--background-light);
+    padding: 0.5rem 0.875rem 0.5rem 0;
+    background-color: var(--oc-background-base);
   }
   .code-content--numbered pre,
   .code-content--numbered code {

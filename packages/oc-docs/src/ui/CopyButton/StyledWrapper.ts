@@ -4,11 +4,12 @@ export const StyledWrapper = styled.button`
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  font-size: 0.875rem;
   padding: 0.3rem;
   border: 1px solid var(--border-color);
   border-radius: var(--oc-radius);
   color: var(--text-tertiary);
-  background-color: var(--background-light);
+  background-color: var(--oc-bg);
   cursor: pointer;
   transition: color 0.15s ease, background-color 0.15s ease;
 

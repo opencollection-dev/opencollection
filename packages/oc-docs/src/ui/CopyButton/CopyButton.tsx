@@ -7,18 +7,19 @@ interface CopyButtonProps {
   copiedLabel?: string;
   resetAfterMs?: number;
   testId?: string;
+  style?: React.CSSProperties;
   className?: string;
 }
 
 const CopyGlyph: React.FC = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+  <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
     <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
   </svg>
 );
 
 const CheckGlyph: React.FC = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+  <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
     <polyline points="20 6 9 17 4 12" />
   </svg>
 );
@@ -29,6 +30,7 @@ export const CopyButton: React.FC<CopyButtonProps> = ({
   copiedLabel = 'Copied',
   resetAfterMs = 2000,
   testId,
+  style,
   className
 }) => {
   const [copied, setCopied] = useState(false);
@@ -60,6 +62,7 @@ export const CopyButton: React.FC<CopyButtonProps> = ({
       onClick={handleCopy}
       aria-label={copied ? copiedLabel : label}
       data-testid={testId}
+      style={style}
     >
       {copied ? <CheckGlyph /> : <CopyGlyph />}
     </StyledWrapper>

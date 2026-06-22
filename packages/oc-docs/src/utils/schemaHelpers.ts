@@ -3,8 +3,8 @@
  * 
  * The new schema groups request properties into:
  * - info: name, type, seq, description, tags
- * - http/graphql/grpc/websocket: protocol-specific details (method, url, headers, body, params)
- * - runtime: auth, variables, assertions, scripts
+ * - http/graphql/grpc/websocket: protocol-specific details (method, url, headers, body, params, auth)
+ * - runtime: variables, assertions, scripts, actions
  * - settings: timeout, followRedirects, etc.
  * - docs: documentation at root level
  * 
@@ -215,21 +215,32 @@ export const getHttpParams = (item: HttpRequest | null | undefined): HttpRequest
 };
 
 /**
- * Get auth from a request (from runtime block or root)
+ * Get auth from a request. In the current schema auth lives in the protocol-detail
+ * block (`http.auth`, and likewise for graphql/grpc/websocket); older data may carry
+ * it on a `runtime` block or at the root. Returns the raw `Auth` value (which may be
+ * the `'inherit'` string), or undefined when no auth is declared anywhere.
  */
 export const getRequestAuth = (item: RequestItem | null | undefined): any => {
   if (!item) return undefined;
-  
-  // New schema: auth in runtime block
+
+  // Current schema: auth is part of the protocol-detail block.
+  const blocks = item as Record<string, { auth?: unknown } | undefined>;
+  for (const key of ['http', 'graphql', 'grpc', 'websocket']) {
+    if (blocks[key]?.auth !== undefined) {
+      return blocks[key]?.auth;
+    }
+  }
+
+  // Legacy: auth grouped under a runtime block.
   if ('runtime' in item && (item as any).runtime?.auth) {
     return (item as any).runtime.auth;
   }
-  
-  // Backwards compatibility: auth at root level
+
+  // Backwards compatibility: auth at root level.
   if ('auth' in item) {
     return (item as any).auth;
   }
-  
+
   return undefined;
 };
 

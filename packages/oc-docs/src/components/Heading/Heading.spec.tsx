@@ -15,4 +15,18 @@ describe('Heading', () => {
     expect(html).toContain('<h2');
     expect(html).toContain('Section');
   });
+
+  // Assert on the element's class attribute (the injected <style> tag contains both
+  // variant selectors regardless of which one is applied to the element).
+  it('defaults to the lg size variant', () => {
+    const html = renderToStaticMarkup(<Heading>Title</Heading>);
+    expect(html).toMatch(/class="[^"]*oc-heading--lg[^"]*"/);
+    expect(html).not.toMatch(/class="[^"]*oc-heading--md[^"]*"/);
+  });
+
+  it('applies the md size variant when requested', () => {
+    const html = renderToStaticMarkup(<Heading size="md">Login</Heading>);
+    expect(html).toMatch(/class="[^"]*oc-heading--md[^"]*"/);
+    expect(html).not.toMatch(/class="[^"]*oc-heading--lg[^"]*"/);
+  });
 });

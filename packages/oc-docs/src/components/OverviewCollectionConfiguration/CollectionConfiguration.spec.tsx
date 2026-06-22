@@ -52,6 +52,7 @@ describe('CollectionConfiguration', () => {
     expect(html).toContain('Add scripts to run for all requests in the collection');
     expect(html).toContain('Add tests to run for all requests in the collection');
     expect(html).toContain('bearer');
-    expect(html).not.toContain('Add authentication to inherit');
+    expect(html).toContain('3 hidden sections');
+    expect(html).toContain('oc-hidden-sections');
   });
 });

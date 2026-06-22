@@ -8,13 +8,15 @@ const createRenderer = (): MarkdownIt => {
   const markdownIt = new MarkdownIt({
     html: true,
     linkify: true,
-    typographer: true,
+    // Off: smart-typography rewrites punctuation in technical docs — e.g. (c)->©,
+    // --->en-dash, ...->ellipsis, straight->curly quotes — which corrupts API copy.
+    typographer: false,
     breaks: true,
     highlight: (str, lang) => {
       if (lang && Prism.languages[lang]) {
         try {
           return Prism.highlight(str, Prism.languages[lang], lang);
-        } catch (error) {
+        } catch {
           // Ignore highlighting errors and fall back to default behaviour
         }
       }

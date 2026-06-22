@@ -1,66 +1,38 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useMemo } from 'react';
 import type { OpenCollection as OpenCollectionCollection } from '@opencollection/types';
 import Sidebar from './Sidebar/Sidebar';
 import Overview from '../../pages/Overview/Overview';
-import { getItemId, generateSafeId } from '../../utils/itemUtils';
-import { isFolder } from '../../utils/schemaHelpers';
-import { useAppSelector } from '../../store/hooks';
-import { selectSelectedItemId } from '../../store/slices/docs';
+import Request from '../../pages/Request/Request';
+import { findItemByUuid, getAncestorsByUuid } from '../../utils/itemTree';
+import { isHttpRequest } from '../../utils/schemaHelpers';
+import { useAppSelector, useAppDispatch } from '../../store/hooks';
+import { selectSelectedItemId, selectItem } from '../../store/slices/docs';
 
 interface DocsProps {
   docsCollection: OpenCollectionCollection | null;
-  filteredCollectionItems: any[];
+  /** Retained for API compatibility; the sidebar reads collection items from the store. */
+  filteredCollectionItems?: unknown[];
   onOpenPlayground?: () => void;
 }
 
-const Docs: React.FC<DocsProps> = ({
-  docsCollection,
-  filteredCollectionItems,
-}) => {
+/**
+ * Docs content shell: a sidebar plus the active page. When an HTTP request is
+ * selected we show its detail page; otherwise (a folder, or nothing selected) we
+ * show the collection Overview. Selection flows through the Redux `docs` slice.
+ */
+const Docs: React.FC<DocsProps> = ({ docsCollection, onOpenPlayground }) => {
+  const dispatch = useAppDispatch();
   const selectedItemId = useAppSelector(selectSelectedItemId);
-  const isInitialMount = useRef(true);
 
-  // Scroll to selected item when it changes (but not on initial load)
-  useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-      return;
-    }
+  const selected = useMemo(
+    () => (docsCollection && selectedItemId ? findItemByUuid(docsCollection.items, selectedItemId) : null),
+    [docsCollection, selectedItemId]
+  );
 
-    if (selectedItemId && filteredCollectionItems.length > 0) {
-      // Find the item by UUID to get its safe ID for scrolling
-      const findItemForScroll = (items: any[]): any => {
-        for (const item of items) {
-          const itemUuid = (item as any).uuid;
-          const itemId = getItemId(item);
-          const safeId = generateSafeId(itemId);
-          
-          // Check if this is the selected item
-          if (itemUuid === selectedItemId || safeId === selectedItemId || itemId === selectedItemId) {
-            return { item, safeId };
-          }
-          
-          // If it's a folder, search recursively
-          if (isFolder(item) && item.items) {
-            const found = findItemForScroll(item.items);
-            if (found) return found;
-          }
-        }
-        return null;
-      };
-
-      const result = findItemForScroll(filteredCollectionItems);
-      if (result) {
-        // Scroll to the item after a short delay to ensure DOM is updated
-        setTimeout(() => {
-          const element = document.getElementById(`section-${result.safeId}`);
-          if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
-        }, 100);
-      }
-    }
-  }, [selectedItemId, filteredCollectionItems]);
+  const ancestry = useMemo(
+    () => (docsCollection && selectedItemId ? getAncestorsByUuid(docsCollection, selectedItemId) : []),
+    [docsCollection, selectedItemId]
+  );
 
   return (
     <>
@@ -76,16 +48,21 @@ const Docs: React.FC<DocsProps> = ({
         <Sidebar />
       </div>
 
-      <div
-        className="playground-content h-full overflow-y-auto flex-1"
-      >
-        {docsCollection && (
+      <div className="playground-content h-full overflow-y-auto flex-1">
+        {docsCollection && isHttpRequest(selected) ? (
+          <Request
+            item={selected}
+            ancestry={ancestry}
+            collection={docsCollection}
+            onTryClick={() => onOpenPlayground?.()}
+            onBreadcrumbClick={(uuid) => dispatch(selectItem(uuid))}
+          />
+        ) : docsCollection ? (
           <Overview collection={docsCollection} />
-        )}
+        ) : null}
       </div>
     </>
   );
 };
 
 export default Docs;
-

@@ -4,9 +4,10 @@ export const StyledWrapper = styled.h2`
   margin: 0 0 0.75rem 0;
   font-family: var(--font-sans);
   font-weight: 600;
+  /* Design: 11px eyebrow (DocLabel) with 1.4px tracking, uppercase. */
   font-size: 0.6875rem;
   line-height: 1;
   letter-spacing: 1.4px;
   text-transform: uppercase;
-  color: var(--oc-colors-text-subtext1);
+  color: var(--oc-text);
 `;
