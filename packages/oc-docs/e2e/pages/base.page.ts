@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test';
+import type { Page, Locator } from '@playwright/test';
 
 export abstract class BasePage {
   readonly root = this.page.locator('#root');
