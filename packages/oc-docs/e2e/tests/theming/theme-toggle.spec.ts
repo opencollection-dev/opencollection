@@ -11,7 +11,7 @@ test('toggle switches data-theme and persists across reload', async ({ layoutPag
   await layoutPage.themeToggle.switchToDark();
   await expect(layoutPage.html).toHaveAttribute('data-theme', 'dark');
   // Now in dark mode the toggle offers "Switch to light theme".
-  await expect(layoutPage.themeToggle.switchToLightButton).toBeVisible();
+  await expect(layoutPage.themeToggle.button).toHaveAttribute('aria-label', 'Switch to light theme');
 
   await layoutPage.reload();
   await expect(layoutPage.html).toHaveAttribute('data-theme', 'dark');

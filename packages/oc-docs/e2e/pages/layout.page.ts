@@ -21,10 +21,4 @@ export class LayoutPage extends BasePage {
   collectionHeading(name: string): Locator {
     return this.page.getByRole('heading', { name });
   }
-
-  /** Open a path on the docs app (defaults to the root) and wait for it to boot. */
-  async goto(path = '/'): Promise<void> {
-    await this.navigate(path);
-    await this.root.waitFor({ state: 'visible' });
-  }
 }

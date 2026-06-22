@@ -1,4 +1,4 @@
-import { test, type Locator } from '@playwright/test';
+import type { Locator } from '@playwright/test';
 import { BasePage } from './base.page';
 import { HeaderComponent } from '@components/overview/header.component';
 import { StatsComponent } from '@components/overview/stats.component';
@@ -27,13 +27,5 @@ export class OverviewPage extends BasePage {
   /** An uppercase section heading (e.g. "Environments", "Collection Configuration"). */
   sectionLabel(name: string): Locator {
     return this.page.getByTestId('overview-section-label').filter({ hasText: name });
-  }
-
-  /** Open the docs app and wait for the Overview to finish rendering. */
-  async goto(): Promise<void> {
-    await test.step('Open the docs and wait for the Overview to render', async () => {
-      await this.navigate();
-      await this.root.waitFor({ state: 'visible' });
-    });
   }
 }
