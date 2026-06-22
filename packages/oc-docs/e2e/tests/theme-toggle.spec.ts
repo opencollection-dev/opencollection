@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures';
 
 // Default theme follows the OS preference; pin it so "starts light" is deterministic.
 test.use({ colorScheme: 'light' });
