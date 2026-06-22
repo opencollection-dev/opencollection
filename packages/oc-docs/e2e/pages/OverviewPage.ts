@@ -1,30 +1,39 @@
-import { test } from '@playwright/test';
-import type { Page } from '@playwright/test';
-
+import { test, type Locator } from '@playwright/test';
 import { BasePage } from './BasePage';
-import { buildOverviewLocators } from '../locators/locators.locators';
+import { OverviewHeader } from '../components/OverviewHeader';
+import { OverviewStats } from '../components/OverviewStats';
+import { EnvironmentSummary } from '../components/EnvironmentSummary';
+import { OverviewDocs } from '../components/OverviewDocs';
+import { CollectionConfiguration } from '../components/CollectionConfiguration';
 
 /**
- * Page object for the collection Overview page (the docs app root).
- *
- * Owns the page-level actions (navigation, waiting for render) and exposes the
- * section-grouped locators via {@link OverviewPage.locators}, so specs read as
- * `overview.locators.<section>.<element>()` and never touch raw selectors.
+ * Page object for the collection Overview (the docs app root). Owns page-level
+ * actions (navigation, readiness) and composes the section component objects, so
+ * specs read as `overviewPage.<section>.<element>` with no raw selectors.
  */
 export class OverviewPage extends BasePage {
-  /** Section-grouped locators for the Overview page. */
-  readonly locators: ReturnType<typeof buildOverviewLocators>;
+  /** The Overview page root. */
+  readonly root = this.page.getByTestId('overview');
 
-  constructor(page: Page) {
-    super(page);
-    this.locators = buildOverviewLocators(page);
+  readonly header = new OverviewHeader(this.page);
+  readonly stats = new OverviewStats(this.page);
+  readonly environments = new EnvironmentSummary(this.page);
+  readonly docs = new OverviewDocs(this.page);
+  readonly configuration = new CollectionConfiguration(this.page);
+
+  /** Dashed empty-state placeholders shown when a whole section has no data. */
+  readonly emptyStateHeadings = this.root.getByTestId('overview-empty-heading');
+
+  /** An uppercase section heading (e.g. "Environments", "Collection Configuration"). */
+  sectionLabel(name: string): Locator {
+    return this.page.getByTestId('overview-section-label').filter({ hasText: name });
   }
 
   /** Open the docs app and wait for the Overview to finish rendering. */
   async goto(): Promise<void> {
     await test.step('Open the docs and wait for the Overview to render', async () => {
       await this.navigate('/');
-      await this.locators.root().waitFor({ state: 'visible' });
+      await this.root.waitFor({ state: 'visible' });
     });
   }
 }
