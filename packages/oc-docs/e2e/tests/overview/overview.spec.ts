@@ -1,4 +1,4 @@
-import { test, expect } from '../../fixtures';
+import { test, expect } from '@fixtures';
 
 /**
  * Overview flow for the bundled sample collection ("Bruno Testbench"):

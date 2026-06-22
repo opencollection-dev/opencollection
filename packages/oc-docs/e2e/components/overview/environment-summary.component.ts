@@ -1,8 +1,8 @@
 import type { Locator } from '@playwright/test';
-import { BaseComponent } from './BaseComponent';
+import { BaseComponent } from '../base.component';
 
 /** The Environments list shown on the Overview. */
-export class EnvironmentSummary extends BaseComponent {
+export class EnvironmentSummaryComponent extends BaseComponent {
   /** The list container. */
   readonly list = this.page.getByTestId('overview-environments');
 

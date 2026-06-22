@@ -5,8 +5,9 @@ import type { Page } from '@playwright/test';
  * (a header, a list, a config panel). A page object composes these instead of
  * owning every locator itself, which keeps each class small and focused.
  *
- * Subclasses declare fixed locators as `readonly` fields (evaluated lazily by
- * Playwright) and expose parameterized locators as methods.
+ * Subclasses declare fixed locators as `readonly` fields (Playwright evaluates them
+ * lazily, so there's no cost to declaring them up front) and expose parameterized
+ * locators as methods.
  */
 export abstract class BaseComponent {
   constructor(protected readonly page: Page) {}

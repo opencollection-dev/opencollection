@@ -1,4 +1,4 @@
-import { test, expect } from '../../fixtures';
+import { test, expect } from '@fixtures';
 
 /**
  * Markdown rendering inside the Overview's documentation section. The sample

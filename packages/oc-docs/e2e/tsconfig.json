@@ -1,0 +1,14 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@pages/*": ["pages/*"],
+      "@components/*": ["components/*"],
+      "@fixtures": ["fixtures/index.ts"],
+      "@fixtures/*": ["fixtures/*"]
+    },
+    "noEmit": true
+  },
+  "include": ["**/*.ts"]
+}

@@ -1,11 +1,11 @@
 import type { Locator } from '@playwright/test';
-import { BaseComponent } from './BaseComponent';
+import { BaseComponent } from '../base.component';
 
 /**
  * The rendered-markdown documentation section. Its body is generated HTML with no
  * test ids, so internals are matched by role/tag/text relative to the container.
  */
-export class OverviewDocs extends BaseComponent {
+export class DocsComponent extends BaseComponent {
   /** The documentation container. */
   readonly content = this.page.getByTestId('overview-docs');
 
