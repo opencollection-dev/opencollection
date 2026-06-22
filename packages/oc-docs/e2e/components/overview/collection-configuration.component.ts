@@ -1,8 +1,8 @@
 import type { Locator } from '@playwright/test';
-import { BaseComponent } from './BaseComponent';
+import { BaseComponent } from '../base.component';
 
 /** Collection configuration panel: headers, auth, scripts and tests groups. */
-export class CollectionConfiguration extends BaseComponent {
+export class CollectionConfigurationComponent extends BaseComponent {
   /** The panel root; all other locators are scoped within it. */
   readonly root = this.page.getByTestId('overview-config');
   readonly emptyMessages = this.root.getByTestId('overview-config-empty');

@@ -1,8 +1,8 @@
 import type { Locator } from '@playwright/test';
-import { BaseComponent } from './BaseComponent';
+import { BaseComponent } from '../base.component';
 
 /** Stat counters on the Overview (Requests / Folders / Environments). */
-export class OverviewStats extends BaseComponent {
+export class StatsComponent extends BaseComponent {
   /** Every stat counter. */
   readonly all = this.page.getByTestId('overview-stat');
 
