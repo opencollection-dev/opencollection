@@ -26,8 +26,8 @@ e2e/
 │       ├── endpoint-section.component.ts
 │       ├── examples.component.ts
 │       └── content-section.component.ts
-└── tests/                 # *.spec.ts, grouped by feature
-    ├── smoke/             # quick "does it boot" checks
+└── tests/                 # *.spec.ts, grouped by feature/section (never by test type)
+    ├── app/              # app shell — boots & renders the collection
     ├── theming/
     └── collection/        # docs · requests · examples
 ```
@@ -68,7 +68,11 @@ e2e/
 | Page object | `<name>.page.ts` | `XxxPage extends BasePage` |
 | Component object | `<name>.component.ts` | `XxxComponent extends BaseComponent` |
 | Fixture | `<feature>.fixture.ts` | — (exports a `test`) |
-| Spec | `<name>.spec.ts` (`*.smoke.spec.ts` for smoke) | — |
+| Spec | `<name>.spec.ts` | — |
+
+Folders group specs by **feature/section**, never by test type. Express the test
+type with a Playwright tag instead, e.g. `test('…', { tag: ['@smoke'] }, …)`, and
+run a type with `npx playwright test --grep @smoke`.
 
 ## Imports & path aliases
 
