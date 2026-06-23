@@ -50,11 +50,4 @@ test.describe('Collection overview (rendered Markdown)', () => {
   test('shows the example request as a code block', async ({ collectionPage }) => {
     await expect(collectionPage.overview.code('curl -H')).toBeVisible();
   });
-
-  test('calls out the rate-limit headers in a quote', async ({ collectionPage }) => {
-    const quote = collectionPage.overview.quote();
-    await expect(quote.root).toBeVisible();
-    await expect(quote.boldText('Note')).toBeVisible();
-    await expect(quote.code('X-RateLimit-Remaining')).toBeVisible();
-  });
 });

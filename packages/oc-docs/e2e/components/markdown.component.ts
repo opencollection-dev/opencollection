@@ -46,9 +46,4 @@ export class MarkdownComponent extends BaseComponent {
   cell(text: string): Locator {
     return this.table().getByRole('cell', { name: text, exact: true });
   }
-
-  /** A quoted callout (Markdown `>`) — itself a reusable Markdown block. */
-  quote(): MarkdownComponent {
-    return new MarkdownComponent(this.page, this.root.getByRole('blockquote'));
-  }
 }
