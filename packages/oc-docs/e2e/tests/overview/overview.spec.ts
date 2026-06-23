@@ -1,10 +1,5 @@
 import { test, expect } from '../../playwright';
 
-/**
- * The Overview page for the bundled sample collection ("Bruno Testbench"): the
- * version + name header, the stat counters, the environments list, and the
- * collection configuration (headers, auth, script, tests).
- */
 test.describe('Collection Overview', () => {
   test.beforeEach(async ({ overviewPage }) => {
     await overviewPage.goto();
