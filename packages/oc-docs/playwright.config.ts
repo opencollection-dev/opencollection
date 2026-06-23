@@ -7,12 +7,10 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  // Everything goes under a single ./playwright-report directory: the HTML report.
-  outputDir: './playwright-report/artifacts',
   reporter: [
     ['list'],
-    ['html', { outputFolder: './playwright-report/html', open: 'never' }],
-    ['json', { outputFile: './playwright-report/results.json' }],
+    ['html'],
+    ['json', { outputFile: 'playwright-report/results.json' }],
   ],
   use: {
     baseURL: appConfig.baseURL,

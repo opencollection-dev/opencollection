@@ -97,7 +97,7 @@ actions — the test decides what to check.
 ## How elements are located (most reliable first)
 
 1. **Test id** for the container a component lives in —
-   `getByTestId('collection-docs')`, `getByTestId('theme-toggle')`.
+   `getByTestId('collection-docs-markdown')`, `getByTestId('theme-toggle')`.
 2. **Role + accessible name** for content and controls — `getByRole('heading', …)`,
    `getByRole('table')`. This is also how a screen reader finds them.
 3. **Semantic tags** (`strong`, `code`, `blockquote`) only for Markdown output that has
