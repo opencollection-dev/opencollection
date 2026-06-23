@@ -12,32 +12,19 @@ import 'prismjs/components/prism-xml-doc';
 const LazyCodeEditor = lazy(() => import('../../ui/CodeEditor/CodeEditor'));
 
 interface CodeProps {
-  /** Source to display (read-only) or edit. */
   code?: string;
-  /** Language id for highlighting (e.g. "javascript", "json", "bash"). */
   language?: string;
-  /** Read-only viewer (default) or an editable editor. */
   readOnly?: boolean;
-  /** Called with the new value in editable mode. */
   onChange?: (value: string) => void;
-  /** Show a line-number gutter (read-only viewer). */
   showLineNumbers?: boolean;
-  /** Show the copy-to-clipboard button (read-only viewer). */
   showCopy?: boolean;
-  /** Test hook (`data-testid`) applied to the copy button (read-only viewer). */
   copyTestId?: string;
-  /** Editor height in editable mode. */
   height?: string;
   className?: string;
 }
 
 type CodeViewerProps = Pick<CodeProps, 'code' | 'language' | 'showLineNumbers' | 'showCopy' | 'copyTestId' | 'className'>;
 
-/**
- * Read-only, Prism-highlighted code. Lightweight and SSR-safe (highlighting runs
- * on the client; the raw code and line numbers render server-side). Optionally
- * shows a line-number gutter and a copy-to-clipboard button.
- */
 const CodeViewer: React.FC<CodeViewerProps> = ({
   code = '',
   language = 'text',
@@ -85,11 +72,6 @@ const CodeViewer: React.FC<CodeViewerProps> = ({
   );
 };
 
-/**
- * Code surface used across the docs. Read-only by default (lightweight,
- * Prism-highlighted, SSR-safe); pass `readOnly={false}` with `onChange` to get a
- * full editor instead.
- */
 export const Code: React.FC<CodeProps> = ({
   code = '',
   language = 'text',

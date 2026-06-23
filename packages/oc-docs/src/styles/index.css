@@ -654,8 +654,6 @@ tr.themed-row:nth-child(even) {
 .markdown-documentation {
   color: var(--text-primary) !important;
   max-width: none !important;
-  /* Body text: Inter, Regular 400, 12px (0.75rem), 18px (1.125rem) line-height, 0 tracking.
-     Headings, code and strong text override this via their own rules below. */
   font-family: var(--font-sans) !important;
   font-weight: 400 !important;
   font-size: 0.75rem !important;
@@ -672,8 +670,6 @@ tr.themed-row:nth-child(even) {
   color: var(--text-primary) !important;
   margin-top: 1.5rem !important;
   margin-bottom: 0.625rem !important;
-  /* Shared heading typography: Inter, Semi Bold 600, 13px (0.8125rem),
-     12px (0.75rem) line-height, 0 letter-spacing. */
   font-family: var(--font-sans) !important;
   font-weight: 600 !important;
   font-size: 0.8125rem !important;
@@ -754,8 +750,6 @@ tr.themed-row:nth-child(even) {
 
 .markdown-documentation ul,
 .markdown-documentation ol {
-  /* Tailwind's preflight resets lists to `list-style: none` with zero padding, which
-     hides the markers. Restore the markers + the padding they need to render. */
   margin: 0.5em 0 0.75em !important;
   padding-left: 1.5em !important;
   list-style-position: outside !important;

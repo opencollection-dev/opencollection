@@ -3,8 +3,6 @@ import { appConfig } from './e2e/config/app.config';
 
 export default defineConfig({
   testDir: './e2e',
-  // Apply the e2e path-alias map (@pages, @components, @fixtures) to every test file
-  // and everything it imports.
   tsconfig: './e2e/tsconfig.json',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
