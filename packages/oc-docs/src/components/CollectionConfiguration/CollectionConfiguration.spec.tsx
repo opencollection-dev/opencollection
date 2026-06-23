@@ -47,12 +47,10 @@ describe('CollectionConfiguration', () => {
   });
 
   it('shows an empty hint for each subsection that has no items (when some config exists)', () => {
-    // Only auth is configured: headers, script and tests fall back to their hints.
     const html = renderToStaticMarkup(<CollectionConfiguration auth={{ type: 'bearer', token: 't' }} />);
     expect(html).toContain('Add headers to inherit in all requests in the collection');
     expect(html).toContain('Add scripts to run for all requests in the collection');
     expect(html).toContain('Add tests to run for all requests in the collection');
-    // Auth has data, so it shows rows rather than a hint.
     expect(html).toContain('bearer');
     expect(html).not.toContain('Add authentication to inherit');
   });

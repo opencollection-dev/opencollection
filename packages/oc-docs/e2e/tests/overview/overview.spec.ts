@@ -1,97 +1,97 @@
-import { test, expect } from '@fixtures';
+import { test, expect } from '../../playwright';
 
 /**
- * Overview flow for the bundled sample collection ("Bruno Testbench"):
- * version + name header, stat counters, environments list, and the
- * collection configuration (headers, auth, scripts, tests).
+ * The Overview page for the bundled sample collection ("Bruno Testbench"): the
+ * version + name header, the stat counters, the environments list, and the
+ * collection configuration (headers, auth, script, tests).
  */
 test.describe('Collection Overview', () => {
   test.beforeEach(async ({ overviewPage }) => {
     await overviewPage.goto();
   });
 
-  test('renders the version and collection name in the header', async ({ overviewPage }) => {
-    await test.step('shows the v-prefixed collection version', async () => {
-      await expect(overviewPage.header.version).toHaveText('v1.0.0');
+  test('header shows the collection version ("v1.0.0") and name ("Bruno Testbench")', async ({ overviewPage }) => {
+    await test.step('the version is shown with a "v" prefix', async () => {
+      await expect(overviewPage.header.collectionVersion).toHaveText('v1.0.0');
     });
 
-    await test.step('shows the collection name as the page title', async () => {
-      await expect(overviewPage.header.title).toHaveText('Bruno Testbench');
+    await test.step('the collection name is shown as the page title', async () => {
+      await expect(overviewPage.header.collectionName).toHaveText('Bruno Testbench');
     });
   });
 
-  test('shows request, folder and environment counts', async ({ overviewPage }) => {
-    await expect(overviewPage.stats.all).toHaveCount(3);
-    await expect(overviewPage.stats.value('Requests')).toHaveText('10');
-    await expect(overviewPage.stats.value('Folders')).toHaveText('0');
-    await expect(overviewPage.stats.value('Environments')).toHaveText('2');
+  test('shows three stat cards with the request (10), folder (0) and environment (2) counts', async ({ overviewPage }) => {
+    await expect(overviewPage.stats.cards).toHaveCount(3);
+    await expect(overviewPage.stats.valueFor('Requests')).toHaveText('10');
+    await expect(overviewPage.stats.valueFor('Folders')).toHaveText('0');
+    await expect(overviewPage.stats.valueFor('Environments')).toHaveText('2');
   });
 
-  test('lists each environment with its variable count', async ({ overviewPage }) => {
-    await test.step('shows the Environments section', async () => {
+  test('lists every environment under the "Environments" section with its variable count', async ({ overviewPage }) => {
+    await test.step('the "Environments" section is shown', async () => {
       await expect(overviewPage.sectionLabel('Environments')).toBeVisible();
     });
 
-    await test.step('lists Local and Prod', async () => {
+    await test.step('both environments (Local and Prod) are listed', async () => {
       await expect(overviewPage.environments.items).toHaveCount(2);
       await expect(overviewPage.environments.item('Local')).toBeVisible();
       await expect(overviewPage.environments.item('Prod')).toBeVisible();
     });
 
-    await test.step('shows each environment variable count', async () => {
+    await test.step('each environment shows how many variables it has', async () => {
       await expect(overviewPage.environments.variableCount('Local')).toHaveText('2 variables');
       await expect(overviewPage.environments.variableCount('Prod')).toHaveText('2 variables');
     });
   });
 
-  test('renders the overview documentation section', async ({ overviewPage }) => {
+  test('renders the collection documentation under the "Overview" section', async ({ overviewPage }) => {
     await expect(overviewPage.sectionLabel('Overview')).toBeVisible();
-    await expect(overviewPage.docs.content).toBeVisible();
-    await expect(overviewPage.docs.heading('Getting Started')).toBeVisible();
+    await expect(overviewPage.markdown.root).toBeVisible();
+    await expect(overviewPage.markdown.heading('Getting Started')).toBeVisible();
   });
 
   test.describe('Collection Configuration', () => {
-    test('renders the headers, auth, script and tests groups', async ({ overviewPage }) => {
+    test('shows the Headers, Auth, Script and Tests groups with their resolved values', async ({ overviewPage }) => {
       const { configuration } = overviewPage;
       await expect(overviewPage.sectionLabel('Collection Configuration')).toBeVisible();
 
-      await test.step('Headers group shows the collection header', async () => {
+      await test.step('the Headers group lists the collection-level header and its value', async () => {
         await expect(configuration.subHeading('Headers')).toBeVisible();
         await expect(configuration.rowValue('collection-header')).toHaveText('collection-header-value');
       });
 
-      await test.step('Auth group shows the resolved auth mode', async () => {
+      await test.step('the Auth group shows the resolved auth mode (Bearer Token)', async () => {
         await expect(configuration.subHeading('Auth')).toBeVisible();
         await expect(configuration.rowValue('Mode')).toHaveText('Bearer Token');
       });
 
-      await test.step('Script and Tests groups are present', async () => {
+      await test.step('the Script and Tests groups are present', async () => {
         await expect(configuration.subHeading('Script')).toBeVisible();
         await expect(configuration.subHeading('Tests')).toBeVisible();
       });
     });
 
-    test('masks the auth token until the reveal toggle is clicked', async ({ overviewPage }) => {
+    test('keeps the auth token masked until the reveal toggle is clicked', async ({ overviewPage }) => {
       const { secret } = overviewPage.configuration;
 
-      await test.step('the token is masked by default', async () => {
-        await expect(secret).toContainText('•');
-        await expect(secret).not.toHaveText('{{bearer_auth_token}}');
+      await test.step('the token is shown as dots, not the raw value', async () => {
+        await expect(secret.value).toContainText('•');
+        await expect(secret.value).not.toHaveText('{{bearer_auth_token}}');
       });
 
-      await test.step('clicking the toggle reveals the raw token', async () => {
-        await overviewPage.configuration.revealSecret();
-        await expect(secret).toHaveText('{{bearer_auth_token}}');
+      await test.step('clicking the reveal toggle shows the raw token', async () => {
+        await secret.reveal();
+        await expect(secret.value).toHaveText('{{bearer_auth_token}}');
       });
     });
 
-    test('copies a code snippet to the clipboard', async ({ overviewPage, context }) => {
+    test('copies a config code snippet and confirms with a "Copied" label', async ({ overviewPage, context }) => {
       await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-      const copyButton = overviewPage.configuration.copyButtons.first();
+      const { copyButton } = overviewPage.configuration;
 
-      await test.step('clicking copy confirms with the "Copied" label', async () => {
+      await test.step('clicking the copy button switches its label to "Copied"', async () => {
         await copyButton.click();
-        await expect(copyButton).toHaveAttribute('aria-label', 'Copied');
+        await expect(copyButton.root).toHaveAttribute('aria-label', 'Copied');
       });
     });
   });

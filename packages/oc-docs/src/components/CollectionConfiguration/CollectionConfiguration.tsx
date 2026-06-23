@@ -15,14 +15,8 @@ interface CollectionScripts {
 interface CollectionConfigurationProps {
   headers?: HttpRequestHeader[];
   auth?: Auth;
-  /** Pre-normalised scripts ({ preRequest, postResponse, tests }) supplied by the host. */
   scripts?: CollectionScripts;
-  /** Maps an auth `type` to a display label (e.g. basic -> "Basic Auth"); supplied by the host. */
   authModeLabels?: Record<string, string>;
-  /**
-   * Test hook (`data-testid`) base, set by the composition root. Sub-elements derive
-   * stable ids from it (`-row`, `-row-value`, `-subheading`, `-empty`, `-secret`, `-copy`).
-   */
   testId?: string;
 }
 
@@ -42,12 +36,10 @@ const PlainValue: React.FC<{ value: string }> = ({ value }) => (
   <span className={containsVariable(value) ? 'config-value config-value--var' : 'config-value'}>{value}</span>
 );
 
-/** Italic placeholder shown for a configuration subsection that has no items yet. */
 const EmptyMessage: React.FC<{ children: React.ReactNode; testId?: string }> = ({ children, testId }) => (
   <p className="config-empty-message" data-testid={testId}>{children}</p>
 );
 
-/** Read-only rows for the collection-level auth, derived from the auth `type`. */
 const AuthRows: React.FC<{ auth: Auth; labels: Record<string, string>; rowTestId?: string; secretTestId?: string }> = ({
   auth,
   labels,
@@ -82,11 +74,6 @@ const AuthRows: React.FC<{ auth: Auth; labels: Record<string, string>; rowTestId
   return <dl className="config-box">{rows}</dl>;
 };
 
-/**
- * Read-only view of a collection's request defaults — headers, auth, scripts and tests.
- * Fully prop-driven (no app constants/utils) so it can be lifted into a component package.
- * Reuses `SecretValue` for sensitive values and `Code` for script/test snippets.
- */
 export const CollectionConfiguration: React.FC<CollectionConfigurationProps> = ({
   headers = [],
   auth,

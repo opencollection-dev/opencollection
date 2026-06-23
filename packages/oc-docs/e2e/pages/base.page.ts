@@ -1,16 +1,11 @@
-import type { Page, Locator } from '@playwright/test';
+import type { Page } from '@playwright/test';
 
 /**
- * Base class for every page object.
- *
- * Holds the Playwright `page` handle and the navigation shared by all pages.
- * Concrete pages declare their `root` (the element that signals the page has
- * loaded) and expose their components as `readonly` properties; `goto` and
- * `reload` are inherited, so pages don't repeat the navigate-then-wait boilerplate.
+ * Base class for every page object. Holds the Playwright `page` handle, the app
+ * mount root, and the navigation shared by all pages.
  */
 export abstract class BasePage {
-  /** The element that signals this page has finished loading (awaited by `goto`). */
-  abstract readonly root: Locator;
+  readonly root = this.page.locator('#root');
 
   constructor(protected readonly page: Page) {}
 

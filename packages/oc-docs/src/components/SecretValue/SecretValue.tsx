@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { SecretValueWrapper } from './StyledWrapper';
 
-/** Fixed-length mask so the real length of the secret is never leaked. */
 export const SECRET_MASK = '•'.repeat(12);
 
 interface SecretValueProps {
   value: string;
-  /** Test hook (`data-testid`); the text gets `${testId}-text`, the toggle `${testId}-toggle`. */
   testId?: string;
 }
 
@@ -26,17 +24,11 @@ const EyeIcon: React.FC<{ off?: boolean }> = ({ off }) => (
   </svg>
 );
 
-/**
- * A masked, reveal-on-demand value (used for passwords/tokens in read-only config).
- * The masked form is a fixed length so the secret's true length is not exposed.
- */
 export const SecretValue: React.FC<SecretValueProps> = ({ value, testId }) => {
   const [revealed, setRevealed] = useState(false);
 
   return (
     <SecretValueWrapper className="secret-value" data-testid={testId}>
-      {/* While masked, hide the placeholder dots from assistive tech so they aren't
-          read out as "bullet" repeatedly; the toggle's label conveys it's hidden. */}
       <span className="secret-value-text" aria-hidden={!revealed} data-testid={testId ? `${testId}-text` : undefined}>
         {revealed ? value : SECRET_MASK}
       </span>

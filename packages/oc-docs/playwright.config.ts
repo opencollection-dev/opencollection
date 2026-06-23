@@ -1,6 +1,4 @@
 import { defineConfig, devices } from '@playwright/test';
-// Relative import is required: the `tsconfig` path aliases below do NOT apply while
-// this config (or anything it imports) loads.
 import { appConfig } from './e2e/config/app.config';
 
 export default defineConfig({
@@ -12,11 +10,10 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  outputDir: './test-results',
   reporter: [
     ['list'],
-    ['html', { outputFolder: './playwright-report', open: 'never' }],
-    ['json', { outputFile: './test-results/results.json' }],
+    ['html'],
+    ['json', { outputFile: 'playwright-report/results.json' }],
   ],
   use: {
     baseURL: appConfig.baseURL,

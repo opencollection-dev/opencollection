@@ -7,12 +7,6 @@ export interface CollectionScripts {
   tests?: string;
 }
 
-/**
- * True when a collection exposes any shared request defaults worth showing:
- * an enabled, named header, an auth scheme, or a pre-request / post-response /
- * test script. Used by the Overview page to decide whether the
- * "Collection Configuration" section should appear at all.
- */
 export const hasCollectionConfiguration = (
   headers: HttpRequestHeader[] = [],
   auth?: Auth,

@@ -1,30 +1,79 @@
 import type { Locator } from '@playwright/test';
 import { BasePage } from './base.page';
-import { HeaderComponent } from '@components/overview/header.component';
-import { StatsComponent } from '@components/overview/stats.component';
-import { EnvironmentSummaryComponent } from '@components/overview/environment-summary.component';
-import { DocsComponent } from '@components/overview/docs.component';
-import { CollectionConfigurationComponent } from '@components/overview/collection-configuration.component';
+import { BaseComponent } from '../components/base.component';
+import { MarkdownComponent } from '../components/markdown.component';
+import { CopyButtonComponent } from '../components/copy-button.component';
+import { SecretValueComponent } from '../components/secret-value.component';
 
-/**
- * Page object for the collection Overview (the docs app root). Owns page-level
- * actions (navigation, readiness) and composes the section component objects, so
- * specs read as `overviewPage.<section>.<element>` with no raw selectors.
- */
+/** The Overview headline: the collection's version label and its name. */
+class HeaderSection extends BaseComponent {
+  readonly collectionVersion = this.page.getByTestId('overview-collection-version');
+  readonly collectionName = this.page.getByTestId('overview-collection-name');
+}
+
+/** The stat counter cards (Requests / Folders / Environments). */
+class StatsSection extends BaseComponent {
+  /** Every stat counter card. */
+  readonly cards = this.page.getByTestId('overview-stat-card');
+
+  /** The stat card for a given label (e.g. "Requests"). */
+  card(label: string): Locator {
+    return this.cards.filter({ hasText: label });
+  }
+
+  /** The numeric value shown on a stat card (e.g. the "10" on the Requests card). */
+  valueFor(label: string): Locator {
+    return this.card(label).getByTestId('overview-stat-card-value');
+  }
+}
+
+/** The list of environments shown on the Overview. */
+class EnvironmentsSection extends BaseComponent {
+  /** Every environment row in the list. */
+  readonly items = this.page.getByTestId('overview-environment-item');
+
+  /** The row for a named environment (e.g. "Local"). */
+  item(name: string): Locator {
+    return this.items.filter({ hasText: name });
+  }
+
+  /** The variable-count label within a named environment's row (e.g. "2 variables"). */
+  variableCount(name: string): Locator {
+    return this.item(name).getByTestId('overview-environment-item-variable-count');
+  }
+}
+
+/** The Collection Configuration panel: headers, auth, script and tests groups. */
+class ConfigurationSection extends BaseComponent {
+  readonly root = this.page.getByTestId('overview-configuration');
+
+  readonly copyButton = new CopyButtonComponent(this.page, this.root.getByTestId('overview-configuration-copy').first());
+
+  readonly secret = new SecretValueComponent(this.page, 'overview-configuration-secret');
+
+  subHeading(name: string): Locator {
+    return this.root.getByTestId('overview-configuration-subheading').filter({ hasText: name });
+  }
+
+  row(key: string): Locator {
+    return this.root.getByTestId('overview-configuration-row').filter({ hasText: key });
+  }
+
+  rowValue(key: string): Locator {
+    return this.row(key).getByTestId('overview-configuration-row-value');
+  }
+}
+
 export class OverviewPage extends BasePage {
-  /** The Overview page root. */
   readonly root = this.page.getByTestId('overview');
 
-  readonly header = new HeaderComponent(this.page);
-  readonly stats = new StatsComponent(this.page);
-  readonly environments = new EnvironmentSummaryComponent(this.page);
-  readonly docs = new DocsComponent(this.page);
-  readonly configuration = new CollectionConfigurationComponent(this.page);
+  readonly header = new HeaderSection(this.page);
+  readonly stats = new StatsSection(this.page);
+  readonly environments = new EnvironmentsSection(this.page);
+  readonly configuration = new ConfigurationSection(this.page);
+  readonly markdown = new MarkdownComponent(this.page, this.page.getByTestId('overview-markdown-documentation'));
 
-  /** Dashed empty-state placeholders shown when a whole section has no data. */
-  readonly emptyStateHeadings = this.root.getByTestId('overview-empty-heading');
-
-  /** An uppercase section heading (e.g. "Environments", "Collection Configuration"). */
+  /** An uppercase section label (e.g. "Environments", "Collection Configuration"). */
   sectionLabel(name: string): Locator {
     return this.page.getByTestId('overview-section-label').filter({ hasText: name });
   }

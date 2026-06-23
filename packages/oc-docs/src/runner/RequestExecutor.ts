@@ -1,21 +1,17 @@
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import { RunRequestResponse } from './index';
-import { getHttpMethod, getRequestUrl, getHttpHeaders, getHttpBody, getRequestAuth, getHttpParams, getRequestSettings } from '../utils/schemaHelpers';
-import { applyPathParams } from '../utils/pathParams';
+import { getHttpMethod, getRequestUrl, getHttpHeaders, getHttpBody, getRequestAuth } from '../utils/schemaHelpers';
+import { classifyRequestError, DEFAULT_TIMEOUT_MS } from './classifyRequestError';
 import stripJsonComments from 'strip-json-comments';
 
 export class RequestExecutor {
   async executeRequest(request: HttpRequest, options: { timeout?: number } = {}): Promise<RunRequestResponse> {
     const startTime = Date.now();
+    const timeoutMs = options.timeout ?? DEFAULT_TIMEOUT_MS;
 
     try {
-      const fetchOptions = await this.buildFetchOptions(request, options.timeout);
-      // Substitute `:name` path params (e.g. /posts/:postId -> /posts/1) before
-      // sending. Values are already variable-interpolated by this point. Honour
-      // the request's encodeUrl setting — only an explicit `false` disables
-      // encoding (undefined / 'inherit' keep the safe default of encoding).
-      const encodeUrl = getRequestSettings(request)?.encodeUrl !== false;
-      const requestUrl = applyPathParams(getRequestUrl(request), getHttpParams(request), { encode: encodeUrl });
+      const fetchOptions = await this.buildFetchOptions(request, timeoutMs);
+      const requestUrl = getRequestUrl(request);
       const response = await fetch(requestUrl, fetchOptions);
       const endTime = Date.now();
 
@@ -33,35 +29,22 @@ export class RequestExecutor {
       };
     } catch (error) {
       const endTime = Date.now();
-      let errorMessage = 'Request failed';
-      let errorType = 'unknown';
-
-      if (error instanceof Error) {
-        errorMessage = error.message;
-        
-        // Categorize error types
-        if (error.name === 'AbortError' || error.message.includes('timeout')) {
-          errorType = 'timeout';
-          errorMessage = `Request timed out after ${endTime - startTime}ms`;
-        } else if (error.name === 'TypeError' && error.message.includes('fetch')) {
-          errorType = 'cors';
-          errorMessage = 'CORS error: Failed to fetch. The server either does not include the required CORS headers for this origin or cannot be reached.';
-        } else if (error.message.includes('fetch')) {
-          errorType = 'network';
-        } else if (error.message.includes('SSL') || error.message.includes('certificate')) {
-          errorType = 'ssl';
-        }
-      }
+      const classified = classifyRequestError(error, {
+        timeoutMs,
+        requestUrl: getRequestUrl(request),
+        pageUrl: typeof window !== 'undefined' ? window.location.href : undefined
+      });
 
       return {
-        error: errorMessage,
-        duration: endTime - startTime,
-        errorType
+        error: classified.message,
+        errorType: classified.type,
+        errorTitle: classified.title,
+        duration: endTime - startTime
       };
     }
   }
 
-  private async buildFetchOptions(request: HttpRequest, timeout = 30000): Promise<RequestInit> {
+  private async buildFetchOptions(request: HttpRequest, timeout = DEFAULT_TIMEOUT_MS): Promise<RequestInit> {
     const method = getHttpMethod(request);
     const options: RequestInit = {
       method,

@@ -17,7 +17,6 @@ import { Section } from '../../components/Section/Section';
 import { GlobeIcon, BookIcon } from '../../assets/icons';
 import { OverviewWrapper } from './StyledWrapper';
 
-/** Extracts the markdown string from a collection's `docs` (string or structured text). */
 const getDocsContent = (docs: OpenCollection['docs']): string => {
   if (!docs) return '';
   return typeof docs === 'string' ? docs : (docs as StructuredText)?.content || '';
@@ -27,11 +26,6 @@ interface OverviewProps {
   collection: OpenCollection;
 }
 
-/**
- * The collection Overview page. Acts as the composition root: it reads app constants
- * and utils, then passes plain data + config down to the atomic, package-ready
- * components (which import nothing app-specific).
- */
 export const Overview: React.FC<OverviewProps> = ({ collection }) => {
   const md = useMarkdownRenderer();
 
@@ -66,13 +60,13 @@ export const Overview: React.FC<OverviewProps> = ({ collection }) => {
       <OverviewWrapper className="oc-overview" data-testid="overview">
         <header className="overview-headline">
           <div>
-            {version && <div className="overview-version" data-testid="overview-version">{version}</div>}
-            <Heading testId="overview-title">{name}</Heading>
+            {version && <div className="overview-version" data-testid="overview-collection-version">{version}</div>}
+            <Heading testId="overview-collection-name">{name}</Heading>
           </div>
         </header>
 
         <div className="overview-stats-row">
-          <CollectionStats stats={stats} testId="overview-stats" itemTestId="overview-stat" />
+          <CollectionStats stats={stats} testId="overview-stat-list" itemTestId="overview-stat-card" />
         </div>
 
         <div className="overview-body">
@@ -81,8 +75,8 @@ export const Overview: React.FC<OverviewProps> = ({ collection }) => {
               {hasEnvironments ? (
                 <EnvironmentSummary
                   environments={environments}
-                  testId="overview-environments"
-                  itemTestId="overview-environment"
+                  testId="overview-environment-list"
+                  itemTestId="overview-environment-item"
                 />
               ) : (
                 <EmptyState
@@ -98,7 +92,7 @@ export const Overview: React.FC<OverviewProps> = ({ collection }) => {
               {hasOverview ? (
                 <div
                   className="overview-markdown markdown-documentation"
-                  data-testid="overview-docs"
+                  data-testid="overview-markdown-documentation"
                   dangerouslySetInnerHTML={{ __html: docsHtml }}
                 />
               ) : (
@@ -120,7 +114,7 @@ export const Overview: React.FC<OverviewProps> = ({ collection }) => {
                   auth={collection.request?.auth}
                   scripts={scripts}
                   authModeLabels={AUTH_MODE_LABELS}
-                  testId="overview-config"
+                  testId="overview-configuration"
                 />
               ) : (
                 <EmptyState

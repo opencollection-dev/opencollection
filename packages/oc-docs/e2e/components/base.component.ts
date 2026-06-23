@@ -1,14 +1,13 @@
-import type { Page } from '@playwright/test';
+import type { Page, Locator } from '@playwright/test';
 
-/**
- * Base class for component objects — reusable, self-contained slices of a page
- * (a header, a list, a config panel). A page object composes these instead of
- * owning every locator itself, which keeps each class small and focused.
- *
- * Subclasses declare fixed locators as `readonly` fields (Playwright evaluates them
- * lazily, so there's no cost to declaring them up front) and expose parameterized
- * locators as methods.
- */
 export abstract class BaseComponent {
-  constructor(protected readonly page: Page) {}
+  /**
+   * The element this component is scoped to. Section components receive their
+   * container; page-wide controls omit it and default to the whole page.
+   */
+  readonly root: Locator;
+
+  constructor(protected readonly page: Page, root?: Locator) {
+    this.root = root ?? page.locator(':root');
+  }
 }

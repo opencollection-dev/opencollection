@@ -2,15 +2,10 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { CopyButtonWrapper } from './StyledWrapper';
 
 interface CopyButtonProps {
-  /** Text written to the clipboard when pressed. */
   text: string;
-  /** Accessible label in the idle state. */
   label?: string;
-  /** Accessible label shown briefly after a successful copy. */
   copiedLabel?: string;
-  /** How long (ms) the confirmation state persists. */
   resetAfterMs?: number;
-  /** Test hook (`data-testid`); useful here since the accessible name flips on copy. */
   testId?: string;
   className?: string;
 }
@@ -28,11 +23,6 @@ const CheckGlyph: React.FC = () => (
   </svg>
 );
 
-/**
- * Accessible copy-to-clipboard button. Copies `text` on press and briefly swaps
- * to a confirmation icon, with the accessible label switching to match. Fully
- * prop-driven and unaware of where it sits, so it can be reused anywhere.
- */
 export const CopyButton: React.FC<CopyButtonProps> = ({
   text,
   label = 'Copy',
@@ -44,7 +34,6 @@ export const CopyButton: React.FC<CopyButtonProps> = ({
   const [copied, setCopied] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  // Cancel a pending reset on unmount so we never set state on a gone component.
   useEffect(
     () => () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);

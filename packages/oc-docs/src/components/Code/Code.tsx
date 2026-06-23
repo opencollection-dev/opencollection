@@ -9,8 +9,6 @@ import 'prismjs/components/prism-python';
 import 'prismjs/components/prism-json';
 import 'prismjs/components/prism-xml-doc';
 
-// Editing pulls in a heavy editor, so it is loaded on demand — read-only
-// viewers (e.g. the docs) never pay its cost or break server-side rendering.
 const LazyCodeEditor = lazy(() => import('../../ui/CodeEditor/CodeEditor'));
 
 interface CodeProps {
@@ -90,8 +88,7 @@ const CodeViewer: React.FC<CodeViewerProps> = ({
 /**
  * Code surface used across the docs. Read-only by default (lightweight,
  * Prism-highlighted, SSR-safe); pass `readOnly={false}` with `onChange` to get a
- * full editor instead. The editor is loaded on demand, so read-only usage stays
- * cheap. Reuse anywhere a code block (viewer or editor) is needed.
+ * full editor instead.
  */
 export const Code: React.FC<CodeProps> = ({
   code = '',

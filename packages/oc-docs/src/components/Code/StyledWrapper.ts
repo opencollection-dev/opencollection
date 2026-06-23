@@ -6,8 +6,6 @@ export const StyledWrapper = styled.div`
   border: 1px solid var(--oc-table-border);
   border-radius: 8px;
 
-  /* The copy button owns its own look (see CopyButton); here we only place it
-     and reveal it on hover/keyboard focus. */
   .code-copy-floating {
     position: absolute;
     top: 8px;
@@ -54,10 +52,6 @@ export const StyledWrapper = styled.div`
     font-size: 13px;
   }
 
-  /* Line-numbered variant (collection-config code snippets): a light background
-     with Fira Code 12px text. The gutter shares the exact same font metrics +
-     top padding as the code so the numbers line up with their rows; only the
-     code scrolls horizontally. */
   .code-content-numbered {
     display: flex;
     align-items: stretch;

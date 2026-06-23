@@ -51,9 +51,6 @@ const createRenderer = (): MarkdownIt => {
     return defaultRender(tokens, idx, options, env, self);
   };
 
-  // Wrap tables in a horizontal-scroll container so wide tables scroll on small
-  // screens instead of overflowing the page (markdown tables have no built-in
-  // overflow handling). Styled via `.md-table-scroll` in the global markdown CSS.
   markdownIt.renderer.rules.table_open = () => '<div class="md-table-scroll"><table>';
   markdownIt.renderer.rules.table_close = () => '</table></div>';
 

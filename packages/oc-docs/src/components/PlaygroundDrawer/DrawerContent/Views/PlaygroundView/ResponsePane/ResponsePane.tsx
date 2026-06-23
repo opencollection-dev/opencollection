@@ -3,6 +3,7 @@ import Tabs from '../../../../../../ui/Tabs/Tabs';
 import ResponseBodyTab from '../../Common/ResponseBodyTab';
 import ResponseHeadersTab from '../../Common/ResponseHeadersTab';
 import TestResultsTab from '../../Common/TestResultsTab';
+import ErrorBanner from '../../../../../../ui/ErrorBanner/ErrorBanner';
 
 interface ResponsePaneProps {
   response: any;
@@ -48,20 +49,19 @@ const ResponsePane: React.FC<ResponsePaneProps> = ({ response, isLoading }) => {
     );
   }
 
-  if (response.error) {
-    return (
-      <div className="h-full" style={{ backgroundColor: 'var(--bg-primary)' }}>
-        <div className="p-4">
-          <div className="p-4 rounded border-l-4 border-red-500" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-            <h3 className="text-lg font-medium text-red-600 mb-2">Request Failed</h3>
-            <p style={{ color: 'var(--text-primary)' }}>{response.error}</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // A failed request (no HTTP response) renders a danger banner inside the
+  // Response tab, keeping the same tab shell as a successful response.
+  const renderErrorBanner = () => (
+    <div className="p-4">
+      <ErrorBanner
+        title={response.errorTitle || 'Request Failed'}
+        message={response.error}
+      />
+    </div>
+  );
 
-  const renderResponseBody = () => <ResponseBodyTab response={response} />;
+  const renderResponseBody = () =>
+    response.error ? renderErrorBanner() : <ResponseBodyTab response={response} />;
   const renderHeaders = () => <ResponseHeadersTab headers={response.headers} />;
   const renderTestResults = () => (
     <TestResultsTab 
@@ -136,7 +136,7 @@ const ResponsePane: React.FC<ResponsePaneProps> = ({ response, isLoading }) => {
         tabs={tabs}
         activeTab={activeTab}
         onTabChange={setActiveTab}
-        rightElement={statusInfo}
+        rightElement={response.error ? undefined : statusInfo}
       />
     </div>
   );

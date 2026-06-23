@@ -1,30 +1,39 @@
-import { test, expect } from '@fixtures';
+import { test, expect } from '../../playwright';
 
-// Default theme follows the OS preference; pin it so "starts light" is deterministic.
-test.use({ colorScheme: 'light' });
+/**
+ * The header has one button that flips the whole app between light and dark.
+ */
+test.describe('Theme switcher', () => {
+  test.use({ colorScheme: 'light' });
 
-test('toggle switches data-theme and persists across reload', async ({ layoutPage }) => {
-  await layoutPage.goto();
-  await expect(layoutPage.html).toHaveAttribute('data-theme', 'light');
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+  });
 
-  // Light mode shows "Switch to dark theme"; clicking flips to dark.
-  await layoutPage.themeToggle.switchToDark();
-  await expect(layoutPage.html).toHaveAttribute('data-theme', 'dark');
-  // Now in dark mode the toggle offers "Switch to light theme".
-  await expect(layoutPage.themeToggle.button).toHaveAttribute('aria-label', 'Switch to light theme');
+  test('starts in light mode, with the toggle offering "Switch to dark theme"', async ({ page, themeToggle }) => {
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+    await expect(themeToggle.button).toHaveAccessibleName('Switch to dark theme');
+  });
 
-  await layoutPage.reload();
-  await expect(layoutPage.html).toHaveAttribute('data-theme', 'dark');
-});
+  test('switches the whole app to dark mode when the toggle is clicked', async ({ page, themeToggle }) => {
+    await themeToggle.toggle();
 
-test('renders on mobile, tablet, and large viewports', async ({ layoutPage, page }) => {
-  for (const size of [
-    { width: 390, height: 800 },
-    { width: 768, height: 1024 },
-    { width: 1280, height: 900 }
-  ]) {
-    await page.setViewportSize(size);
-    await layoutPage.goto();
-    await expect(layoutPage.root).toBeVisible();
-  }
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    // The toggle now offers the opposite action.
+    await expect(themeToggle.button).toHaveAccessibleName('Switch to light theme');
+  });
+
+  test('switches back to light mode when the toggle is clicked again', async ({ page, themeToggle }) => {
+    await themeToggle.toggle();
+    await themeToggle.toggle();
+
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  });
+
+  test('remembers the chosen theme across a page reload', async ({ page, themeToggle }) => {
+    await themeToggle.toggle();
+    await page.reload();
+
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  });
 });

@@ -1,10 +1,5 @@
 import styled from '@emotion/styled';
 
-/**
- * Layout for the collection Overview page. Pure styled-component (Emotion) driven by
- * the docs theme CSS variables, so it stays portable if extracted into a package.
- * Content styling lives in the individual components; this owns page-level layout.
- */
 export const OverviewWrapper = styled.div`
   color: var(--text-primary);
   padding-bottom: 2rem;
@@ -26,7 +21,6 @@ export const OverviewWrapper = styled.div`
     margin-top: 1.5rem;
   }
 
-  /* The divider lives on the body, so it only appears when there are sections to show. */
   .overview-body {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -38,9 +32,6 @@ export const OverviewWrapper = styled.div`
 
   @media (max-width: 1100px) {
     .overview-body {
-      /* minmax(0, 1fr) (not 1fr) so the column can shrink below its content's
-         intrinsic width, letting code blocks / tables scroll instead of
-         overflowing the page on small screens. */
       grid-template-columns: minmax(0, 1fr);
       gap: 2rem;
     }

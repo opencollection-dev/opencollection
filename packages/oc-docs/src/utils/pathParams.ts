@@ -1,18 +1,5 @@
 import type { HttpRequestParam } from '@opencollection/types/requests/http';
 
-/**
- * Extract the ordered, de-duplicated list of path-parameter names declared in a
- * URL using the `:name` segment syntax (e.g. `/posts/:postId` -> `['postId']`).
- *
- * Rules (mirroring the request-client behaviour):
- * - Only a segment that *starts* with `:` is a path param, so ports
- *   (`localhost:8081`) and protocols (`https://`) are never misread as params.
- * - The query string and fragment are ignored — only the path is scanned.
- * - The name is the identifier directly after the colon (`[A-Za-z0-9_-]+`), so
- *   `:postId.json` yields `postId` and a bare `:` yields nothing.
- * - Variable templates such as `{{host}}` are left untouched.
- * - Repeated names collapse to a single entry, preserving first-seen order.
- */
 export const parsePathParamNames = (url: string | undefined | null): string[] => {
   if (!url || typeof url !== 'string') return [];
 
@@ -39,17 +26,6 @@ export const parsePathParamNames = (url: string | undefined | null): string[] =>
   return names;
 };
 
-/**
- * Reconcile a request's `params` with the path params declared in its URL.
- *
- * Query params (anything not typed `'path'`) are preserved untouched. Path
- * params are rebuilt from the URL's `:name` segments: existing path params are
- * reused by name (so edited values survive), names no longer in the URL are
- * dropped, and new names are added with an empty value.
- *
- * Returns the original `params` reference when nothing changed, so callers can
- * cheaply skip redundant state updates / re-renders.
- */
 export const syncPathParams = (
   params: HttpRequestParam[] | undefined,
   url: string
@@ -86,18 +62,6 @@ export const syncPathParams = (
   return [...queryParams, ...nextPath];
 };
 
-/**
- * Replace `:name` path segments in a URL with the values of the matching
- * (enabled) path params — e.g. `/posts/:postId` + `{ postId: '1' }` -> `/posts/1`.
- *
- * - Only the path is rewritten; the query string and fragment are left intact
- *   (so a `:` inside a query value is never touched).
- * - The segment's name is the identifier after the colon, matching
- *   `parsePathParamNames`, so `:postId.json` -> `<value>.json`.
- * - Values are URL-encoded by default so they are safe, single path segments.
- * - A `:name` with no matching/enabled param (or no value provided) is left
- *   as-is rather than producing a broken URL.
- */
 export const applyPathParams = (
   url: string | undefined | null,
   params: HttpRequestParam[] | undefined,

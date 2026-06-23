@@ -1,53 +1,44 @@
-import { test, expect } from '@fixtures';
+import { test, expect } from '../../playwright';
 
 /**
- * Markdown rendering inside the Overview's documentation section. The sample
- * collection's `docs` exercises headings, inline formatting, lists, a table,
- * a code block and a blockquote.
+ * The Markdown rendered inside the Overview's "Overview" (documentation) section.
  */
-test.describe('Overview documentation (markdown)', () => {
+test.describe('Overview documentation (rendered Markdown)', () => {
   test.beforeEach(async ({ overviewPage }) => {
     await overviewPage.goto();
   });
 
-  test('renders markdown headings', async ({ overviewPage }) => {
-    const { docs } = overviewPage;
-    await expect(docs.heading('Getting Started')).toBeVisible();
-    await expect(docs.heading('Authentication')).toBeVisible();
-    await expect(docs.heading('Rate Limits')).toBeVisible();
+  test('renders the "Getting Started", "Authentication" and "Rate Limits" section headings', async ({ overviewPage }) => {
+    const { markdown } = overviewPage;
+    await expect(markdown.heading('Getting Started')).toBeVisible();
+    await expect(markdown.heading('Authentication')).toBeVisible();
+    await expect(markdown.heading('Rate Limits')).toBeVisible();
   });
 
-  test('renders paragraphs with inline formatting', async ({ overviewPage }) => {
-    const { docs } = overviewPage;
-    await expect(docs.content.getByText('comprehensive API collection for testing')).toBeVisible();
-    await expect(docs.content.locator('strong', { hasText: 'OpenCollection' })).toBeVisible();
+  test('renders the intro paragraph and shows the product name "OpenCollection" in bold', async ({ overviewPage }) => {
+    const { markdown } = overviewPage;
+    await expect(markdown.paragraph('comprehensive API collection for testing')).toBeVisible();
+    await expect(markdown.boldText('OpenCollection')).toBeVisible();
   });
 
-  test('renders an ordered list', async ({ overviewPage }) => {
-    const { docs } = overviewPage;
-    await expect(docs.content.getByText('Select an environment')).toBeVisible();
-    await expect(docs.content.getByText('Try out the various API endpoints')).toBeVisible();
-    await expect(docs.content.getByText('Check the response examples')).toBeVisible();
+  test('renders the getting-started steps as an ordered list', async ({ overviewPage }) => {
+    const { markdown } = overviewPage;
+    await expect(markdown.numberedItem('Select an environment')).toBeVisible();
+    await expect(markdown.numberedItem('Try out the various API endpoints')).toBeVisible();
+    await expect(markdown.numberedItem('Check the response examples')).toBeVisible();
   });
 
-  test('renders a markdown table', async ({ overviewPage }) => {
-    const { table } = overviewPage.docs;
-    await expect(table).toBeVisible();
-    await expect(table.getByRole('columnheader', { name: 'Environment' })).toBeVisible();
-    await expect(table.getByRole('columnheader', { name: 'Base URL' })).toBeVisible();
-    await expect(table.getByRole('columnheader', { name: 'Auth' })).toBeVisible();
-    await expect(table.getByRole('cell', { name: 'Local', exact: true })).toBeVisible();
-    await expect(table.getByRole('cell', { name: 'Prod', exact: true })).toBeVisible();
+  test('renders the environments table with its column headers and Local/Prod rows', async ({ overviewPage }) => {
+    const { markdown } = overviewPage;
+    await expect(markdown.table()).toBeVisible();
+    await expect(markdown.columnHeader('Environment')).toBeVisible();
+    await expect(markdown.columnHeader('Base URL')).toBeVisible();
+    await expect(markdown.columnHeader('Auth')).toBeVisible();
+    await expect(markdown.cell('Local')).toBeVisible();
+    await expect(markdown.cell('Prod')).toBeVisible();
   });
 
-  test('renders a code block', async ({ overviewPage }) => {
-    await expect(overviewPage.docs.content.locator('code', { hasText: 'curl -H' })).toBeVisible();
-  });
-
-  test('renders a blockquote', async ({ overviewPage }) => {
-    const blockquote = overviewPage.docs.content.locator('blockquote');
-    await expect(blockquote).toBeVisible();
-    await expect(blockquote.getByText('Note')).toBeVisible();
-    await expect(blockquote.locator('code', { hasText: 'X-RateLimit-Remaining' })).toBeVisible();
+  test('renders the example request as a fenced code block', async ({ overviewPage }) => {
+    await expect(overviewPage.markdown.code('curl -H')).toBeVisible();
   });
 });

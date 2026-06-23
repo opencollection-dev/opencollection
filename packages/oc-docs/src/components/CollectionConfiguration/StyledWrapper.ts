@@ -51,8 +51,6 @@ export const CollectionConfigurationWrapper = styled.div`
     flex: 1;
     min-width: 0;
     overflow-wrap: anywhere;
-    /* Single source of truth for value typography — every value rendered in the
-       cell (plain, variable, muted, and the masked SecretValue) inherits it. */
     font-family: 'Fira Code', var(--font-mono);
     font-weight: 400;
     font-size: 0.75rem;
@@ -66,9 +64,6 @@ export const CollectionConfigurationWrapper = styled.div`
   .config-value--var {
     color: var(--primary-color);
   }
-  /* SecretValue defaults to the app mono token; re-point it to the cell's font
-     so secret values match the rest of the section (size/weight inherit). The
-     descendant selector keeps specificity above SecretValue's own rule. */
   .config-value-cell .secret-value-text {
     font-family: inherit;
   }
