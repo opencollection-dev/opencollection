@@ -34,23 +34,5 @@ export const StyledWrapper = styled.section`
     color: var(--text-muted);
   }
 
-  /* Body opens/closes with a height animation (grid-rows 0fr → 1fr). */
-  .oc-section-body {
-    display: grid;
-    grid-template-rows: 0fr;
-    transition: grid-template-rows 0.25s ease;
-  }
-  .oc-section-body.is-open {
-    grid-template-rows: 1fr;
-  }
-  .oc-section-body-clip {
-    overflow: hidden;
-    min-height: 0;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .oc-section-body {
-      transition: none;
-    }
-  }
+  /* The body's open/close height animation is handled by the shared <Collapse>. */
 `;

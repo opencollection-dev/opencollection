@@ -1,6 +1,7 @@
 import React, { useId, useState } from 'react';
 import { SectionLabel } from '../SectionLabel/SectionLabel';
 import { Chevron } from '../Chevron';
+import { Collapse } from '../Collapse';
 import { StyledWrapper } from './StyledWrapper';
 
 type HeadingLevel = 'h2' | 'h3' | 'h4';
@@ -48,14 +49,9 @@ export const Section: React.FC<SectionProps> = ({
           </SectionLabel>
           {badge}
         </div>
-        <div
-          id={panelId}
-          role="region"
-          aria-labelledby={labelId}
-          className={`oc-section-body${open ? ' is-open' : ''}`}
-        >
-          <div className="oc-section-body-clip">{children}</div>
-        </div>
+        <Collapse open={open} id={panelId} role="region" aria-labelledby={labelId}>
+          {children}
+        </Collapse>
       </StyledWrapper>
     );
   }

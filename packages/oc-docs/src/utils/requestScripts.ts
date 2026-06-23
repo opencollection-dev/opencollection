@@ -2,20 +2,22 @@ import type { OpenCollection } from '@opencollection/types';
 import type { Item } from '@opencollection/types/collection/item';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { Scripts } from '@opencollection/types/common/scripts';
+import type { ScriptExecutionFlow } from '@opencollection/types/config/collection';
 import { getRequestScripts, scriptsArrayToObject, getItemName } from './schemaHelpers';
 
 export type ScriptLevel = 'collection' | 'folder' | 'request';
 export type ScriptPhase = 'before-request' | 'after-response';
 
+/** Script execution flow — re-exported from the schema (`config.scripts.flow`). */
+export type ScriptFlow = ScriptExecutionFlow;
+
 /**
- * Script execution flow. Pre-request order is identical in both; they differ only
- * in post-response order:
- *  - `sandwich`   — post runs innermost→outermost (request → folder → collection),
- *                   mirroring the pre-request order so each level wraps the request.
- *  - `sequential` — post runs outermost→innermost (collection → folder → request),
- *                   the same hierarchical order as pre-request.
+ * The collection's script execution flow, read from the schema's
+ * `config.scripts.flow`. Defaults to `sandwich` when omitted — matching how the
+ * Bruno runtime resolves it (`brunoConfig.scripts.flow ?? 'sandwich'`).
  */
-export type ScriptFlow = 'sandwich' | 'sequential';
+export const getScriptFlow = (collection: OpenCollection | null | undefined): ScriptFlow =>
+  collection?.config?.scripts?.flow === 'sequential' ? 'sequential' : 'sandwich';
 
 export interface ScriptChainStep {
   level: ScriptLevel;
@@ -23,12 +25,10 @@ export interface ScriptChainStep {
   label: string;
   sourceName?: string;
   code: string;
-  /** Collection/folder steps are inherited; the request's own steps are not. */
-  inherited: boolean;
   /**
    * Hierarchy index of the step's source: 0 = collection, 1..n = folders
-   * (outermost→innermost), n+1 = request. Used to reorder steps per the active
-   * {@link ScriptFlow} without losing nested-folder ordering.
+   * (outermost→innermost), n+1 = request. Used to order the chain: pre-request runs
+   * by ascending order, post-response the reverse (innermost→outermost).
    */
   order: number;
 }
@@ -80,7 +80,6 @@ export const buildScriptChain = (
         label: stepLabel(source.level, 'before-request'),
         sourceName: source.sourceName,
         code: source.pre,
-        inherited: source.level !== 'request',
         order: source.order
       });
     }
@@ -94,7 +93,6 @@ export const buildScriptChain = (
         label: stepLabel(source.level, 'after-response'),
         sourceName: source.sourceName,
         code: source.post,
-        inherited: source.level !== 'request',
         order: source.order
       });
     }

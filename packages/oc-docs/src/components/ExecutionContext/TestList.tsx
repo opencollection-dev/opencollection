@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ScopeTag } from './ScopeTag';
 import { Code } from '../Code/Code';
+import { Collapse } from '../Collapse';
 import type { TestRow } from '../../utils/extractTests';
 
 interface TestListProps {
@@ -39,11 +40,9 @@ const TestItem: React.FC<{ test: TestRow }> = ({ test }) => {
           {open ? 'hide code' : 'view code'}
         </button>
       </div>
-      {open && (
-        <div style={{ padding: '0 16px 14px' }}>
-          <Code code={testCode(test)} language="javascript" showLineNumbers showCopy={false} />
-        </div>
-      )}
+      <Collapse open={open} lazy innerClassName="oc-test-code">
+        <Code code={testCode(test)} language="javascript" showLineNumbers showCopy={false} />
+      </Collapse>
     </div>
   );
 };

@@ -1,5 +1,16 @@
 import { describe, it, expect } from 'vitest';
-import { buildScriptChain } from './requestScripts';
+import { buildScriptChain, getScriptFlow } from './requestScripts';
+
+describe('getScriptFlow', () => {
+  it('reads config.scripts.flow, defaulting to sandwich', () => {
+    expect(getScriptFlow(null)).toBe('sandwich');
+    expect(getScriptFlow({} as any)).toBe('sandwich');
+    expect(getScriptFlow({ config: {} } as any)).toBe('sandwich');
+    expect(getScriptFlow({ config: { scripts: {} } } as any)).toBe('sandwich');
+    expect(getScriptFlow({ config: { scripts: { flow: 'sequential' } } } as any)).toBe('sequential');
+    expect(getScriptFlow({ config: { scripts: { flow: 'sandwich' } } } as any)).toBe('sandwich');
+  });
+});
 
 describe('buildScriptChain', () => {
   it('orders pre-request collection→folder→request, then post-response reversed', () => {
@@ -23,8 +34,8 @@ describe('buildScriptChain', () => {
       'request:after-response',
       'collection:after-response'
     ]);
-    expect(chain[0]).toMatchObject({ inherited: true, label: 'Collection Pre-Request', code: 'coll pre' });
-    expect(chain[2]).toMatchObject({ inherited: false, label: 'Request Pre-Request' });
+    expect(chain[0]).toMatchObject({ label: 'Collection Pre-Request', code: 'coll pre' });
+    expect(chain[2]).toMatchObject({ label: 'Request Pre-Request' });
     // Hierarchy index: collection=0, folder=1, request=2 — independent of phase.
     const orderOf = (level: string, phase: string) =>
       chain.find((s) => s.level === level && s.phase === phase)?.order;

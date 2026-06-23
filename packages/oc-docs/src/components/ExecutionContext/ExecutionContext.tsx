@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ScriptChain } from './ScriptChain';
-import { FlowToggle } from './FlowToggle';
 import { VariablesPanel } from './VariablesPanel';
 import { AssertList } from './AssertList';
 import { TestList } from './TestList';
@@ -16,20 +15,21 @@ interface ExecutionContextProps {
   postVars: PostResponseVarRow[];
   assertions: AssertionRow[];
   tests: TestRow[];
-  /** Method/url shown on the synthetic "Request Execution" row in the script chain. */
+  /** Script execution flow (from `config.scripts.flow`). Defaults to `sandwich`. */
+  flow?: ScriptFlow;
+  /** Method/url shown on the synthetic "HTTP" row in the script chain. */
   method?: string;
   url?: string;
-  /** Initial script execution flow. Defaults to `sandwich`. */
-  defaultFlow?: ScriptFlow;
   className?: string;
 }
 
 const countLabel = (n: number, noun: string): string => `${n} ${noun}${n === 1 ? '' : 's'}`;
+const FLOW_LABEL: Record<ScriptFlow, string> = { sandwich: 'Sandwich', sequential: 'Sequential' };
 
 /**
- * A titled section card inside the Execution Context. These are not individually
- * collapsible — the whole Execution Context collapses as one (see the page's
- * collapsible `Section`); each card just groups a title + optional meta + content.
+ * A titled section inside the Execution Context: the title (+ optional meta) sits
+ * ABOVE a bordered content box. Not individually collapsible — the whole Execution
+ * Context collapses as one (see the page's collapsible `Section`).
  */
 const Card: React.FC<{ title: string; meta?: React.ReactNode; children: React.ReactNode }> = ({
   title,
@@ -41,7 +41,7 @@ const Card: React.FC<{ title: string; meta?: React.ReactNode; children: React.Re
       <span className="oc-exec-card-title">{title}</span>
       {meta !== undefined && <span className="oc-exec-card-meta">{meta}</span>}
     </div>
-    {children}
+    <div className="oc-exec-card-box">{children}</div>
   </div>
 );
 
@@ -56,13 +56,11 @@ export const ExecutionContext: React.FC<ExecutionContextProps> = ({
   postVars,
   assertions,
   tests,
+  flow = 'sandwich',
   method,
   url,
-  defaultFlow = 'sandwich',
   className
 }) => {
-  const [flow, setFlow] = useState<ScriptFlow>(defaultFlow);
-
   const hasScripts = scriptChain.length > 0;
   const hasVars = preVars.length > 0 || postVars.length > 0;
   const hasAsserts = assertions.length > 0;
@@ -75,7 +73,7 @@ export const ExecutionContext: React.FC<ExecutionContextProps> = ({
   return (
     <ExecutionContextWrapper className={['oc-execution-context', className].filter(Boolean).join(' ')}>
       {hasScripts && (
-        <Card title="Scripts" meta={<FlowToggle value={flow} onChange={setFlow} />}>
+        <Card title="Scripts" meta={<span className="oc-exec-flow">{FLOW_LABEL[flow]} execution flow</span>}>
           <ScriptChain steps={scriptChain} flow={flow} method={method} url={url} />
         </Card>
       )}

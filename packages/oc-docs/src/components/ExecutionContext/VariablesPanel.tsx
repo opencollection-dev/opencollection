@@ -27,7 +27,7 @@ export const VariablesPanel: React.FC<VariablesPanelProps> = ({ preVars, postVar
   return (
     <div className="oc-vars-grid">
       <Field label="Pre-Request" rows={preRows(preVars)} />
-      <Field label="Post-Response" rows={postRows(postVars)} />
+      <Field label="Post Response" rows={postRows(postVars)} />
     </div>
   );
 };
