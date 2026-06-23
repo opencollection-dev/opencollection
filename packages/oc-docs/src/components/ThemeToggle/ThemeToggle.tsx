@@ -50,6 +50,7 @@ const ThemeToggle: React.FC = () => {
   return (
     <Button
       type="button"
+      data-testid="theme-toggle"
       aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
       title={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
       onClick={() => dispatch(toggleTheme())}

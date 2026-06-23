@@ -1,13 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
-// Relative import is required: the `tsconfig` path aliases below do NOT apply while
-// this config (or anything it imports) loads.
 import { appConfig } from './e2e/config/app.config';
 
 export default defineConfig({
   testDir: './e2e',
-  // Apply the e2e path-alias map (@pages, @components, @fixtures) to every test file
-  // and everything it imports.
-  tsconfig: './e2e/tsconfig.json',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
@@ -26,7 +21,7 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'], channel: 'chrome' },
+      use: { ...devices['Desktop Chrome'] },
     },
   ],
   webServer: {

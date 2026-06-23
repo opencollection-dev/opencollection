@@ -1,144 +1,117 @@
 # End-to-end tests
 
-Playwright e2e tests for the docs app, written with a **class-based Page Object Model**
-and a scalable, feature-first layout.
+Playwright tests for the docs app. They open the app in a real browser and check that
+what a person sees on the page is correct.
 
-## Layout
+Two rules shape every test here:
+
+1. **Tests read like documentation.** The title says, in plain English, what the page
+   does; the body confirms it. You shouldn't need to read the code to follow a test.
+2. **Elements are found the way a person reads the screen** — a heading's words, a
+   button's label, a table cell's text — never by styling classes that can change.
+
+## What's tested
+
+| Area | What it checks | Spec |
+|------|----------------|------|
+| Collection overview | the Markdown intro renders correctly (headings, lists, table, code, quote) | `tests/collection/markdown.spec.ts` |
+| Theme switch | the header button flips the app light ⇄ dark and remembers the choice | `tests/theming/theme-toggle.spec.ts` |
+
+## Running the tests
+
+```sh
+npm run test:e2e       # run headless
+npm run test:e2e:ui    # run in Playwright's interactive UI
+```
+
+Playwright starts the dev server for you (see `webServer` in `playwright.config.ts`),
+so there's nothing to start beforehand.
+
+## Folder layout
 
 ```
 e2e/
-├── tsconfig.json          # extends the root; defines the @pages / @components / @fixtures aliases
-├── config/
-│   └── app.config.ts      # baseURL + webServer command (one env today; BASE_URL overrides)
-├── playwright/            # Playwright test harness (named to match the OSS codebase;
-│   └── pages.fixture.ts   #   `fixtures/` is reserved for static test data)
-│                          #   the project `test` — base test + all page-object fixtures (@fixtures)
-├── pages/                 # one class per route/screen — *.page.ts, extend BasePage
-│   ├── base.page.ts
-│   ├── layout.page.ts     # app-wide chrome (mount root, theme)
-│   └── collection.page.ts # the rendered collection (docs + endpoint sections)
-├── components/            # component objects (sections of a page) — *.component.ts, extend BaseComponent
-│   ├── base.component.ts
-│   ├── layout/
-│   │   └── theme-toggle.component.ts
-│   └── collection/
-│       ├── collection-docs.component.ts
-│       ├── endpoint-section.component.ts
-│       ├── examples.component.ts
-│       └── content-section.component.ts
-└── tests/                 # *.spec.ts, grouped by feature/section (never by test type)
-    ├── app/              # app shell — boots & renders the collection
-    ├── theming/
-    └── collection/        # docs · requests · examples
+├── tests/                          # the tests, grouped by feature
+│   ├── collection/markdown.spec.ts
+│   └── theming/theme-toggle.spec.ts
+├── pages/                          # one "page object" per screen
+│   ├── base.page.ts                #   shared navigation (goto, reload)
+│   └── collection.page.ts          #   the collection screen + its overview
+├── components/                     # reusable pieces of UI (work on any screen)
+│   ├── base.component.ts           #   shared base — every component has a `root`
+│   ├── markdown.component.ts       #   any block of rendered Markdown
+│   └── theme-toggle.component.ts   #   the light/dark switch
+├── playwright/                     # the test harness
+│   ├── pages.fixture.ts            #   defines the fixtures
+│   └── index.ts                    #   the single thing specs import from
+├── config/app.config.ts            # base URL + how to start the app
+└── tsconfig.json                   # TypeScript settings for this folder
 ```
 
-## The model
+## The three building blocks
 
-- **Page objects** (`pages/*.page.ts`) represent a route. They extend `BasePage`, expose
-  their sections as `readonly` component instances, and own page-level actions
-  (`goto`, `reload`, flows).
-- **Component objects** (`components/<page>/*.component.ts`) represent a section of UI.
-  They extend `BaseComponent`, which scopes them to a `root` locator so the same
-  component can be reused for each repeated instance on a page (e.g. one
-  `EndpointSectionComponent` per endpoint). Page-wide components (theme toggle) omit
-  the root. Grouping by page (`collection/`, `layout/`) keeps the folder navigable.
-- **Locators:** fixed locators are `readonly` fields (Playwright evaluates them lazily);
-  locators that take an argument are methods.
+**Page objects** (`pages/`) describe a whole screen. They know how to get there
+(`goto`) and expose the parts of the page a test cares about.
 
-  ```ts
-  export class EndpointSectionComponent extends BaseComponent {
-    readonly methodBadge = this.root.locator('.badge-method');   // fixed → field
-    table(name: string): Locator {                               // parameterized → method
-      return this.root.locator('.minimal-table').filter({ hasText: name });
-    }
-  }
-  ```
+**Components** (`components/`) describe a reusable piece of UI — a Markdown block, the
+theme switch. They aren't tied to one page: you point a component at the element it
+lives in, and it works anywhere that UI appears.
 
-- **Actions** are `async` methods (`collectionPage.goto()`, `examples.selectExample(...)`).
-- **Assertions stay in specs.** Page objects/components expose locators + actions; specs
-  do the `expect`s (readiness waits inside `goto()` are the one exception).
-- **Only page objects and components own the CSS-class selectors.** Specs may refine a
-  component locator by role/text/tag (`getByRole('cell', …)`, `locator('th', …)`), but
-  never reach for app CSS classes (`.badge-method`, `.toggle-btn`) directly.
-
-## Naming conventions
-
-| Kind | File | Class |
-|------|------|-------|
-| Page object | `<name>.page.ts` | `XxxPage extends BasePage` |
-| Component object | `<name>.component.ts` | `XxxComponent extends BaseComponent` |
-| Fixture | `<feature>.fixture.ts` | — (exports a `test`) |
-| Spec | `<name>.spec.ts` | — |
-
-Folders group specs by **feature/section**, never by test type. Express the test
-type with a Playwright tag instead, e.g. `test('…', { tag: ['@smoke'] }, …)`, and
-run a type with `npx playwright test --grep @smoke`.
-
-## Imports & path aliases
-
-`e2e/tsconfig.json` defines aliases (wired into Playwright via `tsconfig` in
-`playwright.config.ts`). The rule:
-
-- **Cross top-level folder → alias:** `@fixtures`, `@pages/*`, `@components/*`.
-- **Within the same top-level folder → relative:** e.g. `collection.page.ts` imports
-  `./base.page`; `endpoint-section.component.ts` imports `../base.component`.
+**Fixtures** (`playwright/`) hand a test ready-made page objects and components, so a
+test simply asks for what it needs by name:
 
 ```ts
-import { test, expect } from '@fixtures';                          // specs
-import { CollectionPage } from '@pages/collection.page';            // fixtures → pages
-import { ExamplesComponent } from '@components/collection/examples.component'; // pages → components
+test('…', async ({ collectionPage, themeToggle }) => { … });
 ```
 
-> `playwright.config.ts` and `config/app.config.ts` must use **relative** imports — the
-> alias map does not apply while the Playwright config loads.
+Commonly-used components (the theme switch, and later the sidebar and page header) are
+handed over directly — so you write `themeToggle.toggle()`, not
+`layoutPage.themeToggle.toggle()`.
 
-## Writing a spec
+`pages.fixture.ts` defines those fixtures; `index.ts` combines them with Playwright's
+`mergeTests` and is the one place specs import from. To add a page, drop a new
+`*.fixture.ts` in this folder and add it to the `mergeTests(…)` call in `index.ts`.
 
-Import `test`/`expect` from `@fixtures` (never `@playwright/test` directly) and pull the
-page objects you need off the fixture — no `new`, no construction in `beforeEach`:
+## Writing a test
+
+Import `test` and `expect` from the `playwright` folder, then pull the page objects and
+components you need straight off the test callback — no `new`, no setup boilerplate:
 
 ```ts
-import { test, expect } from '@fixtures';
+import { test, expect } from '../../playwright';
 
-test.describe('Requests', () => {
+test.describe('Collection overview', () => {
   test.beforeEach(async ({ collectionPage }) => {
     await collectionPage.goto();
   });
 
-  test('POST shows its method badge', async ({ collectionPage }) => {
-    await expect(collectionPage.endpoint('echo json').methodBadge).toContainText('POST');
+  test('shows the "Getting Started" heading', async ({ collectionPage }) => {
+    await expect(collectionPage.overview.heading('Getting Started')).toBeVisible();
   });
 });
 ```
 
-## Adding a page
+Keep the `expect`s in the test. Page objects and components only expose elements and
+actions — the test decides what to check.
 
-1. Add `pages/<name>.page.ts` extending `BasePage`.
-2. Split its UI into `components/<name>/*.component.ts` (extend `BaseComponent`) and
-   compose them as `readonly` fields.
-3. Add a fixture for it in `playwright/pages.fixture.ts` (all page objects share that file).
-4. Add specs under `tests/<feature>/`.
+## How elements are located (most reliable first)
 
-## Locator strategy
+1. **Test id** for the container a component lives in —
+   `getByTestId('collection-docs')`, `getByTestId('theme-toggle')`.
+2. **Role + accessible name** for content and controls — `getByRole('heading', …)`,
+   `getByRole('table')`. This is also how a screen reader finds them.
+3. **Semantic tags** (`strong`, `code`, `blockquote`) only for Markdown output that has
+   no role or test id.
 
-Prefer stable hooks set by the app (here, semantic CSS classes like `.endpoint-section`,
-`.badge-method`). Use `getByRole` / text only for generated HTML with no such hook (e.g.
-rendered markdown internals). Components own the selectors; specs stay declarative.
+Tests never reach for app styling classes; each component owns its own selectors.
 
-## Future seams (deliberately not scaffolded yet)
+## Imports
 
-Add these only when there's real content for them, to keep the tree readable:
+Every import is a relative path — there are no aliases. Tests import from the
+`playwright` barrel; everything else points straight at the file it needs:
 
-- `config/environments/*` + a `TEST_ENV` resolver — when a second environment exists.
-- `constants/` (routes, messages, timeouts) — when routes/strings repeat enough to centralize.
-- `data/` (+ `factory/*.factory.ts`) — when tests need fixtures/generated data.
-- `hooks/` (global setup/teardown) — e.g. for shared auth state (the app has none today).
-- `utils/` (`*.helper.ts`) and `types/*.types.ts` — when shared, page-agnostic code appears.
-- `tests/api/` — when there's an API to test directly.
-
-## Running
-
-```sh
-npm run test:e2e          # headless
-npm run test:e2e:ui       # Playwright UI mode
+```ts
+import { test, expect } from '../../playwright';                    // test → harness
+import { CollectionPage } from '../pages/collection.page';           // harness → page
+import { MarkdownComponent } from '../components/markdown.component'; // page → component
 ```

@@ -1,15 +1,11 @@
 import type { Page } from '@playwright/test';
 
 /**
- * Base class for every page object. Holds the Playwright `page` handle, the
- * app-wide elements present on every screen (the React mount root and the
- * document element) and the navigation shared by all pages.
+ * Base class for every page object. Holds the Playwright `page` handle, the app
+ * mount root, and the navigation shared by all pages.
  */
 export abstract class BasePage {
-
   readonly root = this.page.locator('#root');
-
-  readonly html = this.page.locator('html');
 
   constructor(protected readonly page: Page) {}
 
