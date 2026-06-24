@@ -179,6 +179,7 @@ const Docs: React.FC<DocsProps> = ({
               <div
                 key={`${itemUuid}-${index}`}
                 id={sectionId}
+                data-testid="endpoint-section"
                 className={`endpoint-section scroll-mt-20 ${isSelected ? 'selected' : ''}`}
               >
                 <Item
