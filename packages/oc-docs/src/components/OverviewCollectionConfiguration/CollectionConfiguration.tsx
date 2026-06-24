@@ -3,9 +3,8 @@ import type { HttpRequestHeader } from '@opencollection/types/requests/http';
 import type { Auth } from '@opencollection/types/common/auth';
 import { Code } from '../Code/Code';
 import { SubHeading } from '../SubHeading/SubHeading';
-import { PropertyTable } from '../PropertyTable';
-import { AuthDetails } from '../AuthDetails';
-import { HiddenSections } from '../HiddenSections';
+import { PropertyTable } from '../PropertyTable/PropertyTable';
+import { AuthDetails } from '../AuthDetails/AuthDetails';
 import { StyledWrapper } from './StyledWrapper';
 
 interface CollectionScripts {
@@ -38,13 +37,6 @@ export const CollectionConfiguration: React.FC<CollectionConfigurationProps> = (
   if (!hasConfig) {
     return null;
   }
-
-  const hiddenTitles = [
-    !hasHeaders && 'Headers',
-    !hasAuth && 'Auth',
-    !hasScripts && 'Script',
-    !hasTests && 'Tests'
-  ].filter((title): title is string => Boolean(title));
 
   return (
     <StyledWrapper className="collection-configuration">
@@ -87,7 +79,6 @@ export const CollectionConfiguration: React.FC<CollectionConfigurationProps> = (
         </div>
       )}
 
-      <HiddenSections titles={hiddenTitles} className="config-hidden" />
     </StyledWrapper>
   );
 };

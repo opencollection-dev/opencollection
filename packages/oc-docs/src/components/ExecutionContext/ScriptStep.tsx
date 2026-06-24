@@ -1,20 +1,14 @@
 import React, { useState } from 'react';
 import { Code } from '../Code/Code';
-import { Chevron } from '../Chevron';
-import { Collapse } from '../Collapse';
+import { Chevron } from '../Chevron/Chevron';
+import { Collapse } from '../Collapse/Collapse';
 import type { ScriptChainStep } from '../../utils/requestScripts';
 
 interface ScriptStepProps {
   step: ScriptChainStep;
-  /** 1-based position of this row in the display order. */
   position: number;
 }
 
-/**
- * One script node in the chain: number + chevron + level/phase label, with the
- * script's source code revealed in a height-animated panel on demand. Only the
- * label and the code are shown — both come straight from the collection.
- */
 export const ScriptStep: React.FC<ScriptStepProps> = ({ step, position }) => {
   const [open, setOpen] = useState(false);
   const toggle = () => setOpen((v) => !v);

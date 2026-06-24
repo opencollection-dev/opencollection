@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-export const RequestBodyWrapper = styled.div`
+export const StyledWrapper = styled.div`
   > * + * {
     margin-top: 0.5rem;
   }

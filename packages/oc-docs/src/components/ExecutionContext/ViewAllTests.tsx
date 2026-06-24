@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React, { Fragment, useMemo, useState } from 'react';
 import { Code } from '../Code/Code';
-import { Modal } from '../Modal';
+import { Modal } from '../../ui/Modal/Modal';
 import { SectionLabel } from '../SectionLabel/SectionLabel';
 import type { TestRow } from '../../utils/extractTests';
 
@@ -19,14 +19,14 @@ export const ViewAllTests: React.FC<ViewAllTestsProps> = ({ tests }) => {
   if (!code) return null;
 
   return (
-    <>
+    <Fragment>
       <button type="button" className="oc-code-toggle oc-view-all-tests" onClick={() => setOpen(true)}>
         View complete code
       </button>
       <Modal open={open} onClose={() => setOpen(false)} title={<SectionLabel>Tests</SectionLabel>} ariaLabel="All tests">
         {open && <Code code={code} language="javascript" showLineNumbers showCopy />}
       </Modal>
-    </>
+    </Fragment>
   );
 };
 

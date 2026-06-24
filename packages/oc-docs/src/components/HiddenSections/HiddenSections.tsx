@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { HiddenSectionsWrapper } from './StyledWrapper';
+import { StyledWrapper } from './StyledWrapper';
 
 interface HiddenSectionsProps {
-  /**
-   * Titles of the sections that are empty for the current item, in display order
-   * (e.g. ["Body", "Auth"]). Each becomes an "(empty)" card when revealed.
-   */
   titles: string[];
   className?: string;
 }
 
-/** Eye / eye-off glyph (Tabler-style), matching the finalized design. */
 const EyeIcon: React.FC<{ crossed: boolean }> = ({ crossed }) => (
   <svg
     width="13"
@@ -38,11 +33,6 @@ const EyeIcon: React.FC<{ crossed: boolean }> = ({ crossed }) => (
   </svg>
 );
 
-/**
- * Surfaces the sections that have no content for the current item behind a single
- * toggle, so the page stays clean while still signalling the sections exist. Renders
- * nothing when no section is hidden. Reusable across the request and Overview pages.
- */
 export const HiddenSections: React.FC<HiddenSectionsProps> = ({ titles, className }) => {
   const [open, setOpen] = useState(false);
 
@@ -56,7 +46,7 @@ export const HiddenSections: React.FC<HiddenSectionsProps> = ({ titles, classNam
   const count = titles.length;
 
   return (
-    <HiddenSectionsWrapper className={['oc-hidden-sections', className].filter(Boolean).join(' ')}>
+    <StyledWrapper className={['oc-hidden-sections', className].filter(Boolean).join(' ')}>
       <button type="button" className="oc-hidden-toggle" aria-expanded={open} onClick={() => setOpen((value) => !value)}>
         <EyeIcon crossed={open} />
         {open ? 'These fields were hidden' : `${count} hidden section${count > 1 ? 's' : ''}`}
@@ -68,7 +58,7 @@ export const HiddenSections: React.FC<HiddenSectionsProps> = ({ titles, classNam
             <div className="oc-hidden-item-box">(empty)</div>
           </div>
         ))}
-    </HiddenSectionsWrapper>
+    </StyledWrapper>
   );
 };
 

@@ -1,21 +1,18 @@
 import React from 'react';
-import { MethodBadge } from '../MethodBadge';
-import { VariableText } from '../VariableText';
+import { MethodBadge } from '../MethodBadge/MethodBadge';
+import { VariableText } from '../VariableText/VariableText';
 import { CopyButton } from '../../ui/CopyButton/CopyButton';
-import { RequestUrlBarWrapper } from './StyledWrapper';
+import { StyledWrapper } from './StyledWrapper';
 
 interface RequestUrlBarProps {
   method: string;
   url: string;
-  /** Opens the playground/runner. When omitted, the "Try it" button is hidden. */
   onTry?: () => void;
   tryLabel?: string;
-  /** Per-instance style overrides (e.g. page-specific spacing). */
   style?: React.CSSProperties;
   className?: string;
 }
 
-/** The method + URL bar with copy and a "Try it" action. */
 export const RequestUrlBar: React.FC<RequestUrlBarProps> = ({
   method,
   url,
@@ -24,7 +21,7 @@ export const RequestUrlBar: React.FC<RequestUrlBarProps> = ({
   style,
   className
 }) => (
-  <RequestUrlBarWrapper style={style} className={['oc-request-url-bar', className].filter(Boolean).join(' ')}>
+  <StyledWrapper style={style} className={['oc-request-url-bar', className].filter(Boolean).join(' ')}>
     <span className="oc-request-url-bar-method">
       <MethodBadge method={method} />
     </span>
@@ -51,7 +48,7 @@ export const RequestUrlBar: React.FC<RequestUrlBarProps> = ({
         </button>
       )}
     </span>
-  </RequestUrlBarWrapper>
+  </StyledWrapper>
 );
 
 export default RequestUrlBar;

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-export const MethodBadgeWrapper = styled.span`
+export const StyledWrapper = styled.span`
   display: inline-flex;
   align-items: center;
   font-family: var(--font-mono);

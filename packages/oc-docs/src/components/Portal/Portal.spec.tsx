@@ -5,8 +5,6 @@ import { Portal } from './Portal';
 
 describe('Portal', () => {
   it('renders nothing during server-side rendering (defers until mounted)', () => {
-    // The mount gate keeps SSR output empty, so there is no hydration mismatch and
-    // createPortal is never called in an environment without a DOM.
     const html = renderToStaticMarkup(
       <Portal>
         <span>portaled content</span>

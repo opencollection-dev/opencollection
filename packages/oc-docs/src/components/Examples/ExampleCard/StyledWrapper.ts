@@ -1,10 +1,5 @@
 import styled from '@emotion/styled';
 
-/**
- * Tone color for a status badge: 2xx success (green), 3xx/1xx info (blue),
- * 4xx & 5xx error (red) — matching the design (success vs error) while keeping
- * redirects/informational visually distinct.
- */
 export const statusToneColor = (status?: number): string => {
   if (status === undefined) return 'var(--text-muted)';
   if (status >= 200 && status < 300) return 'var(--oc-status-success-text)';
@@ -12,7 +7,7 @@ export const statusToneColor = (status?: number): string => {
   return 'var(--oc-status-info-text)';
 };
 
-export const ExampleCardWrapper = styled.div`
+export const StyledWrapper = styled.div`
   border: 1px solid var(--border-color);
   border-radius: 8px;
   overflow: hidden;
@@ -22,9 +17,6 @@ export const ExampleCardWrapper = styled.div`
     margin-top: 12px;
   }
 
-  /* ── Summary row ───────────────────────────────────────────── */
-  /* A flex row holding the toggle button and the (sibling) Try button — never
-     nested, so both are real, keyboard-operable controls. */
   .oc-example-summary {
     display: flex;
     align-items: center;
@@ -103,9 +95,6 @@ export const ExampleCardWrapper = styled.div`
     outline-offset: 2px;
   }
 
-  /* ── Detail (animated open/close) ──────────────────────────── */
-  /* grid-template-rows 0fr → 1fr animates height without a fixed max-height; the
-     clip wrapper hides the overflow (and the body's top border) while collapsed. */
   .oc-example-detail {
     display: grid;
     grid-template-rows: 0fr;
@@ -118,7 +107,6 @@ export const ExampleCardWrapper = styled.div`
     overflow: hidden;
     min-height: 0;
   }
-  /* No divider between the summary row and the description below it. */
   .oc-example-description {
     margin: 0;
     padding: 0.5rem;
@@ -151,7 +139,6 @@ export const ExampleCardWrapper = styled.div`
     text-overflow: ellipsis;
   }
 
-  /* ── Two-pane grid ─────────────────────────────────────────── */
   .oc-example-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -176,7 +163,6 @@ export const ExampleCardWrapper = styled.div`
     }
   }
 
-  /* ── Pane ──────────────────────────────────────────────────── */
   .oc-pane-head {
     display: flex;
     align-items: center;
@@ -220,9 +206,6 @@ export const ExampleCardWrapper = styled.div`
     font-weight: 700;
   }
 
-  /* Tabs can shrink and scroll horizontally so they never overflow the header
-     (e.g. all four request tabs on a narrow / mobile pane). The scrollbar is
-     hidden — tabs scroll by swipe/drag/keyboard. */
   .oc-pane-tabs {
     display: flex;
     align-items: center;
@@ -267,8 +250,6 @@ export const ExampleCardWrapper = styled.div`
     display: inline-block;
   }
 
-  /* Long bodies / header lists scroll within the pane (capped height) with a thin
-     scrollbar, instead of growing the card unboundedly. */
   .oc-pane-body {
     flex: 1;
     min-height: 96px;
@@ -308,7 +289,6 @@ export const ExampleCardWrapper = styled.div`
     color: var(--text-tertiary);
   }
 
-  /* On phones, drop the content-type label so the tabs get the full header width. */
   @media (max-width: 600px) {
     .oc-pane-ctype {
       display: none;

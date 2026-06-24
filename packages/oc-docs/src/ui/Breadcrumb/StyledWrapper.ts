@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-export const BreadcrumbWrapper = styled.nav`
+export const StyledWrapper = styled.nav`
   ol {
     list-style: none;
     margin: 0;

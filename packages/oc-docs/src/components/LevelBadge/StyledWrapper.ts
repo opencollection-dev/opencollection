@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-export const LevelBadgeWrapper = styled.span`
+export const StyledWrapper = styled.span`
   display: inline-flex;
   align-items: center;
   padding: 0.05rem 0.4rem;

@@ -7,8 +7,6 @@ const child = <p>panel content</p>;
 
 describe('Collapse', () => {
   it('marks the track open/closed via the is-open class', () => {
-    // Assert on the element's class attribute (emotion also emits a `.is-open` CSS
-    // rule in a <style> tag, so a plain substring check would always match).
     expect(renderToStaticMarkup(<Collapse open>{child}</Collapse>)).toMatch(/class="oc-collapse is-open/);
     expect(renderToStaticMarkup(<Collapse open={false}>{child}</Collapse>)).not.toMatch(/class="oc-collapse is-open/);
   });

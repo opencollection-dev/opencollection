@@ -14,7 +14,6 @@ describe('Examples', () => {
     const html = renderToStaticMarkup(<Examples examples={examples} method="post" url="/login" />);
     expect(html).toContain('Happy path');
     expect(html).toContain('Unauthorized');
-    // first example defaults to expanded
     expect(html).toContain('REQUEST');
   });
 

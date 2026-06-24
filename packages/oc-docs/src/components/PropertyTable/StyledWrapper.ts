@@ -1,11 +1,6 @@
 import styled from '@emotion/styled';
 
-/**
- * Bordered key/value table. The value cell is the single source of truth for value
- * typography (Fira Code 12px); plain values inherit it, secrets re-point their own
- * font to it. Extracted from CollectionConfiguration so it's shared docs-wide.
- */
-export const PropertyTableWrapper = styled.div`
+export const StyledWrapper = styled.div`
   .property-empty-message {
     margin: 0;
     font-family: var(--font-sans);

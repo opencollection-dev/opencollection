@@ -1,13 +1,6 @@
 import styled from '@emotion/styled';
 
-/**
- * Code snippet panel. A single bordered box whose header bar holds the language
- * tabs (cURL / Javascript / Python) and the expand control, separated from the
- * code by a divider; the active tab carries a brand underline. The inner `Code`
- * panel renders flush (its own border/radius are dropped). Sizes are in rem so the
- * panel scales with the root font size.
- */
-export const CodeSnippetTabsWrapper = styled.div`
+export const StyledWrapper = styled.div`
   .oc-snippet-box {
     border: 1px solid var(--border-color);
     border-radius: 0.5rem;
@@ -15,7 +8,6 @@ export const CodeSnippetTabsWrapper = styled.div`
     background: var(--oc-background-base);
   }
 
-  /* Header bar: tabs on the left, expand on the right, divider below. */
   .oc-snippet-head {
     display: flex;
     align-items: stretch;
@@ -35,7 +27,6 @@ export const CodeSnippetTabsWrapper = styled.div`
     padding: 0 0.625rem;
     background: transparent;
     border: none;
-    /* Active underline overlaps the header divider (−1px) so it reads as one line. */
     border-bottom: 2px solid transparent;
     margin-bottom: -1px;
     font-family: var(--font-sans);
@@ -63,18 +54,15 @@ export const CodeSnippetTabsWrapper = styled.div`
     flex: 1;
   }
 
-  /* The code panel sits flush inside the box. */
   .oc-snippet-box .code-content-wrapper {
     border: none;
     border-radius: 0;
   }
 
-  /* Keep the code's copy button always visible in the snippet (matches design). */
   && .code-copy-floating {
     opacity: 1;
   }
 
-  /* Maximize / minimize icon button in the header bar. */
   .oc-code-snippet-expand {
     align-self: center;
     flex: 0 0 auto;
@@ -97,7 +85,6 @@ export const CodeSnippetTabsWrapper = styled.div`
     outline-offset: 2px;
   }
 
-  /* Copy control shown in the header when the snippet is in the expanded modal. */
   .oc-snippet-copy {
     align-self: center;
     flex: 0 0 auto;

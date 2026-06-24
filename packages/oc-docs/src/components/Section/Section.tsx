@@ -1,7 +1,7 @@
 import React, { useId, useState } from 'react';
 import { SectionLabel } from '../SectionLabel/SectionLabel';
-import { Chevron } from '../Chevron';
-import { Collapse } from '../Collapse';
+import { Chevron } from '../Chevron/Chevron';
+import { Collapse } from '../Collapse/Collapse';
 import { StyledWrapper } from './StyledWrapper';
 
 type HeadingLevel = 'h2' | 'h3' | 'h4';

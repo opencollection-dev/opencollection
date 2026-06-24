@@ -1,13 +1,6 @@
 import styled from '@emotion/styled';
 
-/**
- * Collapsible group for sections that are empty for the current item. An eye chip
- * ("N hidden sections" → "These fields were hidden") reveals one labelled "(empty)"
- * field per hidden section. Matches the finalized design and is reused on both the
- * request page (Body/Auth/…) and the Overview (collection configuration). All sizes
- * are in rem so the group scales with the root font size.
- */
-export const HiddenSectionsWrapper = styled.div`
+export const StyledWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.875rem;
@@ -40,8 +33,6 @@ export const HiddenSectionsWrapper = styled.div`
     outline-offset: 2px;
   }
 
-  /* Each hidden section: an uppercase label above a bordered "(empty)" field,
-     mirroring how populated, labelled fields read elsewhere on the page. */
   .oc-hidden-item-title {
     font-family: var(--font-sans);
     font-size: 0.6875rem;

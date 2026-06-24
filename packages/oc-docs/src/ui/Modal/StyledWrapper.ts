@@ -1,11 +1,6 @@
 import styled from '@emotion/styled';
 
-/**
- * Reusable modal: a dimmed backdrop centring a rounded dialog with an optional
- * header (title + close) and a scrollable body. Theme-token driven and rem-based
- * so it scales with the root font size and works in light/dark automatically.
- */
-export const ModalWrapper = styled.div`
+export const StyledWrapper = styled.div`
   position: fixed;
   inset: 0;
   z-index: 1000;
@@ -46,7 +41,6 @@ export const ModalWrapper = styled.div`
     padding: 0.875rem 1.125rem;
     border-bottom: 1px solid var(--border-color);
   }
-  /* The title slot accepts any node (e.g. a SectionLabel); strip its own margins. */
   .oc-modal-title {
     flex: 1;
     min-width: 0;

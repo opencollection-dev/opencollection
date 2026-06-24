@@ -1,10 +1,9 @@
 import styled from '@emotion/styled';
 
-export const RequestUrlBarWrapper = styled.div`
+export const StyledWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  /* Design: 6px/8px padding, 8px radius, 1px border (#e5e5e5), mantle fill. */
   padding: 0.375rem 0.5rem;
   border: 1px solid var(--border-color);
   border-radius: 0.5rem;
@@ -13,14 +12,12 @@ export const RequestUrlBarWrapper = styled.div`
   .oc-request-url-bar-method {
     flex-shrink: 0;
   }
-  /* Design: method label is mono, Bold 700, 12px, brand-coloured (MethodBadge default). */
   .oc-request-url-bar-method .oc-method-badge {
     font-size: 0.75rem;
     line-height: 1.125rem;
     letter-spacing: 0.04em;
   }
-  /* Design: URL is mono, 12px, single line with ellipsis; {{var}} tokens render as
-     brand chips via VariableText (which inherits this mono family). */
+
   .oc-request-url-bar-url {
     flex: 1;
     min-width: 0;
@@ -39,8 +36,7 @@ export const RequestUrlBarWrapper = styled.div`
     gap: 0.5rem;
     flex-shrink: 0;
   }
-  /* Figma: fixed 24px height, 6px radius, 8px horizontal padding, 5px gap; label is
-     Inter, Semi Bold 600, 12px, 100% line-height, 0 letter-spacing. */
+
   .oc-request-try {
     display: inline-flex;
     align-items: center;

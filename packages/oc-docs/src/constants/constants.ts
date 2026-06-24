@@ -1,4 +1,3 @@
-// Human-readable labels for collection/request auth modes.
 
 export const AUTH_MODE_LABELS: Record<string, string> = {
   basic: 'Basic Auth',

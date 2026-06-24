@@ -1,5 +1,5 @@
 import React from 'react';
-import { PropertyTable, type PropertyRow } from '../PropertyTable';
+import { PropertyTable, type PropertyRow } from '../PropertyTable/PropertyTable';
 import { SubHeading } from '../SubHeading/SubHeading';
 import type { PreRequestVarRow, PostResponseVarRow } from '../../utils/requestVars';
 
@@ -14,10 +14,6 @@ const preRows = (vars: PreRequestVarRow[]): PropertyRow[] =>
 const postRows = (vars: PostResponseVarRow[]): PropertyRow[] =>
   vars.map((v) => ({ label: v.name, value: v.expression, disabled: v.disabled }));
 
-// Label floats ABOVE its value box, using the shared SubHeading (the same #9B9B9B
-// group-title used for Path / Query / Headers); a scoped className keeps the panel's
-// uppercase styling without touching SubHeading's other usages. Both columns share the
-// same table so an empty "None." column stays the same size as a populated one.
 const Field: React.FC<{ label: string; rows: PropertyRow[] }> = ({ label, rows }) => (
   <div className="oc-vars-field">
     <SubHeading as="h4" className="oc-vars-field-label">{label}</SubHeading>
@@ -25,7 +21,6 @@ const Field: React.FC<{ label: string; rows: PropertyRow[] }> = ({ label, rows }
   </div>
 );
 
-/** Pre-request variables and post-response captures, side by side as key/value tables. */
 export const VariablesPanel: React.FC<VariablesPanelProps> = ({ preVars, postVars }) => {
   if (preVars.length === 0 && postVars.length === 0) return null;
 

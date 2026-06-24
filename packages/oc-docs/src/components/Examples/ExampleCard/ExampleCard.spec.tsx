@@ -28,7 +28,6 @@ describe('ExampleCard', () => {
     expect(html).toContain('200');
     expect(html).toContain('>Try<');
     expect(html).toContain('--oc-status-success-text');
-    // collapsed: detail panes are not rendered
     expect(html).not.toContain('REQUEST');
   });
 
@@ -41,7 +40,6 @@ describe('ExampleCard', () => {
     expect(html).toContain('Params');
     expect(html).toContain('Body');
     expect(html).toContain('Headers');
-    // computed response size is shown
     expect(html).toContain('B');
   });
 
@@ -49,7 +47,6 @@ describe('ExampleCard', () => {
     const html = renderToStaticMarkup(<ExampleCard example={{ response: { status: 500 } }} method="get" url="/x" />);
     expect(html).toContain('Example');
     expect(html).toContain('--oc-status-danger-text');
-    // the Try control is not rendered without a handler
     expect(html).not.toContain('>Try<');
   });
 

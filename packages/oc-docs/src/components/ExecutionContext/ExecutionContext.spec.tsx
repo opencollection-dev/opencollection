@@ -13,7 +13,6 @@ const scriptChain: ScriptChainStep[] = [
   { level: 'request', phase: 'after-response', label: 'Request Post-Response', code: 'console.log("done")', order: 1 }
 ];
 
-// Collection + folder + request post-response steps, used to assert ordering.
 const postChain: ScriptChainStep[] = [
   { level: 'collection', phase: 'after-response', label: 'Collection Post-Response', code: 'a', order: 0 },
   { level: 'folder', phase: 'after-response', label: 'Folder Post-Response', code: 'b', order: 1 },
@@ -124,7 +123,6 @@ describe('ScriptChain ordering', () => {
   it('numbers rows 1..N in display order, HTTP marker included', () => {
     const html = renderToStaticMarkup(<ScriptChain steps={postChain} flow="sandwich" url="http://x" method="POST" />);
     expect(html).toContain('HTTP');
-    // 3 post steps + 1 marker → positions 1..4 present.
     ['>1<', '>2<', '>3<', '>4<'].forEach((n) => expect(html).toContain(n));
   });
 });

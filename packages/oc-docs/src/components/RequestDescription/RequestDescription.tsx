@@ -1,37 +1,23 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { RequestDescriptionWrapper } from './StyledWrapper';
+import { StyledWrapper } from './StyledWrapper';
 
 interface RequestDescriptionProps {
-  /** Pre-rendered markdown HTML (from the host's markdown renderer). */
   html: string;
-  /** Per-instance style overrides (e.g. page-specific spacing). */
   style?: React.CSSProperties;
   className?: string;
 }
 
-/** Animation duration; must match the CSS `max-height` transition below. */
 const DURATION_MS = 280;
 const PREVIEW_LINES = 3;
 
 const prefersReducedMotion = (): boolean =>
   typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
 
-/** The collapsed preview height = a few lines of text. */
 const previewHeight = (el: HTMLElement): number => {
   const lineHeight = parseFloat(getComputedStyle(el).lineHeight);
   return Math.round((Number.isNaN(lineHeight) ? el.clientHeight / PREVIEW_LINES : lineHeight) * PREVIEW_LINES);
 };
 
-/**
- * Request description. Renders markdown via the shared `markdown-documentation`
- * styling (identical to the Overview page), clamps to a few lines, and reveals a
- * "View more" toggle only when the content actually overflows.
- *
- * Expanding/collapsing animates the height: the static preview stays a pure CSS
- * `-webkit-line-clamp` box (so the ellipsis recomputes natively on resize/font load);
- * the clamp is dropped only during the transition while we animate `max-height`
- * between the measured preview and full heights, then restored on completion.
- */
 export const RequestDescription: React.FC<RequestDescriptionProps> = ({ html, style, className }) => {
   const [expanded, setExpanded] = useState(false);
   const [overflowing, setOverflowing] = useState(false);
@@ -39,14 +25,11 @@ export const RequestDescription: React.FC<RequestDescriptionProps> = ({ html, st
   const bodyRef = useRef<HTMLDivElement>(null);
   const cleanupRef = useRef<(() => void) | null>(null);
 
-  // The clamp is applied at rest, so clientHeight is the preview height and a taller
-  // scrollHeight means there's more to reveal.
   useEffect(() => {
     const el = bodyRef.current;
     if (el) setOverflowing(el.scrollHeight > el.clientHeight + 4);
   }, [html]);
 
-  // Cancel any in-flight animation on unmount.
   useEffect(() => () => cleanupRef.current?.(), []);
 
   const toggle = () => {
@@ -57,7 +40,6 @@ export const RequestDescription: React.FC<RequestDescriptionProps> = ({ html, st
       return;
     }
 
-    // Abort any in-flight animation, then pin the current height as the start.
     cleanupRef.current?.();
     el.style.maxHeight = `${el.clientHeight}px`;
     setAnimating(true); // drops the clamp (CSS) so full content lays out + is measurable
@@ -76,10 +58,8 @@ export const RequestDescription: React.FC<RequestDescriptionProps> = ({ html, st
     };
     cleanupRef.current = finish;
     el.addEventListener('transitionend', onEnd);
-    // Fallback in case transitionend doesn't fire (≈0 delta, off-screen, etc.).
     timer = window.setTimeout(finish, DURATION_MS + 60);
 
-    // Commit the start height, then animate to the measured target next frame.
     requestAnimationFrame(() => {
       void el.offsetHeight;
       el.style.maxHeight = `${next ? el.scrollHeight : previewHeight(el)}px`;
@@ -89,7 +69,7 @@ export const RequestDescription: React.FC<RequestDescriptionProps> = ({ html, st
   if (!html) return null;
 
   return (
-    <RequestDescriptionWrapper
+    <StyledWrapper
       style={style}
       className={['oc-request-description', expanded ? 'is-expanded' : '', animating ? 'is-animating' : '', className]
         .filter(Boolean)
@@ -124,7 +104,7 @@ export const RequestDescription: React.FC<RequestDescriptionProps> = ({ html, st
           </svg>
         </button>
       )}
-    </RequestDescriptionWrapper>
+    </StyledWrapper>
   );
 };
 

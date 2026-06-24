@@ -3,7 +3,7 @@ import type { Item, ScriptFile } from '@opencollection/types/collection/item';
 import { getItemName } from '../../utils/schemaHelpers';
 import { PageWrapper } from '../../components/PageWrapper/PageWrapper';
 import { Heading } from '../../components/Heading/Heading';
-import { Breadcrumb, type BreadcrumbSegment } from '../../components/Breadcrumb';
+import { Breadcrumb, type BreadcrumbSegment } from '../../ui/Breadcrumb/Breadcrumb';
 import { Code } from '../../components/Code/Code';
 import { StyledWrapper } from './StyledWrapper';
 

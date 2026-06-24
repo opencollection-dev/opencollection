@@ -1,10 +1,6 @@
 import styled from '@emotion/styled';
 
-/**
- * A chevron icon that points right and rotates to point down when `.is-open`.
- * Inherits its colour from the surrounding text (stroke: currentColor).
- */
-export const ChevronIcon = styled.svg`
+export const StyledWrapper = styled.svg`
   flex-shrink: 0;
   transition: transform 0.2s ease;
 

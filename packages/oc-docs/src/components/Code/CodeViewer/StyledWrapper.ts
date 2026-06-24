@@ -5,8 +5,6 @@ export const StyledWrapper = styled.div`
   border: 1px solid var(--border-color);
   border-radius: 6px;
 
-  /* Muted surface: a borderless grey (mantle) panel — used for the code inside the
-     Execution Context. The inner surfaces inherit the mantle background. */
   &.code--muted {
     background-color: var(--oc-background-mantle);
     border-color: transparent;
@@ -67,8 +65,6 @@ export const StyledWrapper = styled.div`
     align-items: stretch;
     background-color: var(--oc-background-base);
   }
-  /* Design: 8px vertical padding; each number padded 12px left / 10px right so the
-     gutter lines up with the code rows. Dim, 70% opacity. */
   .code-line-numbers {
     flex-shrink: 0;
     padding: 0.5rem 0;

@@ -26,11 +26,6 @@ interface CodeProps {
 
 type CodeViewerProps = Pick<CodeProps, 'code' | 'language' | 'showLineNumbers' | 'showCopy' | 'surface' | 'className'>;
 
-/**
- * Read-only, Prism-highlighted code. Lightweight and SSR-safe (highlighting runs
- * on the client; the raw code and line numbers render server-side). Optionally
- * shows a line-number gutter and a copy-to-clipboard button.
- */
 const CodeViewer: React.FC<CodeViewerProps> = ({
   code = '',
   language = 'text',
@@ -80,12 +75,6 @@ const CodeViewer: React.FC<CodeViewerProps> = ({
   );
 };
 
-/**
- * Code surface used across the docs. Read-only by default (lightweight,
- * Prism-highlighted, SSR-safe); pass `readOnly={false}` with `onChange` to get a
- * full editor instead. The editor is loaded on demand, so read-only usage stays
- * cheap. Reuse anywhere a code block (viewer or editor) is needed.
- */
 export const Code: React.FC<CodeProps> = ({
   code = '',
   language = 'text',

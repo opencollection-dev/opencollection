@@ -3,8 +3,6 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect, vi } from 'vitest';
 import { Modal } from './Modal';
 
-// Render the portal inline so the dialog markup is assertable in the node test
-// environment (the real Portal defers to a DOM that doesn't exist during SSR).
 vi.mock('../Portal', () => ({
   Portal: ({ children }: { children: React.ReactNode }) => children
 }));
@@ -29,7 +27,6 @@ describe('Modal', () => {
     expect(html).toContain('aria-modal="true"');
     expect(html).toContain('Code snippet');
     expect(html).toContain('snippet body');
-    // close button is always present and labelled
     expect(html).toContain('aria-label="Close"');
   });
 
@@ -39,7 +36,6 @@ describe('Modal', () => {
         <p>body</p>
       </Modal>
     );
-    // The title element is not rendered (the class still appears in the injected <style>).
     expect(html).not.toContain('class="oc-modal-title"');
     expect(html).toContain('aria-label="Plain dialog"');
     expect(html).toContain('aria-label="Close"');

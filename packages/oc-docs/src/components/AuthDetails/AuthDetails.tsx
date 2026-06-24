@@ -1,14 +1,11 @@
 import React from 'react';
 import type { Auth } from '@opencollection/types/common/auth';
-import { PropertyTable, type PropertyRow } from '../PropertyTable';
+import { PropertyTable, type PropertyRow } from '../PropertyTable/PropertyTable';
 
 interface AuthDetailsProps {
   auth?: Auth;
-  /** Maps an auth `type` to a display label (e.g. basic -> "Basic Auth"). */
   authModeLabels?: Record<string, string>;
-  /** For `inherit`: where the effective auth was resolved from (e.g. 'Collection'). */
   inheritedFrom?: string;
-  /** Italic placeholder when there is no auth at all. */
   emptyMessage?: string;
 }
 
@@ -19,7 +16,6 @@ const pushRow = (rows: PropertyRow[], label: string, value: unknown, secret = fa
   if (typeof value === 'string' && value.length > 0) rows.push({ label, value, secret });
 };
 
-/** Display rows for a concrete (non-inherit) auth object; secrets are flagged. */
 const buildAuthRows = (auth: Exclude<Auth, 'inherit'>): PropertyRow[] => {
   const rows: PropertyRow[] = [];
 
@@ -61,8 +57,6 @@ const buildAuthRows = (auth: Exclude<Auth, 'inherit'>): PropertyRow[] => {
       pushRow(rows, 'Placement', auth.placement);
       break;
     case 'oauth2': {
-      // oauth2 is a union of grant flows with differing optional fields; read them
-      // structurally so each is surfaced when present.
       const o = auth as {
         flow?: string;
         scope?: string;
@@ -90,11 +84,6 @@ const buildAuthRows = (auth: Exclude<Auth, 'inherit'>): PropertyRow[] => {
   return rows;
 };
 
-/**
- * Read-only auth display: the auth mode plus its fields (secrets masked) as a
- * PropertyTable. Reused by Collection Configuration (Overview) and the request page.
- * For `inherit`, the host resolves the effective auth and passes `inheritedFrom`.
- */
 export const AuthDetails: React.FC<AuthDetailsProps> = ({
   auth,
   authModeLabels = {},

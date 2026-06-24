@@ -26,19 +26,18 @@ import { getBodyView } from '../../utils/requestBody';
 import { PageWrapper } from '../../components/PageWrapper/PageWrapper';
 import { Heading } from '../../components/Heading/Heading';
 import { Section } from '../../components/Section/Section';
-import { Breadcrumb, type BreadcrumbSegment } from '../../components/Breadcrumb';
-import { RequestUrlBar } from '../../components/RequestUrlBar';
-import { RequestDescription } from '../../components/RequestDescription';
-import { AuthDetails } from '../../components/AuthDetails';
-import { RequestParams } from '../../components/RequestParams';
-import { RequestBody } from '../../components/RequestBody';
-import { ContentTypeBadge } from '../../components/ContentTypeBadge';
-import { PropertyTable } from '../../components/PropertyTable';
-import { HiddenSections } from '../../components/HiddenSections';
-import { CodeSnippetTabs } from '../../components/CodeSnippetTabs';
-import { Examples } from '../../components/Examples';
+import { Breadcrumb, type BreadcrumbSegment } from '../../ui/Breadcrumb/Breadcrumb';
+import { RequestUrlBar } from '../../components/RequestUrlBar/RequestUrlBar';
+import { RequestDescription } from '../../components/RequestDescription/RequestDescription';
+import { AuthDetails } from '../../components/AuthDetails/AuthDetails';
+import { RequestParams } from '../../components/RequestParams/RequestParams';
+import { RequestBody } from '../../components/RequestBody/RequestBody';
+import { ContentTypeBadge } from '../../components/ContentTypeBadge/ContentTypeBadge';
+import { PropertyTable } from '../../components/PropertyTable/PropertyTable';
+import { CodeSnippetTabs } from '../../components/CodeSnippetTabs/CodeSnippetTabs';
+import { Examples } from '../../components/Examples/Examples';
 import { ExecutionContext } from '../../components/ExecutionContext';
-import { RequestWrapper } from './StyledWrapper';
+import { StyledWrapper } from './StyledWrapper';
 
 interface RequestProps {
   item: HttpRequest;
@@ -142,7 +141,7 @@ export const Request: React.FC<RequestProps> = ({
 
   return (
     <PageWrapper>
-      <RequestWrapper className="oc-request">
+      <StyledWrapper className="oc-request">
         <Breadcrumb segments={segments} current={name} onSegmentClick={onBreadcrumbClick} />
 
         <Heading size="md" style={{ marginTop: '0.875rem' }}>{name}</Heading>
@@ -216,7 +215,7 @@ export const Request: React.FC<RequestProps> = ({
             />
           </Section>
         )}
-      </RequestWrapper>
+      </StyledWrapper>
     </PageWrapper>
   );
 };

@@ -1,18 +1,15 @@
 import React, { useMemo } from 'react';
-import { VariableText } from '../VariableText';
+import { VariableText } from '../VariableText/VariableText';
 import { ScriptStep } from './ScriptStep';
 import type { ScriptChainStep, ScriptFlow } from '../../utils/requestScripts';
 
 interface ScriptChainProps {
   steps: ScriptChainStep[];
-  /** Execution flow (from `extensions.config.scripts.flow`); controls post-response ordering. */
   flow: ScriptFlow;
-  /** Method/url for the synthetic "HTTP" execution marker, if known. */
   method?: string;
   url?: string;
 }
 
-/** The synthetic row marking where the HTTP request is actually sent. */
 const HttpMarker: React.FC<{ position: number; url?: string }> = ({ position, url }) => (
   <div className="oc-script-row oc-script-row--marker">
     <div className="oc-script-line oc-script-http">
@@ -31,20 +28,11 @@ const HttpMarker: React.FC<{ position: number; url?: string }> = ({ position, ur
   </div>
 );
 
-/**
- * The ordered script-execution chain rendered as rows: pre-request scripts run
- * first (collection → folders → request), then the request is sent (the "HTTP"
- * marker), then post-response scripts run in an order set by `flow` — mirroring how
- * the runner executes them. For `sandwich` post-response runs innermost→outermost
- * (request → folder → collection); for `sequential` it keeps the pre-request order
- * (collection → folder → request). Rows are numbered 1..N in display order.
- */
 export const ScriptChain: React.FC<ScriptChainProps> = ({ steps, flow, url }) => {
   const { pre, post } = useMemo(() => {
     const byOrderAsc = (a: ScriptChainStep, b: ScriptChainStep) => a.order - b.order;
     const pre = steps.filter((s) => s.phase === 'before-request').sort(byOrderAsc);
     const postAsc = steps.filter((s) => s.phase === 'after-response').sort(byOrderAsc);
-    // sequential keeps the hierarchical order; sandwich (default) reverses it.
     const post = flow === 'sequential' ? postAsc : [...postAsc].reverse();
     return { pre, post };
   }, [steps, flow]);

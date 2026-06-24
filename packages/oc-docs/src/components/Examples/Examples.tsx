@@ -1,7 +1,7 @@
 import React from 'react';
 import type { HttpRequestExample } from '@opencollection/types/requests/http';
-import { ExampleCard } from './ExampleCard';
-import { ExamplesWrapper } from './StyledWrapper';
+import { ExampleCard } from './ExampleCard/ExampleCard';
+import { StyledWrapper } from './StyledWrapper';
 
 interface ExamplesProps {
   examples?: HttpRequestExample[];
@@ -11,12 +11,11 @@ interface ExamplesProps {
   className?: string;
 }
 
-/** A list of saved request examples, each an expandable request/response card. */
 export const Examples: React.FC<ExamplesProps> = ({ examples, method, url, onTry, className }) => {
   if (!examples || examples.length === 0) return null;
 
   return (
-    <ExamplesWrapper className={['oc-examples', className].filter(Boolean).join(' ')}>
+    <StyledWrapper className={['oc-examples', className].filter(Boolean).join(' ')}>
       {examples.map((example, index) => (
         <ExampleCard
           key={`${example.name ?? 'example'}-${index}`}
@@ -27,7 +26,7 @@ export const Examples: React.FC<ExamplesProps> = ({ examples, method, url, onTry
           defaultExpanded={index === 0}
         />
       ))}
-    </ExamplesWrapper>
+    </StyledWrapper>
   );
 };
 

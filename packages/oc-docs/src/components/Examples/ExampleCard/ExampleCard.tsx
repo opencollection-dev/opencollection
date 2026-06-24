@@ -6,16 +6,16 @@ import type {
   HttpRequestBody
 } from '@opencollection/types/requests/http';
 import type { Auth } from '@opencollection/types/common/auth';
-import { MethodBadge } from '../../MethodBadge';
+import { MethodBadge } from '../../MethodBadge/MethodBadge';
 import { CopyButton } from '../../../ui/CopyButton/CopyButton';
-import { PropertyTable, type PropertyRow } from '../../PropertyTable';
-import { RequestParams } from '../../RequestParams';
-import { AuthDetails } from '../../AuthDetails';
+import { PropertyTable, type PropertyRow } from '../../PropertyTable/PropertyTable';
+import { RequestParams } from '../../RequestParams/RequestParams';
+import { AuthDetails } from '../../AuthDetails/AuthDetails';
 import { Code } from '../../Code/Code';
 import { AUTH_MODE_LABELS } from '../../../constants';
 import { resolvePathAndQueryParams } from '../../../utils/pathParams';
 import { computeBodySize, formatBytes, responseBodyLanguage } from '../../../utils/exampleResponse';
-import { ExampleCardWrapper, statusToneColor } from './StyledWrapper';
+import { StyledWrapper, statusToneColor } from './StyledWrapper';
 
 interface ExampleCardProps {
   example: HttpRequestExample;
@@ -25,7 +25,6 @@ interface ExampleCardProps {
   defaultExpanded?: boolean;
 }
 
-/** A single pane tab: a label, whether it carries data (brand dot), its content-type label and body. */
 interface PaneTab {
   id: string;
   label: string;
@@ -257,17 +256,12 @@ const Pane: React.FC<{
   );
 };
 
-/** A single saved example: a collapsible summary over the request/response detail. */
 export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, onTry, defaultExpanded }) => {
   const [expanded, setExpanded] = useState(Boolean(defaultExpanded));
-  // Mount the (heavy, Prism-highlighted) detail lazily on first open, then keep it
-  // mounted so opening/closing animates without re-running highlighting.
   const [mounted, setMounted] = useState(Boolean(defaultExpanded));
   const detailId = useId();
   const detailRef = useRef<HTMLDivElement>(null);
 
-  // While collapsed, take the (animating-but-hidden) detail out of the tab order and
-  // the accessibility tree via `inert` — robust across browsers/React versions.
   useEffect(() => {
     const el = detailRef.current;
     if (!el) return;
@@ -292,19 +286,17 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
   const toneColor = statusToneColor(status);
   const displayUrl = request.url || url;
 
-  // REQUEST: canonical Params / Body / Auth / Headers tabs, each with a data dot when populated.
   const requestTabs: PaneTab[] = useMemo(() => {
-    // Split into path + query (path params include any implied by the URL), so the
-    // example's Params tab matches the request detail page.
     const { path: pathParams, query: queryParams } = resolvePathAndQueryParams(request.params, displayUrl);
     const hasParams = pathParams.length > 0 || queryParams.length > 0;
-    // Tab label reflects what's present: "path & query", "path", or "query".
     const paramsCtype = [pathParams.length ? 'path' : '', queryParams.length ? 'query' : '']
       .filter(Boolean)
       .join(' & ');
+
     const headers = request.headers ?? [];
     const body = request.body;
     const auth = request.auth;
+
     return [
       {
         id: 'params',
@@ -340,7 +332,6 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
     ];
   }, [request.params, request.body, request.auth, request.headers, displayUrl]);
 
-  // RESPONSE: canonical Body / Headers tabs.
   const responseTabs: PaneTab[] = useMemo(() => {
     const headers = response.headers ?? [];
     const hasBody = Boolean(responseBody?.data);
@@ -383,7 +374,7 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
   };
 
   return (
-    <ExampleCardWrapper className="oc-example-card">
+    <StyledWrapper className="oc-example-card">
       <div className="oc-example-summary">
         <button
           type="button"
@@ -439,7 +430,7 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
           )}
         </div>
       </div>
-    </ExampleCardWrapper>
+    </StyledWrapper>
   );
 };
 

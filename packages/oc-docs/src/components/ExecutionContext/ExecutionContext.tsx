@@ -4,7 +4,7 @@ import { VariablesPanel } from './VariablesPanel';
 import { AssertList } from './AssertList';
 import { TestList } from './TestList';
 import { ViewAllTests } from './ViewAllTests';
-import { ExecutionContextWrapper } from './StyledWrapper';
+import { StyledWrapper } from './StyledWrapper';
 import type { ScriptChainStep, ScriptFlow } from '../../utils/requestScripts';
 import type { PreRequestVarRow, PostResponseVarRow } from '../../utils/requestVars';
 import type { AssertionRow } from '../../utils/assertions';
@@ -16,9 +16,7 @@ interface ExecutionContextProps {
   postVars: PostResponseVarRow[];
   assertions: AssertionRow[];
   tests: TestRow[];
-  /** Script execution flow (from `extensions.config.scripts.flow`). Defaults to `sandwich`. */
   flow?: ScriptFlow;
-  /** Method/url shown on the synthetic "HTTP" row in the script chain. */
   method?: string;
   url?: string;
   className?: string;
@@ -26,16 +24,10 @@ interface ExecutionContextProps {
 
 const FLOW_LABEL: Record<ScriptFlow, string> = { sandwich: 'Sandwich', sequential: 'Sequential' };
 
-/**
- * A titled section inside the Execution Context: the title (+ optional meta) sits
- * ABOVE a bordered content box. Not individually collapsible — the whole Execution
- * Context collapses as one (see the page's collapsible `Section`).
- */
 const Card: React.FC<{
   title: string;
   meta?: React.ReactNode;
   children: React.ReactNode;
-  /** Extra class on the content box (e.g. `oc-exec-card-box--bare` to drop the frame). */
   boxClassName?: string;
 }> = ({ title, meta, children, boxClassName }) => (
   <div className="oc-exec-card">
@@ -47,11 +39,6 @@ const Card: React.FC<{
   </div>
 );
 
-/**
- * Execution context for a request: the ordered script chain, pre/post variables,
- * defined asserts and tests — each in its own bordered card. Purely presentational
- * (static documentation, not a run). Renders nothing when every group is empty.
- */
 export const ExecutionContext: React.FC<ExecutionContextProps> = ({
   scriptChain,
   preVars,
@@ -71,7 +58,7 @@ export const ExecutionContext: React.FC<ExecutionContextProps> = ({
   if (!hasScripts && !hasVars && !hasAsserts && !hasTests) return null;
 
   return (
-    <ExecutionContextWrapper className={['oc-execution-context', className].filter(Boolean).join(' ')}>
+    <StyledWrapper className={['oc-execution-context', className].filter(Boolean).join(' ')}>
       {hasScripts && (
         <Card title="Scripts" meta={<span className="oc-exec-flow">{FLOW_LABEL[flow]} execution flow</span>}>
           <ScriptChain steps={scriptChain} flow={flow} method={method} url={url} />
@@ -92,7 +79,7 @@ export const ExecutionContext: React.FC<ExecutionContextProps> = ({
           <TestList tests={tests} />
         </Card>
       )}
-    </ExecutionContextWrapper>
+    </StyledWrapper>
   );
 };
 

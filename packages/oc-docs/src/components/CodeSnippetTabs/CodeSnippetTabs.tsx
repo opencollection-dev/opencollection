@@ -4,7 +4,7 @@ import type { Auth } from '@opencollection/types/common/auth';
 import { Code } from '../Code/Code';
 import { CopyButton} from '../../ui/CopyButton/CopyButton';
 import { SectionLabel } from '../SectionLabel/SectionLabel';
-import { Modal } from '../Modal';
+import { Modal } from '../../ui/Modal/Modal';
 import {
   generateCurlCommand,
   generateJavaScriptCode,
@@ -12,7 +12,7 @@ import {
   type SnippetHeader,
   type SnippetInput
 } from '../../utils/codegen';
-import { CodeSnippetTabsWrapper } from './StyledWrapper';
+import { StyledWrapper } from './StyledWrapper';
 
 interface CodeSnippetTabsProps {
   method: string;
@@ -29,7 +29,6 @@ const LANGUAGES = [
   { id: 'python', label: 'Python', language: 'python', generate: generatePythonCode }
 ] as const;
 
-/** Maximize glyph (diagonal arrows out) for the expand-to-fullscreen control. */
 const ExpandGlyph: React.FC = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <polyline points="15 3 21 3 21 9" />
@@ -39,7 +38,6 @@ const ExpandGlyph: React.FC = () => (
   </svg>
 );
 
-/** Generated request snippets (cURL / Javascript / Python) with a copy button and expand-to-fullscreen. */
 export const CodeSnippetTabs: React.FC<CodeSnippetTabsProps> = ({ method, url, headers, body, auth, className }) => {
   const [active, setActive] = useState<string>(LANGUAGES[0].id);
   const [expanded, setExpanded] = useState(false);
@@ -62,13 +60,6 @@ export const CodeSnippetTabs: React.FC<CodeSnippetTabsProps> = ({ method, url, h
 
   const activeLang = LANGUAGES.find((lang) => lang.id === active) ?? LANGUAGES[0];
 
-  /**
-   * The unified, bordered panel — identical in both contexts — whose header bar
-   * holds the language tabs and a right-side control, with the active snippet below
-   * a divider. Inline: the header shows the expand control and the code its floating
-   * copy. Modal: the header shows a copy button (the dialog supplies title + close),
-   * and the code's floating copy is suppressed.
-   */
   const renderSnippetBox = (variant: 'inline' | 'modal') => (
     <div className="oc-snippet-box">
       <div className="oc-snippet-head">
@@ -105,14 +96,14 @@ export const CodeSnippetTabs: React.FC<CodeSnippetTabsProps> = ({ method, url, h
   );
 
   return (
-    <CodeSnippetTabsWrapper className={['oc-code-snippet-tabs', className].filter(Boolean).join(' ')}>
+    <StyledWrapper className={['oc-code-snippet-tabs', className].filter(Boolean).join(' ')}>
       {renderSnippetBox('inline')}
       <Modal open={expanded} onClose={() => setExpanded(false)} title={<SectionLabel>Code snippet</SectionLabel>} ariaLabel="Code snippet">
         {expanded && (
-          <CodeSnippetTabsWrapper className="oc-code-snippet-tabs">{renderSnippetBox('modal')}</CodeSnippetTabsWrapper>
+          <StyledWrapper className="oc-code-snippet-tabs">{renderSnippetBox('modal')}</StyledWrapper>
         )}
       </Modal>
-    </CodeSnippetTabsWrapper>
+    </StyledWrapper>
   );
 };
 
