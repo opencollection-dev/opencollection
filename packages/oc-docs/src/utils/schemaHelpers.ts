@@ -11,7 +11,7 @@
  * Scripts are now an array of { type, code } instead of { preRequest, postResponse, tests, hooks }
  */
 
-import type { Item as OpenCollectionItem, Folder } from '@opencollection/types/collection/item';
+import type { Item as OpenCollectionItem, Folder, ScriptFile } from '@opencollection/types/collection/item';
 import type { HttpRequest, HttpRequestHeader, HttpRequestExample } from '@opencollection/types/requests/http';
 import type { GraphQLRequest } from '@opencollection/types/requests/graphql';
 import type { GrpcRequest } from '@opencollection/types/requests/grpc';
@@ -87,6 +87,13 @@ export const isFolder = (item: OpenCollectionItem | null | undefined): item is F
  */
 export const isHttpRequest = (item: OpenCollectionItem | null | undefined): item is HttpRequest => {
   return getItemType(item) === 'http';
+};
+
+/**
+ * Check if an item is a standalone script file (`type: 'script'`).
+ */
+export const isScriptFile = (item: OpenCollectionItem | null | undefined): item is ScriptFile => {
+  return getItemType(item) === 'script';
 };
 
 /**

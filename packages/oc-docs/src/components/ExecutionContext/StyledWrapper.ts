@@ -34,7 +34,6 @@ export const ExecutionContextWrapper = styled.div`
   .oc-exec-card-box {
     border: 1px solid var(--border-color);
     border-radius: 0.625rem;
-    overflow: hidden;
     background: var(--oc-background-base);
   }
 
@@ -190,7 +189,6 @@ export const ExecutionContextWrapper = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
-    padding: 14px 16px;
   }
   /* PRE-REQUEST / POST RESPONSE label floats above its value box, via the shared
      SubHeading (the #9B9B9B group title); we only add the panel's uppercase styling. */

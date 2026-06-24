@@ -320,13 +320,16 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
         ctype: body ? requestBodyCtype(body) : '',
         content: body ? <RequestBodyContent body={body} /> : emptyPane('body')
       },
-      {
-        id: 'auth',
-        label: 'Auth',
-        hasData: Boolean(auth),
-        ctype: auth ? authTypeLabel(auth) : '',
-        content: auth ? <AuthDetails auth={auth} authModeLabels={AUTH_MODE_LABELS} /> : emptyPane('auth')
-      },
+      // Auth tab is shown only when the example actually defines auth.
+      ...(auth
+        ? [{
+            id: 'auth',
+            label: 'Auth',
+            hasData: true,
+            ctype: authTypeLabel(auth),
+            content: <AuthDetails auth={auth} authModeLabels={AUTH_MODE_LABELS} />
+          }]
+        : []),
       {
         id: 'headers',
         label: 'Headers',

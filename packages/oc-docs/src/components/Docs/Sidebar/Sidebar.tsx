@@ -69,6 +69,7 @@ const Sidebar: React.FC = () => {
 
   const renderItem = (item: OpenCollectionItem, level = 0) => {
     const itemIsFolder = isFolder(item);
+    const itemIsScript = isScriptFile(item);
     const itemType = getItemType(item);
     const itemName = getItemName(item);
     const itemUuid = getItemUuid(item);

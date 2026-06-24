@@ -73,7 +73,7 @@ describe('ExampleCard', () => {
     expect(html).toContain('RESPONSE');
   });
 
-  it('always renders the canonical request tabs even when the request is sparse', () => {
+  it('renders Params/Body/Headers tabs and omits Auth when the request has no auth', () => {
     const html = renderToStaticMarkup(
       <ExampleCard
         example={{ name: 'Body only', request: { body: { type: 'json', data: '{"a":1}' } }, response: { status: 200 } }}
@@ -85,6 +85,8 @@ describe('ExampleCard', () => {
     expect(html).toContain('Params');
     expect(html).toContain('Body');
     expect(html).toContain('Headers');
+    // No auth on the request → the Auth tab is not rendered at all.
+    expect(html).not.toContain('Auth');
     // the response has neither body nor headers → its empty state shows
     expect(html).toContain('No response data.');
   });

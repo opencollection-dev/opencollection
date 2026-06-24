@@ -56,6 +56,15 @@ items:
             bru.setVar('execChain', (bru.getVar('execChain') || '') + '>F1(billing)');
     items:
       - info:
+          name: Script
+          type: script
+          seq: 0
+        script: |
+          {
+            "email": "user@example.com",
+            "password": "password123"
+          }
+      - info:
           name: customers
           type: folder
           seq: 1

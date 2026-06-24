@@ -3,8 +3,9 @@ import type { OpenCollection as OpenCollectionCollection } from '@opencollection
 import Sidebar from './Sidebar/Sidebar';
 import Overview from '../../pages/Overview/Overview';
 import Request from '../../pages/Request/Request';
+import Script from '../../pages/Script/Script';
 import { findItemByUuid, getAncestorsByUuid } from '../../utils/itemTree';
-import { isHttpRequest } from '../../utils/schemaHelpers';
+import { isHttpRequest, isScriptFile } from '../../utils/schemaHelpers';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { selectSelectedItemId, selectItem } from '../../store/slices/docs';
 
@@ -16,9 +17,10 @@ interface DocsProps {
 }
 
 /**
- * Docs content shell: a sidebar plus the active page. When an HTTP request is
- * selected we show its detail page; otherwise (a folder, or nothing selected) we
- * show the collection Overview. Selection flows through the Redux `docs` slice.
+ * Docs content shell: a sidebar plus the active page. An HTTP request shows its
+ * detail page, a script file shows the script page; otherwise (a folder, or nothing
+ * selected) we show the collection Overview. Selection flows through the Redux
+ * `docs` slice.
  */
 const Docs: React.FC<DocsProps> = ({ docsCollection, onOpenPlayground }) => {
   const dispatch = useAppDispatch();
@@ -55,6 +57,12 @@ const Docs: React.FC<DocsProps> = ({ docsCollection, onOpenPlayground }) => {
             ancestry={ancestry}
             collection={docsCollection}
             onTryClick={() => onOpenPlayground?.()}
+            onBreadcrumbClick={(uuid) => dispatch(selectItem(uuid))}
+          />
+        ) : docsCollection && isScriptFile(selected) ? (
+          <Script
+            item={selected}
+            ancestry={ancestry}
             onBreadcrumbClick={(uuid) => dispatch(selectItem(uuid))}
           />
         ) : docsCollection ? (
