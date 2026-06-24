@@ -11,8 +11,8 @@ import { CollectionStats } from '../../components/CollectionStats/CollectionStat
 import { EnvironmentSummary } from '../../components/OverviewEnvironments/EnvironmentSummary/EnvironmentSummary';
 import { CollectionConfiguration } from '../../components/OverviewCollectionConfiguration/CollectionConfiguration';
 import { EmptyState } from '../../ui/EmptyState/EmptyState';
-import { PageWrapper } from '../../ui/PageWrapper/PageWrapper';
-import { Heading } from '../../ui/Heading/Heading';
+import { PageWrapper } from '../../components/PageWrapper/PageWrapper';
+import { Heading } from '../../components/Heading/Heading';
 import { Section } from '../../components/Section/Section';
 import { GlobeIcon, BookIcon } from '../../assets/icons';
 import { StyledWrapper } from './StyledWrapper';
