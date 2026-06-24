@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
 import type { Item, ScriptFile } from '@opencollection/types/collection/item';
 import { getItemName } from '../../utils/schemaHelpers';
-import { PageWrapper } from '../../components/PageWrapper';
-import { Heading } from '../../components/Heading';
+import { PageWrapper } from '../../components/PageWrapper/PageWrapper';
+import { Heading } from '../../components/Heading/Heading';
 import { Breadcrumb, type BreadcrumbSegment } from '../../components/Breadcrumb';
-import { Code } from '../../components/Code';
+import { Code } from '../../components/Code/Code';
 import { StyledWrapper } from './StyledWrapper';
 
 interface ScriptProps {

@@ -1,19 +1,13 @@
 import React, { useMemo, useState } from 'react';
-import { Code } from '../Code';
+import { Code } from '../Code/Code';
 import { Modal } from '../Modal';
-import { SectionLabel } from '../SectionLabel';
+import { SectionLabel } from '../SectionLabel/SectionLabel';
 import type { TestRow } from '../../utils/extractTests';
 
 interface ViewAllTestsProps {
   tests: TestRow[];
 }
 
-/**
- * "View complete code" link for the Tests card header. Opens a modal showing every
- * test's source as one script, reusing the shared Modal + Code (the same pattern as the
- * code snippet modal). The combined source is memoised, and the modal mounts its content
- * only while open. Renders nothing when no test carries source to show.
- */
 export const ViewAllTests: React.FC<ViewAllTestsProps> = ({ tests }) => {
   const [open, setOpen] = useState(false);
 
