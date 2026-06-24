@@ -154,6 +154,9 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
 
   return (
     <div className="flex flex-col h-screen">
+      {/* searchSlot (BRU-3573), envSwitcherSlot (BRU-3186) and onToggleSidebar
+          (BRU-3574) are wired by their own tickets; the header renders the
+          empty slots / inert hamburger until then. */}
       <Topbar
         collectionName={collectionName}
         version={version}

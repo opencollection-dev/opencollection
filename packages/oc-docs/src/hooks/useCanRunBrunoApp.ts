@@ -46,14 +46,16 @@ const readDeviceEnv = (): DeviceEnv => ({
 });
 
 /**
- * Hook form. Defaults to `false` until the first client measure (SSR/no-window
- * safe and avoids flashing the CTA on touch devices). Re-evaluates when the
- * pointer capability changes (e.g. attaching a trackpad / external mouse) by
- * listening to the media query itself — a `resize` event would NOT fire on
- * device attach.
+ * Hook form. Measured eagerly on first render (SSR/no-window safe → `false`),
+ * so the CTA's visibility is correct on first paint — no flash. Re-evaluates
+ * when the pointer capability changes (e.g. attaching a trackpad / external
+ * mouse) by listening to the media query itself — a `resize` event would NOT
+ * fire on device attach.
  */
 export const useCanRunBrunoApp = (): boolean => {
-  const [canRun, setCanRun] = useState(false);
+  const [canRun, setCanRun] = useState(() =>
+    typeof window === 'undefined' ? false : computeCanRunBrunoApp(readDeviceEnv())
+  );
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
