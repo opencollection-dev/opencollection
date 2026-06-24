@@ -93,7 +93,6 @@ export const CollectionConfiguration: React.FC<CollectionConfigurationProps> = (
   const rowTestId = `${testId}-row`;
   const subTestId = `${testId}-subheading`;
   const secretTestId = `${testId}-secret`;
-  const copyTestId = `${testId}-copy`;
 
   return (
     <StyledWrapper className="collection-configuration" data-testid={testId}>
@@ -128,13 +127,13 @@ export const CollectionConfiguration: React.FC<CollectionConfigurationProps> = (
             {scripts.preRequest && (
               <div className="script-block">
                 <p className="script-label">Pre-Request</p>
-                <Code code={scripts.preRequest} language="javascript" showLineNumbers copyTestId={copyTestId} />
+                <Code code={scripts.preRequest} language="javascript" showLineNumbers testId={testId} />
               </div>
             )}
             {scripts.postResponse && (
               <div className="script-block">
                 <p className="script-label">Post-Response</p>
-                <Code code={scripts.postResponse} language="javascript" showLineNumbers copyTestId={copyTestId} />
+                <Code code={scripts.postResponse} language="javascript" showLineNumbers testId={testId} />
               </div>
             )}
           </>
@@ -146,7 +145,7 @@ export const CollectionConfiguration: React.FC<CollectionConfigurationProps> = (
       <div className="config-group">
         <SubHeading testId={subTestId}>Tests</SubHeading>
         {scripts.tests ? (
-          <Code code={scripts.tests} language="javascript" showLineNumbers copyTestId={copyTestId} />
+          <Code code={scripts.tests} language="javascript" showLineNumbers testId={testId} />
         ) : (
           <EmptyMessage>Add tests to run for all requests in the collection</EmptyMessage>
         )}

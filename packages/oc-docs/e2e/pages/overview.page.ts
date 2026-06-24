@@ -1,10 +1,10 @@
 import type { Locator } from '@playwright/test';
 import { BasePage } from './base.page';
 import { MarkdownComponent } from '../components/markdown.component';
-import { HeaderSection } from '../components/overview/header-section.component';
-import { StatsSection } from '../components/overview/stats-section.component';
-import { EnvironmentsSection } from '../components/overview/environments-section.component';
-import { ConfigurationSection } from '../components/overview/configuration-section.component';
+import { HeaderSection } from '../components/overview/header.component';
+import { StatsSection } from '../components/overview/collection-stats.component';
+import { EnvironmentsSection } from '../components/overview/environments.component';
+import { ConfigurationSection } from '../components/overview/collection-configuration.component.';
 
 export class OverviewPage extends BasePage {
   readonly root = this.page.getByTestId('overview');

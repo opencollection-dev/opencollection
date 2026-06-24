@@ -31,15 +31,14 @@ export const StyledWrapper = styled.div`
   .code-content::-webkit-scrollbar-track {
     background: transparent;
   }
+  /* Reuse the app-wide scrollbar token (theme-aware); same hover treatment as the
+     global scrollbar in index.css. */
   .code-content::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: var(--oc-scrollbar-color);
     border-radius: 4px;
   }
-  .code-content:hover::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2);
-  }
   .code-content::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: color-mix(in srgb, var(--oc-text) 20%, transparent);
   }
 
   .code-content pre {
