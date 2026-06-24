@@ -52,11 +52,10 @@ describe('ExecutionContext', () => {
     expect(html).toContain('Post-Response');
     expect(html).toContain('sessionId');
     expect(html).toContain('res.body.id');
-    expect(html).toContain('2 asserts');
     expect(html).toContain('equals');
     expect(html).toContain('is defined');
-    expect(html).toContain('2 tests');
     expect(html).toContain('returns a token');
+    expect(html).toContain('View complete code');
   });
 
   it('shows the execution-flow chip from the schema (defaults to sandwich); no "inherited" tag', () => {
@@ -74,20 +73,21 @@ describe('ExecutionContext', () => {
     expect(seq).not.toContain('Sandwich execution flow');
   });
 
-  it('uses singular nouns for a single assert/test', () => {
+  it('omits per-section counts and offers a "View complete code" link', () => {
     const html = renderToStaticMarkup(
       <ExecutionContext
         scriptChain={[]}
-        preVars={[]}
+        preVars={[{ name: 'token', value: 'x' }]}
         postVars={[]}
-        assertions={[assertions[0]]}
-        tests={[tests[1]]}
+        assertions={assertions}
+        tests={tests}
       />
     );
-    expect(html).toContain('1 assert');
-    expect(html).not.toContain('1 asserts');
-    expect(html).toContain('1 test');
-    expect(html).not.toContain('1 tests');
+    expect(html).toContain('View complete code');
+    // The "N vars / N asserts / N tests" count labels no longer appear in the headings.
+    expect(html).not.toContain('2 asserts');
+    expect(html).not.toContain('2 tests');
+    expect(html).not.toContain('1 var');
   });
 
   it('renders nothing when everything is empty', () => {

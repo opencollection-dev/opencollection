@@ -138,6 +138,13 @@ export const ExecutionContextWrapper = styled.div`
   .oc-code-toggle:hover {
     text-decoration: underline;
   }
+  /* "View complete code" reuses the toggle's button reset but matches the muted meta
+     label (grey, regular weight) the per-section counts used; hover underline signals
+     it's clickable. */
+  .oc-view-all-tests {
+    color: var(--text-muted);
+    font-weight: 400;
+  }
   .oc-code-toggle:focus-visible {
     outline: 2px solid var(--oc-status-info-text);
     outline-offset: 0.125rem;

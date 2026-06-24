@@ -3,6 +3,7 @@ import { ScriptChain } from './ScriptChain';
 import { VariablesPanel } from './VariablesPanel';
 import { AssertList } from './AssertList';
 import { TestList } from './TestList';
+import { ViewAllTests } from './ViewAllTests';
 import { ExecutionContextWrapper } from './StyledWrapper';
 import type { ScriptChainStep, ScriptFlow } from '../../utils/requestScripts';
 import type { PreRequestVarRow, PostResponseVarRow } from '../../utils/requestVars';
@@ -23,7 +24,6 @@ interface ExecutionContextProps {
   className?: string;
 }
 
-const countLabel = (n: number, noun: string): string => `${n} ${noun}${n === 1 ? '' : 's'}`;
 const FLOW_LABEL: Record<ScriptFlow, string> = { sandwich: 'Sandwich', sequential: 'Sequential' };
 
 /**
@@ -70,8 +70,6 @@ export const ExecutionContext: React.FC<ExecutionContextProps> = ({
 
   if (!hasScripts && !hasVars && !hasAsserts && !hasTests) return null;
 
-  const varCount = preVars.length + postVars.length;
-
   return (
     <ExecutionContextWrapper className={['oc-execution-context', className].filter(Boolean).join(' ')}>
       {hasScripts && (
@@ -80,17 +78,17 @@ export const ExecutionContext: React.FC<ExecutionContextProps> = ({
         </Card>
       )}
       {hasVars && (
-        <Card title="Variables" meta={countLabel(varCount, 'var')} boxClassName="oc-exec-card-box--bare">
+        <Card title="Variables" boxClassName="oc-exec-card-box--bare">
           <VariablesPanel preVars={preVars} postVars={postVars} />
         </Card>
       )}
       {hasAsserts && (
-        <Card title="Asserts" meta={countLabel(assertions.length, 'assert')}>
+        <Card title="Asserts">
           <AssertList assertions={assertions} />
         </Card>
       )}
       {hasTests && (
-        <Card title="Tests" meta={countLabel(tests.length, 'test')}>
+        <Card title="Tests" meta={<ViewAllTests tests={tests} />}>
           <TestList tests={tests} />
         </Card>
       )}
