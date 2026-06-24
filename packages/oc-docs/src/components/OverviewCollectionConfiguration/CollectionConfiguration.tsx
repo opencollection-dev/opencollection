@@ -3,7 +3,7 @@ import type { HttpRequestHeader } from '@opencollection/types/requests/http';
 import type { Auth } from '@opencollection/types/common/auth';
 import { Code } from '../Code/Code';
 import { SecretValue } from '../../ui/SecretValue/SecretValue';
-import { SubHeading } from '../SubHeading/SubHeading';
+import { SubHeading } from '../../ui/SubHeading/SubHeading';
 import { StyledWrapper } from './StyledWrapper';
 
 interface CollectionScripts {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { SectionLabel } from '../SectionLabel/SectionLabel'
+import { SectionLabel } from '../../ui/SectionLabel/SectionLabel'
 import { StyledWrapper } from './StyledWrapper';
 
 interface SectionProps {
