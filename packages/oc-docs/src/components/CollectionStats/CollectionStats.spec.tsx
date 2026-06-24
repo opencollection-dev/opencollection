@@ -27,13 +27,13 @@ describe('CollectionStats', () => {
       <CollectionStats stats={[{ label: 'Requests', value: 30 }]} testId="custom-stats" />
     );
     expect(html).toContain('data-testid="custom-stats"');
-    expect(html).toContain('data-testid="custom-stats-card"');
-    expect(html).toContain('data-testid="custom-stats-card-value"');
+    expect(html).toContain('data-testid="custom-stats-stat"');
+    expect(html).toContain('data-testid="custom-stats-stat-value"');
   });
 
   it('falls back to a default testId when none is given', () => {
     const html = renderToStaticMarkup(<CollectionStats stats={[{ label: 'Requests', value: 30 }]} />);
     expect(html).toContain('data-testid="collection-stats"');
-    expect(html).toContain('data-testid="collection-stats-card"');
+    expect(html).toContain('data-testid="collection-stats-stat"');
   });
 });

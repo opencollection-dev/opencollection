@@ -9,8 +9,8 @@ interface CollectionStatsProps {
 }
 
 export const CollectionStats: React.FC<CollectionStatsProps> = ({ stats, testId = 'collection-stats' }) => {
-  // Each stat card's test id extends the base testId (e.g. `collection-stats-card`).
-  const itemTestId = `${testId}-card`;
+  // Each stat card's test id extends the base testId (e.g. `collection-stats-stat`).
+  const itemTestId = `${testId}-stat`;
 
   return (
     <CollectionStatsWrapper className="collection-stats" data-testid={testId}>
