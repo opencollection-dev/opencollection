@@ -1,6 +1,6 @@
 import React from 'react';
-import { SectionLabel } from '../SectionLabel/SectionLabel'
-import { SectionWrapper } from './StyledWrapper';
+import { SectionLabel } from '../../ui/SectionLabel/SectionLabel'
+import { StyledWrapper } from './StyledWrapper';
 
 interface SectionProps {
   label: React.ReactNode;
@@ -10,10 +10,10 @@ interface SectionProps {
 }
 
 export const Section: React.FC<SectionProps> = ({ label, children, testId, className }) => (
-  <SectionWrapper className={className}>
+  <StyledWrapper className={className}>
     <SectionLabel testId={testId}>{label}</SectionLabel>
     {children}
-  </SectionWrapper>
+  </StyledWrapper>
 );
 
 export default Section;

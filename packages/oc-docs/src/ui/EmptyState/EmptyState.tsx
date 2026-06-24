@@ -1,5 +1,5 @@
 import React from 'react';
-import { EmptyStateWrapper } from './StyledWrapper';
+import { StyledWrapper } from './StyledWrapper';
 
 interface EmptyStateProps {
   icon: React.ReactNode;
@@ -10,13 +10,13 @@ interface EmptyStateProps {
 }
 
 export const EmptyState: React.FC<EmptyStateProps> = ({ icon, heading, subheading, testId, className }) => (
-  <EmptyStateWrapper className={className} data-testid={testId}>
+  <StyledWrapper className={className} data-testid={testId}>
     <span className="empty-state-icon" aria-hidden="true">
       {icon}
     </span>
     <p className="empty-state-heading" data-testid={testId ? `${testId}-heading` : undefined}>{heading}</p>
     <p className="empty-state-subheading">{subheading}</p>
-  </EmptyStateWrapper>
+  </StyledWrapper>
 );
 
 export default EmptyState;

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-export const CollectionConfigurationWrapper = styled.div`
+export const StyledWrapper = styled.div`
   .config-group + .config-group {
     margin-top: 1.75rem;
   }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { SubHeadingWrapper } from './StyledWrapper';
+import { StyledWrapper } from './StyledWrapper';
 
 type HeadingLevel = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
@@ -11,9 +11,9 @@ interface SubHeadingProps {
 }
 
 export const SubHeading: React.FC<SubHeadingProps> = ({ children, as = 'h3', testId, className }) => (
-  <SubHeadingWrapper as={as} className={className} data-testid={testId}>
+  <StyledWrapper as={as} className={className} data-testid={testId}>
     {children}
-  </SubHeadingWrapper>
+  </StyledWrapper>
 );
 
 export default SubHeading;

@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Environment } from '@opencollection/types/config/environments';
 import { EnvironmentSummaryItem } from '../EnvironmentSummaryItem/EnvironmentSummaryItem';
-import { EnvironmentSummaryWrapper } from './StyledWrapper';
+import { StyledWrapper } from './StyledWrapper';
 
 interface EnvironmentSummaryProps {
   environments: Environment[];
@@ -15,11 +15,11 @@ export const EnvironmentSummary: React.FC<EnvironmentSummaryProps> = ({ environm
   }
 
   return (
-    <EnvironmentSummaryWrapper className="environment-summary" data-testid={testId}>
+    <StyledWrapper className="environment-summary" data-testid={testId}>
       {environments.map((environment, index) => (
         <EnvironmentSummaryItem key={`${environment.name}-${index}`} environment={environment} testId={itemTestId} />
       ))}
-    </EnvironmentSummaryWrapper>
+    </StyledWrapper>
   );
 };
 

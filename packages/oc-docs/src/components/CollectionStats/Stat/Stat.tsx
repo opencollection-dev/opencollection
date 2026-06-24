@@ -1,5 +1,5 @@
 import React from 'react';
-import { StatWrapper } from './StyledWrapper';
+import { StyledWrapper } from './StyledWrapper';
 
 export interface StatItem {
   label: string;
@@ -11,10 +11,10 @@ interface StatProps extends StatItem {
 }
 
 export const Stat: React.FC<StatProps> = ({ label, value, testId }) => (
-  <StatWrapper className="stat" data-testid={testId}>
+  <StyledWrapper className="stat" data-testid={testId}>
     <span className="stat-value" data-testid={testId ? `${testId}-value` : undefined}>{value}</span>
     <span className="stat-label">{label}</span>
-  </StatWrapper>
+  </StyledWrapper>
 );
 
 export default Stat;

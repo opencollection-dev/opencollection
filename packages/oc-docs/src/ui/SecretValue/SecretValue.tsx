@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SecretValueWrapper } from './StyledWrapper';
+import { StyledWrapper } from './StyledWrapper';
 
 export const SECRET_MASK = '•'.repeat(12);
 
@@ -28,7 +28,7 @@ export const SecretValue: React.FC<SecretValueProps> = ({ value, testId }) => {
   const [revealed, setRevealed] = useState(false);
 
   return (
-    <SecretValueWrapper className="secret-value" data-testid={testId}>
+    <StyledWrapper className="secret-value" data-testid={testId}>
       <span className="secret-value-text" aria-hidden={!revealed} data-testid={testId ? `${testId}-text` : undefined}>
         {revealed ? value : SECRET_MASK}
       </span>
@@ -42,7 +42,7 @@ export const SecretValue: React.FC<SecretValueProps> = ({ value, testId }) => {
       >
         <EyeIcon off={revealed} />
       </button>
-    </SecretValueWrapper>
+    </StyledWrapper>
   );
 };
 

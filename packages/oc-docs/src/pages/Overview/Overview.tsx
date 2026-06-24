@@ -8,14 +8,14 @@ import { scriptsArrayToObject } from '../../utils/schemaHelpers';
 import { formatCollectionVersion } from '../../utils/common';
 import { AUTH_MODE_LABELS } from '../../constants';
 import { CollectionStats } from '../../components/CollectionStats/CollectionStats';
-import { EnvironmentSummary } from '../../components/EnvironmentSummary/EnvironmentSummary';
-import { CollectionConfiguration } from '../../components/CollectionConfiguration/CollectionConfiguration';
+import { EnvironmentSummary } from '../../components/OverviewEnvironments/EnvironmentSummary/EnvironmentSummary';
+import { CollectionConfiguration } from '../../components/OverviewCollectionConfiguration/CollectionConfiguration';
 import { EmptyState } from '../../ui/EmptyState/EmptyState';
 import { PageWrapper } from '../../ui/PageWrapper/PageWrapper';
 import { Heading } from '../../ui/Heading/Heading';
-import { Section } from '../../ui/Section/Section';
+import { Section } from '../../components/Section/Section';
 import { GlobeIcon, BookIcon } from '../../assets/icons';
-import { OverviewWrapper } from './StyledWrapper';
+import { StyledWrapper } from './StyledWrapper';
 
 const getDocsContent = (docs: OpenCollection['docs']): string => {
   if (!docs) return '';
@@ -57,7 +57,7 @@ export const Overview: React.FC<OverviewProps> = ({ collection }) => {
 
   return (
     <PageWrapper>
-      <OverviewWrapper className="oc-overview" data-testid="overview">
+      <StyledWrapper className="oc-overview" data-testid="overview">
         <header className="overview-headline">
           <div>
             {version && <div className="overview-version" data-testid="overview-collection-version">{version}</div>}
@@ -126,7 +126,7 @@ export const Overview: React.FC<OverviewProps> = ({ collection }) => {
             </Section>
           </div>
         </div>
-      </OverviewWrapper>
+      </StyledWrapper>
     </PageWrapper>
   );
 };

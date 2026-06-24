@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-export const CopyButtonWrapper = styled.button`
+export const StyledWrapper = styled.button`
   display: inline-flex;
   align-items: center;
   justify-content: center;

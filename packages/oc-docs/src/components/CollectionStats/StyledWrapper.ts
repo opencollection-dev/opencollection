@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-export const CollectionStatsWrapper = styled.div`
+export const StyledWrapper = styled.div`
   display: flex;
   align-items: stretch;
 

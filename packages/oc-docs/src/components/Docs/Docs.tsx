@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import type { OpenCollection as OpenCollectionCollection } from '@opencollection/types';
 import Sidebar from './Sidebar/Sidebar';
-import Overview from '../../pages/Overview';
+import Overview from '../../pages/Overview/Overview';
 import { getItemId, generateSafeId } from '../../utils/itemUtils';
 import { isFolder } from '../../utils/schemaHelpers';
 import { useAppSelector } from '../../store/hooks';

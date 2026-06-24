@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TabGroup } from '../../../../ui/MinimalComponents';
-import { Code } from '../../../../ui/Code/Code';
+import { Code } from '../../../Code/Code';
 import { StyledWrapper } from './StyledWrapper';
 
 interface ScriptsProps {

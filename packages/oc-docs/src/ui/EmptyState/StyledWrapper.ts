@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-export const EmptyStateWrapper = styled.div`
+export const StyledWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;

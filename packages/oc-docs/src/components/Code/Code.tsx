@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, useEffect, useMemo, useRef } from 'react';
-import { CopyButton } from '../CopyButton/CopyButton';
+import { CopyButton } from '../../ui/CopyButton/CopyButton';
 import { StyledWrapper } from './StyledWrapper';
 
 import Prism from 'prismjs';
@@ -9,7 +9,7 @@ import 'prismjs/components/prism-python';
 import 'prismjs/components/prism-json';
 import 'prismjs/components/prism-xml-doc';
 
-const LazyCodeEditor = lazy(() => import('../CodeEditor/CodeEditor'));
+const LazyCodeEditor = lazy(() => import('../../ui/CodeEditor/CodeEditor'));
 
 interface CodeProps {
   code?: string;

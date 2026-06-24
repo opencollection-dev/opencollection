@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-export const SubHeadingWrapper = styled.h3`
+export const StyledWrapper = styled.h3`
   margin: 0 0 0.625rem 0;
   font-family: var(--font-sans);
   font-weight: 600;

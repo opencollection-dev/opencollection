@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-export const StatWrapper = styled.div`
+export const StyledWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.25rem;

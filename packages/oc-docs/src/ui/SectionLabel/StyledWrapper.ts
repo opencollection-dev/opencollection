@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-export const SectionLabelWrapper = styled.h2`
+export const StyledWrapper = styled.h2`
   margin: 0 0 0.75rem 0;
   font-family: var(--font-sans);
   font-weight: 600;

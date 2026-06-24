@@ -1,5 +1,5 @@
 import React from 'react';
-import { PageWrapperContainer } from './StyledWrapper';
+import { StyledWrapper } from './StyledWrapper';
 
 interface PageWrapperProps {
   children: React.ReactNode;
@@ -11,9 +11,9 @@ interface PageWrapperProps {
  * consistent gutters; pages render their own content inside it.
  */
 export const PageWrapper: React.FC<PageWrapperProps> = ({ children, className }) => (
-  <PageWrapperContainer className={['page-wrapper', className].filter(Boolean).join(' ')}>
+  <StyledWrapper className={['page-wrapper', className].filter(Boolean).join(' ')}>
     {children}
-  </PageWrapperContainer>
+  </StyledWrapper>
 );
 
 export default PageWrapper;
