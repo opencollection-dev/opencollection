@@ -30,7 +30,7 @@ export const countItems = (
   return { requestCount, folderCount };
 };
 
-/** Summarises a collection: request, folder and environment counts. */
+// Summarises a collection: request, folder and environment counts.
 export const getCollectionStats = (collection: OpenCollection | null | undefined): CollectionStats => {
   const { requestCount, folderCount } = countItems(collection?.items);
   return {

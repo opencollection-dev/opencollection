@@ -1,7 +1,6 @@
 import React from 'react';
 import { baseIconProps } from './baseIconProps';
 
-/** Globe — empty Environments. */
 export const GlobeIcon: React.FC = () => (
   <svg {...baseIconProps}>
     <circle cx="12" cy="12" r="10" />

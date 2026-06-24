@@ -1,8 +1,7 @@
 import { test, expect } from '../../playwright';
 
-/**
- * The Markdown rendered inside the Overview's "Overview" (documentation) section.
- */
+// The Markdown rendered inside the Overview's "Overview" (documentation) section.
+
 test.describe('Overview documentation (rendered Markdown)', () => {
   test.beforeEach(async ({ overviewPage }) => {
     await overviewPage.goto();
