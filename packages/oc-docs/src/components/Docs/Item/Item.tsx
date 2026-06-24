@@ -29,7 +29,7 @@ import {
   MinimalDataTable,
   StatusBadge
 } from '../../../ui/MinimalComponents';
-import { Code } from '../../Code/Code';
+import { Code } from '../../../ui/Code/Code';
 import { CodeSnippets } from '../CodeSnippets/CodeSnippets';
 import { StyledWrapper } from './StyledWrapper';
 import { Scripts } from './Scripts/Scripts';

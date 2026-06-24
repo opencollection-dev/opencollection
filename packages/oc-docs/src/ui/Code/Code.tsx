@@ -9,7 +9,7 @@ import 'prismjs/components/prism-python';
 import 'prismjs/components/prism-json';
 import 'prismjs/components/prism-xml-doc';
 
-const LazyCodeEditor = lazy(() => import('../../ui/CodeEditor/CodeEditor'));
+const LazyCodeEditor = lazy(() => import('../CodeEditor/CodeEditor'));
 
 interface CodeProps {
   code?: string;

@@ -39,13 +39,17 @@ e2e/
 │   └── theming/theme-toggle.spec.ts
 ├── pages/                          # one "page object" per screen
 │   ├── base.page.ts                #   shared navigation (goto, reload)
-│   └── overview.page.ts            #   OverviewPage + its page-specific sections
-├── components/                     # common pieces, reused across pages
+│   └── overview.page.ts            #   OverviewPage — composes its overview/ sections
+├── components/                     # reusable pieces
 │   ├── base.component.ts           #   shared base — every component has a `root`
 │   ├── markdown.component.ts       #   any block of rendered Markdown
-│   ├── copy-button.component.ts    #   a copy-to-clipboard button
 │   ├── secret-value.component.ts   #   a masked value with a reveal toggle
-│   └── theme-toggle.component.ts   #   the light/dark switch
+│   ├── theme-toggle.component.ts   #   the light/dark switch
+│   └── overview/                   #   sections specific to the Overview page
+│       ├── header-section.component.ts
+│       ├── stats-section.component.ts
+│       ├── environments-section.component.ts
+│       └── configuration-section.component.ts
 ├── playwright/                     # the test harness
 │   ├── pages.fixture.ts            #   defines the fixtures
 │   └── index.ts                    #   merges them; the single import for specs
@@ -56,15 +60,16 @@ e2e/
 ## The three building blocks
 
 **Page objects** (`pages/`) describe a whole screen. They own navigation (`goto`) and
-expose the parts of the page a test cares about. **Sections that belong only to one
-page live in that page's file** — e.g. the Overview's header, stats, environments and
-configuration sections are defined inside `overview.page.ts`, not in `components/`.
+compose the components a test cares about — the `OverviewPage`, for instance, wires up
+the header, stats, environments and configuration sections.
 
-**Components** (`components/`) are **common and reused across pages** — the Markdown
-renderer and the theme switch. They aren't tied to one page: point a component at the
-element it lives in (its `root`) and it works anywhere that UI appears. The Overview's
-documentation section, for instance, is just the common `MarkdownComponent` scoped to
-the `overview-markdown-documentation` container.
+**Components** (`components/`) are the reusable building blocks. Common controls used
+across pages — the Markdown renderer, the theme switch — live at the top level; point
+one at the element it lives in (its `root`) and it works anywhere that UI appears.
+**Sections that belong to a single page live in a subfolder named after it** — the
+Overview's header, stats, environments and configuration sections are in
+`components/overview/`. (Its documentation section is just the common `MarkdownComponent`
+scoped to the `overview-markdown-documentation` container.)
 
 **Fixtures** (`playwright/`) hand a test ready-made page objects and common components:
 

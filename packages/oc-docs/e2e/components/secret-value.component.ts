@@ -1,5 +1,6 @@
 import type { Locator, Page } from '@playwright/test';
 import { BaseComponent } from './base.component';
+
 export class SecretValueComponent extends BaseComponent {
   readonly value: Locator;
 
@@ -11,8 +12,8 @@ export class SecretValueComponent extends BaseComponent {
     this.toggle = page.getByTestId(`${testId}-toggle`);
   }
 
-  /** Reveal the raw value. */
-  async reveal(): Promise<void> {
+  // Reveal the raw value.
+  async toggleReveal(): Promise<void> {
     await this.toggle.click();
   }
 }

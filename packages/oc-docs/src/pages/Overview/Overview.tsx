@@ -10,10 +10,10 @@ import { AUTH_MODE_LABELS } from '../../constants';
 import { CollectionStats } from '../../components/CollectionStats/CollectionStats';
 import { EnvironmentSummary } from '../../components/EnvironmentSummary/EnvironmentSummary';
 import { CollectionConfiguration } from '../../components/CollectionConfiguration/CollectionConfiguration';
-import { EmptyState } from '../../components/EmptyState/EmptyState';
-import { PageWrapper } from '../../components/PageWrapper/PageWrapper';
-import { Heading } from '../../components/Heading/Heading';
-import { Section } from '../../components/Section/Section';
+import { EmptyState } from '../../ui/EmptyState/EmptyState';
+import { PageWrapper } from '../../ui/PageWrapper/PageWrapper';
+import { Heading } from '../../ui/Heading/Heading';
+import { Section } from '../../ui/Section/Section';
 import { GlobeIcon, BookIcon } from '../../assets/icons';
 import { OverviewWrapper } from './StyledWrapper';
 
@@ -66,7 +66,7 @@ export const Overview: React.FC<OverviewProps> = ({ collection }) => {
         </header>
 
         <div className="overview-stats-row">
-          <CollectionStats stats={stats} testId="overview-stat-list" itemTestId="overview-stat-card" />
+          <CollectionStats stats={stats} />
         </div>
 
         <div className="overview-body">
@@ -114,7 +114,6 @@ export const Overview: React.FC<OverviewProps> = ({ collection }) => {
                   auth={collection.request?.auth}
                   scripts={scripts}
                   authModeLabels={AUTH_MODE_LABELS}
-                  testId="overview-configuration"
                 />
               ) : (
                 <EmptyState

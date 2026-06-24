@@ -41,8 +41,8 @@ test.describe('Collection Overview', () => {
 
   test('renders the collection documentation under the "Overview" section', async ({ overviewPage }) => {
     await expect(overviewPage.sectionLabel('Overview')).toBeVisible();
-    await expect(overviewPage.markdown.root).toBeVisible();
-    await expect(overviewPage.markdown.heading('Getting Started')).toBeVisible();
+    await expect(overviewPage.docMarkdown.root).toBeVisible();
+    await expect(overviewPage.docMarkdown.heading('Getting Started')).toBeVisible();
   });
 
   test.describe('Collection Configuration', () => {
@@ -75,18 +75,18 @@ test.describe('Collection Overview', () => {
       });
 
       await test.step('clicking the reveal toggle shows the raw token', async () => {
-        await secret.reveal();
+        await secret.toggleReveal();
         await expect(secret.value).toHaveText('{{bearer_auth_token}}');
       });
     });
 
     test('copies a config code snippet and confirms with a "Copied" label', async ({ overviewPage, context }) => {
       await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-      const { copyButton } = overviewPage.configuration;
+      const { configuration } = overviewPage;
 
       await test.step('clicking the copy button switches its label to "Copied"', async () => {
-        await copyButton.click();
-        await expect(copyButton.root).toHaveAttribute('aria-label', 'Copied');
+        await configuration.copyToClipboard();
+        await expect(configuration.copyButton).toHaveAttribute('aria-label', 'Copied');
       });
     });
   });
