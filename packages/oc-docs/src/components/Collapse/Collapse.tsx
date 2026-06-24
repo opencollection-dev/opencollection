@@ -15,7 +15,7 @@ export const Collapse: React.FC<CollapseProps> = ({ open, lazy = false, innerCla
   }, [open]);
 
   return (
-    <StyledWrapper {...rest} className={['collapse', open ? 'is-open' : '', className].filter(Boolean).join(' ')}>
+    <StyledWrapper {...rest} className={['collapse-wrapper', open ? 'is-open' : '', className].filter(Boolean).join(' ')}>
       <div className={['collapse-clip', innerClassName].filter(Boolean).join(' ')}>
         {!lazy || everOpened ? children : null}
       </div>

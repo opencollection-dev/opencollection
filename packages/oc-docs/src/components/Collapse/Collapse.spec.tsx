@@ -7,8 +7,8 @@ const child = <p>panel content</p>;
 
 describe('Collapse', () => {
   it('marks the track open/closed via the is-open class', () => {
-    expect(renderToStaticMarkup(<Collapse open>{child}</Collapse>)).toMatch(/class="collapse is-open/);
-    expect(renderToStaticMarkup(<Collapse open={false}>{child}</Collapse>)).not.toMatch(/class="collapse is-open/);
+    expect(renderToStaticMarkup(<Collapse open>{child}</Collapse>)).toMatch(/class="collapse-wrapper is-open/);
+    expect(renderToStaticMarkup(<Collapse open={false}>{child}</Collapse>)).not.toMatch(/class="collapse-wrapper is-open/);
   });
 
   it('keeps non-lazy children mounted even when closed (clipped, not removed)', () => {
