@@ -9,7 +9,7 @@ import type { Auth } from '@opencollection/types/common/auth';
 import { MethodBadge } from '../../MethodBadge/MethodBadge';
 import { CopyButton } from '../../../ui/CopyButton/CopyButton';
 import { PropertyTable, type PropertyRow } from '../../PropertyTable/PropertyTable';
-import { RequestParams } from '../../RequestParams/RequestParams';
+import { RequestParams } from '../../Request/RequestParams/RequestParams';
 import { AuthDetails } from '../../AuthDetails/AuthDetails';
 import { Code } from '../../Code/Code';
 import { AUTH_MODE_LABELS } from '../../../constants';

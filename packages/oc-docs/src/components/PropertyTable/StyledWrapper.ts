@@ -12,7 +12,6 @@ export const StyledWrapper = styled.div`
     color: var(--text-secondary);
   }
 
-  /* Design: soft 1px frame via inset shadow (so row dividers never double up), 6px radius. */
   .property-box {
     margin: 0;
     border-radius: var(--oc-radius);
@@ -21,7 +20,6 @@ export const StyledWrapper = styled.div`
     overflow: hidden;
   }
 
-  /* Design: label (140px) | value grid, 24px gutter, 8px/14px padding, divider between rows. */
   .property-row {
     display: grid;
     grid-template-columns: 8.75rem minmax(0, 1fr);
@@ -61,7 +59,6 @@ export const StyledWrapper = styled.div`
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  /* SecretValue defaults to the app mono token; re-point it to the cell's font. */
   .property-value-cell .secret-value-text {
     font-family: inherit;
   }

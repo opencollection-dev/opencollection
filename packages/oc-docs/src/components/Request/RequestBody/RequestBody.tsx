@@ -1,9 +1,9 @@
 import React from 'react';
 import type { HttpRequestBody, HttpRequestBodyVariant } from '@opencollection/types/requests/http';
-import { Code } from '../Code/Code';
-import { ContentTypeBadge } from '../ContentTypeBadge/ContentTypeBadge';
-import { PropertyTable, type PropertyRow } from '../PropertyTable/PropertyTable';
-import { getBodyView } from '../../utils/requestBody';
+import { Code } from '../../Code/Code';
+import { ContentTypeBadge } from '../../ContentTypeBadge/ContentTypeBadge';
+import { PropertyTable, type PropertyRow } from '../../PropertyTable/PropertyTable';
+import { getBodyView } from '../../../utils/requestBody';
 import { StyledWrapper } from './StyledWrapper';
 
 interface RequestBodyProps {

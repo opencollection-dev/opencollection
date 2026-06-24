@@ -1,7 +1,7 @@
 import React from 'react';
 import type { HttpRequestParam } from '@opencollection/types/requests/http';
-import { SubHeading } from '../SubHeading/SubHeading';
-import { PropertyTable, type PropertyRow } from '../PropertyTable/PropertyTable';
+import { SubHeading } from '../../SubHeading/SubHeading';
+import { PropertyTable, type PropertyRow } from '../../PropertyTable/PropertyTable';
 import { StyledWrapper } from './StyledWrapper';
 
 const toRows = (params: HttpRequestParam[]): PropertyRow[] =>

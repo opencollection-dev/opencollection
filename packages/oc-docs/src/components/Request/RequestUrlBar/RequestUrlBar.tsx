@@ -1,7 +1,7 @@
 import React from 'react';
-import { MethodBadge } from '../MethodBadge/MethodBadge';
-import { VariableText } from '../VariableText/VariableText';
-import { CopyButton } from '../../ui/CopyButton/CopyButton';
+import { MethodBadge } from '../../MethodBadge/MethodBadge';
+import { VariableText } from '../../VariableText/VariableText';
+import { CopyButton } from '../../../ui/CopyButton/CopyButton';
 import { StyledWrapper } from './StyledWrapper';
 
 interface RequestUrlBarProps {
