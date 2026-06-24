@@ -1,4 +1,5 @@
 import React from 'react';
+import { StyledWrapper } from './StyledWrapper';
 
 export type Scope = 'request' | 'folder' | 'collection';
 
@@ -7,7 +8,7 @@ interface ScopeTagProps {
 }
 
 export const ScopeTag: React.FC<ScopeTagProps> = ({ scope }) => (
-  <span className={`oc-scope-tag oc-scope-tag--${scope}`}>{scope}</span>
+  <StyledWrapper className={`scope-tag scope-tag--${scope}`}>{scope}</StyledWrapper>
 );
 
 export default ScopeTag;

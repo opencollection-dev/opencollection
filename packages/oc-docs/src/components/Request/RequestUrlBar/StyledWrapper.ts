@@ -9,16 +9,16 @@ export const StyledWrapper = styled.div`
   border-radius: 0.5rem;
   background-color: var(--oc-background-mantle);
 
-  .oc-request-url-bar-method {
+  .request-url-bar-method {
     flex-shrink: 0;
   }
-  .oc-request-url-bar-method .oc-method-badge {
+  .request-url-bar-method .method-badge {
     font-size: 0.75rem;
     line-height: 1.125rem;
     letter-spacing: 0.04em;
   }
 
-  .oc-request-url-bar-url {
+  .request-url-bar-url {
     flex: 1;
     min-width: 0;
     font-family: var(--font-mono);
@@ -30,14 +30,14 @@ export const StyledWrapper = styled.div`
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .oc-request-url-bar-actions {
+  .request-url-bar-actions {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
     flex-shrink: 0;
   }
 
-  .oc-request-try {
+  .request-try {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -56,10 +56,10 @@ export const StyledWrapper = styled.div`
     white-space: nowrap;
     cursor: pointer;
   }
-  .oc-request-try:hover {
+  .request-try:hover {
     opacity: 0.92;
   }
-  .oc-request-try:focus-visible {
+  .request-try:focus-visible {
     outline: 2px solid var(--primary-color);
     outline-offset: 2px;
   }

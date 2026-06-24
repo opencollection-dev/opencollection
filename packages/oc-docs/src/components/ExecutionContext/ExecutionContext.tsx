@@ -1,9 +1,9 @@
 import React from 'react';
-import { ScriptChain } from './ScriptChain';
-import { VariablesPanel } from './VariablesPanel';
-import { AssertList } from './AssertList';
-import { TestList } from './TestList';
-import { ViewAllTests } from './ViewAllTests';
+import { ScriptChain } from './ScriptChain/ScriptChain';
+import { VariablesPanel } from './VariablesPanel/VariablesPanel';
+import { AssertList } from './AssertList/AssertList';
+import { TestList } from './TestList/TestList';
+import { ViewAllTests } from './ViewAllTests/ViewAllTests';
 import { StyledWrapper } from './StyledWrapper';
 import type { ScriptChainStep, ScriptFlow } from '../../utils/requestScripts';
 import type { PreRequestVarRow, PostResponseVarRow } from '../../utils/requestVars';
@@ -30,12 +30,12 @@ const Card: React.FC<{
   children: React.ReactNode;
   boxClassName?: string;
 }> = ({ title, meta, children, boxClassName }) => (
-  <div className="oc-exec-card">
-    <div className="oc-exec-card-head">
-      <span className="oc-exec-card-title">{title}</span>
-      {meta !== undefined && <span className="oc-exec-card-meta">{meta}</span>}
+  <div className="exec-card">
+    <div className="exec-card-head">
+      <span className="exec-card-title">{title}</span>
+      {meta !== undefined && <span className="exec-card-meta">{meta}</span>}
     </div>
-    <div className={['oc-exec-card-box', boxClassName].filter(Boolean).join(' ')}>{children}</div>
+    <div className={['exec-card-box', boxClassName].filter(Boolean).join(' ')}>{children}</div>
   </div>
 );
 
@@ -58,14 +58,14 @@ export const ExecutionContext: React.FC<ExecutionContextProps> = ({
   if (!hasScripts && !hasVars && !hasAsserts && !hasTests) return null;
 
   return (
-    <StyledWrapper className={['oc-execution-context', className].filter(Boolean).join(' ')}>
+    <StyledWrapper className={['execution-context', className].filter(Boolean).join(' ')}>
       {hasScripts && (
-        <Card title="Scripts" meta={<span className="oc-exec-flow">{FLOW_LABEL[flow]} execution flow</span>}>
+        <Card title="Scripts" meta={<span className="exec-flow">{FLOW_LABEL[flow]} execution flow</span>}>
           <ScriptChain steps={scriptChain} flow={flow} method={method} url={url} />
         </Card>
       )}
       {hasVars && (
-        <Card title="Variables" boxClassName="oc-exec-card-box--bare">
+        <Card title="Variables" boxClassName="exec-card-box--bare">
           <VariablesPanel preVars={preVars} postVars={postVars} />
         </Card>
       )}

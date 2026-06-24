@@ -9,9 +9,9 @@ export const StyledWrapper = styled.div`
   justify-content: center;
   padding: 2rem;
   background: rgba(0, 0, 0, 0.5);
-  animation: oc-modal-fade 0.12s ease-out;
+  animation: modal-fade 0.12s ease-out;
 
-  @keyframes oc-modal-fade {
+  @keyframes modal-fade {
     from {
       opacity: 0;
     }
@@ -20,7 +20,7 @@ export const StyledWrapper = styled.div`
     }
   }
 
-  .oc-modal-dialog {
+  .modal-dialog {
     display: flex;
     flex-direction: column;
     width: min(60rem, 100%);
@@ -33,7 +33,7 @@ export const StyledWrapper = styled.div`
     outline: none;
   }
 
-  .oc-modal-head {
+  .modal-head {
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -41,15 +41,15 @@ export const StyledWrapper = styled.div`
     padding: 0.875rem 1.125rem;
     border-bottom: 1px solid var(--border-color);
   }
-  .oc-modal-title {
+  .modal-title {
     flex: 1;
     min-width: 0;
   }
-  .oc-modal-title > * {
+  .modal-title > * {
     margin: 0;
   }
 
-  .oc-modal-close {
+  .modal-close {
     flex-shrink: 0;
     display: inline-flex;
     align-items: center;
@@ -64,16 +64,16 @@ export const StyledWrapper = styled.div`
     cursor: pointer;
     transition: color 0.12s ease, background-color 0.12s ease;
   }
-  .oc-modal-close:hover {
+  .modal-close:hover {
     color: var(--text-primary);
     background: var(--oc-background-surface0);
   }
-  .oc-modal-close:focus-visible {
+  .modal-close:focus-visible {
     outline: 2px solid var(--primary-color);
     outline-offset: 2px;
   }
 
-  .oc-modal-body {
+  .modal-body {
     min-height: 0;
     overflow: auto;
     padding: 1.125rem;

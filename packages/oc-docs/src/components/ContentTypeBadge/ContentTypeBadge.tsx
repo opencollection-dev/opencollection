@@ -7,7 +7,7 @@ interface ContentTypeBadgeProps {
 }
 
 export const ContentTypeBadge: React.FC<ContentTypeBadgeProps> = ({ label, className }) => (
-  <StyledWrapper className={['oc-content-type-badge', className].filter(Boolean).join(' ')}>
+  <StyledWrapper className={['content-type-badge', className].filter(Boolean).join(' ')}>
     {label}
   </StyledWrapper>
 );

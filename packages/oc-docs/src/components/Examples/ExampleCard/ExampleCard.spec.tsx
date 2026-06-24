@@ -125,8 +125,8 @@ describe('ExampleCard', () => {
     );
     expect(html).toContain('A described example');
     // Toggle and Try are separate, sibling buttons (never nested).
-    expect(html).toContain('class="oc-example-toggle"');
-    expect(html).toContain('class="oc-example-try"');
+    expect(html).toContain('class="example-toggle"');
+    expect(html).toContain('class="example-try"');
     expect(html).toContain('aria-expanded="true"');
     // WAI-ARIA tabs.
     expect(html).toContain('role="tablist"');

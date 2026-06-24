@@ -17,7 +17,7 @@ export const Heading: React.FC<HeadingProps> = ({ children, as = 'h1', size = 'l
   <StyledWrapper
     as={as}
     style={style}
-    className={['oc-heading', `oc-heading--${size}`, className].filter(Boolean).join(' ')}
+    className={['heading', `heading--${size}`, className].filter(Boolean).join(' ')}
     data-testid={testId}
   >
     {children}

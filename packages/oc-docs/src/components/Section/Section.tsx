@@ -32,19 +32,19 @@ export const Section: React.FC<SectionProps> = ({
 
   if (collapsible) {
     return (
-      <StyledWrapper className={['oc-section--collapsible', className].filter(Boolean).join(' ')}>
-        <div className="oc-section-head">
-          <SectionLabel as={as} className="oc-section-head-label">
+      <StyledWrapper className={['section--collapsible', className].filter(Boolean).join(' ')}>
+        <div className="section-head">
+          <SectionLabel as={as} className="section-head-label">
             <button
               type="button"
               id={labelId}
-              className="oc-section-toggle"
+              className="section-toggle"
               aria-expanded={open}
               aria-controls={panelId}
               onClick={() => setOpen((v) => !v)}
             >
-              <Chevron open={open} className="oc-section-chevron" />
-              <span className="oc-section-toggle-text">{label}</span>
+              <Chevron open={open} className="section-chevron" />
+              <span className="section-toggle-text">{label}</span>
             </button>
           </SectionLabel>
           {badge}
@@ -59,8 +59,8 @@ export const Section: React.FC<SectionProps> = ({
   return (
     <StyledWrapper className={className}>
       {badge ? (
-        <div className="oc-section-head">
-          <SectionLabel as={as} className="oc-section-head-label">{label}</SectionLabel>
+        <div className="section-head">
+          <SectionLabel as={as} className="section-head-label">{label}</SectionLabel>
           {badge}
         </div>
       ) : (

@@ -35,7 +35,7 @@ interface PaneTab {
 
 const ChevronIcon: React.FC<{ open: boolean }> = ({ open }) => (
   <svg
-    className={`oc-example-chevron ${open ? 'is-open' : ''}`}
+    className={`example-chevron ${open ? 'is-open' : ''}`}
     width="14"
     height="14"
     viewBox="0 0 24 24"
@@ -103,7 +103,7 @@ const responseBodyCtype = (type: string | undefined): string => {
   }
 };
 
-const emptyPane = (label: string): React.ReactNode => <p className="oc-pane-empty">No {label}.</p>;
+const emptyPane = (label: string): React.ReactNode => <p className="pane-empty">No {label}.</p>;
 
 /** Renders a request body: raw bodies as highlighted code, structured ones as a key/value table. */
 const RequestBodyContent: React.FC<{ body: HttpRequestBody }> = ({ body }) => {
@@ -196,7 +196,7 @@ const Pane: React.FC<{
   };
 
   const tabStrip = hasAnyData ? (
-    <div className="oc-pane-tabs" role="tablist" aria-label={`${title} content`} onKeyDown={onTabKeyDown}>
+    <div className="pane-tabs" role="tablist" aria-label={`${title} content`} onKeyDown={onTabKeyDown}>
       {tabs.map((tab) => {
         const isActive = tab.id === active?.id;
         return (
@@ -211,11 +211,11 @@ const Pane: React.FC<{
             aria-selected={isActive}
             aria-controls={panelId}
             tabIndex={isActive ? 0 : -1}
-            className={`oc-pane-tab ${isActive ? 'is-active' : ''}`}
+            className={`pane-tab ${isActive ? 'is-active' : ''}`}
             onClick={() => setActiveId(tab.id)}
           >
             {tab.label}
-            {tab.hasData && <span className="oc-pane-tab-dot" aria-hidden="true" />}
+            {tab.hasData && <span className="pane-tab-dot" aria-hidden="true" />}
           </button>
         );
       })}
@@ -226,30 +226,30 @@ const Pane: React.FC<{
 
   return (
     <div className={paneClassName}>
-      <div className="oc-pane-head">
-        <span className="oc-pane-title">{title}</span>
+      <div className="pane-head">
+        <span className="pane-title">{title}</span>
         {tabsRight ? (
           <>
             {meta}
-            <span className="oc-pane-spacer" />
-            {ctype && <span className="oc-pane-ctype">{ctype}</span>}
+            <span className="pane-spacer" />
+            {ctype && <span className="pane-ctype">{ctype}</span>}
             {tabStrip}
           </>
         ) : (
           <>
             {tabStrip}
-            <span className="oc-pane-spacer" />
-            {ctype && <span className="oc-pane-ctype">{ctype}</span>}
+            <span className="pane-spacer" />
+            {ctype && <span className="pane-ctype">{ctype}</span>}
           </>
         )}
       </div>
       {hasAnyData && active ? (
-        <div className="oc-pane-body" id={panelId} role="tabpanel" aria-labelledby={tabId(active.id)} tabIndex={0}>
+        <div className="pane-body" id={panelId} role="tabpanel" aria-labelledby={tabId(active.id)} tabIndex={0}>
           {active.content}
         </div>
       ) : (
-        <div className="oc-pane-body">
-          <p className="oc-pane-empty">{emptyMessage}</p>
+        <div className="pane-body">
+          <p className="pane-empty">{emptyMessage}</p>
         </div>
       )}
     </div>
@@ -359,8 +359,8 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
 
   const responseMeta =
     status !== undefined ? (
-      <span className="oc-pane-meta">
-        <span className="oc-pane-meta-status" style={{ color: toneColor }}>
+      <span className="pane-meta">
+        <span className="pane-meta-status" style={{ color: toneColor }}>
           {status}
         </span>
         {responseBody?.data ? ` · ${formatBytes(size)}` : ''}
@@ -374,11 +374,11 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
   };
 
   return (
-    <StyledWrapper className="oc-example-card">
-      <div className="oc-example-summary">
+    <StyledWrapper className="example-card">
+      <div className="example-summary">
         <button
           type="button"
-          className="oc-example-toggle"
+          className="example-toggle"
           aria-expanded={expanded}
           aria-controls={detailId}
           onClick={toggle}
@@ -386,16 +386,16 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
           <ChevronIcon open={expanded} />
           {status !== undefined && (
             <span
-              className="oc-example-status"
+              className="example-status"
               style={{ color: toneColor, background: `color-mix(in srgb, ${toneColor} 12%, transparent)` }}
             >
               {status}
             </span>
           )}
-          <span className="oc-example-name">{name}</span>
+          <span className="example-name">{name}</span>
         </button>
         {onTry && (
-          <button type="button" className="oc-example-try" onClick={handleTry}>
+          <button type="button" className="example-try" onClick={handleTry}>
             <PlayIcon />
             Try
           </button>
@@ -403,27 +403,27 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
       </div>
 
       {/* Grid-rows 0fr→1fr animates the height open/close with no fixed max-height. */}
-      <div ref={detailRef} className={`oc-example-detail ${expanded ? 'is-open' : ''}`}>
-        <div className="oc-example-detail-clip">
+      <div ref={detailRef} className={`example-detail ${expanded ? 'is-open' : ''}`}>
+        <div className="example-detail-clip">
           {mounted && (
-            <div className="oc-example-detail-body" id={detailId}>
-              {description && <p className="oc-example-description">{description}</p>}
+            <div className="example-detail-body" id={detailId}>
+              {description && <p className="example-description">{description}</p>}
 
-              <div className="oc-example-url-row">
+              <div className="example-url-row">
                 <MethodBadge method={method} />
-                <span className="oc-example-url-text">{displayUrl}</span>
+                <span className="example-url-text">{displayUrl}</span>
                 <CopyButton text={displayUrl} />
               </div>
 
-              <div className="oc-example-grid">
-                <Pane title="REQUEST" emptyMessage="No request data." tabs={requestTabs} paneClassName="oc-example-pane-left" />
+              <div className="example-grid">
+                <Pane title="REQUEST" emptyMessage="No request data." tabs={requestTabs} paneClassName="example-pane-left" />
                 <Pane
                   title="RESPONSE"
                   emptyMessage="No response data."
                   tabs={responseTabs}
                   meta={responseMeta}
                   tabsRight
-                  paneClassName="oc-example-pane-right"
+                  paneClassName="example-pane-right"
                 />
               </div>
             </div>

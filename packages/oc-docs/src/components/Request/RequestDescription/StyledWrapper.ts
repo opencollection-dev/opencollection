@@ -1,27 +1,27 @@
 import styled from '@emotion/styled';
 
 export const StyledWrapper = styled.div`
-  .oc-request-description-body {
+  .request-description-body {
     color: var(--text-secondary);
   }
-  &:not(.is-expanded):not(.is-animating) .oc-request-description-body {
+  &:not(.is-expanded):not(.is-animating) .request-description-body {
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  &.is-animating .oc-request-description-body {
+  &.is-animating .request-description-body {
     overflow: hidden;
     transition: max-height 0.28s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: max-height;
   }
   @media (prefers-reduced-motion: reduce) {
-    &.is-animating .oc-request-description-body,
-    .oc-request-description-chevron {
+    &.is-animating .request-description-body,
+    .request-description-chevron {
       transition: none;
     }
   }
-  .oc-request-description-toggle {
+  .request-description-toggle {
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
@@ -37,14 +37,14 @@ export const StyledWrapper = styled.div`
     letter-spacing: 0;
     color: var(--primary-text);
   }
-  .oc-request-description-chevron {
+  .request-description-chevron {
     flex-shrink: 0;
     transition: transform 0.15s ease;
   }
-  &.is-expanded .oc-request-description-chevron {
+  &.is-expanded .request-description-chevron {
     transform: rotate(180deg);
   }
-  .oc-request-description-toggle:focus-visible {
+  .request-description-toggle:focus-visible {
     outline: 2px solid var(--primary-color);
     outline-offset: 2px;
     border-radius: 2px;

@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
-import { VariableText } from '../VariableText/VariableText';
-import { ScriptStep } from './ScriptStep';
-import type { ScriptChainStep, ScriptFlow } from '../../utils/requestScripts';
+import { VariableText } from '../../VariableText/VariableText';
+import { ScriptStep } from '../ScriptStep/ScriptStep';
+import type { ScriptChainStep, ScriptFlow } from '../../../utils/requestScripts';
+import { StyledWrapper } from './StyledWrapper';
 
 interface ScriptChainProps {
   steps: ScriptChainStep[];
@@ -10,15 +11,16 @@ interface ScriptChainProps {
   url?: string;
 }
 
+/** The synthetic row marking where the HTTP request is sent, between pre and post steps. */
 const HttpMarker: React.FC<{ position: number; url?: string }> = ({ position, url }) => (
-  <div className="oc-script-row oc-script-row--marker">
-    <div className="oc-script-line oc-script-http">
-      <span className="oc-step-num">{position}</span>
+  <div className="script-row script-row--marker">
+    <div className="script-line script-http">
+      <span className="step-num">{position}</span>
       <span aria-hidden="true" />
-      <span className="oc-script-http-main">
-        <span className="oc-script-http-label">HTTP</span>
+      <span className="script-http-main">
+        <span className="script-http-label">HTTP</span>
         {url && (
-          <span className="oc-script-http-url">
+          <span className="script-http-url">
             <VariableText value={url} />
           </span>
         )}
@@ -28,6 +30,12 @@ const HttpMarker: React.FC<{ position: number; url?: string }> = ({ position, ur
   </div>
 );
 
+/**
+ * The ordered script-execution chain: pre-request steps run collection → folder →
+ * request, then the HTTP marker, then post-response steps. `sandwich` flow reverses
+ * the post-response order (innermost → outermost); `sequential` keeps it. Rows are
+ * numbered 1..N in display order.
+ */
 export const ScriptChain: React.FC<ScriptChainProps> = ({ steps, flow, url }) => {
   const { pre, post } = useMemo(() => {
     const byOrderAsc = (a: ScriptChainStep, b: ScriptChainStep) => a.order - b.order;
@@ -43,7 +51,7 @@ export const ScriptChain: React.FC<ScriptChainProps> = ({ steps, flow, url }) =>
   const next = (): number => (position += 1);
 
   return (
-    <>
+    <StyledWrapper>
       {pre.map((step, index) => (
         <ScriptStep key={`pre-${step.order}-${index}`} step={step} position={next()} />
       ))}
@@ -51,7 +59,7 @@ export const ScriptChain: React.FC<ScriptChainProps> = ({ steps, flow, url }) =>
       {post.map((step, index) => (
         <ScriptStep key={`post-${step.order}-${index}`} step={step} position={next()} />
       ))}
-    </>
+    </StyledWrapper>
   );
 };
 

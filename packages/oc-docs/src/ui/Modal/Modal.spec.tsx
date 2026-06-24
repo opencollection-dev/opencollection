@@ -36,7 +36,7 @@ describe('Modal', () => {
         <p>body</p>
       </Modal>
     );
-    expect(html).not.toContain('class="oc-modal-title"');
+    expect(html).not.toContain('class="modal-title"');
     expect(html).toContain('aria-label="Plain dialog"');
     expect(html).toContain('aria-label="Close"');
   });

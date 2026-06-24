@@ -20,13 +20,13 @@ describe('Heading', () => {
   // variant selectors regardless of which one is applied to the element).
   it('defaults to the lg size variant', () => {
     const html = renderToStaticMarkup(<Heading>Title</Heading>);
-    expect(html).toMatch(/class="[^"]*oc-heading--lg[^"]*"/);
-    expect(html).not.toMatch(/class="[^"]*oc-heading--md[^"]*"/);
+    expect(html).toMatch(/class="[^"]*heading--lg[^"]*"/);
+    expect(html).not.toMatch(/class="[^"]*heading--md[^"]*"/);
   });
 
   it('applies the md size variant when requested', () => {
     const html = renderToStaticMarkup(<Heading size="md">Login</Heading>);
-    expect(html).toMatch(/class="[^"]*oc-heading--md[^"]*"/);
-    expect(html).not.toMatch(/class="[^"]*oc-heading--lg[^"]*"/);
+    expect(html).toMatch(/class="[^"]*heading--md[^"]*"/);
+    expect(html).not.toMatch(/class="[^"]*heading--lg[^"]*"/);
   });
 });

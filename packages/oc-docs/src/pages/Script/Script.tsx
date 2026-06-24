@@ -27,12 +27,12 @@ export const Script: React.FC<ScriptProps> = ({ item, ancestry = [], onBreadcrum
 
   return (
     <PageWrapper>
-      <StyledWrapper className="oc-script">
+      <StyledWrapper className="script">
         <Breadcrumb segments={segments} current={name} onSegmentClick={onBreadcrumbClick} />
 
         <Heading size="md" style={{ marginTop: '0.875rem' }}>{name}</Heading>
 
-        <Code code={code} language="javascript" showLineNumbers showCopy className="oc-script-code" />
+        <Code code={code} language="javascript" showLineNumbers showCopy className="script-code" />
       </StyledWrapper>
     </PageWrapper>
   );

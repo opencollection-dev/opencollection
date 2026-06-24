@@ -57,7 +57,7 @@ export const Overview: React.FC<OverviewProps> = ({ collection }) => {
 
   return (
     <PageWrapper>
-      <StyledWrapper className="oc-overview" data-testid="overview">
+      <StyledWrapper className="overview" data-testid="overview">
         <header className="overview-headline">
           <div>
             {version && <div className="overview-version" data-testid="overview-collection-version">{version}</div>}

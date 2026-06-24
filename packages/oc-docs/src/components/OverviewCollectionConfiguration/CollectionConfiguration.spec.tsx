@@ -53,6 +53,6 @@ describe('CollectionConfiguration', () => {
     expect(html).toContain('Add tests to run for all requests in the collection');
     expect(html).toContain('bearer');
     expect(html).toContain('3 hidden sections');
-    expect(html).toContain('oc-hidden-sections');
+    expect(html).toContain('hidden-sections');
   });
 });

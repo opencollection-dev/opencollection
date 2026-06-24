@@ -9,7 +9,7 @@ interface MethodBadgeProps {
 
 export const MethodBadge: React.FC<MethodBadgeProps> = ({ method, className }) => (
   <StyledWrapper
-    className={['oc-method-badge', className].filter(Boolean).join(' ')}
+    className={['method-badge', className].filter(Boolean).join(' ')}
     style={{ color: getMethodColorVar(method) }}
   >
     {(method || 'GET').toUpperCase()}

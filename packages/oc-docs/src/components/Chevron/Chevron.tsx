@@ -9,7 +9,7 @@ interface ChevronProps {
 
 export const Chevron: React.FC<ChevronProps> = ({ open = false, size = 13, className }) => (
   <StyledWrapper
-    className={['oc-chevron', open ? 'is-open' : '', className].filter(Boolean).join(' ')}
+    className={['chevron', open ? 'is-open' : '', className].filter(Boolean).join(' ')}
     width={size}
     height={size}
     viewBox="0 0 24 24"

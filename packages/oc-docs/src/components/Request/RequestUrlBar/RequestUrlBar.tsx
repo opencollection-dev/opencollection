@@ -21,14 +21,14 @@ export const RequestUrlBar: React.FC<RequestUrlBarProps> = ({
   style,
   className
 }) => (
-  <StyledWrapper style={style} className={['oc-request-url-bar', className].filter(Boolean).join(' ')}>
-    <span className="oc-request-url-bar-method">
+  <StyledWrapper style={style} className={['request-url-bar', className].filter(Boolean).join(' ')}>
+    <span className="request-url-bar-method">
       <MethodBadge method={method} />
     </span>
-    <span className="oc-request-url-bar-url">
+    <span className="request-url-bar-url">
       <VariableText value={url} />
     </span>
-    <span className="oc-request-url-bar-actions">
+    <span className="request-url-bar-actions">
       <CopyButton
         text={url}
         label="Copy URL"
@@ -40,7 +40,7 @@ export const RequestUrlBar: React.FC<RequestUrlBarProps> = ({
         }}
       />
       {onTry && (
-        <button type="button" className="oc-request-try" onClick={onTry}>
+        <button type="button" className="request-try" onClick={onTry}>
           <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style={{ display: 'block' }}>
             <polygon points="6 4 20 12 6 20 6 4" />
           </svg>

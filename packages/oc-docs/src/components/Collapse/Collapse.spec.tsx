@@ -7,8 +7,8 @@ const child = <p>panel content</p>;
 
 describe('Collapse', () => {
   it('marks the track open/closed via the is-open class', () => {
-    expect(renderToStaticMarkup(<Collapse open>{child}</Collapse>)).toMatch(/class="oc-collapse is-open/);
-    expect(renderToStaticMarkup(<Collapse open={false}>{child}</Collapse>)).not.toMatch(/class="oc-collapse is-open/);
+    expect(renderToStaticMarkup(<Collapse open>{child}</Collapse>)).toMatch(/class="collapse is-open/);
+    expect(renderToStaticMarkup(<Collapse open={false}>{child}</Collapse>)).not.toMatch(/class="collapse is-open/);
   });
 
   it('keeps non-lazy children mounted even when closed (clipped, not removed)', () => {
@@ -32,6 +32,6 @@ describe('Collapse', () => {
   });
 
   it('applies innerClassName to the clip (so padding/bg live off the animated track)', () => {
-    expect(renderToStaticMarkup(<Collapse open innerClassName="oc-test-code">{child}</Collapse>)).toContain('oc-test-code');
+    expect(renderToStaticMarkup(<Collapse open innerClassName="test-code">{child}</Collapse>)).toContain('test-code');
   });
 });

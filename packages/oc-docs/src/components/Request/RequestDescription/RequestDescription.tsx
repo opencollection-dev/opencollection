@@ -71,25 +71,25 @@ export const RequestDescription: React.FC<RequestDescriptionProps> = ({ html, st
   return (
     <StyledWrapper
       style={style}
-      className={['oc-request-description', expanded ? 'is-expanded' : '', animating ? 'is-animating' : '', className]
+      className={['request-description', expanded ? 'is-expanded' : '', animating ? 'is-animating' : '', className]
         .filter(Boolean)
         .join(' ')}
     >
       <div
         ref={bodyRef}
-        className="oc-request-description-body markdown-documentation"
+        className="request-description-body markdown-documentation"
         dangerouslySetInnerHTML={{ __html: html }}
       />
       {overflowing && (
         <button
           type="button"
-          className="oc-request-description-toggle"
+          className="request-description-toggle"
           aria-expanded={expanded}
           onClick={toggle}
         >
           <span>{expanded ? 'View less' : 'View more'}</span>
           <svg
-            className="oc-request-description-chevron"
+            className="request-description-chevron"
             width="1em"
             height="1em"
             viewBox="0 0 24 24"

@@ -18,20 +18,20 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ segments, current, onSeg
   if (!hasSegments && !current) return null;
 
   return (
-    <StyledWrapper className={['oc-breadcrumb', className].filter(Boolean).join(' ')} aria-label="Breadcrumb">
+    <StyledWrapper className={['breadcrumb', className].filter(Boolean).join(' ')} aria-label="Breadcrumb">
       <ol>
         {segments.map((segment, index) => (
           <li key={segment.uuid || index}>
-            {index > 0 && <span className="oc-breadcrumb-sep" aria-hidden="true">›</span>}
-            <button type="button" className="oc-breadcrumb-link" onClick={() => onSegmentClick?.(segment.uuid)}>
+            {index > 0 && <span className="breadcrumb-sep" aria-hidden="true">›</span>}
+            <button type="button" className="breadcrumb-link" onClick={() => onSegmentClick?.(segment.uuid)}>
               {segment.name}
             </button>
           </li>
         ))}
         {current && (
           <li key="current" aria-current="page">
-            {hasSegments && <span className="oc-breadcrumb-sep" aria-hidden="true">›</span>}
-            <span className="oc-breadcrumb-current">{current}</span>
+            {hasSegments && <span className="breadcrumb-sep" aria-hidden="true">›</span>}
+            <span className="breadcrumb-current">{current}</span>
           </li>
         )}
       </ol>

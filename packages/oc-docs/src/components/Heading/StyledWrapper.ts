@@ -6,13 +6,13 @@ export const StyledWrapper = styled.h1`
   font-weight: 600;
   color: var(--text-primary);
 
-  &.oc-heading--lg {
+  &.heading--lg {
     font-size: 1.25rem;
     line-height: 1;
     letter-spacing: -0.5px;
   }
 
-  &.oc-heading--md {
+  &.heading--md {
     font-size: 1rem;
     line-height: 1.5rem;
     letter-spacing: 0;

@@ -7,7 +7,7 @@ export const StyledWrapper = styled.div`
   padding-top: 1.5625rem;
   padding-bottom: 2.5625rem;
 
-  .oc-script-code {
+  .script-code {
     margin-top: 1.25rem;
   }
 `;

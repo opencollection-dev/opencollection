@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { ScopeTag } from './ScopeTag';
-import { Code } from '../Code/Code';
-import { Collapse } from '../Collapse/Collapse';
-import type { TestRow } from '../../utils/extractTests';
+import { ScopeTag } from '../ScopeTag/ScopeTag';
+import { Code } from '../../Code/Code';
+import { Collapse } from '../../Collapse/Collapse';
+import type { TestRow } from '../../../utils/extractTests';
+import { StyledWrapper } from './StyledWrapper';
 
 interface TestListProps {
   tests: TestRow[];
@@ -16,9 +17,9 @@ const TestItem: React.FC<{ test: TestRow }> = ({ test }) => {
   };
 
   return (
-    <div className="oc-test-row">
+    <div className="test-row">
       <div
-        className="oc-test-head"
+        className="test-head"
         role={hasCode ? 'button' : undefined}
         tabIndex={hasCode ? 0 : undefined}
         onClick={toggle}
@@ -30,17 +31,17 @@ const TestItem: React.FC<{ test: TestRow }> = ({ test }) => {
         }}
       >
         <ScopeTag scope={test.level} />
-        <span className="oc-test-name">{test.name}</span>
-        <span className="oc-test-spacer" />
+        <span className="test-name">{test.name}</span>
+        <span className="test-spacer" />
         {hasCode && (
-          <button type="button" className="oc-code-toggle" onClick={(e) => { e.stopPropagation(); toggle(); }}>
+          <button type="button" className="code-toggle" onClick={(e) => { e.stopPropagation(); toggle(); }}>
             {open ? 'hide code' : 'view code'}
           </button>
         )}
       </div>
       {hasCode && (
         <Collapse open={open} lazy>
-          <div className="oc-test-code">
+          <div className="test-code">
             <Code code={test.code} language="javascript" surface="muted" showLineNumbers showCopy={false} />
           </div>
         </Collapse>
@@ -53,11 +54,11 @@ export const TestList: React.FC<TestListProps> = ({ tests }) => {
   if (tests.length === 0) return null;
 
   return (
-    <>
+    <StyledWrapper>
       {tests.map((test, index) => (
         <TestItem key={`${test.name}-${index}`} test={test} />
       ))}
-    </>
+    </StyledWrapper>
   );
 };
 

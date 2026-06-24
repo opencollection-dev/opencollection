@@ -141,7 +141,7 @@ export const Request: React.FC<RequestProps> = ({
 
   return (
     <PageWrapper>
-      <StyledWrapper className="oc-request">
+      <StyledWrapper className="request">
         <Breadcrumb segments={segments} current={name} onSegmentClick={onBreadcrumbClick} />
 
         <Heading size="md" style={{ marginTop: '0.875rem' }}>{name}</Heading>

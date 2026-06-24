@@ -40,19 +40,19 @@ export const Modal: React.FC<ModalProps> = ({ open, onClose, title, children, ar
   return (
     <Portal>
       <StyledWrapper
-        className={['oc-modal-backdrop', className].filter(Boolean).join(' ')}
+        className={['modal-backdrop', className].filter(Boolean).join(' ')}
         onMouseDown={(event) => {
           if (event.target === event.currentTarget) onClose();
         }}
       >
-        <div ref={dialogRef} className="oc-modal-dialog" role="dialog" aria-modal="true" aria-label={ariaLabel} tabIndex={-1}>
-          <div className="oc-modal-head">
-            {title !== undefined && <div className="oc-modal-title">{title}</div>}
-            <button type="button" className="oc-modal-close" aria-label="Close" onClick={onClose}>
+        <div ref={dialogRef} className="modal-dialog" role="dialog" aria-modal="true" aria-label={ariaLabel} tabIndex={-1}>
+          <div className="modal-head">
+            {title !== undefined && <div className="modal-title">{title}</div>}
+            <button type="button" className="modal-close" aria-label="Close" onClick={onClose}>
               <CloseIcon />
             </button>
           </div>
-          <div className="oc-modal-body">{children}</div>
+          <div className="modal-body">{children}</div>
         </div>
       </StyledWrapper>
     </Portal>

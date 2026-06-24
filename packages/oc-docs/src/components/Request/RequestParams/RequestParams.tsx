@@ -17,16 +17,16 @@ export const RequestParams: React.FC<RequestParamsProps> = ({ path = [], query =
   if (path.length === 0 && query.length === 0) return null;
 
   return (
-    <StyledWrapper className={['oc-request-params', className].filter(Boolean).join(' ')}>
+    <StyledWrapper className={['request-params', className].filter(Boolean).join(' ')}>
       {path.length > 0 && (
-        <div className="oc-request-params-group">
-          <SubHeading className="oc-request-params-heading">Path</SubHeading>
+        <div className="request-params-group">
+          <SubHeading className="request-params-heading">Path</SubHeading>
           <PropertyTable rows={toRows(path)} />
         </div>
       )}
       {query.length > 0 && (
-        <div className="oc-request-params-group">
-          <SubHeading className="oc-request-params-heading">Query</SubHeading>
+        <div className="request-params-group">
+          <SubHeading className="request-params-heading">Query</SubHeading>
           <PropertyTable rows={toRows(query)} />
         </div>
       )}

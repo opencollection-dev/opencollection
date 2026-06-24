@@ -13,10 +13,10 @@ export const VariableText: React.FC<VariableTextProps> = ({ value, className }) 
   const parts = (value ?? '').split(SPLIT_PATTERN).filter((part) => part !== '');
 
   return (
-    <StyledWrapper className={['oc-var-text', className].filter(Boolean).join(' ')}>
+    <StyledWrapper className={['var-text', className].filter(Boolean).join(' ')}>
       {parts.map((part, index) =>
         IS_VARIABLE.test(part) ? (
-          <span key={index} className="oc-var">
+          <span key={index} className="var">
             {part}
           </span>
         ) : (

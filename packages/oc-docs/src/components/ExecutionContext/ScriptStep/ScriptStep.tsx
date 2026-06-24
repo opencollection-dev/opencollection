@@ -1,22 +1,25 @@
 import React, { useState } from 'react';
-import { Code } from '../Code/Code';
-import { Chevron } from '../Chevron/Chevron';
-import { Collapse } from '../Collapse/Collapse';
-import type { ScriptChainStep } from '../../utils/requestScripts';
+import { Code } from '../../Code/Code';
+import { Chevron } from '../../Chevron/Chevron';
+import { Collapse } from '../../Collapse/Collapse';
+import type { ScriptChainStep } from '../../../utils/requestScripts';
+import { StyledWrapper } from './StyledWrapper';
 
 interface ScriptStepProps {
   step: ScriptChainStep;
+  /** 1-based position of this step within the displayed chain. */
   position: number;
 }
 
+/** One numbered step in the script-execution chain; click/Enter/Space reveals its source. */
 export const ScriptStep: React.FC<ScriptStepProps> = ({ step, position }) => {
   const [open, setOpen] = useState(false);
   const toggle = () => setOpen((v) => !v);
 
   return (
-    <div className="oc-script-row">
+    <StyledWrapper className="script-row">
       <div
-        className="oc-script-line oc-script-step-head"
+        className="script-line script-step-head"
         role="button"
         tabIndex={0}
         aria-expanded={open}
@@ -28,12 +31,12 @@ export const ScriptStep: React.FC<ScriptStepProps> = ({ step, position }) => {
           }
         }}
       >
-        <span className="oc-step-num">{position}</span>
-        <Chevron open={open} className="oc-script-chevron" />
-        <span className="oc-script-step-label">{step.label}</span>
+        <span className="step-num">{position}</span>
+        <Chevron open={open} className="script-chevron" />
+        <span className="script-step-label">{step.label}</span>
         <button
           type="button"
-          className="oc-code-toggle"
+          className="code-toggle"
           aria-expanded={open}
           onClick={(e) => {
             e.stopPropagation();
@@ -45,11 +48,11 @@ export const ScriptStep: React.FC<ScriptStepProps> = ({ step, position }) => {
       </div>
 
       <Collapse open={open} lazy>
-        <div className="oc-script-code-inner">
+        <div className="script-code-inner">
           <Code code={step.code} language="javascript" surface="muted" showLineNumbers showCopy />
         </div>
       </Collapse>
-    </div>
+    </StyledWrapper>
   );
 };
 

@@ -1,17 +1,17 @@
 import styled from '@emotion/styled';
 
 export const StyledWrapper = styled.section`
-  .oc-section-head {
+  .section-head {
     display: flex;
     align-items: center;
     gap: 0.4rem;
     margin-bottom: 0.75rem;
   }
-  .oc-section-head .oc-section-head-label {
+  .section-head .section-head-label {
     margin-bottom: 0;
   }
 
-  .oc-section-toggle {
+  .section-toggle {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
@@ -25,12 +25,12 @@ export const StyledWrapper = styled.section`
     letter-spacing: inherit;
     text-transform: inherit;
   }
-  .oc-section-toggle:focus-visible {
+  .section-toggle:focus-visible {
     outline: 2px solid var(--oc-status-info-text);
     outline-offset: 2px;
     border-radius: 0.25rem;
   }
-  .oc-section-chevron {
+  .section-chevron {
     color: var(--text-muted);
   }
 

@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 export const StyledWrapper = styled.div`
-  .oc-request-params-heading {
+  .request-params-heading {
     margin-top: 0.75rem;
     margin-left: 0.875rem;
   }

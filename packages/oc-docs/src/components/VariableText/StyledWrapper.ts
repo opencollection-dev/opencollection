@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 export const StyledWrapper = styled.span`
-  .oc-var {
+  .var {
     color: var(--primary-text);
     background-color: var(--brand-soft);
     border-radius: 0.1875rem;

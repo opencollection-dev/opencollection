@@ -1,14 +1,14 @@
 import styled from '@emotion/styled';
 
 export const StyledWrapper = styled.div`
-  .oc-snippet-box {
+  .snippet-box {
     border: 1px solid var(--border-color);
     border-radius: 0.5rem;
     overflow: hidden;
     background: var(--oc-background-base);
   }
 
-  .oc-snippet-head {
+  .snippet-head {
     display: flex;
     align-items: stretch;
     min-height: 2.375rem;
@@ -16,12 +16,12 @@ export const StyledWrapper = styled.div`
     border-bottom: 1px solid var(--border-color);
   }
 
-  .oc-snippet-tabs {
+  .snippet-tabs {
     display: flex;
     align-items: stretch;
   }
 
-  .oc-snippet-tab {
+  .snippet-tab {
     display: inline-flex;
     align-items: center;
     padding: 0 0.625rem;
@@ -37,24 +37,24 @@ export const StyledWrapper = styled.div`
     cursor: pointer;
     transition: color 0.12s ease;
   }
-  .oc-snippet-tab:hover {
+  .snippet-tab:hover {
     color: var(--text-primary);
   }
-  .oc-snippet-tab.is-active {
+  .snippet-tab.is-active {
     color: var(--text-primary);
     font-weight: 600;
     border-bottom-color: var(--primary-color);
   }
-  .oc-snippet-tab:focus-visible {
+  .snippet-tab:focus-visible {
     outline: 2px solid var(--primary-color);
     outline-offset: -2px;
   }
 
-  .oc-snippet-head-spacer {
+  .snippet-head-spacer {
     flex: 1;
   }
 
-  .oc-snippet-box .code-content-wrapper {
+  .snippet-box .code-content-wrapper {
     border: none;
     border-radius: 0;
   }
@@ -63,7 +63,7 @@ export const StyledWrapper = styled.div`
     opacity: 1;
   }
 
-  .oc-code-snippet-expand {
+  .code-snippet-expand {
     align-self: center;
     flex: 0 0 auto;
     display: inline-flex;
@@ -77,15 +77,15 @@ export const StyledWrapper = styled.div`
     border-radius: var(--oc-radius);
     transition: color 0.12s ease;
   }
-  .oc-code-snippet-expand:hover {
+  .code-snippet-expand:hover {
     color: var(--text-primary);
   }
-  .oc-code-snippet-expand:focus-visible {
+  .code-snippet-expand:focus-visible {
     outline: 2px solid var(--primary-color);
     outline-offset: 2px;
   }
 
-  .oc-snippet-copy {
+  .snippet-copy {
     align-self: center;
     flex: 0 0 auto;
   }

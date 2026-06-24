@@ -17,7 +17,7 @@ export const RequestBody: React.FC<RequestBodyProps> = ({ body, showContentType 
   if (view.render === 'none') return null;
 
   return (
-    <StyledWrapper className={['oc-request-body', className].filter(Boolean).join(' ')}>
+    <StyledWrapper className={['request-body', className].filter(Boolean).join(' ')}>
       {showContentType && <ContentTypeBadge label={view.contentTypeLabel} />}
       {view.render === 'code' && <Code code={view.code} language={view.language} showLineNumbers />}
       {view.render === 'table' && (
@@ -29,7 +29,7 @@ export const RequestBody: React.FC<RequestBodyProps> = ({ body, showContentType 
           }))}
         />
       )}
-      {view.render === 'file' && <p className="oc-request-body-file">{view.filePath}</p>}
+      {view.render === 'file' && <p className="request-body-file">{view.filePath}</p>}
     </StyledWrapper>
   );
 };

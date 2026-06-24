@@ -61,34 +61,34 @@ export const CodeSnippetTabs: React.FC<CodeSnippetTabsProps> = ({ method, url, h
   const activeLang = LANGUAGES.find((lang) => lang.id === active) ?? LANGUAGES[0];
 
   const renderSnippetBox = (variant: 'inline' | 'modal') => (
-    <div className="oc-snippet-box">
-      <div className="oc-snippet-head">
-        <div className="oc-snippet-tabs" role="tablist" aria-label="Snippet language">
+    <div className="snippet-box">
+      <div className="snippet-head">
+        <div className="snippet-tabs" role="tablist" aria-label="Snippet language">
           {LANGUAGES.map((lang) => (
             <button
               key={lang.id}
               type="button"
               role="tab"
               aria-selected={active === lang.id}
-              className={['oc-snippet-tab', active === lang.id ? 'is-active' : ''].filter(Boolean).join(' ')}
+              className={['snippet-tab', active === lang.id ? 'is-active' : ''].filter(Boolean).join(' ')}
               onClick={() => setActive(lang.id)}
             >
               {lang.label}
             </button>
           ))}
         </div>
-        <span className="oc-snippet-head-spacer" />
+        <span className="snippet-head-spacer" />
         {variant === 'inline' ? (
           <button
             type="button"
-            className="oc-code-snippet-expand"
+            className="code-snippet-expand"
             aria-label="Expand code snippet"
             onClick={() => setExpanded(true)}
           >
             <ExpandGlyph />
           </button>
         ) : (
-          <CopyButton text={snippets[active]} label="Copy code" className="oc-snippet-copy" />
+          <CopyButton text={snippets[active]} label="Copy code" className="snippet-copy" />
         )}
       </div>
       <Code code={snippets[active]} language={activeLang.language} showLineNumbers showCopy={variant === 'inline'} />
@@ -96,11 +96,11 @@ export const CodeSnippetTabs: React.FC<CodeSnippetTabsProps> = ({ method, url, h
   );
 
   return (
-    <StyledWrapper className={['oc-code-snippet-tabs', className].filter(Boolean).join(' ')}>
+    <StyledWrapper className={['code-snippet-tabs', className].filter(Boolean).join(' ')}>
       {renderSnippetBox('inline')}
       <Modal open={expanded} onClose={() => setExpanded(false)} title={<SectionLabel>Code snippet</SectionLabel>} ariaLabel="Code snippet">
         {expanded && (
-          <StyledWrapper className="oc-code-snippet-tabs">{renderSnippetBox('modal')}</StyledWrapper>
+          <StyledWrapper className="code-snippet-tabs">{renderSnippetBox('modal')}</StyledWrapper>
         )}
       </Modal>
     </StyledWrapper>

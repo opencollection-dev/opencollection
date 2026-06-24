@@ -4,7 +4,7 @@ export const StyledWrapper = styled.div`
   > * + * {
     margin-top: 0.5rem;
   }
-  .oc-request-body-file {
+  .request-body-file {
     margin: 0;
     font-family: var(--font-mono);
     font-size: 0.8125rem;

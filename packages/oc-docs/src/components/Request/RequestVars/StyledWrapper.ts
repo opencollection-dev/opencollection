@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 export const StyledWrapper = styled.div`
-  .oc-request-vars-group + .oc-request-vars-group {
+  .request-vars-group + .request-vars-group {
     margin-top: 1rem;
   }
 `;

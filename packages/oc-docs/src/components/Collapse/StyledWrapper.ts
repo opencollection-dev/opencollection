@@ -9,7 +9,7 @@ export const StyledWrapper = styled.div`
     grid-template-rows: 1fr;
   }
 
-  .oc-collapse-clip {
+  .collapse-clip {
     overflow: hidden;
     min-height: 0;
   }

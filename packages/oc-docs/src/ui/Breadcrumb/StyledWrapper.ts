@@ -20,10 +20,10 @@ export const StyledWrapper = styled.nav`
     align-items: center;
     gap: 0.25rem;
   }
-  .oc-breadcrumb-sep {
+  .breadcrumb-sep {
     color: var(--oc-breadcrumb-color-segments, var(--text-secondary));
   }
-  .oc-breadcrumb-link {
+  .breadcrumb-link {
     border: none;
     background: none;
     padding: 0;
@@ -32,16 +32,16 @@ export const StyledWrapper = styled.nav`
     font: inherit;
     color: var(--oc-breadcrumb-color-segments, var(--text-secondary));
   }
-  .oc-breadcrumb-link:hover {
+  .breadcrumb-link:hover {
     color: var(--oc-breadcrumb-color-current, var(--text-primary));
   }
-  .oc-breadcrumb-link:focus-visible {
+  .breadcrumb-link:focus-visible {
     outline: 2px solid var(--primary-color);
     outline-offset: 2px;
     border-radius: 2px;
   }
   /* Current (active) crumb uses the brand text color; ancestor segments stay muted. */
-  .oc-breadcrumb-current {
+  .breadcrumb-current {
     color: var(--oc-breadcrumb-color-current, var(--primary-text));
   }
 `;
