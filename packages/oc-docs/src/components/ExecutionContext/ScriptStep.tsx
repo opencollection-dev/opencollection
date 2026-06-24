@@ -52,7 +52,7 @@ export const ScriptStep: React.FC<ScriptStepProps> = ({ step, position }) => {
 
       <Collapse open={open} lazy>
         <div className="oc-script-code-inner">
-          <Code code={step.code} language="javascript" showLineNumbers showCopy />
+          <Code code={step.code} language="javascript" surface="muted" showLineNumbers showCopy />
         </div>
       </Collapse>
     </div>

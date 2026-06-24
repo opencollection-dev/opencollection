@@ -21,13 +21,13 @@ export const RequestParams: React.FC<RequestParamsProps> = ({ path = [], query =
     <RequestParamsWrapper className={['oc-request-params', className].filter(Boolean).join(' ')}>
       {path.length > 0 && (
         <div className="oc-request-params-group">
-          <SubHeading>Path</SubHeading>
+          <SubHeading className="oc-request-params-heading">Path</SubHeading>
           <PropertyTable rows={toRows(path)} />
         </div>
       )}
       {query.length > 0 && (
         <div className="oc-request-params-group">
-          <SubHeading>Query</SubHeading>
+          <SubHeading className="oc-request-params-heading">Query</SubHeading>
           <PropertyTable rows={toRows(query)} />
         </div>
       )}

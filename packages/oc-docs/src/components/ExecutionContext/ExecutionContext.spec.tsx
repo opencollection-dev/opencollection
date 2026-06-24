@@ -26,8 +26,8 @@ const assertions: AssertionRow[] = [
 ];
 
 const tests: TestRow[] = [
-  { level: 'collection', name: 'is authenticated', sourceName: 'API' },
-  { level: 'request', name: 'returns a token' }
+  { level: 'collection', name: 'is authenticated', sourceName: 'API', code: "test('is authenticated', () => {})" },
+  { level: 'request', name: 'returns a token', code: "test('returns a token', () => {})" }
 ];
 
 const order = (html: string, ...labels: string[]) => labels.map((l) => html.indexOf(l));

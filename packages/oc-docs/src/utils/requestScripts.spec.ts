@@ -2,13 +2,39 @@ import { describe, it, expect } from 'vitest';
 import { buildScriptChain, getScriptFlow } from './requestScripts';
 
 describe('getScriptFlow', () => {
-  it('reads config.scripts.flow, defaulting to sandwich', () => {
-    expect(getScriptFlow(null)).toBe('sandwich');
-    expect(getScriptFlow({} as any)).toBe('sandwich');
-    expect(getScriptFlow({ config: {} } as any)).toBe('sandwich');
-    expect(getScriptFlow({ config: { scripts: {} } } as any)).toBe('sandwich');
+  it('reads extensions.config.scripts.flow', () => {
+    expect(getScriptFlow({ extensions: { config: { scripts: { flow: 'sequential' } } } } as any)).toBe('sequential');
+    expect(getScriptFlow({ extensions: { config: { scripts: { flow: 'sandwich' } } } } as any)).toBe('sandwich');
+  });
+
+  it('falls back to the typed config.scripts.flow', () => {
     expect(getScriptFlow({ config: { scripts: { flow: 'sequential' } } } as any)).toBe('sequential');
     expect(getScriptFlow({ config: { scripts: { flow: 'sandwich' } } } as any)).toBe('sandwich');
+  });
+
+  it('prefers extensions.config.scripts.flow over the typed config.scripts.flow', () => {
+    expect(
+      getScriptFlow({
+        extensions: { config: { scripts: { flow: 'sequential' } } },
+        config: { scripts: { flow: 'sandwich' } }
+      } as any)
+    ).toBe('sequential');
+  });
+
+  // Always resolves to exactly one flow — anything that isn't `sequential` is `sandwich`.
+  it('defaults to sandwich for every other case', () => {
+    expect(getScriptFlow(null)).toBe('sandwich');
+    expect(getScriptFlow(undefined)).toBe('sandwich');
+    expect(getScriptFlow({} as any)).toBe('sandwich');
+    expect(getScriptFlow({ extensions: {} } as any)).toBe('sandwich');
+    expect(getScriptFlow({ extensions: { config: {} } } as any)).toBe('sandwich');
+    expect(getScriptFlow({ extensions: { config: { scripts: {} } } } as any)).toBe('sandwich');
+    expect(getScriptFlow({ config: {} } as any)).toBe('sandwich');
+    expect(getScriptFlow({ config: { scripts: {} } } as any)).toBe('sandwich');
+    // Unknown / malformed values never leak through.
+    expect(getScriptFlow({ extensions: { config: { scripts: { flow: 'parallel' } } } } as any)).toBe('sandwich');
+    expect(getScriptFlow({ extensions: { config: 'oops' } } as any)).toBe('sandwich');
+    expect(getScriptFlow({ extensions: 'oops' } as any)).toBe('sandwich');
   });
 });
 

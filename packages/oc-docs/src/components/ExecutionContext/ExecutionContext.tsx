@@ -15,7 +15,7 @@ interface ExecutionContextProps {
   postVars: PostResponseVarRow[];
   assertions: AssertionRow[];
   tests: TestRow[];
-  /** Script execution flow (from `config.scripts.flow`). Defaults to `sandwich`. */
+  /** Script execution flow (from `extensions.config.scripts.flow`). Defaults to `sandwich`. */
   flow?: ScriptFlow;
   /** Method/url shown on the synthetic "HTTP" row in the script chain. */
   method?: string;
@@ -31,17 +31,19 @@ const FLOW_LABEL: Record<ScriptFlow, string> = { sandwich: 'Sandwich', sequentia
  * ABOVE a bordered content box. Not individually collapsible — the whole Execution
  * Context collapses as one (see the page's collapsible `Section`).
  */
-const Card: React.FC<{ title: string; meta?: React.ReactNode; children: React.ReactNode }> = ({
-  title,
-  meta,
-  children
-}) => (
+const Card: React.FC<{
+  title: string;
+  meta?: React.ReactNode;
+  children: React.ReactNode;
+  /** Extra class on the content box (e.g. `oc-exec-card-box--bare` to drop the frame). */
+  boxClassName?: string;
+}> = ({ title, meta, children, boxClassName }) => (
   <div className="oc-exec-card">
     <div className="oc-exec-card-head">
       <span className="oc-exec-card-title">{title}</span>
       {meta !== undefined && <span className="oc-exec-card-meta">{meta}</span>}
     </div>
-    <div className="oc-exec-card-box">{children}</div>
+    <div className={['oc-exec-card-box', boxClassName].filter(Boolean).join(' ')}>{children}</div>
   </div>
 );
 
@@ -78,7 +80,7 @@ export const ExecutionContext: React.FC<ExecutionContextProps> = ({
         </Card>
       )}
       {hasVars && (
-        <Card title="Variables" meta={countLabel(varCount, 'var')}>
+        <Card title="Variables" meta={countLabel(varCount, 'var')} boxClassName="oc-exec-card-box--bare">
           <VariablesPanel preVars={preVars} postVars={postVars} />
         </Card>
       )}

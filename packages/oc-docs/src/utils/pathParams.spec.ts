@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parsePathParamNames, syncPathParams, applyPathParams } from './pathParams';
+import { parsePathParamNames, syncPathParams, applyPathParams, resolvePathAndQueryParams } from './pathParams';
 
 describe('parsePathParamNames', () => {
   it('extracts a single path param', () => {
@@ -180,5 +180,36 @@ describe('applyPathParams', () => {
     expect(applyPathParams('', [path('id', '1')])).toBe('');
     expect(applyPathParams(undefined, [path('id', '1')])).toBe('');
     expect(applyPathParams(null, [path('id', '1')])).toBe('');
+  });
+});
+
+describe('resolvePathAndQueryParams', () => {
+  const path = (name: string, value = ''): any => ({ name, value, type: 'path' });
+  const query = (name: string, value = ''): any => ({ name, value, type: 'query' });
+
+  it('splits declared params into path and query, preserving order', () => {
+    const { path: p, query: q } = resolvePathAndQueryParams(
+      [path('orgId', 'org_42'), query('q', 'alice'), query('role', 'admin')],
+      '{{host}}/api/orgs/:orgId/users/search'
+    );
+    expect(p.map((x) => x.name)).toEqual(['orgId']);
+    expect(q.map((x) => x.name)).toEqual(['q', 'role']);
+  });
+
+  it('adds path params implied by the URL but not declared', () => {
+    const { path: p } = resolvePathAndQueryParams([], '/users/:userId/posts/:postId');
+    expect(p.map((x) => x.name)).toEqual(['userId', 'postId']);
+    expect(p.every((x) => x.type === 'path')).toBe(true);
+  });
+
+  it('keeps the declared value when a path param is both declared and in the URL (no duplicate)', () => {
+    const { path: p } = resolvePathAndQueryParams([path('id', '5')], '/users/:id');
+    expect(p).toHaveLength(1);
+    expect(p[0].name).toBe('id');
+    expect(p[0].value).toBe('5');
+  });
+
+  it('returns empty arrays for no params and no URL path segments', () => {
+    expect(resolvePathAndQueryParams(undefined, undefined)).toEqual({ path: [], query: [] });
   });
 });

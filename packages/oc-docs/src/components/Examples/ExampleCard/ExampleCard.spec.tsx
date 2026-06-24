@@ -134,4 +134,30 @@ describe('ExampleCard', () => {
     expect(html).toContain('role="tab"');
     expect(html).toContain('role="tabpanel"');
   });
+
+  it('splits Params into Path and Query and labels the tab "path & query"', () => {
+    const html = renderToStaticMarkup(
+      <ExampleCard
+        example={{
+          name: 'Org search',
+          request: {
+            url: '{{host}}/api/orgs/:orgId/users/search',
+            params: [
+              { name: 'orgId', value: 'org_42', type: 'path' },
+              { name: 'q', value: 'alice', type: 'query' }
+            ]
+          },
+          response: { status: 200 }
+        }}
+        method="get"
+        url="/x"
+        defaultExpanded
+      />
+    );
+    expect(html).toContain('path &amp; query'); // tab label (the & is HTML-escaped)
+    expect(html).toContain('Path');
+    expect(html).toContain('Query');
+    expect(html).toContain('orgId');
+    expect(html).toContain('alice');
+  });
 });

@@ -1,7 +1,6 @@
 import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
 import type {
   HttpRequestExample,
-  HttpRequestParam,
   HttpRequestHeader,
   HttpResponseHeader,
   HttpRequestBody
@@ -10,9 +9,11 @@ import type { Auth } from '@opencollection/types/common/auth';
 import { MethodBadge } from '../../MethodBadge';
 import { CopyButton } from '../../../ui/CopyButton/CopyButton';
 import { PropertyTable, type PropertyRow } from '../../PropertyTable';
+import { RequestParams } from '../../RequestParams';
 import { AuthDetails } from '../../AuthDetails';
 import { Code } from '../../Code/Code';
 import { AUTH_MODE_LABELS } from '../../../constants';
+import { resolvePathAndQueryParams } from '../../../utils/pathParams';
 import { computeBodySize, formatBytes, responseBodyLanguage } from '../../../utils/exampleResponse';
 import { ExampleCardWrapper, statusToneColor } from './StyledWrapper';
 
@@ -56,8 +57,6 @@ const PlayIcon: React.FC = () => (
   </svg>
 );
 
-const paramRows = (params: HttpRequestParam[]): PropertyRow[] =>
-  params.map((p) => ({ label: p.name, value: p.value, disabled: p.disabled }));
 
 const headerRows = (headers: (HttpRequestHeader | HttpResponseHeader)[]): PropertyRow[] =>
   headers.map((h) => ({ label: h.name, value: h.value, disabled: 'disabled' in h ? h.disabled : undefined }));
@@ -295,7 +294,14 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
 
   // REQUEST: canonical Params / Body / Auth / Headers tabs, each with a data dot when populated.
   const requestTabs: PaneTab[] = useMemo(() => {
-    const params = request.params ?? [];
+    // Split into path + query (path params include any implied by the URL), so the
+    // example's Params tab matches the request detail page.
+    const { path: pathParams, query: queryParams } = resolvePathAndQueryParams(request.params, displayUrl);
+    const hasParams = pathParams.length > 0 || queryParams.length > 0;
+    // Tab label reflects what's present: "path & query", "path", or "query".
+    const paramsCtype = [pathParams.length ? 'path' : '', queryParams.length ? 'query' : '']
+      .filter(Boolean)
+      .join(' & ');
     const headers = request.headers ?? [];
     const body = request.body;
     const auth = request.auth;
@@ -303,9 +309,9 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
       {
         id: 'params',
         label: 'Params',
-        hasData: params.length > 0,
-        ctype: params.length ? 'query' : '',
-        content: params.length ? <PropertyTable rows={paramRows(params)} /> : emptyPane('params')
+        hasData: hasParams,
+        ctype: paramsCtype,
+        content: hasParams ? <RequestParams path={pathParams} query={queryParams} /> : emptyPane('params')
       },
       {
         id: 'body',
@@ -329,7 +335,7 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
         content: headers.length ? <PropertyTable rows={headerRows(headers)} /> : emptyPane('headers')
       }
     ];
-  }, [request.params, request.body, request.auth, request.headers]);
+  }, [request.params, request.body, request.auth, request.headers, displayUrl]);
 
   // RESPONSE: canonical Body / Headers tabs.
   const responseTabs: PaneTab[] = useMemo(() => {

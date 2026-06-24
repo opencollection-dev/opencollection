@@ -5,7 +5,7 @@ import type { ScriptChainStep, ScriptFlow } from '../../utils/requestScripts';
 
 interface ScriptChainProps {
   steps: ScriptChainStep[];
-  /** Execution flow (from `config.scripts.flow`); controls post-response ordering. */
+  /** Execution flow (from `extensions.config.scripts.flow`); controls post-response ordering. */
   flow: ScriptFlow;
   /** Method/url for the synthetic "HTTP" execution marker, if known. */
   method?: string;

@@ -72,6 +72,12 @@ items:
                 // Folder "customers" · post-response (L2)
                 console.log('POST > L2 customers');
                 bru.setVar('execChain', (bru.getVar('execChain') || '') + '>F2(customers)');
+            - type: tests
+              code: |
+                // Folder "customers" · tests (folder-scoped — inherited by every request inside)
+                test('customers folder scripts ran before the request', () => {
+                  expect(bru.getVar('execChain')).to.contain('F2(customers)');
+                });
         items:
           - info:
               name: Get All Customers
@@ -82,6 +88,16 @@ items:
               url: '{{baseUrl}}/billing/customers'
               auth: inherit
             runtime:
+              variables:
+                - name: expectedStatus
+                  value: '200'
+                - name: customersPath
+                  value: /billing/customers
+                - name: defaultPerPage
+                  value: '10'
+                - name: legacyApiVersion
+                  value: v1
+                  disabled: true
               scripts:
                 - type: before-request
                   code: |
@@ -96,10 +112,62 @@ items:
                     bru.setVar('execChain', (bru.getVar('execChain') || '') + '>R3');
                 - type: tests
                   code: |
-                    // Request · tests — asserts the full collection->folder->folder->request chain ran
+                    // Request · tests — validate the customers list response
+                    test('status is 200 OK', () => {
+                      expect(res.getStatus()).to.equal(200);
+                    });
+
+                    test('response body is a non-empty array', () => {
+                      const body = res.getBody();
+                      expect(body).to.be.an('array');
+                      expect(body.length).to.be.above(0);
+                    });
+
+                    test('every customer has an id and email', () => {
+                      res.getBody().forEach((customer) => {
+                        expect(customer).to.have.property('id');
+                        expect(customer).to.have.property('email');
+                      });
+                    });
+
                     test('multi-level execution chain captured', () => {
                       expect(bru.getVar('execChain')).to.contain('C0');
                     });
+              assertions:
+                - expression: res.status
+                  operator: eq
+                  value: '200'
+                - expression: res.body
+                  operator: isArray
+                - expression: res.body.length
+                  operator: gt
+                  value: '0'
+                - expression: res.body[0].status
+                  operator: eq
+                  value: active
+                - expression: "res.headers['x-total-count']"
+                  operator: isNotEmpty
+                - expression: res.responseTime
+                  operator: lt
+                  value: '500'
+                  disabled: true
+              actions:
+                - type: set-variable
+                  phase: after-response
+                  selector:
+                    expression: res.body[0].id
+                    method: jsonq
+                  variable:
+                    name: firstCustomerId
+                    scope: runtime
+                - type: set-variable
+                  phase: after-response
+                  selector:
+                    expression: "res.headers['x-total-count']"
+                    method: jsonq
+                  variable:
+                    name: totalCustomers
+                    scope: collection
             settings:
               encodeUrl: true
               timeout: 0

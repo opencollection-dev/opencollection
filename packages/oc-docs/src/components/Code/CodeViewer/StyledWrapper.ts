@@ -5,6 +5,18 @@ export const StyledWrapper = styled.div`
   border: 1px solid var(--border-color);
   border-radius: 6px;
 
+  /* Muted surface: a borderless grey (mantle) panel — used for the code inside the
+     Execution Context. The inner surfaces inherit the mantle background. */
+  &.code--muted {
+    background-color: var(--oc-background-mantle);
+    border-color: transparent;
+  }
+  &.code--muted .code-content,
+  &.code--muted .code-content-numbered,
+  &.code--muted .code-content--numbered {
+    background-color: var(--oc-background-mantle);
+  }
+
   .code-copy-floating {
     position: absolute;
     top: 8px;

@@ -1,5 +1,32 @@
 import type { HttpRequestParam } from '@opencollection/types/requests/http';
 
+export const resolvePathAndQueryParams = (
+  params: HttpRequestParam[] | undefined,
+  url: string | undefined
+): { path: HttpRequestParam[]; query: HttpRequestParam[] } => {
+  const all = params ?? [];
+  const declaredPath = all.filter((p) => p.type === 'path');
+  const declaredNames = new Set(declaredPath.map((p) => p.name));
+  const fromUrl = parsePathParamNames(url).filter((name) => !declaredNames.has(name));
+  return {
+    path: [...declaredPath, ...fromUrl.map((name): HttpRequestParam => ({ name, value: '', type: 'path' }))],
+    query: all.filter((p) => p.type === 'query')
+  };
+};
+
+/**
+ * Extract the ordered, de-duplicated list of path-parameter names declared in a
+ * URL using the `:name` segment syntax (e.g. `/posts/:postId` -> `['postId']`).
+ *
+ * Rules (mirroring the request-client behaviour):
+ * - Only a segment that *starts* with `:` is a path param, so ports
+ *   (`localhost:8081`) and protocols (`https://`) are never misread as params.
+ * - The query string and fragment are ignored — only the path is scanned.
+ * - The name is the identifier directly after the colon (`[A-Za-z0-9_-]+`), so
+ *   `:postId.json` yields `postId` and a bare `:` yields nothing.
+ * - Variable templates such as `{{host}}` are left untouched.
+ * - Repeated names collapse to a single entry, preserving first-seen order.
+ */
 export const parsePathParamNames = (url: string | undefined | null): string[] => {
   if (!url || typeof url !== 'string') return [];
 

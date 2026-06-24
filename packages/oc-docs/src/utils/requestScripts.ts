@@ -8,16 +8,26 @@ import { getRequestScripts, scriptsArrayToObject, getItemName } from './schemaHe
 export type ScriptLevel = 'collection' | 'folder' | 'request';
 export type ScriptPhase = 'before-request' | 'after-response';
 
-/** Script execution flow — re-exported from the schema (`config.scripts.flow`). */
+/** Script execution flow (`sandwich` | `sequential`). */
 export type ScriptFlow = ScriptExecutionFlow;
 
+/** Script config carried under `extensions.config` (e.g. `extensions.config.scripts.flow`). */
+interface ConfigExtension {
+  scripts?: { flow?: unknown };
+}
+
 /**
- * The collection's script execution flow, read from the schema's
- * `config.scripts.flow`. Defaults to `sandwich` when omitted — matching how the
- * Bruno runtime resolves it (`brunoConfig.scripts.flow ?? 'sandwich'`).
+ * The collection's script execution flow. It is declared under
+ * `extensions.config.scripts.flow`; we fall back to the typed `config.scripts.flow` for
+ * older collections. Exactly one flow is always returned — anything other than the
+ * literal `sequential` (missing, unknown value, malformed extension, null collection)
+ * resolves to `sandwich`, matching the runtime default (`scripts.flow ?? 'sandwich'`).
  */
-export const getScriptFlow = (collection: OpenCollection | null | undefined): ScriptFlow =>
-  collection?.config?.scripts?.flow === 'sequential' ? 'sequential' : 'sandwich';
+export const getScriptFlow = (collection: OpenCollection | null | undefined): ScriptFlow => {
+  const ext = collection?.extensions?.config as ConfigExtension | undefined;
+  const flow = ext?.scripts?.flow ?? collection?.config?.scripts?.flow;
+  return flow === 'sequential' ? 'sequential' : 'sandwich';
+};
 
 export interface ScriptChainStep {
   level: ScriptLevel;
