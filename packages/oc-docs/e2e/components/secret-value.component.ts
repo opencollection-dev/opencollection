@@ -1,5 +1,6 @@
 import type { Locator, Page } from '@playwright/test';
 import { BaseComponent } from './base.component';
+
 export class SecretValueComponent extends BaseComponent {
   readonly value: Locator;
 

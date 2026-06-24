@@ -8,12 +8,12 @@ import { scriptsArrayToObject } from '../../utils/schemaHelpers';
 import { formatCollectionVersion } from '../../utils/common';
 import { AUTH_MODE_LABELS } from '../../constants';
 import { CollectionStats } from '../../components/CollectionStats/CollectionStats';
-import { EnvironmentSummary } from '../../components/OverviewEnvironments/EnvironmentSummary/EnvironmentSummary';
-import { CollectionConfiguration } from '../../components/OverviewCollectionConfiguration/CollectionConfiguration';
+import { EnvironmentSummary } from '../../components/EnvironmentSummary/EnvironmentSummary';
+import { CollectionConfiguration } from '../../components/CollectionConfiguration/CollectionConfiguration';
 import { EmptyState } from '../../ui/EmptyState/EmptyState';
-import { PageWrapper } from '../../components/PageWrapper/PageWrapper';
-import { Heading } from '../../components/Heading/Heading';
-import { Section } from '../../components/Section/Section';
+import { PageWrapper } from '../../ui/PageWrapper/PageWrapper';
+import { Heading } from '../../ui/Heading/Heading';
+import { Section } from '../../ui/Section/Section';
 import { GlobeIcon, BookIcon } from '../../assets/icons';
 import { StyledWrapper } from './StyledWrapper';
 
@@ -66,7 +66,7 @@ export const Overview: React.FC<OverviewProps> = ({ collection }) => {
         </header>
 
         <div className="overview-stats-row">
-          <CollectionStats stats={stats} testId="overview-stats" itemTestId="overview-stat" />
+          <CollectionStats stats={stats} />
         </div>
 
         <div className="overview-body">

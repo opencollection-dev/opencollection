@@ -1,7 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import { CodeViewer } from './CodeViewer/CodeViewer';
 
-const LazyCodeEditor = lazy(() => import('../../ui/CodeEditor/CodeEditor'));
+const LazyCodeEditor = lazy(() => import('../CodeEditor/CodeEditor'));
 
 interface CodeProps {
   code?: string;

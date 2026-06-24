@@ -1,8 +1,8 @@
 import React from 'react';
 import type { HttpRequestHeader } from '@opencollection/types/requests/http';
 import type { Auth } from '@opencollection/types/common/auth';
-import { Code } from '../Code/Code';
-import { SecretValue } from '../SecretValue/SecretValue';
+import { Code } from '../../ui/Code/Code';
+import { SecretValue } from '../../ui/SecretValue/SecretValue';
 import { SubHeading } from '../SubHeading/SubHeading';
 import { CollectionConfigurationWrapper } from './StyledWrapper';
 
@@ -31,10 +31,10 @@ const containsVariable = (value: string): boolean => value.includes('{{');
 const resolveAuthMode = (auth: Auth, labels: Record<string, string>): string =>
   auth === 'inherit' ? 'Inherit' : labels[auth.type] || auth.type;
 
-const ConfigRow: React.FC<{ label: string; children: React.ReactNode; testId?: string }> = ({ label, children, testId }) => (
+const ConfigRow: React.FC<{ label: string; children: React.ReactNode; testId: string }> = ({ label, children, testId }) => (
   <div className="config-row" data-testid={testId}>
     <dt className="config-key">{label}</dt>
-    <dd className="config-value-cell" data-testid={testId ? `${testId}-value` : undefined}>{children}</dd>
+    <dd className="config-value-cell" data-testid={`${testId}-value`}>{children}</dd>
   </div>
 );
 
@@ -92,7 +92,7 @@ export const CollectionConfiguration: React.FC<CollectionConfigurationProps> = (
   auth,
   scripts = {},
   authModeLabels = {},
-  testId
+  testId = 'collection-config'
 }) => {
   const visibleHeaders = headers.filter((header) => header && header.name && header.disabled !== true);
   const hasScripts = Boolean(scripts.preRequest || scripts.postResponse);
@@ -102,12 +102,11 @@ export const CollectionConfiguration: React.FC<CollectionConfigurationProps> = (
     return null;
   }
 
-  // Stable test hooks derived from the base testId (omitted entirely when unset).
-  const rowTestId = testId ? `${testId}-row` : undefined;
-  const subTestId = testId ? `${testId}-subheading` : undefined;
-  const emptyTestId = testId ? `${testId}-empty` : undefined;
-  const secretTestId = testId ? `${testId}-secret` : undefined;
-  const copyTestId = testId ? `${testId}-copy` : undefined;
+  // Stable test hooks derived from the base testId.
+  const rowTestId = `${testId}-row`;
+  const subTestId = `${testId}-subheading`;
+  const secretTestId = `${testId}-secret`;
+  const copyTestId = `${testId}-copy`;
 
   return (
     <CollectionConfigurationWrapper className="collection-configuration" data-testid={testId}>
@@ -122,7 +121,7 @@ export const CollectionConfiguration: React.FC<CollectionConfigurationProps> = (
             ))}
           </dl>
         ) : (
-          <EmptyMessage testId={emptyTestId}>Add headers to inherit in all requests in the collection</EmptyMessage>
+          <EmptyMessage>Add headers to inherit in all requests in the collection</EmptyMessage>
         )}
       </div>
 
@@ -131,7 +130,7 @@ export const CollectionConfiguration: React.FC<CollectionConfigurationProps> = (
         {auth ? (
           <AuthRows auth={auth} labels={authModeLabels} rowTestId={rowTestId} secretTestId={secretTestId} />
         ) : (
-          <EmptyMessage testId={emptyTestId}>Add authentication to inherit in all requests in the collection</EmptyMessage>
+          <EmptyMessage>Add authentication to inherit in all requests in the collection</EmptyMessage>
         )}
       </div>
 
@@ -153,7 +152,7 @@ export const CollectionConfiguration: React.FC<CollectionConfigurationProps> = (
             )}
           </>
         ) : (
-          <EmptyMessage testId={emptyTestId}>Add scripts to run for all requests in the collection</EmptyMessage>
+          <EmptyMessage>Add scripts to run for all requests in the collection</EmptyMessage>
         )}
       </div>
 
@@ -162,7 +161,7 @@ export const CollectionConfiguration: React.FC<CollectionConfigurationProps> = (
         {scripts.tests ? (
           <Code code={scripts.tests} language="javascript" showLineNumbers copyTestId={copyTestId} />
         ) : (
-          <EmptyMessage testId={emptyTestId}>Add tests to run for all requests in the collection</EmptyMessage>
+          <EmptyMessage>Add tests to run for all requests in the collection</EmptyMessage>
         )}
       </div>
     </CollectionConfigurationWrapper>
