@@ -33,10 +33,3 @@ jobs:
           name: playwright-report
           path: packages/oc-docs/playwright-report/
           retention-days: 30
-
-      - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: test-results
-          path: packages/oc-docs/test-results/
-          retention-days: 30

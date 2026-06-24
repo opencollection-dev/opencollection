@@ -145,6 +145,7 @@ const Docs: React.FC<DocsProps> = ({
           {docsCollection?.docs && (
             <div
               className="collection-docs"
+              data-testid="collection-docs-markdown"
               style={{
                 maxWidth: '80rem',
                 paddingTop: '1.5rem',

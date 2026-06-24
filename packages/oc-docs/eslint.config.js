@@ -27,4 +27,13 @@ export default tseslint.config(
       '@typescript-eslint/no-explicit-any': 'warn',
     },
   },
+  {
+    // Playwright e2e tests are not React: the fixture `use` argument is not a hook,
+    // and the files export page-object/component classes, not React components.
+    files: ['e2e/**/*.ts'],
+    rules: {
+      'react-hooks/rules-of-hooks': 'off',
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 ); 
