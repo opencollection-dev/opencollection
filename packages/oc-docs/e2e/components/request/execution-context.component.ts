@@ -9,7 +9,7 @@ export class ExecutionContextComponent extends BaseComponent {
   readonly asserts = this.root.getByTestId('execution-context-asserts');
   readonly tests = this.root.getByTestId('execution-context-tests');
 
-  scriptStep(label: string): Locator {
+  script(label: string): Locator {
     return this.scripts.getByText(label);
   }
 

@@ -18,9 +18,9 @@ test.describe('Request page — Execution Context', () => {
 
   test('lists the collection → folder → request script chain around the HTTP call', async ({ requestPage }) => {
     const { executionContext } = requestPage;
-    await expect(executionContext.scriptStep('Collection Pre-Request')).toBeVisible();
-    await expect(executionContext.scriptStep('Request Pre-Request')).toBeVisible();
-    await expect(executionContext.scriptStep('Collection Post-Response')).toBeVisible();
+    await expect(executionContext.script('Collection Pre-Request')).toBeVisible();
+    await expect(executionContext.script('Request Pre-Request')).toBeVisible();
+    await expect(executionContext.script('Collection Post-Response')).toBeVisible();
     await expect(executionContext.scripts.getByText('HTTP')).toBeVisible();
   });
 
@@ -37,7 +37,7 @@ test.describe('Request page — Execution Context', () => {
     await expect(executionContext.variable('firstCustomerId')).toBeVisible();
   });
 
-  test('lists the assertions in human-readable form', async ({ requestPage }) => {
+  test('lists all the assertions in the execution context', async ({ requestPage }) => {
     const { executionContext } = requestPage;
     await expect(executionContext.assertion('res.status equals 200')).toBeVisible();
     await expect(executionContext.assertion('res.body is an array')).toBeVisible();

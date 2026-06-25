@@ -6,11 +6,11 @@ export class CodeSnippetComponent extends BaseComponent {
 
   readonly code = this.root.locator('code');
 
-  tab(language: string): Locator {
+  languageTab(language: string): Locator {
     return this.root.getByTestId(`code-snippet-tab-${language}`);
   }
 
   async selectLanguage(language: string): Promise<void> {
-    await this.tab(language).click();
+    await this.languageTab(language).click();
   }
 }

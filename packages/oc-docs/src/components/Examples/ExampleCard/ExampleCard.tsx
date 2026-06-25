@@ -143,7 +143,8 @@ const Pane: React.FC<{
   /** Render the tab strip on the right of the header (RESPONSE layout). */
   tabsRight?: boolean;
   paneClassName: string;
-}> = ({ title, emptyMessage, tabs, meta, tabsRight, paneClassName }) => {
+  testId?: string;
+}> = ({ title, emptyMessage, tabs, meta, tabsRight, paneClassName, testId }) => {
   const baseId = useId();
   const panelId = `${baseId}-panel`;
   const tabId = (id: string) => `${baseId}-tab-${id}`;
@@ -211,6 +212,7 @@ const Pane: React.FC<{
             aria-selected={isActive}
             aria-controls={panelId}
             tabIndex={isActive ? 0 : -1}
+            data-testid={testId ? `${testId}-tab-${tab.id}` : undefined}
             className={`pane-tab ${isActive ? 'is-active' : ''}`}
             onClick={() => setActiveId(tab.id)}
           >
@@ -225,7 +227,7 @@ const Pane: React.FC<{
   const ctype = hasAnyData ? active?.ctype : '';
 
   return (
-    <div className={paneClassName}>
+    <div className={paneClassName} data-testid={testId}>
       <div className="pane-head">
         <span className="pane-title">{title}</span>
         {tabsRight ? (
@@ -244,11 +246,18 @@ const Pane: React.FC<{
         )}
       </div>
       {hasAnyData && active ? (
-        <div className="pane-body" id={panelId} role="tabpanel" aria-labelledby={tabId(active.id)} tabIndex={0}>
+        <div
+          className="pane-body"
+          id={panelId}
+          role="tabpanel"
+          aria-labelledby={tabId(active.id)}
+          tabIndex={0}
+          data-testid={testId ? `${testId}-body` : undefined}
+        >
           {active.content}
         </div>
       ) : (
-        <div className="pane-body">
+        <div className="pane-body" data-testid={testId ? `${testId}-body` : undefined}>
           <p className="pane-empty">{emptyMessage}</p>
         </div>
       )}
@@ -381,6 +390,7 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
           className="example-toggle"
           aria-expanded={expanded}
           aria-controls={detailId}
+          data-testid="example-toggle"
           onClick={toggle}
         >
           <ChevronIcon open={expanded} />
@@ -417,7 +427,13 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
               </div>
 
               <div className="example-grid">
-                <Pane title="REQUEST" emptyMessage="No request data." tabs={requestTabs} paneClassName="example-pane-left" />
+                <Pane
+                  title="REQUEST"
+                  emptyMessage="No request data."
+                  tabs={requestTabs}
+                  paneClassName="example-pane-left"
+                  testId="example-request-pane"
+                />
                 <Pane
                   title="RESPONSE"
                   emptyMessage="No response data."
@@ -425,6 +441,7 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
                   meta={responseMeta}
                   tabsRight
                   paneClassName="example-pane-right"
+                  testId="example-response-pane"
                 />
               </div>
             </div>

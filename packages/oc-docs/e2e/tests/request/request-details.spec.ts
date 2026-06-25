@@ -66,7 +66,7 @@ test.describe('Request page — Details', () => {
   test.describe('Code snippet', () => {
     test('shows a cURL command by default', async ({ requestPage }) => {
       const { codeSnippet } = requestPage;
-      await expect(codeSnippet.tab('curl')).toHaveAttribute('aria-selected', 'true');
+      await expect(codeSnippet.languageTab('curl')).toHaveAttribute('aria-selected', 'true');
       await expect(codeSnippet.code).toContainText('curl');
       await expect(codeSnippet.code).toContainText('/billing/customers');
     });
@@ -74,7 +74,7 @@ test.describe('Request page — Details', () => {
     test('switches to the Python snippet when its tab is selected', async ({ requestPage }) => {
       const { codeSnippet } = requestPage;
       await codeSnippet.selectLanguage('python');
-      await expect(codeSnippet.tab('python')).toHaveAttribute('aria-selected', 'true');
+      await expect(codeSnippet.languageTab('python')).toHaveAttribute('aria-selected', 'true');
       await expect(codeSnippet.code).toContainText('requests');
     });
   });
