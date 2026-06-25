@@ -45,7 +45,7 @@ import { ContentTypeBadge } from '../../components/ContentTypeBadge/ContentTypeB
 import { PropertyTable } from '../../components/PropertyTable/PropertyTable';
 import { CodeSnippetTabs } from '../../components/CodeSnippetTabs/CodeSnippetTabs';
 import { Examples } from '../../components/Examples/Examples';
-import { ExecutionContext } from '../../components/ExecutionContext';
+import { ExecutionContext } from '../../components/ExecutionContext/ExecutionContext';
 import { UnsupportedRequest } from '../../components/UnsupportedRequest/UnsupportedRequest';
 import { StyledWrapper } from './StyledWrapper';
 
