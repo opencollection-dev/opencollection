@@ -30,6 +30,12 @@ export const StyledWrapper = styled.div`
     border-top: 1px solid var(--border-color);
   }
 
+  .overview-col-left {
+    gap: 1.5rem;
+    display: flex;
+    flex-direction: column;
+  }
+
   @media (max-width: 1200px) {
     .overview-body {
       grid-template-columns: minmax(0, 1fr);

@@ -12,7 +12,7 @@ export const StyledWrapper = styled.div`
     grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
     gap: 2.75rem;
     align-items: start;
-    margin-top: 1.25rem;
+    margin-top: 1.5rem;
   }
 
   .request-col-left {

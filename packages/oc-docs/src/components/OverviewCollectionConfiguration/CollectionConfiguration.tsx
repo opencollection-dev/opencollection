@@ -42,30 +42,30 @@ export const CollectionConfiguration: React.FC<CollectionConfigurationProps> = (
     <StyledWrapper className="collection-configuration" data-testid="collection-config">
       {hasHeaders && (
         <div className="config-group">
-          <SubHeading testId="collection-config-subheading">Headers</SubHeading>
+          <SubHeading className='script-label' testId="collection-config-subheading">Headers</SubHeading>
           <PropertyTable rows={visibleHeaders.map((header) => ({ label: header.name, value: header.value }))} />
         </div>
       )}
 
       {hasAuth && (
         <div className="config-group">
-          <SubHeading testId="collection-config-subheading">Auth</SubHeading>
+          <SubHeading className='script-label' testId="collection-config-subheading">Auth</SubHeading>
           <AuthDetails auth={auth} authModeLabels={authModeLabels} testId="collection-config-auth" />
         </div>
       )}
 
       {hasScripts && (
         <div className="config-group">
-          <SubHeading testId="collection-config-subheading">Script</SubHeading>
+          <SubHeading className='script-label' testId="collection-config-subheading">Script</SubHeading>
           {scripts.preRequest && (
             <div className="script-block">
-              <p className="script-label">Pre-Request</p>
+              <p className="script-phase-label">Pre-Request</p>
               <Code code={scripts.preRequest} language="javascript" showLineNumbers />
             </div>
           )}
           {scripts.postResponse && (
             <div className="script-block">
-              <p className="script-label">Post-Response</p>
+              <p className="script-phase-label">Post-Response</p>
               <Code code={scripts.postResponse} language="javascript" showLineNumbers />
             </div>
           )}
@@ -74,7 +74,7 @@ export const CollectionConfiguration: React.FC<CollectionConfigurationProps> = (
 
       {hasTests && (
         <div className="config-group">
-          <SubHeading testId="collection-config-subheading">Tests</SubHeading>
+          <SubHeading className='script-label' testId="collection-config-subheading">Tests</SubHeading>
           <Code code={scripts.tests as string} language="javascript" showLineNumbers testId="collection-config-tests" />
         </div>
       )}
