@@ -40,7 +40,6 @@ export const StyledWrapper = styled.nav`
     outline-offset: 2px;
     border-radius: 2px;
   }
-  /* Current (active) crumb uses the brand text color; ancestor segments stay muted. */
   .breadcrumb-current {
     color: var(--oc-breadcrumb-color-current, var(--primary-text));
   }

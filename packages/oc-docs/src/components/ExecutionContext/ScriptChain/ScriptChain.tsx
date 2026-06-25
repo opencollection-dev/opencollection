@@ -11,7 +11,6 @@ interface ScriptChainProps {
   url?: string;
 }
 
-/** The synthetic row marking where the HTTP request is sent, between pre and post steps. */
 const HttpMarker: React.FC<{ position: number; url?: string }> = ({ position, url }) => (
   <div className="script-row script-row--marker">
     <div className="script-line script-http">
@@ -30,12 +29,6 @@ const HttpMarker: React.FC<{ position: number; url?: string }> = ({ position, ur
   </div>
 );
 
-/**
- * The ordered script-execution chain: pre-request steps run collection → folder →
- * request, then the HTTP marker, then post-response steps. `sandwich` flow reverses
- * the post-response order (innermost → outermost); `sequential` keeps it. Rows are
- * numbered 1..N in display order.
- */
 export const ScriptChain: React.FC<ScriptChainProps> = ({ steps, flow, url }) => {
   const { pre, post } = useMemo(() => {
     const byOrderAsc = (a: ScriptChainStep, b: ScriptChainStep) => a.order - b.order;

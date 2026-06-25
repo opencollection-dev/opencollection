@@ -8,7 +8,7 @@ export const StyledWrapper = styled.div`
     gap: 12px;
     padding: 11px 16px;
   }
-  .assert-row + .assert-row {
+  .assert-row:not(:first-child) {
     border-top: 1px solid var(--oc-border-border0);
   }
   .assert-row.is-disabled {

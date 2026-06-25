@@ -50,11 +50,6 @@ export interface AssertionRow {
   disabled?: boolean;
 }
 
-/**
- * Collect a request's assertions as display rows. `RequestDefaults` carries no
- * assertions, so only request-level asserts exist (the parameter is kept for
- * forward-compatibility). This is a static view — no pass/fail.
- */
 export const collectAssertions = (item: HttpRequest): AssertionRow[] =>
   getRequestAssertions(item).map((assertion: Assertion) => {
     const unary = isUnaryOperator(assertion.operator);

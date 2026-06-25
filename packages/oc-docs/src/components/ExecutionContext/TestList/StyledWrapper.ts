@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 export const StyledWrapper = styled.div`
-  .test-row + .test-row {
+  .test-row:not(:first-child) {
     border-top: 1px solid var(--oc-border-border0);
   }
   .test-head {
