@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatCollectionVersion, DEFAULT_COLLECTION_VERSION } from './common';
+import { formatCollectionVersion, DEFAULT_COLLECTION_VERSION, getInitials } from './common';
 
 describe('formatCollectionVersion', () => {
   it('pads numeric versions to a full major.minor.patch with a "v" prefix', () => {
@@ -31,5 +31,35 @@ describe('formatCollectionVersion', () => {
     expect(formatCollectionVersion(null)).toBe(DEFAULT_COLLECTION_VERSION);
     expect(formatCollectionVersion('')).toBe(DEFAULT_COLLECTION_VERSION);
     expect(formatCollectionVersion('   ')).toBe(DEFAULT_COLLECTION_VERSION);
+  });
+});
+
+describe('getInitials', () => {
+  it('uses the first letter of the first two words', () => {
+    expect(getInitials('Hotel Booking API')).toBe('HB');
+    expect(getInitials('Bruno Testbench')).toBe('BT');
+  });
+
+  it('uses only the first letter for a single word', () => {
+    expect(getInitials('Echo')).toBe('E');
+    expect(getInitials('payments')).toBe('P');
+  });
+
+  it('uppercases the result', () => {
+    expect(getInitials('hotel booking')).toBe('HB');
+  });
+
+  it('collapses extra whitespace', () => {
+    expect(getInitials('  Hotel   Booking  ')).toBe('HB');
+  });
+
+  it('returns empty string for nullish / blank input', () => {
+    expect(getInitials(undefined)).toBe('');
+    expect(getInitials(null)).toBe('');
+    expect(getInitials('   ')).toBe('');
+  });
+
+  it('handles non-letter first characters by taking them verbatim', () => {
+    expect(getInitials('1Password Vault')).toBe('1V');
   });
 });
