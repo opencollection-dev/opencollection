@@ -12,7 +12,7 @@ import {
   generatePythonCode,
   type SnippetHeader,
   type SnippetInput
-} from '../../utils/codegen';
+} from '../../utils/codeSnippets';
 import { StyledWrapper } from './StyledWrapper';
 
 interface CodeSnippetTabsProps {

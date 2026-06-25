@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Code } from '../../Code/Code';
-import { Chevron } from '../../Chevron/Chevron';
+import { ChevronArrow } from '../../ChevronArrow/ChevronArrow';
 import { Collapse } from '../../Collapse/Collapse';
-import type { ScriptChainStep } from '../../../utils/requestScripts';
+import type { ScriptChainStep } from '../../../utils/request';
 import { StyledWrapper } from './StyledWrapper';
 
 interface ScriptStepProps {
@@ -32,7 +32,7 @@ export const ScriptStep: React.FC<ScriptStepProps> = ({ step, position }) => {
         }}
       >
         <span className="step-num">{position}</span>
-        <Chevron open={open} className="script-chevron" />
+        <ChevronArrow open={open} className="script-chevron" />
         <span className="script-step-label">{step.label}</span>
         <button
           type="button"

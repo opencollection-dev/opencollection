@@ -2,7 +2,7 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect } from 'vitest';
 import { ViewAllTests } from './ViewAllTests';
-import type { TestRow } from '../../../utils/extractTests';
+import type { TestRow } from '../../../utils/fileUtils';
 
 const withCode: TestRow[] = [{ level: 'request', name: 't1', code: "test('t1', () => { runIt(); })" }];
 const noCode: TestRow[] = [{ level: 'request', name: 't1', code: '   ' }];

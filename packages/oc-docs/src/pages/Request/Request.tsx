@@ -21,12 +21,17 @@ import {
   getRequestExamples,
   isUnsupportedRequest
 } from '../../utils/schemaHelpers';
-import { resolveInheritedAuth } from '../../utils/requestAuth';
-import { getPreRequestVars, getPostResponseVars } from '../../utils/requestVars';
-import { buildScriptChain } from '../../utils/requestScripts';
+import {
+  resolveInheritedAuth,
+  getPreRequestVars,
+  getPostResponseVars,
+  buildScriptChain,
+  getScriptFlow,
+  getBodyView
+} from '../../utils/request';
 import { collectAssertions } from '../../utils/assertions';
-import { collectTests } from '../../utils/extractTests';
-import { getBodyView } from '../../utils/requestBody';
+import { collectTests } from '../../utils/fileUtils';
+import { resolvePathAndQueryParams } from '../../utils/pathParams';
 import { PageWrapper } from '../../components/PageWrapper/PageWrapper';
 import { Heading } from '../../components/Heading/Heading';
 import { Section } from '../../components/Section/Section';

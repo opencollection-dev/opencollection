@@ -3,7 +3,7 @@ import type { HttpRequestBody, HttpRequestBodyVariant } from '@opencollection/ty
 import { Code } from '../../Code/Code';
 import { ContentTypeBadge } from '../../ContentTypeBadge/ContentTypeBadge';
 import { PropertyTable, type PropertyRow } from '../../PropertyTable/PropertyTable';
-import { getBodyView } from '../../../utils/requestBody';
+import { getBodyView } from '../../../utils/request';
 import { StyledWrapper } from './StyledWrapper';
 
 interface RequestBodyProps {

@@ -7,7 +7,7 @@ import type {
 } from '@opencollection/types/requests/http';
 import type { Auth } from '@opencollection/types/common/auth';
 import { MethodBadge } from '../../MethodBadge/MethodBadge';
-import { Chevron } from '../../Chevron/Chevron';
+import { ChevronArrow } from '../../ChevronArrow/ChevronArrow';
 import { CopyButton } from '../../../ui/CopyButton/CopyButton';
 import { PropertyTable, type PropertyRow } from '../../PropertyTable/PropertyTable';
 import { RequestParams } from '../../Request/RequestParams/RequestParams';
@@ -357,7 +357,7 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
           data-testid="example-toggle"
           onClick={toggle}
         >
-          <Chevron open={expanded} size={14} className="example-chevron" />
+          <ChevronArrow open={expanded} size={14} className="example-chevron" />
           {status !== undefined && (
             <span
               className="example-status"

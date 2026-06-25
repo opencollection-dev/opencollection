@@ -5,7 +5,7 @@ import type { OpenCollection as OpenCollectionCollection } from '@opencollection
 import type { OpenCollection as IOpenCollection } from '@opencollection/types';
 import AppShell from '../AppShell/AppShell';
 import { parseYaml } from '../../utils/yamlUtils';
-import { hydrateWithUUIDs } from '../../utils/items';
+import { hydrateWithUUIDs } from '../../utils/fileUtils';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   selectDocsCollection,

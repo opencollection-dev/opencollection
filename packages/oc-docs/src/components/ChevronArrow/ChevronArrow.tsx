@@ -1,13 +1,13 @@
 import React from 'react';
 import { StyledWrapper } from './StyledWrapper';
 
-interface ChevronProps {
+interface ChevronArrowProps {
   open?: boolean;
   size?: number;
   className?: string;
 }
 
-export const Chevron: React.FC<ChevronProps> = ({ open = false, size = 13, className }) => (
+export const ChevronArrow: React.FC<ChevronArrowProps> = ({ open = false, size = 13, className }) => (
   <StyledWrapper
     className={['chevron', open ? 'is-open' : '', className].filter(Boolean).join(' ')}
     width={size}
@@ -24,4 +24,4 @@ export const Chevron: React.FC<ChevronProps> = ({ open = false, size = 13, class
   </StyledWrapper>
 );
 
-export default Chevron;
+export default ChevronArrow;

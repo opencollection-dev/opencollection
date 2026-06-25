@@ -4,7 +4,7 @@ import Sidebar from './Sidebar/Sidebar';
 import Overview from '../../pages/Overview/Overview';
 import Request from '../../pages/Request/Request';
 import Script from '../../pages/Script/Script';
-import { findItemByUuid, getAncestorsByUuid } from '../../utils/itemTree';
+import { findItemByUuid, getAncestorsByUuid } from '../../utils/fileUtils';
 import { isHttpRequest, isScriptFile, isUnsupportedRequest } from '../../utils/schemaHelpers';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { selectSelectedItemId, selectItem } from '../../store/slices/docs';

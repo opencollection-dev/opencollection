@@ -5,10 +5,9 @@ import { AssertList } from './AssertList/AssertList';
 import { TestList } from './TestList/TestList';
 import { ViewAllTests } from './ViewAllTests/ViewAllTests';
 import { StyledWrapper } from './StyledWrapper';
-import type { ScriptChainStep, ScriptFlow } from '../../utils/requestScripts';
-import type { PreRequestVarRow, PostResponseVarRow } from '../../utils/requestVars';
+import type { ScriptChainStep, ScriptFlow, PreRequestVarRow, PostResponseVarRow } from '../../utils/request';
 import type { AssertionRow } from '../../utils/assertions';
-import type { TestRow } from '../../utils/extractTests';
+import type { TestRow } from '../../utils/fileUtils';
 
 interface ExecutionContextProps {
   scriptChain: ScriptChainStep[];

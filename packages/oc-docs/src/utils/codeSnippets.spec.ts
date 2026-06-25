@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generateCurlCommand, generateJavaScriptCode, generatePythonCode } from './codegen';
+import { generateCurlCommand, generateJavaScriptCode, generatePythonCode } from './codeSnippets';
 
 describe('codegen', () => {
   it('generates cURL with headers + JSON body + content-type', () => {

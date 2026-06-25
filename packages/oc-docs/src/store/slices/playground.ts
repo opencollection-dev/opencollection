@@ -3,7 +3,7 @@ import type { OpenCollection as OpenCollectionCollection } from '@opencollection
 import type { Item as OpenCollectionItem, Folder } from '@opencollection/types/collection/item';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { RootState } from '../store';
-import { hydrateWithUUIDs, findAndUpdateItem } from '../../utils/items';
+import { hydrateWithUUIDs, findAndUpdateItem } from '../../utils/fileUtils';
 import { isFolder } from '../../utils/schemaHelpers';
 
 export type ViewMode = 'playground' | 'environments' | 'folder-settings' | 'collection-settings';

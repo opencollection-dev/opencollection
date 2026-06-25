@@ -1,7 +1,7 @@
 import React from 'react';
 import { PropertyTable, type PropertyRow } from '../../PropertyTable/PropertyTable';
 import { SubHeading } from '../../SubHeading/SubHeading';
-import type { PreRequestVarRow, PostResponseVarRow } from '../../../utils/requestVars';
+import type { PreRequestVarRow, PostResponseVarRow } from '../../../utils/request';
 import { StyledWrapper } from './StyledWrapper';
 
 interface VariablesPanelProps {

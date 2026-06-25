@@ -2,9 +2,9 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect } from 'vitest';
 import { ExecutionContext } from './ExecutionContext';
-import type { ScriptChainStep } from '../../utils/requestScripts';
+import type { ScriptChainStep } from '../../utils/request';
 import type { AssertionRow } from '../../utils/assertions';
-import type { TestRow } from '../../utils/extractTests';
+import type { TestRow } from '../../utils/fileUtils';
 
 const scriptChain: ScriptChainStep[] = [
   { level: 'collection', phase: 'before-request', label: 'Collection Pre-Request', sourceName: 'API', code: 'bru.setVar("x", 1)', order: 0 },

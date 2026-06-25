@@ -1,6 +1,6 @@
 import type { HttpRequestBody, HttpRequestBodyVariant } from '@opencollection/types/requests/http';
 import type { Auth } from '@opencollection/types/common/auth';
-import { selectBodyVariant } from './requestBody';
+import { selectBodyVariant } from './request';
 
 export interface SnippetHeader {
   name: string;

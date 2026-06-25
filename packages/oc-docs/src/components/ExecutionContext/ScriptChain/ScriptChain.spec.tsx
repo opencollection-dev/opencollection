@@ -2,7 +2,7 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect } from 'vitest';
 import { ScriptChain } from './ScriptChain';
-import type { ScriptChainStep } from '../../../utils/requestScripts';
+import type { ScriptChainStep } from '../../../utils/request';
 
 const postChain: ScriptChainStep[] = [
   { level: 'collection', phase: 'after-response', label: 'Collection Post-Response', code: 'a', order: 0 },

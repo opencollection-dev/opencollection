@@ -228,12 +228,6 @@ export const getHttpParams = (item: HttpRequest | null | undefined): HttpRequest
   return [];
 };
 
-/**
- * Get auth from a request. In the current schema auth lives in the protocol-detail
- * block (`http.auth`, and likewise for graphql/grpc/websocket); older data may carry
- * it on a `runtime` block or at the root. Returns the raw `Auth` value (which may be
- * the `'inherit'` string), or undefined when no auth is declared anywhere.
- */
 export const getRequestAuth = (item: RequestItem | null | undefined): any => {
   if (!item) return undefined;
 

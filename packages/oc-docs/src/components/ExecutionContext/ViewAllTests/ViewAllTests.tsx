@@ -2,7 +2,7 @@ import React, { Fragment, useMemo, useState } from 'react';
 import { Code } from '../../Code/Code';
 import { Modal } from '../../../ui/Modal/Modal';
 import { SectionLabel } from '../../SectionLabel/SectionLabel';
-import type { TestRow } from '../../../utils/extractTests';
+import type { TestRow } from '../../../utils/fileUtils';
 import { StyledWrapper } from './StyledWrapper';
 
 interface ViewAllTestsProps {

@@ -1,6 +1,6 @@
 import React, { useId, useState } from 'react';
 import { SectionLabel } from '../SectionLabel/SectionLabel';
-import { Chevron } from '../Chevron/Chevron';
+import { ChevronArrow } from '../ChevronArrow/ChevronArrow';
 import { Collapse } from '../Collapse/Collapse';
 import { StyledWrapper } from './StyledWrapper';
 
@@ -44,7 +44,7 @@ export const Section: React.FC<SectionProps> = ({
               aria-controls={panelId}
               onClick={() => setOpen((v) => !v)}
             >
-              <Chevron open={open} className="section-chevron" />
+              <ChevronArrow open={open} className="section-chevron" />
               <span className="section-toggle-text">{label}</span>
             </button>
           </SectionLabel>
