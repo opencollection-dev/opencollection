@@ -1,14 +1,5 @@
 import styled from '@emotion/styled';
 
-/**
- * Topbar bar styling. Square bar (radius 0, bottom border only). Color surfaces
- * map to `--oc-*` theme tokens so the bar honors light/dark automatically.
- *
- * Which controls render per breakpoint is decided in JSX (`Topbar` +
- * `useTopbarLayout`), not via CSS. `data-mode` (mobile | tablet | desktop) is
- * exposed on the host element for debugging and e2e targeting. Brand, icon
- * buttons and the overflow popover own their own styles in their components.
- */
 export const StyledWrapper = styled.header`
   position: sticky;
   top: 0;
@@ -28,13 +19,11 @@ export const StyledWrapper = styled.header`
     box-sizing: border-box;
   }
 
-  /* Mobile tightens the horizontal inset + gap (matches design). */
   &[data-mode='mobile'] .topbar-bar {
     gap: 8px;
     padding: 0 12px;
   }
 
-  /* Pull the hamburger toward the edge so the brand isn't over-indented. */
   .topbar-menu {
     margin-left: -4px;
   }
@@ -63,7 +52,6 @@ export const StyledWrapper = styled.header`
     flex: 1 1 auto;
   }
 
-  /* Search row revealed under the bar when the icon is toggled (below desktop). */
   .topbar-search-row {
     display: flex;
     align-items: center;

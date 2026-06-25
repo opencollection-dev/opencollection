@@ -6,7 +6,7 @@ import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { OpenCollection as IOpenCollection } from '@opencollection/types';
 import PlaygroundDrawer from '../PlaygroundDrawer/PlaygroundDrawer';
 import Docs from '../Docs/Docs';
-import Topbar from '../Topbar/Topbar';
+import Topbar from '../../ui/Topbar/Topbar';
 import { buildBrunoDeepLink } from '../../utils/buildBrunoDeepLink';
 import { parseYaml } from '../../utils/yamlUtils';
 import { hydrateWithUUIDs } from '../../utils/items';

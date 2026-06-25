@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 
-/** Overflow trigger wrapper + the popover that hosts the relocated slot node. */
 export const StyledWrapper = styled.div`
   position: relative;
   flex: none;

@@ -1,12 +1,5 @@
 import styled from '@emotion/styled';
 
-/**
- * Ghost icon button: no border; a hover/active background provides the
- * affordance. Colours map to `--oc-*` theme tokens. The `svg` is sized here so
- * any glyph passed as a child renders at a consistent 18px. Glyph colour is the
- * base text token (matches the design's solid icon buttons); callers can
- * override per-glyph (e.g. a muted search icon) via inline style on the child.
- */
 export const StyledWrapper = styled.button`
   display: inline-flex;
   align-items: center;

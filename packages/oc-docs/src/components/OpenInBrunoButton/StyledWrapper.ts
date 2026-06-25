@@ -1,10 +1,5 @@
 import styled from '@emotion/styled';
 
-/**
- * Open-in-Bruno CTA. Renders polymorphically as an `<a>` (real bruno:// deep
- * link) or a `<button>` via emotion's `as`. Amber brand border + text; collapses
- * to a 28px square in the `is-icon` variant. Colours map to `--oc-*` tokens.
- */
 export const StyledWrapper = styled.span`
   display: inline-flex;
   align-items: center;

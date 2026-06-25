@@ -1,11 +1,5 @@
 import styled from '@emotion/styled';
 
-/**
- * 26×26 rounded badge with the collection initials. The amber gradient is a
- * FIXED brand mark (same treatment as the Bruno mascot) — it stays identical in
- * light and dark, matching the design, so it is intentionally not theme-tokened.
- * Mono font + tight tracking match the design's letterforms.
- */
 export const StyledWrapper = styled.span`
   display: inline-flex;
   align-items: center;

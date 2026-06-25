@@ -1,11 +1,10 @@
 import styled from '@emotion/styled';
 
-/** Brand cluster: logo/avatar + collection name + version. */
 export const StyledWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  min-width: 0; /* allow truncation */
+  min-width: 0;
   flex-shrink: 0;
 
   .topbar-brand-logo {
