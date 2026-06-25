@@ -1,6 +1,6 @@
 import type { OpenCollection as OpenCollectionCollection } from '@opencollection/types';
 import type { Item as OpenCollectionItem, Folder } from '@opencollection/types/collection/item';
-import { getItemType, isFolder } from './schemaHelpers';
+import { isFolder } from './schemaHelpers';
 
 /**
  * Helper function to find and update an item by UUID

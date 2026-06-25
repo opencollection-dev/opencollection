@@ -1,32 +1,27 @@
 import { test as base } from '@playwright/test';
-import { CollectionPage } from '../pages/collection.page';
+import { OverviewPage } from '../pages/overview.page';
 import { PageHeaderComponent } from '../components/layout/page-header.component';
 import { ThemeToggleComponent } from '../components/theme-toggle.component';
-import { RequestPlaygroundComponent } from '../components/request/request-playground.component';
 
 /**
- * Each page object gets a fixture, and so do the layout components the app uses
- * directly — e.g. `pageHeader` (and `themeToggle`) — so a test writes
+ * Each page object gets a fixture, and so do the layout components specs drive
+ * directly — e.g. `pageHeader` and `themeToggle` — so a test writes
  * `pageHeader.brandName` rather than `layout.header.brandName`.
  */
 type Fixtures = {
-  collectionPage: CollectionPage;
+  overviewPage: OverviewPage;
   pageHeader: PageHeaderComponent;
   themeToggle: ThemeToggleComponent;
-  requestPlayground: RequestPlaygroundComponent;
 };
 
 export const test = base.extend<Fixtures>({
-  collectionPage: async ({ page }, use) => {
-    await use(new CollectionPage(page));
+  overviewPage: async ({ page }, use) => {
+    await use(new OverviewPage(page));
   },
   pageHeader: async ({ page }, use) => {
     await use(new PageHeaderComponent(page));
   },
   themeToggle: async ({ page }, use) => {
     await use(new ThemeToggleComponent(page));
-  },
-  requestPlayground: async ({ page }, use) => {
-    await use(new RequestPlaygroundComponent(page));
   }
 });

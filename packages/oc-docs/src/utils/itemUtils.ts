@@ -3,7 +3,7 @@
  */
 
 import type { Item as OpenCollectionItem } from '@opencollection/types/collection/item';
-import { getItemName, getItemType, isFolder } from './schemaHelpers';
+import { getItemName, isFolder } from './schemaHelpers';
 
 /**
  * Generate a safe HTML ID from an item name or ID

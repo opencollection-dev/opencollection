@@ -30,6 +30,28 @@ request:
   auth:
     type: "bearer"
     token: "{{bearer_auth_token}}"
+  scripts:
+    - type: before-request
+      code: |-
+        // used by \`scripting/js/folder-collection script-tests\`
+        const shouldTestCollectionScripts = bru.getVar('should-test-collection-scripts');
+        if(shouldTestCollectionScripts) {
+         bru.setVar('collection-var-set-by-collection-script', 'collection-var-value-set-by-collection-script');
+        }
+    - type: after-response
+      code: wefewfewfewfewfwefwefewfewfewfewfewfewfewfewf
+    - type: tests
+      code: |-
+        // used by \`scripting/js/folder-collection script-tests\`
+        const shouldTestCollectionScripts = bru.getVar('should-test-collection-scripts');
+        const collectionVar = bru.getVar("collection-var-set-by-collection-script");
+        if (shouldTestCollectionScripts && collectionVar) {
+          test("collection level test - should get the var that was set by the collection script", function() {
+            expect(collectionVar).to.equal("collection-var-value-set-by-collection-script");
+          });
+          bru.setVar('collection-var-set-by-collection-script', null);
+          bru.setVar('should-test-collection-scripts', null);
+        }
 docs:
   content: |
     This is a comprehensive API collection for testing **OpenCollection** features.
@@ -618,5 +640,55 @@ items:
                 ],
                 "total": 1
               }
+
+  - name: "Jokes"
+    type: "http"
+    seq: 11
+    method: "GET"
+    url: "https://jsonplaceholder.typicode.com/posts/:postId"
+    params:
+      - name: "postId"
+        value: "1"
+        type: "path"
+    headers:
+      - name: "Accept"
+        value: "application/json"
+    docs: "Fetch a single post by its ID. The postId is supplied as a path parameter in the URL."
+    examples:
+      - name: "Single Post"
+        request:
+          params:
+            - name: "postId"
+              value: "1"
+              type: "path"
+          headers:
+            - name: "Accept"
+              value: "application/json"
+        response:
+          status: 200
+          statusText: "OK"
+          headers:
+            - name: "Content-Type"
+              value: "application/json; charset=utf-8"
+          body:
+            type: "json"
+            data: |
+              {
+                "userId": 1,
+                "id": 1,
+                "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+                "body": "quia et suscipit suscipit recusandae consequuntur expedita et cum"
+              }
+      - name: "Not Found"
+        response:
+          status: 404
+          statusText: "Not Found"
+          headers:
+            - name: "Content-Type"
+              value: "application/json; charset=utf-8"
+          body:
+            type: "json"
+            data: |
+              {}
 
 `;

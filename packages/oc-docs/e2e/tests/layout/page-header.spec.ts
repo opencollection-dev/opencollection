@@ -2,9 +2,8 @@ import { test, expect } from '../../playwright';
 
 /**
  * The page header (sticky top navigation bar): brand cluster + Open-in-Bruno
- * CTA. These tests cover what the mounted app actually renders for BRU-3572 —
- * the search and env-switcher slots ship empty here (their content is BRU-3573
- * / BRU-3186), so they aren't exercised in this suite.
+ * CTA. These tests cover what the mounted app actually renders — the search and
+ * env-switcher slots ship empty here, so they aren't exercised in this suite.
  */
 test.use({ colorScheme: 'light' });
 
@@ -55,7 +54,7 @@ test.describe('Page header', () => {
     await page.setViewportSize(MOBILE);
     await page.goto('/');
 
-    // Below desktop the sidebar trigger appears (the drawer itself is BRU-3574).
+    // Below desktop the sidebar trigger appears.
     await expect(pageHeader.menuButton).toBeVisible();
     // Open-in-Bruno is desktop-only (no Bruno desktop app on mobile).
     await expect(pageHeader.openInBruno).toHaveCount(0);

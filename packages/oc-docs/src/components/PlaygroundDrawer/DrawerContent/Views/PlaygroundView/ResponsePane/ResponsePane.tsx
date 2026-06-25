@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import Tabs from '../../../../../../ui/Tabs/Tabs';
+import ResponseBodyTab from '../../Common/ResponseBodyTab';
+import ResponseHeadersTab from '../../Common/ResponseHeadersTab';
+import TestResultsTab from '../../Common/TestResultsTab';
 import ErrorBanner from '../../../../../../ui/ErrorBanner/ErrorBanner';
-import { ResponseBodyTab, ResponseHeadersTab, TestResultsTab } from '../../Common';
 
 interface ResponsePaneProps {
   response: any;

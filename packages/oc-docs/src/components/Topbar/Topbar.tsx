@@ -12,14 +12,14 @@ export interface TopbarProps {
   collectionName: string;
   version?: string;
   logo?: React.ReactNode;
-  /** PRIMARY control, filled by BRU-3573. Rendered as-is; degrades when absent. */
+  /** Primary control slot. Rendered as-is; degrades when absent. */
   searchSlot?: React.ReactNode;
-  /** SECONDARY controls (env switcher + show-vars), filled by BRU-3186. */
+  /** Secondary controls slot (env switcher + show-vars). */
   envSwitcherSlot?: React.ReactNode;
   onOpenInBruno?: () => void;
   /** Optional `bruno://` deep link; when set the CTA renders as a real anchor. */
   openInBrunoHref?: string;
-  /** Invoked by the mobile hamburger; the drawer itself is BRU-3574. */
+  /** Invoked by the mobile hamburger. */
   onToggleSidebar?: () => void;
   testId?: string;
 }

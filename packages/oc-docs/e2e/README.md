@@ -6,16 +6,19 @@ what a person sees on the page is correct.
 Two rules shape every test here:
 
 1. **Tests read like documentation.** The title says, in plain English, what the page
-   does; the body confirms it. You shouldn't need to read the code to follow a test.
-2. **Elements are found the way a person reads the screen** — a heading's words, a
-   button's label, a table cell's text — never by styling classes that can change.
+   does; the body confirms it.
+2. **Elements are located by `data-testid`.** The app sets a stable test id on each
+   meaningful element (via the components' `testId` props); tests target those, never
+   styling classes. Rendered-Markdown internals — which have no test id — are matched
+   by role/tag within their test-id'd container.
 
 ## What's tested
 
-| Area | What it checks | Spec |
-|------|----------------|------|
-| Collection overview | the Markdown intro renders correctly (headings, lists, table, code, quote) | `tests/collection/markdown.spec.ts` |
-| Theme switch | the header button flips the app light ⇄ dark and remembers the choice | `tests/theming/theme-toggle.spec.ts` |
+| Area | Spec |
+|------|------|
+| Collection Overview — version/name, stat counts, environments, configuration | `tests/overview/overview.spec.ts` |
+| Overview documentation — rendered Markdown | `tests/overview/overview-documentation.spec.ts` |
+| Light/dark theme switch | `tests/theming/theme-toggle.spec.ts` |
 
 ## Running the tests
 
@@ -24,94 +27,89 @@ npm run test:e2e       # run headless
 npm run test:e2e:ui    # run in Playwright's interactive UI
 ```
 
-Playwright starts the dev server for you (see `webServer` in `playwright.config.ts`),
-so there's nothing to start beforehand.
+Playwright starts the dev server for you (see `webServer` in `playwright.config.ts`).
 
 ## Folder layout
 
 ```
 e2e/
 ├── tests/                          # the tests, grouped by feature
-│   ├── collection/markdown.spec.ts
+│   ├── overview/overview.spec.ts
+│   ├── overview/overview-documentation.spec.ts
 │   └── theming/theme-toggle.spec.ts
 ├── pages/                          # one "page object" per screen
 │   ├── base.page.ts                #   shared navigation (goto, reload)
-│   └── collection.page.ts          #   the collection screen + its overview
-├── components/                     # reusable pieces of UI (work on any screen)
+│   └── overview.page.ts            #   OverviewPage — composes its overview/ sections
+├── components/                     # reusable pieces
 │   ├── base.component.ts           #   shared base — every component has a `root`
 │   ├── markdown.component.ts       #   any block of rendered Markdown
-│   └── theme-toggle.component.ts   #   the light/dark switch
+│   ├── secret-value.component.ts   #   a masked value with a reveal toggle
+│   ├── theme-toggle.component.ts   #   the light/dark switch
+│   └── overview/                   #   sections specific to the Overview page
+│       ├── header-section.component.ts
+│       ├── stats-section.component.ts
+│       ├── environments-section.component.ts
+│       └── configuration-section.component.ts
 ├── playwright/                     # the test harness
 │   ├── pages.fixture.ts            #   defines the fixtures
-│   └── index.ts                    #   the single thing specs import from
+│   └── index.ts                    #   merges them; the single import for specs
 ├── config/app.config.ts            # base URL + how to start the app
 └── tsconfig.json                   # TypeScript settings for this folder
 ```
 
 ## The three building blocks
 
-**Page objects** (`pages/`) describe a whole screen. They know how to get there
-(`goto`) and expose the parts of the page a test cares about.
+**Page objects** (`pages/`) describe a whole screen. They own navigation (`goto`) and
+compose the components a test cares about — the `OverviewPage`, for instance, wires up
+the header, stats, environments and configuration sections.
 
-**Components** (`components/`) describe a reusable piece of UI — a Markdown block, the
-theme switch. They aren't tied to one page: you point a component at the element it
-lives in, and it works anywhere that UI appears.
+**Components** (`components/`) are the reusable building blocks. Common controls used
+across pages — the Markdown renderer, the theme switch — live at the top level; point
+one at the element it lives in (its `root`) and it works anywhere that UI appears.
+**Sections that belong to a single page live in a subfolder named after it** — the
+Overview's header, stats, environments and configuration sections are in
+`components/overview/`. (Its documentation section is just the common `MarkdownComponent`
+scoped to the `overview-markdown-documentation` container.)
 
-**Fixtures** (`playwright/`) hand a test ready-made page objects and components, so a
-test simply asks for what it needs by name:
+**Fixtures** (`playwright/`) hand a test ready-made page objects and common components:
 
 ```ts
-test('…', async ({ collectionPage, themeToggle }) => { … });
+test('…', async ({ overviewPage, themeToggle }) => { … });
 ```
 
-Commonly-used components (the theme switch, and later the sidebar and page header) are
-handed over directly — so you write `themeToggle.toggle()`, not
-`layoutPage.themeToggle.toggle()`.
-
-`pages.fixture.ts` defines those fixtures; `index.ts` combines them with Playwright's
-`mergeTests` and is the one place specs import from. To add a page, drop a new
-`*.fixture.ts` in this folder and add it to the `mergeTests(…)` call in `index.ts`.
+`pages.fixture.ts` defines them; `index.ts` combines them with Playwright's `mergeTests`
+and is the single place specs import from. To add a page, drop a new `*.fixture.ts` in
+this folder and merge it in `index.ts`.
 
 ## Writing a test
 
 Import `test` and `expect` from the `playwright` folder, then pull the page objects and
-components you need straight off the test callback — no `new`, no setup boilerplate:
+components you need off the test callback — no `new`, no setup boilerplate:
 
 ```ts
 import { test, expect } from '../../playwright';
 
-test.describe('Collection overview', () => {
-  test.beforeEach(async ({ collectionPage }) => {
-    await collectionPage.goto();
+test.describe('Collection Overview', () => {
+  test.beforeEach(async ({ overviewPage }) => {
+    await overviewPage.goto();
   });
 
-  test('shows the "Getting Started" heading', async ({ collectionPage }) => {
-    await expect(collectionPage.overview.heading('Getting Started')).toBeVisible();
+  test('shows the collection name in the header', async ({ overviewPage }) => {
+    await expect(overviewPage.header.collectionName).toHaveText('Bruno Testbench');
   });
 });
 ```
 
-Keep the `expect`s in the test. Page objects and components only expose elements and
+Keep the `expect`s in the test. Page objects and sections only expose elements and
 actions — the test decides what to check.
-
-## How elements are located (most reliable first)
-
-1. **Test id** for the container a component lives in —
-   `getByTestId('collection-docs-markdown')`, `getByTestId('theme-toggle')`.
-2. **Role + accessible name** for content and controls — `getByRole('heading', …)`,
-   `getByRole('table')`. This is also how a screen reader finds them.
-3. **Semantic tags** (`strong`, `code`, `blockquote`) only for Markdown output that has
-   no role or test id.
-
-Tests never reach for app styling classes; each component owns its own selectors.
 
 ## Imports
 
-Every import is a relative path — there are no aliases. Tests import from the
+Every import is a relative path — there are no path aliases. Specs import from the
 `playwright` barrel; everything else points straight at the file it needs:
 
 ```ts
 import { test, expect } from '../../playwright';                    // test → harness
-import { CollectionPage } from '../pages/collection.page';           // harness → page
+import { OverviewPage } from '../pages/overview.page';               // harness → page
 import { MarkdownComponent } from '../components/markdown.component'; // page → component
 ```

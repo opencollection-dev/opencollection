@@ -1,9 +1,5 @@
 import type { Page } from '@playwright/test';
 
-/**
- * Base class for every page object. Holds the Playwright `page` handle, the app
- * mount root, and the navigation shared by all pages.
- */
 export abstract class BasePage {
   readonly root = this.page.locator('#root');
 
