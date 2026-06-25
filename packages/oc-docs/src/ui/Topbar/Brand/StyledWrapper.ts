@@ -30,6 +30,7 @@ export const StyledWrapper = styled.div`
     flex-direction: column;
     min-width: 0;
     line-height: 1.1;
+    gap: 2px;
   }
 
   .topbar-brand-name {
