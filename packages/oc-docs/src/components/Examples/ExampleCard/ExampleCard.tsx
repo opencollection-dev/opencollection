@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useId, useMemo, useRef, useState } from 'react';
 import type {
   HttpRequestExample,
   HttpRequestHeader,
@@ -7,11 +7,13 @@ import type {
 } from '@opencollection/types/requests/http';
 import type { Auth } from '@opencollection/types/common/auth';
 import { MethodBadge } from '../../MethodBadge/MethodBadge';
+import { Chevron } from '../../Chevron/Chevron';
 import { CopyButton } from '../../../ui/CopyButton/CopyButton';
 import { PropertyTable, type PropertyRow } from '../../PropertyTable/PropertyTable';
 import { RequestParams } from '../../Request/RequestParams/RequestParams';
 import { AuthDetails } from '../../AuthDetails/AuthDetails';
 import { Code } from '../../Code/Code';
+import { PlayIcon } from '../../../assets/icons';
 import { AUTH_MODE_LABELS } from '../../../constants';
 import { resolvePathAndQueryParams } from '../../../utils/pathParams';
 import { computeBodySize, formatBytes, responseBodyLanguage } from '../../../utils/exampleResponse';
@@ -33,39 +35,13 @@ interface PaneTab {
   content: React.ReactNode;
 }
 
-const ChevronIcon: React.FC<{ open: boolean }> = ({ open }) => (
-  <svg
-    className={`example-chevron ${open ? 'is-open' : ''}`}
-    width="14"
-    height="14"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <polyline points="9 18 15 12 9 6" />
-  </svg>
-);
-
-const PlayIcon: React.FC = () => (
-  <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <polygon points="6 4 20 12 6 20 6 4" />
-  </svg>
-);
-
-
 const headerRows = (headers: (HttpRequestHeader | HttpResponseHeader)[]): PropertyRow[] =>
   headers.map((h) => ({ label: h.name, value: h.value, disabled: 'disabled' in h ? h.disabled : undefined }));
 
 const headerCtype = (count: number): string => `${count} header${count === 1 ? '' : 's'}`;
 
-/** The auth mode shown as the pane content type (e.g. "bearer", "oauth2", "inherit"). */
 const authTypeLabel = (auth: Auth): string => (typeof auth === 'string' ? auth : auth.type);
 
-/** The full MIME content type for a request body mode (shown in the pane header). */
 const requestBodyCtype = (body: HttpRequestBody): string => {
   switch (body.type) {
     case 'json':
@@ -105,7 +81,6 @@ const responseBodyCtype = (type: string | undefined): string => {
 
 const emptyPane = (label: string): React.ReactNode => <p className="pane-empty">No {label}.</p>;
 
-/** Renders a request body: raw bodies as highlighted code, structured ones as a key/value table. */
 const RequestBodyContent: React.FC<{ body: HttpRequestBody }> = ({ body }) => {
   switch (body.type) {
     case 'json':
@@ -129,18 +104,11 @@ const RequestBodyContent: React.FC<{ body: HttpRequestBody }> = ({ body }) => {
   }
 };
 
-/**
- * One pane (REQUEST or RESPONSE): a header bar (title, tab pills, content type, optional
- * meta) over the active tab's body. Tabs follow the WAI-ARIA tabs pattern (roving
- * tabindex + arrow/Home/End navigation, a single labelled tabpanel). When the side has
- * no data at all, the tab strip is replaced by a single empty message.
- */
 const Pane: React.FC<{
   title: string;
   emptyMessage: string;
   tabs: PaneTab[];
   meta?: React.ReactNode;
-  /** Render the tab strip on the right of the header (RESPONSE layout). */
   tabsRight?: boolean;
   paneClassName: string;
   testId?: string;
@@ -151,13 +119,10 @@ const Pane: React.FC<{
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   const hasAnyData = tabs.some((t) => t.hasData);
-  // Default to the Body tab when it has data, else the first tab with data, else the first tab.
   const defaultTab = tabs.find((t) => t.hasData && t.id === 'body') ?? tabs.find((t) => t.hasData) ?? tabs[0];
   const [activeId, setActiveId] = useState<string | undefined>(defaultTab?.id);
   const active = tabs.find((t) => t.id === activeId) ?? defaultTab;
 
-  // Keep the selected tab visible by scrolling only the tab strip (never an
-  // ancestor / the page) when the strip overflows on narrow panes.
   useEffect(() => {
     const el = tabRefs.current[active?.id ?? ''];
     const strip = el?.parentElement;
@@ -231,12 +196,12 @@ const Pane: React.FC<{
       <div className="pane-head">
         <span className="pane-title">{title}</span>
         {tabsRight ? (
-          <>
+          <Fragment>
             {meta}
             <span className="pane-spacer" />
             {ctype && <span className="pane-ctype">{ctype}</span>}
             {tabStrip}
-          </>
+          </Fragment>
         ) : (
           <>
             {tabStrip}
@@ -321,7 +286,6 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
         ctype: body ? requestBodyCtype(body) : '',
         content: body ? <RequestBodyContent body={body} /> : emptyPane('body')
       },
-      // Auth tab is shown only when the example actually defines auth.
       ...(auth
         ? [{
             id: 'auth',
@@ -393,7 +357,7 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
           data-testid="example-toggle"
           onClick={toggle}
         >
-          <ChevronIcon open={expanded} />
+          <Chevron open={expanded} size={14} className="example-chevron" />
           {status !== undefined && (
             <span
               className="example-status"

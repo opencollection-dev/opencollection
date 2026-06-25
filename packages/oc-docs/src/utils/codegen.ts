@@ -10,10 +10,8 @@ export interface SnippetHeader {
 export interface SnippetInput {
   method: string;
   url: string;
-  /** Enabled request headers (name/value). */
   headers?: SnippetHeader[];
   body?: HttpRequestBody | HttpRequestBodyVariant[];
-  /** Effective auth (already inheritance-resolved by the caller). */
   auth?: Auth;
 }
 
@@ -73,7 +71,6 @@ const normalizeBody = (raw: SnippetInput['body']): BodySnippet => {
   }
 };
 
-/** Auth → header lines, or a comment for non-derivable schemes. `{{var}}` kept literal. */
 const authContribution = (auth: Auth | undefined): { headers: SnippetHeader[]; comment?: string } => {
   if (!auth || auth === 'inherit') return { headers: [] };
   switch (auth.type) {

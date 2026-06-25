@@ -5,6 +5,7 @@ import { Code } from '../Code/Code';
 import { CopyButton} from '../../ui/CopyButton/CopyButton';
 import { SectionLabel } from '../SectionLabel/SectionLabel';
 import { Modal } from '../../ui/Modal/Modal';
+import { ExpandIcon } from '../../assets/icons';
 import {
   generateCurlCommand,
   generateJavaScriptCode,
@@ -28,15 +29,6 @@ const LANGUAGES = [
   { id: 'javascript', label: 'Javascript', language: 'javascript', generate: generateJavaScriptCode },
   { id: 'python', label: 'Python', language: 'python', generate: generatePythonCode }
 ] as const;
-
-const ExpandGlyph: React.FC = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <polyline points="15 3 21 3 21 9" />
-    <polyline points="9 21 3 21 3 15" />
-    <line x1="21" y1="3" x2="14" y2="10" />
-    <line x1="3" y1="21" x2="10" y2="14" />
-  </svg>
-);
 
 export const CodeSnippetTabs: React.FC<CodeSnippetTabsProps> = ({ method, url, headers, body, auth, className }) => {
   const [active, setActive] = useState<string>(LANGUAGES[0].id);
@@ -86,7 +78,7 @@ export const CodeSnippetTabs: React.FC<CodeSnippetTabsProps> = ({ method, url, h
             aria-label="Expand code snippet"
             onClick={() => setExpanded(true)}
           >
-            <ExpandGlyph />
+            <ExpandIcon />
           </button>
         ) : (
           <CopyButton text={snippets[active]} label="Copy code" className="snippet-copy" />

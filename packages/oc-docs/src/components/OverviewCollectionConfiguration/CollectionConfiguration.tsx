@@ -39,24 +39,24 @@ export const CollectionConfiguration: React.FC<CollectionConfigurationProps> = (
   }
 
   return (
-    <StyledWrapper className="collection-configuration">
+    <StyledWrapper className="collection-configuration" data-testid="collection-config">
       {hasHeaders && (
         <div className="config-group">
-          <SubHeading>Headers</SubHeading>
+          <SubHeading testId="collection-config-subheading">Headers</SubHeading>
           <PropertyTable rows={visibleHeaders.map((header) => ({ label: header.name, value: header.value }))} />
         </div>
       )}
 
       {hasAuth && (
         <div className="config-group">
-          <SubHeading>Auth</SubHeading>
+          <SubHeading testId="collection-config-subheading">Auth</SubHeading>
           <AuthDetails auth={auth} authModeLabels={authModeLabels} />
         </div>
       )}
 
       {hasScripts && (
         <div className="config-group">
-          <SubHeading>Script</SubHeading>
+          <SubHeading testId="collection-config-subheading">Script</SubHeading>
           {scripts.preRequest && (
             <div className="script-block">
               <p className="script-label">Pre-Request</p>
@@ -74,7 +74,7 @@ export const CollectionConfiguration: React.FC<CollectionConfigurationProps> = (
 
       {hasTests && (
         <div className="config-group">
-          <SubHeading>Tests</SubHeading>
+          <SubHeading testId="collection-config-subheading">Tests</SubHeading>
           <Code code={scripts.tests as string} language="javascript" showLineNumbers />
         </div>
       )}

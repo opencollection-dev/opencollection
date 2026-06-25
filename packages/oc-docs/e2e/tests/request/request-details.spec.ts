@@ -55,11 +55,11 @@ test.describe('Request page — Details', () => {
   });
 
   test.describe('Auth section', () => {
-    test('shows the inherited auth mode', async ({ requestPage }) => {
+    test('shows the auth mode inherited from the collection', async ({ requestPage }) => {
       const auth = requestPage.section('Auth');
       await expect(auth).toBeVisible();
-      await expect(auth.getByText('Mode')).toBeVisible();
-      await expect(auth.getByText('Inherit', { exact: true })).toBeVisible();
+      await expect(auth.getByText('Inherited from collection')).toBeVisible();
+      await expect(auth.getByText('Bearer Token')).toBeVisible();
     });
   });
 

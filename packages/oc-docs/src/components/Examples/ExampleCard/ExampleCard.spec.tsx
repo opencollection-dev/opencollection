@@ -101,7 +101,6 @@ describe('ExampleCard', () => {
         defaultExpanded
       />
     );
-    // Auth tab is the default-selected pane (it is the only request tab with data).
     expect(html).toContain('Auth');
     expect(html).toContain('Bearer Token'); // AUTH_MODE_LABELS[bearer]
     expect(html).toContain('Token'); // field label
@@ -124,7 +123,6 @@ describe('ExampleCard', () => {
       />
     );
     expect(html).toContain('A described example');
-    // Toggle and Try are separate, sibling buttons (never nested).
     expect(html).toContain('class="example-toggle"');
     expect(html).toContain('class="example-try"');
     expect(html).toContain('aria-expanded="true"');
