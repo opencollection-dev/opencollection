@@ -70,9 +70,6 @@ export const Request: React.FC<RequestProps> = ({
 }) => {
   const md = useMarkdownRenderer();
 
-  console.log(item)
-  console.log(ancestry)
-
   const name = getItemName(item) || 'Untitled Request';
   const method = getHttpMethod(item);
   const url = getRequestUrl(item);
