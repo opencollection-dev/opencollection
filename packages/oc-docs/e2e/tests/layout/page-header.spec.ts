@@ -22,8 +22,8 @@ test.describe('Page header', () => {
     // Sticky: header stays at the top after the page scrolls.
     await page.mouse.wheel(0, 600);
     const box = await pageHeader.root.boundingBox();
-    expect(box).not.toBeNull();
-    expect(box!.y).toBeLessThanOrEqual(1);
+    if (!box) throw new Error('header has no bounding box');
+    expect(box.y).toBeLessThanOrEqual(1);
   });
 
   test('shows the initials avatar derived from the collection name', async ({ page, pageHeader }) => {
