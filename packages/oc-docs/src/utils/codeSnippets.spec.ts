@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { generateCurlCommand, generateJavaScriptCode, generatePythonCode } from './codeSnippets';
 
-describe('codegen', () => {
+describe('codeSnippets', () => {
   it('generates cURL with headers + JSON body + content-type', () => {
     const curl = generateCurlCommand({
       method: 'post',
