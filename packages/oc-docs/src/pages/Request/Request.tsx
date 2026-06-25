@@ -141,10 +141,10 @@ export const Request: React.FC<RequestProps> = ({
 
   return (
     <PageWrapper>
-      <StyledWrapper className="request">
-        <Breadcrumb segments={segments} current={name} onSegmentClick={onBreadcrumbClick} />
+      <StyledWrapper className="request" data-testid="request-page">
+        <Breadcrumb segments={segments} current={name} onSegmentClick={onBreadcrumbClick} testId="request-breadcrumb" />
 
-        <Heading size="md" style={{ marginTop: '0.875rem' }}>{name}</Heading>
+        <Heading size="md" style={{ marginTop: '0.875rem' }} testId="request-title">{name}</Heading>
 
         <RequestUrlBar method={method} url={url} onTry={onTryClick} style={{ marginTop: '0.9375rem' }} />
 
@@ -154,7 +154,7 @@ export const Request: React.FC<RequestProps> = ({
           <div className="request-body">
             <div className="request-col-left">
               {hasParams && (
-                <Section label="Params">
+                <Section label="Params" testId="request-section-params">
                   <RequestParams path={pathParams} query={queryParams} />
                 </Section>
               )}
@@ -162,6 +162,7 @@ export const Request: React.FC<RequestProps> = ({
               {hasBody && (
                 <Section
                   label="Body"
+                  testId="request-section-body"
                   badge={bodyContentType ? <ContentTypeBadge label={bodyContentType} /> : undefined}
                 >
                   <RequestBody body={body} showContentType={false} />
@@ -169,7 +170,7 @@ export const Request: React.FC<RequestProps> = ({
               )}
 
               {hasHeaders && (
-                <Section label="Headers">
+                <Section label="Headers" testId="request-section-headers">
                   <PropertyTable rows={headers.map((h) => ({ label: h.name, value: h.value, disabled: h.disabled }))} />
                 </Section>
               )}
@@ -177,6 +178,7 @@ export const Request: React.FC<RequestProps> = ({
               {showAuth && (
                 <Section
                   label="Auth"
+                  testId="request-section-auth"
                   badge={authInheritedBadge ? <ContentTypeBadge label={authInheritedBadge} /> : undefined}
                 >
                   <AuthDetails auth={effectiveAuth} authModeLabels={AUTH_MODE_LABELS} />
@@ -187,23 +189,23 @@ export const Request: React.FC<RequestProps> = ({
             </div>
 
             <div className="request-col-right">
-              <Section label="Code Snippet">{codeSnippet}</Section>
+              <Section label="Code Snippet" testId="request-section-code-snippet">{codeSnippet}</Section>
             </div>
           </div>
         ) : (
-          <Section label="Code Snippet" className="request-fullwidth">
+          <Section label="Code Snippet" testId="request-section-code-snippet" className="request-fullwidth">
             {codeSnippet}
           </Section>
         )}
 
         {hasExamples && (
-          <Section label="Examples" className="request-fullwidth">
+          <Section label="Examples" testId="request-section-examples" className="request-fullwidth">
             <Examples examples={examples} method={method} url={url} onTry={onTryClick} />
           </Section>
         )}
 
         {hasExecutionContext && (
-          <Section label="Execution Context" className="request-fullwidth" collapsible>
+          <Section label="Execution Context" testId="request-section-execution-context" className="request-fullwidth" collapsible>
             <ExecutionContext
               scriptChain={scriptChain}
               preVars={preVars}

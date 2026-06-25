@@ -374,7 +374,7 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
   };
 
   return (
-    <StyledWrapper className="example-card">
+    <StyledWrapper className="example-card" data-testid="example-card">
       <div className="example-summary">
         <button
           type="button"
@@ -387,12 +387,13 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
           {status !== undefined && (
             <span
               className="example-status"
+              data-testid="example-status"
               style={{ color: toneColor, background: `color-mix(in srgb, ${toneColor} 12%, transparent)` }}
             >
               {status}
             </span>
           )}
-          <span className="example-name">{name}</span>
+          <span className="example-name" data-testid="example-name">{name}</span>
         </button>
         {onTry && (
           <button type="button" className="example-try" onClick={handleTry}>

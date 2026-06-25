@@ -15,7 +15,7 @@ export const Examples: React.FC<ExamplesProps> = ({ examples, method, url, onTry
   if (!examples || examples.length === 0) return null;
 
   return (
-    <StyledWrapper className={['examples', className].filter(Boolean).join(' ')}>
+    <StyledWrapper className={['examples', className].filter(Boolean).join(' ')} data-testid="request-examples">
       {examples.map((example, index) => (
         <ExampleCard
           key={`${example.name ?? 'example'}-${index}`}

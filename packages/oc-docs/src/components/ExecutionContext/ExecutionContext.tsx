@@ -29,10 +29,11 @@ const Card: React.FC<{
   meta?: React.ReactNode;
   children: React.ReactNode;
   boxClassName?: string;
-}> = ({ title, meta, children, boxClassName }) => (
-  <div className="exec-card">
+  testId?: string;
+}> = ({ title, meta, children, boxClassName, testId }) => (
+  <div className="exec-card" data-testid={testId}>
     <div className="exec-card-head">
-      <span className="exec-card-title">{title}</span>
+      <span className="exec-card-title" data-testid={testId ? `${testId}-title` : undefined}>{title}</span>
       {meta !== undefined && <span className="exec-card-meta">{meta}</span>}
     </div>
     <div className={['exec-card-box', boxClassName].filter(Boolean).join(' ')}>{children}</div>
@@ -58,24 +59,24 @@ export const ExecutionContext: React.FC<ExecutionContextProps> = ({
   if (!hasScripts && !hasVars && !hasAsserts && !hasTests) return null;
 
   return (
-    <StyledWrapper className={['execution-context', className].filter(Boolean).join(' ')}>
+    <StyledWrapper className={['execution-context', className].filter(Boolean).join(' ')} data-testid="execution-context">
       {hasScripts && (
-        <Card title="Scripts" meta={<span className="exec-flow">{FLOW_LABEL[flow]} execution flow</span>}>
+        <Card title="Scripts" testId="execution-context-scripts" meta={<span className="exec-flow">{FLOW_LABEL[flow]} execution flow</span>}>
           <ScriptChain steps={scriptChain} flow={flow} method={method} url={url} />
         </Card>
       )}
       {hasVars && (
-        <Card title="Variables" boxClassName="exec-card-box--bare">
+        <Card title="Variables" testId="execution-context-variables" boxClassName="exec-card-box--bare">
           <VariablesPanel preVars={preVars} postVars={postVars} />
         </Card>
       )}
       {hasAsserts && (
-        <Card title="Asserts">
+        <Card title="Asserts" testId="execution-context-asserts">
           <AssertList assertions={assertions} />
         </Card>
       )}
       {hasTests && (
-        <Card title="Tests" meta={<ViewAllTests tests={tests} />}>
+        <Card title="Tests" testId="execution-context-tests" meta={<ViewAllTests tests={tests} />}>
           <TestList tests={tests} />
         </Card>
       )}

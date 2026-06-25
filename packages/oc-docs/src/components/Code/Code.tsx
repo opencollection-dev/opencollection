@@ -24,7 +24,7 @@ interface CodeProps {
   className?: string;
 }
 
-type CodeViewerProps = Pick<CodeProps, 'code' | 'language' | 'showLineNumbers' | 'showCopy' | 'surface' | 'className'>;
+type CodeViewerProps = Pick<CodeProps, 'code' | 'language' | 'showLineNumbers' | 'showCopy' | 'surface' | 'className' | 'testId'>;
 
 const CodeViewer: React.FC<CodeViewerProps> = ({
   code = '',
@@ -32,7 +32,8 @@ const CodeViewer: React.FC<CodeViewerProps> = ({
   showLineNumbers = false,
   showCopy = true,
   surface = 'base',
-  className
+  className,
+  testId
 }) => {
   const preRef = useRef<HTMLPreElement>(null);
 
@@ -54,9 +55,16 @@ const CodeViewer: React.FC<CodeViewerProps> = ({
   );
 
   return (
-    <StyledWrapper className={wrapperClassName}>
+    <StyledWrapper className={wrapperClassName} data-testid={testId}>
       <div className="relative">
-        {showCopy && <CopyButton text={code} label="Copy code" className="code-copy-floating" />}
+        {showCopy && (
+          <CopyButton
+            text={code}
+            label="Copy code"
+            className="code-copy-floating"
+            testId={testId ? `${testId}-copy` : undefined}
+          />
+        )}
 
         {showLineNumbers ? (
           <div className="code-content-numbered">
@@ -84,7 +92,8 @@ export const Code: React.FC<CodeProps> = ({
   showCopy = true,
   surface = 'base',
   height = '200px',
-  className
+  className,
+  testId
 }) => {
   if (!readOnly) {
     return (
@@ -102,6 +111,7 @@ export const Code: React.FC<CodeProps> = ({
       showCopy={showCopy}
       surface={surface}
       className={className}
+      testId={testId}
     />
   );
 };

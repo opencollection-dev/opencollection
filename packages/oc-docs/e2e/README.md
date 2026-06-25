@@ -18,6 +18,10 @@ Two rules shape every test here:
 |------|------|
 | Collection Overview — version/name, stat counts, environments, configuration | `tests/overview/overview.spec.ts` |
 | Overview documentation — rendered Markdown | `tests/overview/overview-documentation.spec.ts` |
+| Request page — details (breadcrumb, title, method/URL, description, params, auth, code snippet) | `tests/request/request-details.spec.ts` |
+| Request page — Examples | `tests/request/request-examples.spec.ts` |
+| Request page — Execution Context (scripts, variables, asserts, tests) | `tests/request/request-execution-context.spec.ts` |
+| Script page — title, breadcrumb, source code | `tests/script/script.spec.ts` |
 | Light/dark theme switch | `tests/theming/theme-toggle.spec.ts` |
 
 ## Running the tests
@@ -36,26 +40,46 @@ e2e/
 ├── tests/                          # the tests, grouped by feature
 │   ├── overview/overview.spec.ts
 │   ├── overview/overview-documentation.spec.ts
+│   ├── request/request-details.spec.ts
+│   ├── request/request-examples.spec.ts
+│   ├── request/request-execution-context.spec.ts
+│   ├── script/script.spec.ts
 │   └── theming/theme-toggle.spec.ts
 ├── pages/                          # one "page object" per screen
 │   ├── base.page.ts                #   shared navigation (goto, reload)
-│   └── overview.page.ts            #   OverviewPage — composes its overview/ sections
+│   ├── overview.page.ts            #   OverviewPage — composes its overview/ sections
+│   ├── request.page.ts             #   RequestPage — composes its request/ sections
+│   └── script.page.ts              #   ScriptPage — breadcrumb, title, source code
 ├── components/                     # reusable pieces
 │   ├── base.component.ts           #   shared base — every component has a `root`
 │   ├── markdown.component.ts       #   any block of rendered Markdown
 │   ├── secret-value.component.ts   #   a masked value with a reveal toggle
 │   ├── theme-toggle.component.ts   #   the light/dark switch
-│   └── overview/                   #   sections specific to the Overview page
-│       ├── header-section.component.ts
-│       ├── stats-section.component.ts
-│       ├── environments-section.component.ts
-│       └── configuration-section.component.ts
+│   ├── sidebar.component.ts        #   the navigation tree (open a request/script)
+│   ├── breadcrumb.component.ts     #   the "folder › folder › page" trail
+│   ├── overview/                   #   sections specific to the Overview page
+│   │   ├── header-section.component.ts
+│   │   ├── stats-section.component.ts
+│   │   ├── environments-section.component.ts
+│   │   └── configuration-section.component.ts
+│   ├── request/                    #   sections specific to the Request page
+│   │   ├── url-bar.component.ts
+│   │   ├── code-snippet.component.ts
+│   │   ├── examples.component.ts
+│   │   └── execution-context.component.ts
+│   └── script/                     #   sections specific to the Script page
+│       └── script-content.component.ts
 ├── playwright/                     # the test harness
 │   ├── pages.fixture.ts            #   defines the fixtures
 │   └── index.ts                    #   merges them; the single import for specs
 ├── config/app.config.ts            # base URL + how to start the app
 └── tsconfig.json                   # TypeScript settings for this folder
 ```
+
+The Request and Script pages have no URL of their own, so their page objects reach
+them by navigating the **sidebar** — `requestPage.open(['billing', 'customers', 'Get
+All Customers'])` clicks down the folder trail and waits for the page to render. The
+reusable `sidebar` and `breadcrumb` components are shared by both pages.
 
 ## The three building blocks
 

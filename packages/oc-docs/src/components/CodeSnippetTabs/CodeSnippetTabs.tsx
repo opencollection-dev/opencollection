@@ -70,6 +70,7 @@ export const CodeSnippetTabs: React.FC<CodeSnippetTabsProps> = ({ method, url, h
               type="button"
               role="tab"
               aria-selected={active === lang.id}
+              data-testid={`code-snippet-tab-${lang.id}`}
               className={['snippet-tab', active === lang.id ? 'is-active' : ''].filter(Boolean).join(' ')}
               onClick={() => setActive(lang.id)}
             >
@@ -96,7 +97,7 @@ export const CodeSnippetTabs: React.FC<CodeSnippetTabsProps> = ({ method, url, h
   );
 
   return (
-    <StyledWrapper className={['code-snippet-tabs', className].filter(Boolean).join(' ')}>
+    <StyledWrapper className={['code-snippet-tabs', className].filter(Boolean).join(' ')} data-testid="request-code-snippet">
       {renderSnippetBox('inline')}
       <Modal open={expanded} onClose={() => setExpanded(false)} title={<SectionLabel>Code snippet</SectionLabel>} ariaLabel="Code snippet">
         {expanded && (

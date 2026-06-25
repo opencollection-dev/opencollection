@@ -11,19 +11,25 @@ interface BreadcrumbProps {
   current?: string;
   onSegmentClick?: (uuid: string) => void;
   className?: string;
+  testId?: string;
 }
 
-export const Breadcrumb: React.FC<BreadcrumbProps> = ({ segments, current, onSegmentClick, className }) => {
+export const Breadcrumb: React.FC<BreadcrumbProps> = ({ segments, current, onSegmentClick, className, testId }) => {
   const hasSegments = segments && segments.length > 0;
   if (!hasSegments && !current) return null;
 
   return (
-    <StyledWrapper className={['breadcrumb', className].filter(Boolean).join(' ')} aria-label="Breadcrumb">
+    <StyledWrapper className={['breadcrumb', className].filter(Boolean).join(' ')} aria-label="Breadcrumb" data-testid={testId}>
       <ol>
         {segments.map((segment, index) => (
           <li key={segment.uuid || index}>
             {index > 0 && <span className="breadcrumb-sep" aria-hidden="true">›</span>}
-            <button type="button" className="breadcrumb-link" onClick={() => onSegmentClick?.(segment.uuid)}>
+            <button
+              type="button"
+              className="breadcrumb-link"
+              data-testid={testId ? `${testId}-segment` : undefined}
+              onClick={() => onSegmentClick?.(segment.uuid)}
+            >
               {segment.name}
             </button>
           </li>
@@ -31,7 +37,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ segments, current, onSeg
         {current && (
           <li key="current" aria-current="page">
             {hasSegments && <span className="breadcrumb-sep" aria-hidden="true">›</span>}
-            <span className="breadcrumb-current">{current}</span>
+            <span className="breadcrumb-current" data-testid={testId ? `${testId}-current` : undefined}>{current}</span>
           </li>
         )}
       </ol>

@@ -74,6 +74,7 @@ export const RequestDescription: React.FC<RequestDescriptionProps> = ({ html, st
       className={['request-description', expanded ? 'is-expanded' : '', animating ? 'is-animating' : '', className]
         .filter(Boolean)
         .join(' ')}
+      data-testid="request-description"
     >
       <div
         ref={bodyRef}

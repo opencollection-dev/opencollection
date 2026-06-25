@@ -21,6 +21,7 @@ export const Section: React.FC<SectionProps> = ({
   label,
   badge,
   children,
+  testId,
   className,
   collapsible = false,
   defaultOpen = true,
@@ -32,7 +33,7 @@ export const Section: React.FC<SectionProps> = ({
 
   if (collapsible) {
     return (
-      <StyledWrapper className={['section--collapsible', className].filter(Boolean).join(' ')}>
+      <StyledWrapper className={['section--collapsible', className].filter(Boolean).join(' ')} data-testid={testId}>
         <div className="section-head">
           <SectionLabel as={as} className="section-head-label">
             <button
@@ -57,7 +58,7 @@ export const Section: React.FC<SectionProps> = ({
   }
 
   return (
-    <StyledWrapper className={className}>
+    <StyledWrapper className={className} data-testid={testId}>
       {badge ? (
         <div className="section-head">
           <SectionLabel as={as} className="section-head-label">{label}</SectionLabel>
