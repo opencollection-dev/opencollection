@@ -7,3 +7,4 @@ export * from './BookIcon';
 export * from './ExpandIcon';
 export * from './CloseIcon';
 export * from './PlayIcon';
+export * from './EyeOffIcon';

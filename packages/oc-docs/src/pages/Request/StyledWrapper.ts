@@ -7,7 +7,7 @@ export const StyledWrapper = styled.div`
   padding-top: 1.5625rem;
   padding-bottom: 2.5625rem;
 
-  .request-body {
+  .request-columns {
     display: grid;
     grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
     gap: 2.75rem;
@@ -36,7 +36,7 @@ export const StyledWrapper = styled.div`
   }
 
   @media (max-width: 1024px) {
-    .request-body {
+    .request-columns {
       grid-template-columns: 1fr;
       gap: 1.75rem;
     }

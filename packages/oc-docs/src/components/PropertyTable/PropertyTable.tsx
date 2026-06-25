@@ -15,16 +15,17 @@ interface PropertyTableProps {
   rows: PropertyRow[];
   emptyMessage?: string;
   className?: string;
+  testId?: string;
 }
 
-const ValueCell: React.FC<{ row: PropertyRow }> = ({ row }) => {
+const ValueCell: React.FC<{ row: PropertyRow; testId?: string }> = ({ row, testId }) => {
   if (row.node !== undefined) return <>{row.node}</>;
-  if (row.secret) return <SecretValue value={row.value ?? ''} />;
+  if (row.secret) return <SecretValue value={row.value ?? ''} testId={testId ? `${testId}-secret` : undefined} />;
   return <VariableText value={row.value ?? ''} />;
 };
 
-export const PropertyTable: React.FC<PropertyTableProps> = ({ rows, emptyMessage, className }) => (
-  <StyledWrapper className={['property-table', className].filter(Boolean).join(' ')}>
+export const PropertyTable: React.FC<PropertyTableProps> = ({ rows, emptyMessage, className, testId }) => (
+  <StyledWrapper className={['property-table', className].filter(Boolean).join(' ')} data-testid={testId}>
     {rows.length === 0 ? (
       emptyMessage ? <p className="property-empty-message">{emptyMessage}</p> : null
     ) : (
@@ -36,7 +37,7 @@ export const PropertyTable: React.FC<PropertyTableProps> = ({ rows, emptyMessage
           >
             <dt className="property-key">{row.label}</dt>
             <dd className="property-value-cell">
-              <ValueCell row={row} />
+              <ValueCell row={row} testId={testId} />
             </dd>
           </div>
         ))}

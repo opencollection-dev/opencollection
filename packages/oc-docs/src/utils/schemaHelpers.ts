@@ -117,6 +117,13 @@ export const isWebSocketRequest = (item: OpenCollectionItem | null | undefined):
   return getItemType(item) === 'websocket';
 };
 
+// Check if an item is a request the docs viewer can't render (GraphQL, gRPC or WebSocket).
+export const isUnsupportedRequest = (
+  item: OpenCollectionItem | null | undefined
+): item is GraphQLRequest | GrpcRequest | WebSocketRequest => {
+  return isGraphQLRequest(item) || isGrpcRequest(item) || isWebSocketRequest(item);
+};
+
 /**
  * Get HTTP method from a request (from http block or root for backwards compatibility)
  */

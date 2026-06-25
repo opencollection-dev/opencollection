@@ -5,7 +5,7 @@ import Overview from '../../pages/Overview/Overview';
 import Request from '../../pages/Request/Request';
 import Script from '../../pages/Script/Script';
 import { findItemByUuid, getAncestorsByUuid } from '../../utils/itemTree';
-import { isHttpRequest, isScriptFile } from '../../utils/schemaHelpers';
+import { isHttpRequest, isScriptFile, isUnsupportedRequest } from '../../utils/schemaHelpers';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { selectSelectedItemId, selectItem } from '../../store/slices/docs';
 
@@ -51,7 +51,7 @@ const Docs: React.FC<DocsProps> = ({ docsCollection, onOpenPlayground }) => {
       </div>
 
       <div className="playground-content h-full overflow-y-auto flex-1">
-        {docsCollection && isHttpRequest(selected) ? (
+        {docsCollection && (isHttpRequest(selected) || isUnsupportedRequest(selected)) ? (
           <Request
             item={selected}
             ancestry={ancestry}

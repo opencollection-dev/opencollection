@@ -46,13 +46,11 @@ describe('CollectionConfiguration', () => {
     expect(html).toContain('bearer');
   });
 
-  it('shows an empty hint for each subsection that has no items (when some config exists)', () => {
+  it('omits the subsections that have no content', () => {
     const html = renderToStaticMarkup(<CollectionConfiguration auth={{ type: 'bearer', token: 't' }} />);
-    expect(html).toContain('Add headers to inherit in all requests in the collection');
-    expect(html).toContain('Add scripts to run for all requests in the collection');
-    expect(html).toContain('Add tests to run for all requests in the collection');
-    expect(html).toContain('bearer');
-    expect(html).toContain('3 hidden sections');
-    expect(html).toContain('hidden-sections');
+    expect(html).toContain('Auth');
+    expect(html).not.toContain('Headers');
+    expect(html).not.toContain('Script');
+    expect(html).not.toContain('Tests');
   });
 });

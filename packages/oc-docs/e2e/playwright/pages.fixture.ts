@@ -2,6 +2,7 @@ import { test as base } from '@playwright/test';
 import { OverviewPage } from '../pages/overview.page';
 import { RequestPage } from '../pages/request.page';
 import { ScriptPage } from '../pages/script.page';
+import { UnsupportedRequestPage } from '../pages/unsupported-request.page';
 import { SidebarComponent } from '../components/sidebar.component';
 import { ThemeToggleComponent } from '../components/theme-toggle.component';
 import { PageHeaderComponent } from '../components/layout/page-header.component';
@@ -11,6 +12,7 @@ type Fixtures = {
   overviewPage: OverviewPage;
   requestPage: RequestPage;
   scriptPage: ScriptPage;
+  unsupportedRequestPage: UnsupportedRequestPage;
   sidebar: SidebarComponent;
   pageHeader: PageHeaderComponent;
   themeToggle: ThemeToggleComponent;
@@ -28,6 +30,9 @@ export const test = base.extend<Fixtures>({
   },
   scriptPage: async ({ page }, use) => {
     await use(new ScriptPage(page));
+  },
+  unsupportedRequestPage: async ({ page }, use) => {
+    await use(new UnsupportedRequestPage(page));
   },
   sidebar: async ({ page }, use) => {
     await use(new SidebarComponent(page));

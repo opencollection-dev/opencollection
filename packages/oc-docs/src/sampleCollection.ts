@@ -88,6 +88,18 @@ docs:
   type: "text/markdown"
 
 items:
+  - name: "Realtime"
+    type: "folder"
+    items:
+      - name: "Live Updates"
+        type: "websocket"
+        url: "{{host}}/ws/updates"
+      - name: "GraphQL API"
+        type: "graphql"
+        url: "{{host}}/graphql"
+      - name: "Order Service"
+        type: "grpc"
+        url: "{{host}}/orders.OrderService"
   - info:
       name: billing
       type: folder

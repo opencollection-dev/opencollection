@@ -4,6 +4,9 @@ import type { Item } from '@opencollection/types/collection/item';
 import type { HttpRequest, HttpRequestParam } from '@opencollection/types/requests/http';
 import type { Auth } from '@opencollection/types/common/auth';
 import type { Description } from '@opencollection/types/common/description';
+import type { GraphQLRequest } from '@opencollection/types/requests/graphql';
+import type { GrpcRequest } from '@opencollection/types/requests/grpc';
+import type { WebSocketRequest } from '@opencollection/types/requests/websocket';
 import { useMarkdownRenderer } from '../../hooks';
 import { AUTH_MODE_LABELS } from '../../constants';
 import {
@@ -15,7 +18,8 @@ import {
   getHttpBody,
   getRequestAuth,
   getItemDocs,
-  getRequestExamples
+  getRequestExamples,
+  isUnsupportedRequest
 } from '../../utils/schemaHelpers';
 import { resolveInheritedAuth } from '../../utils/requestAuth';
 import { getPreRequestVars, getPostResponseVars } from '../../utils/requestVars';
@@ -37,18 +41,19 @@ import { PropertyTable } from '../../components/PropertyTable/PropertyTable';
 import { CodeSnippetTabs } from '../../components/CodeSnippetTabs/CodeSnippetTabs';
 import { Examples } from '../../components/Examples/Examples';
 import { ExecutionContext } from '../../components/ExecutionContext';
+import { UnsupportedRequest } from '../../components/UnsupportedRequest/UnsupportedRequest';
 import { StyledWrapper } from './StyledWrapper';
 
 interface RequestProps {
-  item: HttpRequest;
-  /** Ancestor folders from collection root to the request's parent. */
+  item: HttpRequest | WebSocketRequest | GraphQLRequest | GrpcRequest;
   ancestry?: Item[];
   collection?: OpenCollection | null;
   onTryClick?: () => void;
   onBreadcrumbClick?: (uuid: string) => void;
 }
 
-/** Markdown content for the description: prefer `docs`, fall back to `info.description`. */
+type RequestContentProps = Omit<RequestProps, 'item'> & { item: HttpRequest };
+
 const descriptionContent = (item: HttpRequest): string => {
   const docs = getItemDocs(item);
   if (docs) return docs;
@@ -57,11 +62,7 @@ const descriptionContent = (item: HttpRequest): string => {
   return (info && typeof info === 'object' && 'content' in info ? info.content : '') || '';
 };
 
-/**
- * The request detail page. Composition root: it reads the request via schema helpers
- * + pure utils and passes plain props to atomic, package-ready components.
- */
-export const Request: React.FC<RequestProps> = ({
+const RequestContent: React.FC<RequestContentProps> = ({
   item,
   ancestry = [],
   collection,
@@ -151,7 +152,7 @@ export const Request: React.FC<RequestProps> = ({
         {descHtml && <RequestDescription html={descHtml} style={{ marginTop: '0.9375rem' }} />}
 
         {hasLeftColumn ? (
-          <div className="request-body">
+          <div className="request-columns">
             <div className="request-col-left">
               {hasParams && (
                 <Section label="Params" testId="request-section-params">
@@ -185,7 +186,6 @@ export const Request: React.FC<RequestProps> = ({
                 </Section>
               )}
 
-              <HiddenSections titles={hiddenTitles} />
             </div>
 
             <div className="request-col-right">
@@ -219,6 +219,22 @@ export const Request: React.FC<RequestProps> = ({
         )}
       </StyledWrapper>
     </PageWrapper>
+  );
+};
+
+export const Request: React.FC<RequestProps> = ({ item, ancestry = [], collection, onTryClick, onBreadcrumbClick }) => {
+  if (isUnsupportedRequest(item)) {
+    return <UnsupportedRequest item={item} ancestry={ancestry} onBreadcrumbClick={onBreadcrumbClick} />;
+  }
+
+  return (
+    <RequestContent
+      item={item}
+      ancestry={ancestry}
+      collection={collection}
+      onTryClick={onTryClick}
+      onBreadcrumbClick={onBreadcrumbClick}
+    />
   );
 };
 

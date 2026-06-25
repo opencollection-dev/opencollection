@@ -7,6 +7,7 @@ interface AuthDetailsProps {
   authModeLabels?: Record<string, string>;
   inheritedFrom?: string;
   emptyMessage?: string;
+  testId?: string;
 }
 
 const modeLabel = (auth: Auth, labels: Record<string, string>): string =>
@@ -88,7 +89,8 @@ export const AuthDetails: React.FC<AuthDetailsProps> = ({
   auth,
   authModeLabels = {},
   inheritedFrom,
-  emptyMessage
+  emptyMessage,
+  testId
 }) => {
   if (!auth) {
     return emptyMessage ? <PropertyTable rows={[]} emptyMessage={emptyMessage} /> : null;
@@ -102,7 +104,7 @@ export const AuthDetails: React.FC<AuthDetailsProps> = ({
     rows.push(...buildAuthRows(auth));
   }
 
-  return <PropertyTable rows={rows} />;
+  return <PropertyTable rows={rows} testId={testId} />;
 };
 
 export default AuthDetails;

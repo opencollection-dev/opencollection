@@ -50,7 +50,7 @@ export const CollectionConfiguration: React.FC<CollectionConfigurationProps> = (
       {hasAuth && (
         <div className="config-group">
           <SubHeading testId="collection-config-subheading">Auth</SubHeading>
-          <AuthDetails auth={auth} authModeLabels={authModeLabels} />
+          <AuthDetails auth={auth} authModeLabels={authModeLabels} testId="collection-config-auth" />
         </div>
       )}
 
@@ -75,7 +75,7 @@ export const CollectionConfiguration: React.FC<CollectionConfigurationProps> = (
       {hasTests && (
         <div className="config-group">
           <SubHeading testId="collection-config-subheading">Tests</SubHeading>
-          <Code code={scripts.tests as string} language="javascript" showLineNumbers />
+          <Code code={scripts.tests as string} language="javascript" showLineNumbers testId="collection-config-tests" />
         </div>
       )}
 

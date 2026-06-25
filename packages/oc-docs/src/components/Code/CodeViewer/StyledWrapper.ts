@@ -31,11 +31,13 @@ export const StyledWrapper = styled.div`
   .code-content {
     background-color: var(--oc-background-base);
     color: var(--text-primary);
+    scrollbar-width: thin;
+    scrollbar-color: var(--oc-scrollbar-color) transparent;
   }
 
   .code-content::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 4px;
+    height: 4px;
   }
   .code-content::-webkit-scrollbar-track {
     background: transparent;
