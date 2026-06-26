@@ -96,7 +96,6 @@ export interface HttpRequestExampleRequest {
   headers?: HttpRequestHeader[];
   params?: HttpRequestParam[];
   body?: HttpRequestBody;
-  auth?: Auth;
 }
 
 export interface HttpRequestExampleResponseBody {
