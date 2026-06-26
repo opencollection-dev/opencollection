@@ -4,7 +4,7 @@ import { MarkdownComponent } from '../components/markdown.component';
 import { HeaderSection } from '../components/overview/header.component';
 import { StatsSection } from '../components/overview/collection-stats.component';
 import { EnvironmentsSection } from '../components/overview/environments.component';
-import { ConfigurationSection } from '../components/overview/collection-configuration.component.';
+import { ConfigurationSection } from '../components/overview/collection-configuration.component';
 
 export class OverviewPage extends BasePage {
   readonly root = this.page.getByTestId('overview');

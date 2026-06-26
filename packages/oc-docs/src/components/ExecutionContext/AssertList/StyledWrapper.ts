@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 
-/** Stacked, hairline-divided list of read-only assertion rows (scope pill + expression). */
 export const StyledWrapper = styled.div`
   .assert-row {
     display: flex;
