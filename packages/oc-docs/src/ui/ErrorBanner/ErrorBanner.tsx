@@ -14,10 +14,10 @@ export interface ErrorBannerProps {
  * and an optional next-step hint. Mirrors Bruno desktop's response error banner.
  */
 const ErrorBanner: React.FC<ErrorBannerProps> = ({ title, message, hint, className = '' }) => (
-  <StyledWrapper className={className}>
-    <div className="error-title">{title}</div>
-    <div className="error-message">{message}</div>
-    {hint ? <div className="error-hint">{hint}</div> : null}
+  <StyledWrapper className={className} data-testid="error-banner">
+    <div className="error-title" data-testid="error-title">{title}</div>
+    <div className="error-message" data-testid="error-message">{message}</div>
+    {hint ? <div className="error-hint" data-testid="error-hint">{hint}</div> : null}
   </StyledWrapper>
 );
 

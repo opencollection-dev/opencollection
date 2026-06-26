@@ -6,6 +6,8 @@ import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { OpenCollection as IOpenCollection } from '@opencollection/types';
 import PlaygroundDrawer from '../PlaygroundDrawer/PlaygroundDrawer';
 import Docs from '../Docs/Docs';
+import Topbar from '../Topbar/Topbar';
+import { buildBrunoDeepLink } from '../../utils/buildBrunoDeepLink';
 import { parseYaml } from '../../utils/yamlUtils';
 import { hydrateWithUUIDs } from '../../utils/items';
 import { getItemType, isFolder } from '../../utils/schemaHelpers';
@@ -79,6 +81,10 @@ interface DesktopLayoutProps {
   docsCollection: OpenCollectionCollection | null;
   playgroundCollection: OpenCollectionCollection | null;
   filteredCollectionItems: OpenCollectionItem[];
+  collectionName: string;
+  version?: string;
+  logo?: React.ReactNode;
+  openInBrunoHref?: string;
   children?: React.ReactNode;
 }
 
@@ -101,7 +107,11 @@ const findItemByUuid = (items: OpenCollectionItem[] | undefined, uuid: string): 
 const DesktopLayout: React.FC<DesktopLayoutProps> = ({
   docsCollection,
   playgroundCollection,
-  filteredCollectionItems
+  filteredCollectionItems,
+  collectionName,
+  version,
+  logo,
+  openInBrunoHref
 }) => {
   const selectedItemId = useAppSelector(selectSelectedItemId);
   const [playgroundItem, setPlaygroundItem] = useState<HttpRequest | Folder | null>(null);
@@ -143,20 +153,32 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
   }, []);
 
   return (
-    <div className="flex h-screen">
-      <Docs
-        docsCollection={docsCollection}
-        filteredCollectionItems={filteredCollectionItems}
-        onOpenPlayground={handleOpenPlayground}
+    <div className="flex flex-col h-screen">
+      {/* searchSlot, envSwitcherSlot and onToggleSidebar are wired up
+          separately; the header renders empty slots / an inert hamburger
+          until then. */}
+      <Topbar
+        collectionName={collectionName}
+        version={version}
+        logo={logo}
+        openInBrunoHref={openInBrunoHref}
       />
 
-      <PlaygroundDrawer
-        isOpen={showPlaygroundDrawer}
-        onClose={() => setShowPlaygroundDrawer(false)}
-        collection={playgroundCollection}
-        selectedItem={playgroundItem}
-        onSelectItem={handlePlaygroundItemSelect}
-      />
+      <div className="flex flex-1 min-h-0">
+        <Docs
+          docsCollection={docsCollection}
+          filteredCollectionItems={filteredCollectionItems}
+          onOpenPlayground={handleOpenPlayground}
+        />
+
+        <PlaygroundDrawer
+          isOpen={showPlaygroundDrawer}
+          onClose={() => setShowPlaygroundDrawer(false)}
+          collection={playgroundCollection}
+          selectedItem={playgroundItem}
+          onSelectItem={handlePlaygroundItemSelect}
+        />
+      </div>
     </div>
   );
 };
@@ -172,6 +194,7 @@ export interface OpenCollectionProps {
 
 const OpenCollectionContent: React.FC<OpenCollectionProps> = ({
   collection,
+  logo,
   gitCollectionUrl,
 }) => {
   const dispatch = useAppDispatch();
@@ -256,6 +279,10 @@ const OpenCollectionContent: React.FC<OpenCollectionProps> = ({
     docsCollection,
     playgroundCollection,
     filteredCollectionItems,
+    collectionName: docsCollection?.info?.name ?? '',
+    version: docsCollection?.info?.version,
+    logo,
+    openInBrunoHref: buildBrunoDeepLink(gitCollectionUrl),
   };
 
   return (

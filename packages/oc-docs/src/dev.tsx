@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- dev-only entry, not a component module */
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
@@ -20,7 +21,6 @@ if (typeof window !== 'undefined') {
   (window as any).Prism = Prism;
 }
 
-
 // Development App component
 const DevApp: React.FC = () => {
   const store = createOpenCollectionStore();
@@ -30,7 +30,6 @@ const DevApp: React.FC = () => {
       <div style={{ height: '100vh', width: '100vw' }}>
         <OpenCollection
           collection={sampleCollectionYaml}
-          logo="/src/assets/opencollection-logo.svg"
           gitCollectionUrl="https://github.com/usebruno/bruno-testbench.git"
         />
       </div>
