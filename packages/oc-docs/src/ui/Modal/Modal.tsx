@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, type ReactNode } from 'react';
-import { Portal } from '../../components/Portal/Portal';
+import { Portal } from '../Portal/Portal';
 import { CloseIcon } from '../../assets/icons';
 import { StyledWrapper } from './StyledWrapper';
 
