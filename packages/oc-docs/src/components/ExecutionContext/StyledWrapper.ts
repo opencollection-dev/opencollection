@@ -44,8 +44,7 @@ export const StyledWrapper = styled.div`
     font-weight: 500;
     line-height: 1;
     letter-spacing: 0;
-    color: #838383;
-    background: var(--oc-background-surface0);
+    color: var(--oc-colors-text-subtext1);
     border: 1px solid var(--border-color);
     border-radius: 0.25rem;
     padding: 0.125rem 0.25rem;
