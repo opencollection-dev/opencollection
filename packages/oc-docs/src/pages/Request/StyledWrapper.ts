@@ -4,8 +4,8 @@ export const StyledWrapper = styled.div`
   max-width: 1280px;
   margin: 0 auto;
   color: var(--text-primary);
-  padding-top: 1.5625rem;
-  padding-bottom: 2.5625rem;
+  padding-top: 0.1rem;
+  padding-bottom: 0.1rem;
 
   .request-columns {
     display: grid;
