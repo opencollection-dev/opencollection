@@ -27,6 +27,7 @@ export interface GraphQLRequestSettings {
   timeout?: number | 'inherit';
   followRedirects?: boolean | 'inherit';
   maxRedirects?: number | 'inherit';
+  forwardAuthorizationOnRedirect?: boolean | 'inherit';
 }
 
 export interface GraphQLRequestInfo {

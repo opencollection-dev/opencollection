@@ -88,6 +88,7 @@ export interface HttpRequestSettings {
   timeout?: number | 'inherit';
   followRedirects?: boolean | 'inherit';
   maxRedirects?: number | 'inherit';
+  forwardAuthorizationOnRedirect?: boolean | 'inherit';
 }
 
 export interface HttpRequestExampleRequest {

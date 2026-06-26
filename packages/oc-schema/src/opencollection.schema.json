@@ -1724,6 +1724,23 @@
             }
           ],
           "description": "Maximum number of redirects to follow"
+        },
+        "forwardAuthorizationOnRedirect": {
+          "oneOf": [
+            {
+              "type": "boolean",
+              "const": true
+            },
+            {
+              "type": "boolean",
+              "const": false
+            },
+            {
+              "type": "string",
+              "const": "inherit"
+            }
+          ],
+          "description": "Whether to forward authorization headers on redirect to third party origin"
         }
       },
       "additionalProperties": false
@@ -1789,6 +1806,23 @@
             }
           ],
           "description": "Maximum number of redirects to follow"
+        },
+        "forwardAuthorizationOnRedirect": {
+          "oneOf": [
+            {
+              "type": "boolean",
+              "const": true
+            },
+            {
+              "type": "boolean",
+              "const": false
+            },
+            {
+              "type": "string",
+              "const": "inherit"
+            }
+          ],
+          "description": "Whether to forward authorization headers on redirect to third party origin"
         }
       },
       "additionalProperties": false
