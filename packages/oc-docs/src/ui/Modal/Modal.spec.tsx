@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect, vi } from 'vitest';
 import { Modal } from './Modal';
 
-vi.mock('../../components/Portal/Portal', () => ({
+vi.mock('../Portal/Portal', () => ({
   Portal: ({ children }: { children: React.ReactNode }) => children
 }));
 
