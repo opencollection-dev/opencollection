@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ScopeTag } from '../ScopeTag/ScopeTag';
 import { Code } from '../../Code/Code';
-import { Collapse } from '../../Collapse/Collapse';
+import { Collapse } from '../../../ui/Collapse/Collapse';
 import type { TestRow } from '../../../utils/fileUtils';
 import { StyledWrapper } from './StyledWrapper';
 
