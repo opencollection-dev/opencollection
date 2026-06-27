@@ -17,7 +17,8 @@ import { PlayIcon } from '../../../assets/icons';
 import { AUTH_MODE_LABELS } from '../../../constants';
 import { resolvePathAndQueryParams } from '../../../utils/pathParams';
 import { computeBodySize, formatBytes, responseBodyLanguage } from '../../../utils/exampleResponse';
-import { StyledWrapper, statusToneColor } from './StyledWrapper';
+import { statusToneColor } from '../../../utils/common';
+import { StyledWrapper } from './StyledWrapper';
 
 interface ExampleCardProps {
   example: HttpRequestExample;

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatCollectionVersion, DEFAULT_COLLECTION_VERSION, getInitials } from './common';
+import { formatCollectionVersion, DEFAULT_COLLECTION_VERSION, getInitials, statusToneColor } from './common';
 
 describe('formatCollectionVersion', () => {
   it('pads numeric versions to a full major.minor.patch with a "v" prefix', () => {
@@ -61,5 +61,19 @@ describe('getInitials', () => {
 
   it('handles non-letter first characters by taking them verbatim', () => {
     expect(getInitials('1Password Vault')).toBe('1V');
+  });
+});
+
+describe('statusToneColor', () => {
+  it('maps status ranges to their tone token', () => {
+    expect(statusToneColor(200)).toBe('var(--oc-status-success-text)');
+    expect(statusToneColor(204)).toBe('var(--oc-status-success-text)');
+    expect(statusToneColor(404)).toBe('var(--oc-status-danger-text)');
+    expect(statusToneColor(500)).toBe('var(--oc-status-danger-text)');
+    expect(statusToneColor(301)).toBe('var(--oc-status-info-text)');
+  });
+
+  it('falls back to muted when the status is undefined', () => {
+    expect(statusToneColor()).toBe('var(--text-muted)');
   });
 });

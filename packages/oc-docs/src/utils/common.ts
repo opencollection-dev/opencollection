@@ -52,3 +52,10 @@ export const getInitials = (collectionName?: string | null): string => {
   }
   return (words[0].charAt(0) + words[1].charAt(0)).toUpperCase();
 };
+
+export const statusToneColor = (status?: number): string => {
+  if (status === undefined) return 'var(--text-muted)';
+  if (status >= 200 && status < 300) return 'var(--oc-status-success-text)';
+  if (status >= 400) return 'var(--oc-status-danger-text)';
+  return 'var(--oc-status-info-text)';
+};

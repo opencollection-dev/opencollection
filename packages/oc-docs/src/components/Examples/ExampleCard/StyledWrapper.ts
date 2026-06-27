@@ -1,12 +1,5 @@
 import styled from '@emotion/styled';
 
-export const statusToneColor = (status?: number): string => {
-  if (status === undefined) return 'var(--text-muted)';
-  if (status >= 200 && status < 300) return 'var(--oc-status-success-text)';
-  if (status >= 400) return 'var(--oc-status-danger-text)';
-  return 'var(--oc-status-info-text)';
-};
-
 export const StyledWrapper = styled.div`
   border: 1px solid var(--border-color);
   border-radius: 8px;
