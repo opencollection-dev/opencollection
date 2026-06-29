@@ -9,14 +9,14 @@ interface RequestDescriptionProps {
 }
 
 const DURATION_MS = 280;
-const PREVIEW_LINES = 3;
+const PREVIEW_MAX_HEIGHT_REM = 4.5;
 
 const prefersReducedMotion = (): boolean =>
   typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
 
-const previewHeight = (el: HTMLElement): number => {
-  const lineHeight = parseFloat(getComputedStyle(el).lineHeight);
-  return Math.round((Number.isNaN(lineHeight) ? el.clientHeight / PREVIEW_LINES : lineHeight) * PREVIEW_LINES);
+const previewHeight = (): number => {
+  const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+  return Math.round(PREVIEW_MAX_HEIGHT_REM * rootFontSize);
 };
 
 export const RequestDescription: React.FC<RequestDescriptionProps> = ({ html, style, className, testId = 'request-description' }) => {
@@ -63,7 +63,7 @@ export const RequestDescription: React.FC<RequestDescriptionProps> = ({ html, st
 
     requestAnimationFrame(() => {
       void el.offsetHeight;
-      el.style.maxHeight = `${next ? el.scrollHeight : previewHeight(el)}px`;
+      el.style.maxHeight = `${next ? el.scrollHeight : previewHeight()}px`;
     });
   };
 
@@ -87,6 +87,7 @@ export const RequestDescription: React.FC<RequestDescriptionProps> = ({ html, st
           type="button"
           className="request-description-toggle"
           aria-expanded={expanded}
+          data-testid={`${testId}-toggle`}
           onClick={toggle}
         >
           <span>{expanded ? 'View less' : 'View more'}</span>

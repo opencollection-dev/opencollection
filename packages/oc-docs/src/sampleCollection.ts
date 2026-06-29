@@ -104,6 +104,13 @@ items:
       name: billing
       type: folder
       seq: 4
+    docs: |
+      ## Billing
+
+      Endpoints for managing **customers** and their invoices.
+
+      - Auth is **inherited** from the collection.
+      - Folder-level scripts record the execution chain for every request inside.
     request:
       auth: inherit
       scripts:

@@ -3,15 +3,22 @@ import styled from '@emotion/styled';
 export const StyledWrapper = styled.div`
   .request-description-body {
     color: var(--text-secondary);
+    overflow: hidden;
+  }
+  .request-description-body > :first-child {
+    margin-top: 0;
+  }
+  .request-description-body > :last-child {
+    margin-bottom: 0;
+  }
+  &:not(.is-expanded) .request-description-body {
+    -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent);
+    mask-image: linear-gradient(to bottom, #000 55%, transparent);
   }
   &:not(.is-expanded):not(.is-animating) .request-description-body {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    max-height: 4.5rem;
   }
   &.is-animating .request-description-body {
-    overflow: hidden;
     transition: max-height 0.28s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: max-height;
   }
