@@ -4,7 +4,6 @@ import type { StructuredText } from '@opencollection/types/common/description';
 import { useMarkdownRenderer } from '../../hooks';
 import { getCollectionStats, hasCollectionConfiguration } from '../../utils/collectionOverview';
 import { scriptsArrayToObject } from '../../utils/schemaHelpers';
-import { formatCollectionVersion } from '../../utils/common';
 import { AUTH_MODE_LABELS } from '../../constants';
 import { CollectionStats } from '../../components/CollectionStats/CollectionStats';
 import { EnvironmentSummary } from '../../components/OverviewEnvironments/EnvironmentSummary/EnvironmentSummary';
@@ -38,7 +37,7 @@ export const Overview: React.FC<OverviewProps> = ({ collection }) => {
     [counts]
   );
   const scripts = useMemo(() => scriptsArrayToObject(collection.request?.scripts), [collection.request]);
-  const version = formatCollectionVersion(collection.info?.version);
+  const version = collection.info?.version;
   const name = collection.info?.name || 'Untitled Collection';
   const environments = collection.config?.environments ?? [];
 
@@ -59,7 +58,9 @@ export const Overview: React.FC<OverviewProps> = ({ collection }) => {
       <StyledWrapper className="overview" data-testid="overview">
         <header className="overview-headline">
           <div>
-            {version && <div className="overview-version" data-testid="overview-collection-version">{version}</div>}
+            {version ? (
+              <div className="overview-version" data-testid="overview-collection-version">{`version : ${version}`}</div>
+            ) : null}
             <Heading testId="overview-collection-name">{name}</Heading>
           </div>
         </header>
