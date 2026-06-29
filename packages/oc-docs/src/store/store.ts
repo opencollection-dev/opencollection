@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import appReducer from '@slices/app';
 import docsReducer from '@slices/docs';
+import envReducer, { persistEnv } from '@slices/env';
 import playgroundReducer from '@slices/playground';
 import themeReducer, { persistThemeMode } from '@slices/theme';
 
@@ -9,6 +10,7 @@ export const createOpenCollectionStore = () => {
     reducer: {
       app: appReducer,
       docs: docsReducer,
+      env: envReducer,
       playground: playgroundReducer,
       theme: themeReducer,
     },
@@ -16,11 +18,18 @@ export const createOpenCollectionStore = () => {
 
   // Persist theme changes (localStorage + root data-theme) outside the reducer.
   let lastMode = store.getState().theme.mode;
+  // Persist the environment selection (sessionStorage) outside the reducer.
+  let lastEnv = store.getState().env;
   store.subscribe(() => {
-    const mode = store.getState().theme.mode;
+    const state = store.getState();
+    const mode = state.theme.mode;
     if (mode !== lastMode) {
       lastMode = mode;
       persistThemeMode(mode);
+    }
+    if (state.env !== lastEnv) {
+      lastEnv = state.env;
+      persistEnv(state.env);
     }
   });
 
