@@ -1713,19 +1713,7 @@
           ],
           "description": "Whether to follow redirects"
         },
-        "maxRedirects": {
-          "oneOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "string",
-              "const": "inherit"
-            }
-          ],
-          "description": "Maximum number of redirects to follow"
-        },
-        "forwardAuthorizationOnRedirect": {
+        "forwardAuthorizationHeader": {
           "oneOf": [
             {
               "type": "boolean",
@@ -1741,6 +1729,18 @@
             }
           ],
           "description": "Whether to forward authorization headers on redirect to third party origin"
+        },
+        "maxRedirects": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string",
+              "const": "inherit"
+            }
+          ],
+          "description": "Maximum number of redirects to follow"
         }
       },
       "additionalProperties": false
@@ -1795,19 +1795,7 @@
           ],
           "description": "Whether to follow redirects"
         },
-        "maxRedirects": {
-          "oneOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "string",
-              "const": "inherit"
-            }
-          ],
-          "description": "Maximum number of redirects to follow"
-        },
-        "forwardAuthorizationOnRedirect": {
+        "forwardAuthorizationHeader": {
           "oneOf": [
             {
               "type": "boolean",
@@ -1823,6 +1811,18 @@
             }
           ],
           "description": "Whether to forward authorization headers on redirect to third party origin"
+        },
+        "maxRedirects": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string",
+              "const": "inherit"
+            }
+          ],
+          "description": "Maximum number of redirects to follow"
         }
       },
       "additionalProperties": false
