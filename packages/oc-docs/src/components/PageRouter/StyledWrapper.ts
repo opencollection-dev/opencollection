@@ -1,20 +1,15 @@
 import styled from '@emotion/styled';
 
+/**
+ * Structural shell only. Page gutters (max-width + padding) are owned by
+ * <PageWrapper>, so the router must not add its own max-width/padding — that
+ * would double up the spacing. Keeps the page chrome identical to the pages.
+ */
 export const StyledWrapper = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   min-height: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 40px 48px;
-
-  @media (max-width: 1024px) {
-    padding: 32px 28px;
-  }
-  @media (max-width: 768px) {
-    padding: 24px 18px;
-  }
 
   .page-body {
     flex: 1 0 auto;

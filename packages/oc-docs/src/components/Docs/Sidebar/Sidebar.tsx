@@ -8,7 +8,7 @@ import { SidebarContainer, SidebarItems, SidebarItem } from './StyledWrapper';
 import ThemeToggle from '../../ThemeToggle/ThemeToggle';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { toggleItem, expandFolders, selectDocsCollection } from '../../../store/slices/docs';
-import { getItemType, getItemName, getHttpMethod, isFolder } from '../../../utils/schemaHelpers';
+import { getItemType, getItemName, getHttpMethod, isFolder, isScriptFile } from '../../../utils/schemaHelpers';
 import { getItemUuid } from '../../../utils/itemUtils';
 import { useNavModel } from '../../../routing/hooks';
 import { normalizeSlug } from '../../../routing/resolve';
@@ -72,6 +72,8 @@ const Sidebar: React.FC = () => {
     const itemIsScript = isScriptFile(item);
     const itemType = getItemType(item);
     const itemName = getItemName(item);
+    // Script files read as code filenames in the tree, e.g. "Script" → "Script.js".
+    const displayName = itemIsScript && itemName && !/\.[jt]s$/i.test(itemName) ? `${itemName}.js` : itemName;
     const itemUuid = getItemUuid(item);
     const itemSlug = itemUuid !== undefined ? uuidToSlug.get(itemUuid) : undefined;
     const isActive = itemSlug !== undefined && itemSlug === activeSlug;
@@ -111,11 +113,11 @@ const Sidebar: React.FC = () => {
             >
               {renderFolderIcon(isExpanded)}
             </div>
-          ) : (
+          ) : itemIsScript ? null : (
             <Method method={itemType === 'http' ? getHttpMethod(item as HttpRequest) : 'GET'} className="text-xs" />
           )}
 
-          <div className="truncate flex-1">{itemName}</div>
+          <div className={`truncate flex-1${itemIsScript ? ' font-mono' : ''}`}>{displayName}</div>
         </SidebarItem>
 
         {itemIsFolder && isExpanded && (item as Folder).items && (

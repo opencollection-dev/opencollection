@@ -78,23 +78,23 @@ export const mergeAuth = (collection: OpenCollection, request: HttpRequest, requ
     return;
   }
   
-  // Initialize runtime block if not present
-  if (!request.runtime) {
-    request.runtime = {};
+  // Auth lives on the protocol-detail block (request.http.auth); ensure it exists.
+  if (!request.http) {
+    request.http = {};
   }
-  
+
   // Look for auth in reverse order (closest to request wins)
   for (let i = requestTreePath.length - 1; i >= 0; i--) {
     const item = requestTreePath[i];
     if (isFolder(item) && item.request?.auth && item.request.auth !== 'inherit') {
-      request.runtime.auth = item.request.auth;
+      request.http.auth = item.request.auth;
       return;
     }
   }
-  
+
   // Finally, check collection-level auth
   if (collection.request?.auth && collection.request.auth !== 'inherit') {
-    request.runtime.auth = collection.request.auth;
+    request.http.auth = collection.request.auth;
   }
 };
 

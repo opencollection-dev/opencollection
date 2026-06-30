@@ -1,13 +1,18 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-import { useActiveResolution } from '../../routing/hooks';
+import React, { useMemo } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
+import type { HttpRequest } from '@opencollection/types/requests/http';
+import type { ScriptFile } from '@opencollection/types/collection/item';
+import { useActiveResolution, useNavModel } from '../../routing/hooks';
 import { useAppSelector } from '../../store/hooks';
 import { selectDocsCollection } from '../../store/slices/docs';
+import { getItemUuid } from '../../utils/itemUtils';
+import { getAncestorsByUuid } from '../../utils/fileUtils';
 import PrevNext from '../PrevNext/PrevNext';
 import { PageWrapper } from '../PageWrapper/PageWrapper';
 import { StyledWrapper } from './StyledWrapper';
 import { Overview } from '../../pages/Overview/Overview';
 import Request from '../../pages/Request/Request';
+import Script from '../../pages/Script/Script';
 import Environments from '../../pages/Environments/Environments';
 import type { PageProps } from '../../routing/types';
 
@@ -17,7 +22,20 @@ interface PageRouterProps {
 
 const PageRouter: React.FC<PageRouterProps> = ({ onOpenPlayground }) => {
   const resolution = useActiveResolution();
+  const model = useNavModel();
   const collection = useAppSelector(selectDocsCollection);
+  const navigate = useNavigate();
+
+  // Map each item's runtime uuid -> its stable slug so breadcrumb clicks
+  // navigate by URL (the same mapping the sidebar uses).
+  const uuidToSlug = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const entry of model.ordered) {
+      const uuid = getItemUuid(entry.item);
+      if (uuid) map.set(uuid, entry.slug);
+    }
+    return map;
+  }, [model]);
 
   if (!resolution) return <Navigate to="/" replace />;
   if (!collection) return null;
@@ -25,17 +43,42 @@ const PageRouter: React.FC<PageRouterProps> = ({ onOpenPlayground }) => {
   const { entry, prev, next } = resolution;
   const pageProps: PageProps = { node: entry, prev, next, collection, onOpenPlayground };
 
+  const goToUuid = (uuid: string) => {
+    const slug = uuidToSlug.get(uuid);
+    // A known item navigates to its slug; the leading collection crumb (and any
+    // unknown uuid) falls back to the overview.
+    navigate(slug !== undefined ? `/${slug}` : '/');
+  };
+
+  // Resolve the active node's item and its folder ancestry (used for breadcrumbs
+  // and for resolving inherited auth/scripts up the folder chain).
+  const item = entry.item;
+  const ancestry = item ? getAncestorsByUuid(collection, getItemUuid(item) ?? '') : [];
+
   const renderBody = () => {
     switch (entry.type) {
       case 'overview':
         return <Overview collection={collection} />;
       case 'environments':
         return <Environments {...pageProps} />;
-      case 'request':
       case 'folder':
+        // A folder shows the collection overview (matches the pre-routing behaviour).
+        return <Overview collection={collection} />;
       case 'script':
+        return item ? (
+          <Script item={item as ScriptFile} ancestry={ancestry} onBreadcrumbClick={goToUuid} />
+        ) : null;
+      case 'request':
       default:
-        return <Request {...pageProps} />;
+        return item ? (
+          <Request
+            item={item as HttpRequest}
+            ancestry={ancestry}
+            collection={collection}
+            onTryClick={onOpenPlayground}
+            onBreadcrumbClick={goToUuid}
+          />
+        ) : null;
     }
   };
 

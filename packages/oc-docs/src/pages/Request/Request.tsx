@@ -59,6 +59,8 @@ interface RequestProps {
 
 type RequestContentProps = Omit<RequestProps, 'item'> & { item: HttpRequest };
 
+const COLLECTION_ROOT_CRUMB = '__collection_root__';
+
 const descriptionContent = (item: HttpRequest): string => {
   const docs = getItemDocs(item);
   if (docs) return docs;
@@ -84,8 +86,10 @@ const RequestContent: React.FC<RequestContentProps> = ({
   const body = getHttpBody(item);
   const examples = getRequestExamples(item);
 
-  const pathParams = useMemo(() => params.filter((p) => p.type === 'path'), [params]);
-  const queryParams = useMemo(() => params.filter((p) => p.type === 'query'), [params]);
+  const { path: pathParams, query: queryParams } = useMemo(
+    () => resolvePathAndQueryParams(params, url),
+    [params, url]
+  );
 
   const descHtml = useMemo(() => {
     const content = descriptionContent(item);
@@ -105,16 +109,17 @@ const RequestContent: React.FC<RequestContentProps> = ({
   const postVars = useMemo(() => getPostResponseVars(item), [item]);
 
   const scriptChain = useMemo(() => buildScriptChain(collection, ancestry, item), [collection, ancestry, item]);
+  const scriptFlow = useMemo(() => getScriptFlow(collection), [collection]);
   const assertions = useMemo(() => collectAssertions(item), [item]);
   const tests = useMemo(() => collectTests(collection, ancestry, item), [collection, ancestry, item]);
 
-  const segments = useMemo<BreadcrumbSegment[]>(
-    () =>
-      ancestry
-        .map((folder) => ({ name: getItemName(folder) || 'Folder', uuid: (folder as { uuid?: string }).uuid || '' }))
-        .filter((segment) => segment.uuid),
-    [ancestry]
-  );
+  const segments = useMemo<BreadcrumbSegment[]>(() => {
+    const folderCrumbs = ancestry
+      .map((folder) => ({ name: getItemName(folder) || 'Folder', uuid: (folder as { uuid?: string }).uuid || '' }))
+      .filter((segment) => segment.uuid);
+    // Lead with the collection itself: Collection › …folders › current.
+    return [{ name: collection?.info?.name || 'Overview', uuid: COLLECTION_ROOT_CRUMB }, ...folderCrumbs];
+  }, [ancestry, collection]);
 
   const hasHeaders = headers.length > 0;
   const hasParams = pathParams.length > 0 || queryParams.length > 0;
@@ -123,19 +128,6 @@ const RequestContent: React.FC<RequestContentProps> = ({
   const hasExamples = examples.length > 0;
   const hasExecutionContext = scriptChain.length > 0 || hasVars || assertions.length > 0 || tests.length > 0;
   const hasLeftColumn = showAuth || hasParams || hasBody || hasHeaders;
-
-  // Left-column sections that have no content for this request collapse into the
-  // "hidden sections" toggle, in canonical order (Params · Body · Headers · Auth).
-  const hiddenTitles = useMemo(
-    () =>
-      [
-        !hasParams && 'Params',
-        !hasBody && 'Body',
-        !hasHeaders && 'Headers',
-        !showAuth && 'Auth'
-      ].filter((title): title is string => Boolean(title)),
-    [hasParams, hasBody, hasHeaders, showAuth]
-  );
 
   // Content-type label shown as a badge on the BODY heading (e.g. "application/json").
   const bodyContentType = useMemo(() => {
@@ -217,6 +209,7 @@ const RequestContent: React.FC<RequestContentProps> = ({
               postVars={postVars}
               assertions={assertions}
               tests={tests}
+              flow={scriptFlow}
               method={method}
               url={url}
             />

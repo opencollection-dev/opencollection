@@ -17,7 +17,7 @@ test.describe('page-based navigation', () => {
 
   test('breadcrumb reflects the folder hierarchy', async ({ page }) => {
     await page.goto(page$('bookings/lifecycle/create-booking'));
-    const bc = page.getByTestId('breadcrumb');
+    const bc = page.getByTestId('request-breadcrumb');
     await expect(bc).toContainText('Hotel API');
     await expect(bc).toContainText('Bookings');
     await expect(bc).toContainText('Lifecycle');
