@@ -9,6 +9,7 @@ export interface PropertyRow {
   secret?: boolean;
   node?: React.ReactNode;
   disabled?: boolean;
+  testId?: string;
 }
 
 interface PropertyTableProps {
@@ -27,7 +28,9 @@ const ValueCell: React.FC<{ row: PropertyRow; testId?: string }> = ({ row, testI
 export const PropertyTable: React.FC<PropertyTableProps> = ({ rows, emptyMessage, className, testId }) => (
   <StyledWrapper className={['property-table', className].filter(Boolean).join(' ')} data-testid={testId}>
     {rows.length === 0 ? (
-      emptyMessage ? <p className="property-empty-message">{emptyMessage}</p> : null
+      emptyMessage ? (
+        <p className="property-empty-message" data-testid={testId ? `${testId}-empty` : undefined}>{emptyMessage}</p>
+      ) : null
     ) : (
       <dl className="property-box">
         {rows.map((row, index) => (
@@ -36,7 +39,7 @@ export const PropertyTable: React.FC<PropertyTableProps> = ({ rows, emptyMessage
             key={`${row.label}-${index}`}
           >
             <dt className="property-key">{row.label}</dt>
-            <dd className="property-value-cell">
+            <dd className="property-value-cell" data-testid={testId && row.testId ? `${testId}-${row.testId}` : undefined}>
               <ValueCell row={row} testId={testId} />
             </dd>
           </div>
