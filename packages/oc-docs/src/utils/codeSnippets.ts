@@ -21,7 +21,8 @@ type NormalizedBody =
   | { kind: 'none' }
   | { kind: 'raw'; contentType: string; text: string }
   | { kind: 'urlencoded'; params: SnippetHeader[] }
-  | { kind: 'multipart'; parts: { name: string; isFile: boolean; value: string }[] };
+  | { kind: 'multipart'; parts: { name: string; isFile: boolean; value: string }[] }
+  | { kind: 'file'; contentType: string; filePath: string };
 
 /** MIME type emitted for each raw (single-blob) body type. */
 const RAW_BODY_MIME: Record<string, string> = {
@@ -70,6 +71,12 @@ const normalizeBody = (raw: SnippetInput['body']): NormalizedBody => {
             value: Array.isArray(entry.value) ? entry.value.join(',') : String(entry.value ?? '')
           }))
       };
+    case 'file': {
+      const variants = body.data || [];
+      const selected = variants.find((variant) => variant.selected) ?? variants[0];
+      if (!selected || !selected.filePath) return { kind: 'none' };
+      return { kind: 'file', contentType: selected.contentType || 'application/octet-stream', filePath: selected.filePath };
+    }
     default:
       return { kind: 'none' };
   }
@@ -113,7 +120,7 @@ const collectHeaders = (
     const alreadyPresent = headers.some((existing) => existing.name.toLowerCase() === authHeader.name.toLowerCase());
     if (!alreadyPresent) headers.push(authHeader);
   });
-  if (body.kind === 'raw' && !headers.some((h) => h.name.toLowerCase() === 'content-type')) {
+  if ((body.kind === 'raw' || body.kind === 'file') && !headers.some((h) => h.name.toLowerCase() === 'content-type')) {
     headers.push({ name: 'Content-Type', value: body.contentType });
   }
   return { headers, comment: auth.comment };
@@ -166,6 +173,10 @@ const toHarPostData = (body: NormalizedBody, mask: (s: string) => string): HarRe
             : { name: mask(part.name), value: mask(part.value) }
         )
       };
+    case 'file':
+      // Single binary file body — show the file path as the payload (mirrors
+      // bruno-enterprise-edition's buildPostData 'file' branch).
+      return { mimeType: body.contentType, text: mask(body.filePath) };
     default:
       return undefined;
   }
