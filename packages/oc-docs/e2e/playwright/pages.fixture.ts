@@ -6,6 +6,7 @@ import { UnsupportedRequestPage } from '../pages/unsupported-request.page';
 import { SidebarComponent } from '../components/sidebar.component';
 import { ThemeToggleComponent } from '../components/layout/theme-toggle.component';
 import { PageHeaderComponent } from '../components/layout/page-header.component';
+import { SearchComponent } from '../components/search/search.component';
 
 
 type Fixtures = {
@@ -16,6 +17,7 @@ type Fixtures = {
   sidebar: SidebarComponent;
   pageHeader: PageHeaderComponent;
   themeToggle: ThemeToggleComponent;
+  search: SearchComponent;
 };
 
 export const test = base.extend<Fixtures>({
@@ -39,5 +41,8 @@ export const test = base.extend<Fixtures>({
   },
   themeToggle: async ({ page }, use) => {
     await use(new ThemeToggleComponent(page));
+  },
+  search: async ({ page }, use) => {
+    await use(new SearchComponent(page));
   }
 });

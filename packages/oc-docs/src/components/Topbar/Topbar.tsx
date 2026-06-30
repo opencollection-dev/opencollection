@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { StyledWrapper } from './StyledWrapper';
 import Brand from './Brand/Brand';
 import MobileOverflow from './MobileOverflow/MobileOverflow';
@@ -14,6 +14,14 @@ export interface TopbarProps {
   logo?: React.ReactNode;
   /** Primary control slot. Rendered as-is; degrades when absent. */
   searchSlot?: React.ReactNode;
+  /**
+   * Below-desktop search-row open state. Optional: when provided (with
+   * `onSearchOpenChange`) the row is controlled by the parent so the search
+   * affordance can share one open-state with its slot content; when omitted the
+   * Topbar manages it internally (backward compatible).
+   */
+  searchOpen?: boolean;
+  onSearchOpenChange?: (open: boolean) => void;
   /** Secondary controls slot (env switcher + show-vars). */
   envSwitcherSlot?: React.ReactNode;
   onOpenInBruno?: () => void;
@@ -45,6 +53,8 @@ const Topbar: React.FC<TopbarProps> = ({
   version,
   logo,
   searchSlot,
+  searchOpen: controlledSearchOpen,
+  onSearchOpenChange,
   envSwitcherSlot,
   onOpenInBruno,
   openInBrunoHref,
@@ -53,7 +63,16 @@ const Topbar: React.FC<TopbarProps> = ({
 }) => {
   const mode = useTopbarLayout();
   const canRunBrunoApp = useCanRunBrunoApp();
-  const [searchOpen, setSearchOpen] = useState(false);
+  const [internalSearchOpen, setInternalSearchOpen] = useState(false);
+  const isControlled = controlledSearchOpen !== undefined;
+  const searchOpen = isControlled ? controlledSearchOpen : internalSearchOpen;
+  const setSearchOpen = useCallback(
+    (next: boolean) => {
+      if (onSearchOpenChange) onSearchOpenChange(next);
+      if (!isControlled) setInternalSearchOpen(next);
+    },
+    [onSearchOpenChange, isControlled],
+  );
 
   const isMobile = mode === 'mobile';
   const isDesktop = mode === 'desktop';
@@ -65,7 +84,7 @@ const Topbar: React.FC<TopbarProps> = ({
   // doesn't reappear (with stale aria state) the next time search collapses.
   useEffect(() => {
     if (isDesktop) setSearchOpen(false);
-  }, [isDesktop]);
+  }, [isDesktop, setSearchOpen]);
 
   const searchInner = <div className="topbar-search-inner">{searchSlot}</div>;
 
@@ -94,7 +113,7 @@ const Topbar: React.FC<TopbarProps> = ({
           <IconButton
             label="Search"
             aria-expanded={searchOpen}
-            onClick={() => setSearchOpen((prev) => !prev)}
+            onClick={() => setSearchOpen(!searchOpen)}
           >
             <SearchIcon />
           </IconButton>

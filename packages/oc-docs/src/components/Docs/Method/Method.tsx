@@ -1,4 +1,5 @@
 import React from 'react';
+import { getShortMethod } from '../../../utils/request';
 import { StyledWrapper } from './StyledWrapper';
 
 interface MethodProps {
@@ -8,7 +9,7 @@ interface MethodProps {
 
 export const Method: React.FC<MethodProps> = ({ method, className = '' }) => {
   const normalizedMethod = method?.toLowerCase() || 'get';
-  const displayMethod = method?.toUpperCase() === 'DELETE' ? 'DEL' : method?.toUpperCase() || 'GET';
+  const displayMethod = getShortMethod(method || 'GET');
 
   return (
     <StyledWrapper className={`${normalizedMethod} ${className}`}>
