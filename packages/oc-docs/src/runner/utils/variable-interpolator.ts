@@ -1,6 +1,7 @@
 import type { HttpRequest, HttpRequestHeader } from '@opencollection/types/requests/http';
 import type { Environment } from '@opencollection/types/config/environments';
 import { getRequestUrl, getHttpHeaders, getHttpBody, getHttpParams, getRequestAuth } from '../../utils/schemaHelpers';
+import { templateVariableGlobalRegex } from '../../utils/common';
 
 /**
  * Simple variable interpolation function
@@ -11,7 +12,7 @@ const interpolate = (str: string, variables: Record<string, any>, options: { esc
     return str;
   }
 
-  return str.replace(/\{\{([^}]+)\}\}/g, (match, variableName) => {
+  return str.replace(templateVariableGlobalRegex(), (match, variableName) => {
     const trimmedName = variableName.trim();
     
     // Handle nested object access (e.g., process.env.NODE_ENV)

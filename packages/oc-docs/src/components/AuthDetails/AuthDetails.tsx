@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Auth } from '@opencollection/types/common/auth';
 import { PropertyTable, type PropertyRow } from '../PropertyTable/PropertyTable';
+import { AUTH_TYPES } from '../../constants';
 
 interface AuthDetailsProps {
   auth?: Auth;
@@ -21,26 +22,26 @@ const buildAuthRows = (auth: Exclude<Auth, 'inherit'>): PropertyRow[] => {
   const rows: PropertyRow[] = [];
 
   switch (auth.type) {
-    case 'basic':
-    case 'digest':
-    case 'wsse':
+    case AUTH_TYPES.BASIC:
+    case AUTH_TYPES.DIGEST:
+    case AUTH_TYPES.WSSE:
       pushRow(rows, 'username', 'Username', auth.username);
       pushRow(rows, 'password', 'Password', auth.password, true);
       break;
-    case 'ntlm':
+    case AUTH_TYPES.NTLM:
       pushRow(rows, 'username', 'Username', auth.username);
       pushRow(rows, 'password', 'Password', auth.password, true);
       pushRow(rows, 'domain', 'Domain', auth.domain);
       break;
-    case 'bearer':
+    case AUTH_TYPES.BEARER:
       pushRow(rows, 'token', 'Token', auth.token, true);
       break;
-    case 'apikey':
+    case AUTH_TYPES.API_KEY:
       pushRow(rows, 'key', 'Key', auth.key);
       pushRow(rows, 'value', 'Value', auth.value, true);
       pushRow(rows, 'add-to', 'Add To', auth.placement);
       break;
-    case 'awsv4':
+    case AUTH_TYPES.AWS_V4:
       pushRow(rows, 'access-key-id', 'Access Key Id', auth.accessKeyId);
       pushRow(rows, 'secret-access-key', 'Secret Access Key', auth.secretAccessKey, true);
       pushRow(rows, 'session-token', 'Session Token', auth.sessionToken, true);
@@ -48,7 +49,7 @@ const buildAuthRows = (auth: Exclude<Auth, 'inherit'>): PropertyRow[] => {
       pushRow(rows, 'region', 'Region', auth.region);
       pushRow(rows, 'profile-name', 'Profile Name', auth.profileName);
       break;
-    case 'oauth1':
+    case AUTH_TYPES.OAUTH1:
       pushRow(rows, 'consumer-key', 'Consumer Key', auth.consumerKey);
       pushRow(rows, 'consumer-secret', 'Consumer Secret', auth.consumerSecret, true);
       pushRow(rows, 'access-token', 'Access Token', auth.accessToken, true);
@@ -57,7 +58,7 @@ const buildAuthRows = (auth: Exclude<Auth, 'inherit'>): PropertyRow[] => {
       pushRow(rows, 'callback-url', 'Callback URL', auth.callbackUrl);
       pushRow(rows, 'placement', 'Placement', auth.placement);
       break;
-    case 'oauth2': {
+    case AUTH_TYPES.OAUTH2: {
       const o = auth as {
         flow?: string;
         scope?: string;
@@ -90,7 +91,7 @@ export const AuthDetails: React.FC<AuthDetailsProps> = ({
   authModeLabels = {},
   inheritedFrom,
   emptyMessage,
-  testId
+  testId = 'auth-details'
 }) => {
   if (!auth) {
     return emptyMessage ? <PropertyTable rows={[]} emptyMessage={emptyMessage} testId={testId} /> : null;

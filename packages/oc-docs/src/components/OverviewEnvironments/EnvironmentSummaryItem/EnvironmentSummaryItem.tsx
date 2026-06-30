@@ -10,7 +10,7 @@ interface EnvironmentSummaryItemProps {
 }
 
 /** A single environment row: color dot, name, and variable count. Renders an `<li>`. */
-export const EnvironmentSummaryItem: React.FC<EnvironmentSummaryItemProps> = ({ environment, testId }) => (
+export const EnvironmentSummaryItem: React.FC<EnvironmentSummaryItemProps> = ({ environment, testId = 'environment-summary-item' }) => (
   <StyledWrapper className="environment-summary-item" data-testid={testId}>
     <span
       className="environment-summary-dot"

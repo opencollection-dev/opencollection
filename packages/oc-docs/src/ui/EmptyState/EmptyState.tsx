@@ -9,7 +9,7 @@ interface EmptyStateProps {
   className?: string;
 }
 
-export const EmptyState: React.FC<EmptyStateProps> = ({ icon, heading, subheading, testId, className }) => (
+export const EmptyState: React.FC<EmptyStateProps> = ({ icon, heading, subheading, testId = 'empty-state', className }) => (
   <StyledWrapper className={className} data-testid={testId}>
     <span className="empty-state-icon" aria-hidden="true">
       {icon}

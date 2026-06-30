@@ -38,13 +38,17 @@ Playwright starts the dev server for you (see `webServer` in `playwright.config.
 ```
 e2e/
 ├── tests/                          # the tests, grouped by feature
-│   ├── overview/overview.spec.ts
-│   ├── overview/overview-documentation.spec.ts
-│   ├── request/request-details.spec.ts
-│   ├── request/request-examples.spec.ts
-│   ├── request/request-execution-context.spec.ts
-│   ├── script/script.spec.ts
-│   └── theming/theme-toggle.spec.ts
+│   ├── overview/                   #   Collection Overview page
+│   │   ├── overview.spec.ts
+│   │   └── overview-documentation.spec.ts
+│   ├── request/                    #   Request page
+│   │   ├── request-details.spec.ts
+│   │   ├── request-examples.spec.ts
+│   │   └── request-execution-context.spec.ts
+│   ├── script/                     #   Script page
+│   │   └── script.spec.ts
+│   └── theming/                    #   light/dark theme switch
+│       └── theme-toggle.spec.ts
 ├── pages/                          # one "page object" per screen
 │   ├── base.page.ts                #   shared navigation (goto, reload)
 │   ├── overview.page.ts            #   OverviewPage — composes its overview/ sections

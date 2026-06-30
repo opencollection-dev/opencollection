@@ -58,7 +58,7 @@ interface RequestProps {
   onBreadcrumbClick?: (uuid: string) => void;
 }
 
-type RequestContentProps = Omit<RequestProps, 'item'> & { item: HttpRequest };
+type RequestContentProps = Omit<RequestProps, 'item'> & { item: HttpRequest; testId?: string };
 
 const descriptionContent = (item: HttpRequest): string => {
   const docs = getItemDocs(item);
@@ -73,7 +73,8 @@ const RequestContent: React.FC<RequestContentProps> = ({
   ancestry = [],
   collection,
   onTryClick,
-  onBreadcrumbClick
+  onBreadcrumbClick,
+  testId = 'request-page'
 }) => {
   const md = useMarkdownRenderer();
 
@@ -135,7 +136,7 @@ const RequestContent: React.FC<RequestContentProps> = ({
 
   return (
     <PageWrapper>
-      <StyledWrapper className="request" data-testid="request-page">
+      <StyledWrapper className="request" data-testid={testId}>
         <Breadcrumb segments={segments} current={name} onSegmentClick={onBreadcrumbClick} testId="request-breadcrumb" />
 
         <Heading size="md" style={{ marginTop: '0.875rem' }} testId="request-title">{name}</Heading>

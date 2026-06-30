@@ -10,7 +10,7 @@ interface SectionLabelProps {
   className?: string;
 }
 
-export const SectionLabel: React.FC<SectionLabelProps> = ({ children, as = 'h2', testId, className }) => (
+export const SectionLabel: React.FC<SectionLabelProps> = ({ children, as = 'h2', testId = 'section-label', className }) => (
   <StyledWrapper as={as} className={className} data-testid={testId}>
     {children}
   </StyledWrapper>

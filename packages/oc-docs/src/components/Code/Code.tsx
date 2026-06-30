@@ -93,7 +93,7 @@ export const Code: React.FC<CodeProps> = ({
   surface = 'base',
   height = '200px',
   className,
-  testId
+  testId = 'code'
 }) => {
   if (!readOnly) {
     return (

@@ -25,7 +25,7 @@ const ValueCell: React.FC<{ row: PropertyRow; testId?: string }> = ({ row, testI
   return <VariableText value={row.value ?? ''} />;
 };
 
-export const PropertyTable: React.FC<PropertyTableProps> = ({ rows, emptyMessage, className, testId }) => (
+export const PropertyTable: React.FC<PropertyTableProps> = ({ rows, emptyMessage, className, testId = 'property-table' }) => (
   <StyledWrapper className={['property-table', className].filter(Boolean).join(' ')} data-testid={testId}>
     {rows.length === 0 ? (
       emptyMessage ? (

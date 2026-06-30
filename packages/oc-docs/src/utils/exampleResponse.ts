@@ -13,10 +13,11 @@ export const computeBodySize = (data: string | undefined): number => {
  * "2.3KB", "1.1MB". KB is the smallest unit shown, matching the design.
  */
 export const formatBytes = (bytes: number): string => {
+  const format = (value: number): string => value.toFixed(value < 10 ? 1 : 0);
   const kb = bytes / 1024;
-  if (kb < 1024) return `${kb.toFixed(kb < 10 ? 1 : 0)}KB`;
-  const mb = kb / 1024;
-  return `${mb.toFixed(mb < 10 ? 1 : 0)}MB`;
+  // Compare the rounded value: 1048575 B rounds to "1024" KB, which must read as 1.0MB.
+  if (Number(format(kb)) < 1024) return `${format(kb)}KB`;
+  return `${format(bytes / 1024 / 1024)}MB`;
 };
 
 const RESPONSE_LANGUAGE: Record<string, string> = {

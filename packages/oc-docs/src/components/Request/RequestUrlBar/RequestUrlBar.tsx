@@ -11,6 +11,7 @@ interface RequestUrlBarProps {
   tryLabel?: string;
   style?: React.CSSProperties;
   className?: string;
+  testId?: string;
 }
 
 export const RequestUrlBar: React.FC<RequestUrlBarProps> = ({
@@ -19,9 +20,10 @@ export const RequestUrlBar: React.FC<RequestUrlBarProps> = ({
   onTry,
   tryLabel = 'Try',
   style,
-  className
+  className,
+  testId = 'request-url-bar'
 }) => (
-  <StyledWrapper style={style} className={['request-url-bar', className].filter(Boolean).join(' ')} data-testid="request-url-bar">
+  <StyledWrapper style={style} className={['request-url-bar', className].filter(Boolean).join(' ')} data-testid={testId}>
     <span className="request-url-bar-method" data-testid="request-method">
       <MethodBadge method={method} />
     </span>

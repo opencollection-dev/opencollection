@@ -13,7 +13,7 @@ interface HeadingProps {
   testId?: string;
 }
 
-export const Heading: React.FC<HeadingProps> = ({ children, as = 'h1', size = 'lg', style, className, testId }) => (
+export const Heading: React.FC<HeadingProps> = ({ children, as = 'h1', size = 'lg', style, className, testId = 'heading' }) => (
   <StyledWrapper
     as={as}
     style={style}

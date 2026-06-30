@@ -42,7 +42,7 @@ const MoonIcon = () => (
   </svg>
 );
 
-const ThemeToggle: React.FC = () => {
+const ThemeToggle: React.FC<{ testId?: string }> = ({ testId = 'theme-toggle' }) => {
   const dispatch = useAppDispatch();
   const mode = useAppSelector((s) => s.theme.mode);
   const isDark = mode === 'dark';
@@ -50,7 +50,7 @@ const ThemeToggle: React.FC = () => {
   return (
     <Button
       type="button"
-      data-testid="theme-toggle"
+      data-testid={testId}
       aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
       title={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
       onClick={() => dispatch(toggleTheme())}

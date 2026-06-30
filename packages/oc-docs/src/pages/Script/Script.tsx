@@ -14,9 +14,10 @@ interface ScriptProps {
   ancestry?: Item[];
   collection?: OpenCollection | null;
   onBreadcrumbClick?: (uuid: string) => void;
+  testId?: string;
 }
 
-export const Script: React.FC<ScriptProps> = ({ item, ancestry = [], collection, onBreadcrumbClick }) => {
+export const Script: React.FC<ScriptProps> = ({ item, ancestry = [], collection, onBreadcrumbClick, testId = 'script-page' }) => {
   const name = getItemName(item) || 'Script';
   const code = item.script ?? '';
 
@@ -27,7 +28,7 @@ export const Script: React.FC<ScriptProps> = ({ item, ancestry = [], collection,
 
   return (
     <PageWrapper>
-      <StyledWrapper className="script" data-testid="script-page">
+      <StyledWrapper className="script" data-testid={testId}>
         <Breadcrumb segments={segments} current={name} onSegmentClick={onBreadcrumbClick} testId="script-breadcrumb" />
 
         <Heading size="md" style={{ marginTop: '0.875rem' }} testId="script-title">{name}</Heading>

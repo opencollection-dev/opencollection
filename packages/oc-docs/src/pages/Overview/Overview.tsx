@@ -22,9 +22,10 @@ const getDocsContent = (docs: OpenCollection['docs']): string => {
 
 interface OverviewProps {
   collection: OpenCollection;
+  testId?: string;
 }
 
-export const Overview: React.FC<OverviewProps> = ({ collection }) => {
+export const Overview: React.FC<OverviewProps> = ({ collection, testId = 'overview' }) => {
   const md = useMarkdownRenderer();
 
   const counts = useMemo(() => getCollectionStats(collection), [collection]);
@@ -55,7 +56,7 @@ export const Overview: React.FC<OverviewProps> = ({ collection }) => {
 
   return (
     <PageWrapper>
-      <StyledWrapper className="overview" data-testid="overview">
+      <StyledWrapper className="overview" data-testid={testId}>
         <header className="overview-headline">
           <div>
             {version ? (
@@ -114,7 +115,6 @@ export const Overview: React.FC<OverviewProps> = ({ collection }) => {
                   auth={collection.request?.auth}
                   scripts={scripts}
                   authModeLabels={AUTH_MODE_LABELS}
-                  testId="overview-config"
                 />
               ) : (
                 <EmptyState

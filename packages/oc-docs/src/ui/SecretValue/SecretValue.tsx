@@ -24,7 +24,7 @@ const EyeIcon: React.FC<{ off?: boolean }> = ({ off }) => (
   </svg>
 );
 
-export const SecretValue: React.FC<SecretValueProps> = ({ value, testId }) => {
+export const SecretValue: React.FC<SecretValueProps> = ({ value, testId = 'secret-value' }) => {
   const [revealed, setRevealed] = useState(false);
 
   return (

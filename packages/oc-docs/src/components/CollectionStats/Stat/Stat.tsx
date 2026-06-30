@@ -10,7 +10,7 @@ interface StatProps extends StatItem {
   testId?: string;
 }
 
-export const Stat: React.FC<StatProps> = ({ label, value, testId }) => (
+export const Stat: React.FC<StatProps> = ({ label, value, testId = 'stat' }) => (
   <StyledWrapper className="stat" data-testid={testId}>
     <span className="stat-value" data-testid={testId ? `${testId}-value` : undefined}>{value}</span>
     <span className="stat-label">{label}</span>

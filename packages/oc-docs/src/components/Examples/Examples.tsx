@@ -9,13 +9,14 @@ interface ExamplesProps {
   url: string;
   onTry?: () => void;
   className?: string;
+  testId?: string;
 }
 
-export const Examples: React.FC<ExamplesProps> = ({ examples, method, url, onTry, className }) => {
+export const Examples: React.FC<ExamplesProps> = ({ examples, method, url, onTry, className, testId = 'request-examples' }) => {
   if (!examples || examples.length === 0) return null;
 
   return (
-    <StyledWrapper className={['examples', className].filter(Boolean).join(' ')} data-testid="request-examples">
+    <StyledWrapper className={['examples', className].filter(Boolean).join(' ')} data-testid={testId}>
       {examples.map((example, index) => (
         <ExampleCard
           key={`${example.name ?? 'example'}-${index}`}

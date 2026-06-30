@@ -3,6 +3,7 @@ import type { OpenCollection } from '@opencollection/types';
 import type { Item } from '@opencollection/types/collection/item';
 import type { BreadcrumbSegment } from '../ui/Breadcrumb/Breadcrumb';
 import { getItemName } from './schemaHelpers';
+import { TEMPLATE_VARIABLE_BODY, TEMPLATE_VARIABLE_SOURCE } from '../constants';
 
 // a customized version of nanoid without using _ and -
 export const uuid = () => {
@@ -49,3 +50,13 @@ export const buildBreadcrumbSegments = (
     .filter((segment) => segment.uuid);
   return [{ name: collection?.info?.name || 'Overview', uuid: COLLECTION_ROOT_CRUMB }, ...folderCrumbs];
 };
+
+/** True when the whole string is exactly one `{{var}}` token (anchored, non-global → stateless). */
+export const isTemplateVariable = (value: string): boolean =>
+  new RegExp(`^${TEMPLATE_VARIABLE_SOURCE}$`).test(value);
+
+/** Fresh global regex capturing the WHOLE `{{var}}` token, for `String.split` tokenizing (delimiter kept). New instance per call → no shared `lastIndex`. */
+export const templateVariableSplitRegex = (): RegExp => new RegExp(`(${TEMPLATE_VARIABLE_SOURCE})`, 'g');
+
+/** Fresh global regex whose capture group 1 is the variable NAME, for `String.replace` masking/interpolation. New instance per call → stateless. */
+export const templateVariableGlobalRegex = (): RegExp => new RegExp(`\\{\\{(${TEMPLATE_VARIABLE_BODY})\\}\\}`, 'g');

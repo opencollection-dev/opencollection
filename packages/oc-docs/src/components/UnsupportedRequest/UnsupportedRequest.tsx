@@ -18,6 +18,7 @@ interface UnsupportedRequestProps {
   ancestry?: Item[];
   collection?: OpenCollection | null;
   onBreadcrumbClick?: (uuid: string) => void;
+  testId?: string;
 }
 
 const REQUEST_TYPE_LABELS: Record<string, string> = {
@@ -26,7 +27,7 @@ const REQUEST_TYPE_LABELS: Record<string, string> = {
   grpc: 'gRPC'
 };
 
-export const UnsupportedRequest: React.FC<UnsupportedRequestProps> = ({ item, ancestry = [], collection, onBreadcrumbClick }) => {
+export const UnsupportedRequest: React.FC<UnsupportedRequestProps> = ({ item, ancestry = [], collection, onBreadcrumbClick, testId = 'unsupported-request' }) => {
   const typeLabel = REQUEST_TYPE_LABELS[getItemType(item) ?? ''] ?? 'This request';
   const name = getItemName(item) || typeLabel;
 
@@ -37,7 +38,7 @@ export const UnsupportedRequest: React.FC<UnsupportedRequestProps> = ({ item, an
 
   return (
     <PageWrapper>
-      <StyledWrapper className="unsupported-request" data-testid="unsupported-request">
+      <StyledWrapper className="unsupported-request" data-testid={testId}>
         <Breadcrumb segments={segments} current={name} onSegmentClick={onBreadcrumbClick} testId="unsupported-request-breadcrumb" />
 
         <Heading size="md" style={{ marginTop: '0.875rem' }} testId="unsupported-request-title">{typeLabel}</Heading>

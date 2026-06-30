@@ -29,7 +29,7 @@ export const CopyButton: React.FC<CopyButtonProps> = ({
   label = 'Copy',
   copiedLabel = 'Copied',
   resetAfterMs = 2000,
-  testId,
+  testId = 'copy-button',
   style,
   className
 }) => {

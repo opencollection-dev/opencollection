@@ -2,6 +2,8 @@ import { HTTPSnippet, type HarRequest } from '@mintlify/httpsnippet';
 import type { HttpRequestBody, HttpRequestBodyVariant } from '@opencollection/types/requests/http';
 import type { Auth } from '@opencollection/types/common/auth';
 import { selectBodyVariant } from './request';
+import { AUTH_TYPES, BODY_TYPES, CONTENT_TYPES } from '../constants';
+import { templateVariableGlobalRegex } from './common';
 
 export interface SnippetHeader {
   name: string;
@@ -26,10 +28,10 @@ type NormalizedBody =
 
 /** MIME type emitted for each raw (single-blob) body type. */
 const RAW_BODY_MIME: Record<string, string> = {
-  json: 'application/json',
-  xml: 'application/xml',
-  text: 'text/plain',
-  sparql: 'application/sparql-query'
+  [BODY_TYPES.JSON]: CONTENT_TYPES.JSON,
+  [BODY_TYPES.XML]: CONTENT_TYPES.XML,
+  [BODY_TYPES.TEXT]: CONTENT_TYPES.TEXT,
+  [BODY_TYPES.SPARQL]: CONTENT_TYPES.SPARQL
 };
 
 const toBase64 = (input: string): string => {
@@ -48,19 +50,19 @@ const normalizeBody = (raw: SnippetInput['body']): NormalizedBody => {
   const { body } = selectBodyVariant(raw);
   if (!body || !body.type) return { kind: 'none' };
   switch (body.type) {
-    case 'json':
-    case 'xml':
-    case 'text':
-    case 'sparql': {
+    case BODY_TYPES.JSON:
+    case BODY_TYPES.XML:
+    case BODY_TYPES.TEXT:
+    case BODY_TYPES.SPARQL: {
       const text = typeof body.data === 'string' ? body.data.trim() : '';
       return text ? { kind: 'raw', contentType: RAW_BODY_MIME[body.type], text } : { kind: 'none' };
     }
-    case 'form-urlencoded':
+    case BODY_TYPES.FORM_URLENCODED:
       return {
         kind: 'urlencoded',
         params: (body.data || []).filter((entry) => entry.disabled !== true).map((entry) => ({ name: entry.name, value: entry.value }))
       };
-    case 'multipart-form':
+    case BODY_TYPES.MULTIPART_FORM:
       return {
         kind: 'multipart',
         parts: (body.data || [])
@@ -71,11 +73,11 @@ const normalizeBody = (raw: SnippetInput['body']): NormalizedBody => {
             value: Array.isArray(entry.value) ? entry.value.join(',') : String(entry.value ?? '')
           }))
       };
-    case 'file': {
+    case BODY_TYPES.FILE: {
       const variants = body.data || [];
       const selected = variants.find((variant) => variant.selected) ?? variants[0];
       if (!selected || !selected.filePath) return { kind: 'none' };
-      return { kind: 'file', contentType: selected.contentType || 'application/octet-stream', filePath: selected.filePath };
+      return { kind: 'file', contentType: selected.contentType || CONTENT_TYPES.OCTET_STREAM, filePath: selected.filePath };
     }
     default:
       return { kind: 'none' };
@@ -90,7 +92,7 @@ const normalizeBody = (raw: SnippetInput['body']): NormalizedBody => {
 const authToHeaders = (auth: Auth | undefined): { headers: SnippetHeader[]; comment?: string } => {
   if (!auth || auth === 'inherit') return { headers: [] };
   switch (auth.type) {
-    case 'basic': {
+    case AUTH_TYPES.BASIC: {
       const username = auth.username ?? '';
       const password = auth.password ?? '';
       if (`${username}${password}`.includes('{{')) {
@@ -98,9 +100,9 @@ const authToHeaders = (auth: Auth | undefined): { headers: SnippetHeader[]; comm
       }
       return { headers: [{ name: 'Authorization', value: `Basic ${toBase64(`${username}:${password}`)}` }] };
     }
-    case 'bearer':
+    case AUTH_TYPES.BEARER:
       return { headers: [{ name: 'Authorization', value: `Bearer ${auth.token ?? ''}` }] };
-    case 'apikey':
+    case AUTH_TYPES.API_KEY:
       return auth.placement === 'query'
         ? { headers: [], comment: `auth: API Key — sent as query param "${auth.key ?? ''}"` }
         : { headers: [{ name: auth.key ?? 'X-API-Key', value: auth.value ?? '' }] };
@@ -126,9 +128,6 @@ const collectHeaders = (
   return { headers, comment: auth.comment };
 };
 
-/** Matches an OpenCollection template variable, e.g. `{{baseUrl}}`. */
-const TEMPLATE_VARIABLE = /\{\{[^}]+\}\}/g;
-
 /**
  * HTTPSnippet runs the URL through WHATWG parsing/encoding, which lowercases the
  * host and percent-encodes `{{var}}` tokens. The masker swaps each variable for a
@@ -139,7 +138,7 @@ const TEMPLATE_VARIABLE = /\{\{[^}]+\}\}/g;
 const createTemplateMasker = () => {
   const originalByPlaceholder = new Map<string, string>();
   const mask = (value: string): string =>
-    value.replace(TEMPLATE_VARIABLE, (variable) => {
+    value.replace(templateVariableGlobalRegex(), (variable) => {
       for (const [placeholder, original] of originalByPlaceholder) if (original === variable) return placeholder;
       // Trailing `x` terminates the index so e.g. `ocvar1x` is never a prefix of `ocvar11x`.
       const placeholder = `ocvar${originalByPlaceholder.size}x`;

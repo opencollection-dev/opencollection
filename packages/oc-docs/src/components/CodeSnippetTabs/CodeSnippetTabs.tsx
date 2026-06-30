@@ -22,6 +22,7 @@ interface CodeSnippetTabsProps {
   body?: HttpRequestBody | HttpRequestBodyVariant[];
   auth?: Auth;
   className?: string;
+  testId?: string;
 }
 
 const LANGUAGES = [
@@ -30,7 +31,7 @@ const LANGUAGES = [
   { id: 'python', label: 'Python', language: 'python', generate: generatePythonCode }
 ] as const;
 
-export const CodeSnippetTabs: React.FC<CodeSnippetTabsProps> = ({ method, url, headers, body, auth, className }) => {
+export const CodeSnippetTabs: React.FC<CodeSnippetTabsProps> = ({ method, url, headers, body, auth, className, testId = 'request-code-snippet' }) => {
   const [active, setActive] = useState<string>(LANGUAGES[0].id);
   const [expanded, setExpanded] = useState(false);
 
@@ -89,7 +90,7 @@ export const CodeSnippetTabs: React.FC<CodeSnippetTabsProps> = ({ method, url, h
   );
 
   return (
-    <StyledWrapper className={['code-snippet-tabs', className].filter(Boolean).join(' ')} data-testid="request-code-snippet">
+    <StyledWrapper className={['code-snippet-tabs', className].filter(Boolean).join(' ')} data-testid={testId}>
       {renderSnippetBox('inline')}
       <Modal open={expanded} onClose={() => setExpanded(false)} title={<SectionLabel>Code snippet</SectionLabel>} ariaLabel="Code snippet">
         {expanded && (

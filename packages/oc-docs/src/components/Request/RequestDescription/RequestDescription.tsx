@@ -5,6 +5,7 @@ interface RequestDescriptionProps {
   html: string;
   style?: React.CSSProperties;
   className?: string;
+  testId?: string;
 }
 
 const DURATION_MS = 280;
@@ -18,7 +19,7 @@ const previewHeight = (el: HTMLElement): number => {
   return Math.round((Number.isNaN(lineHeight) ? el.clientHeight / PREVIEW_LINES : lineHeight) * PREVIEW_LINES);
 };
 
-export const RequestDescription: React.FC<RequestDescriptionProps> = ({ html, style, className }) => {
+export const RequestDescription: React.FC<RequestDescriptionProps> = ({ html, style, className, testId = 'request-description' }) => {
   const [expanded, setExpanded] = useState(false);
   const [overflowing, setOverflowing] = useState(false);
   const [animating, setAnimating] = useState(false);
@@ -74,7 +75,7 @@ export const RequestDescription: React.FC<RequestDescriptionProps> = ({ html, st
       className={['request-description', expanded ? 'is-expanded' : '', animating ? 'is-animating' : '', className]
         .filter(Boolean)
         .join(' ')}
-      data-testid="request-description"
+      data-testid={testId}
     >
       <div
         ref={bodyRef}

@@ -26,6 +26,7 @@ export const CollectionConfiguration: React.FC<CollectionConfigurationProps> = (
   auth,
   scripts = {},
   authModeLabels = {},
+  testId = 'collection-config',
 }) => {
   const visibleHeaders = headers.filter((header) => header && header.name && header.disabled !== true);
   const hasHeaders = visibleHeaders.length > 0;
@@ -39,24 +40,24 @@ export const CollectionConfiguration: React.FC<CollectionConfigurationProps> = (
   }
 
   return (
-    <StyledWrapper className="collection-configuration" data-testid="collection-config">
+    <StyledWrapper className="collection-configuration" data-testid={testId}>
       {hasHeaders && (
         <div className="config-group">
-          <SubHeading className='script-label' testId="collection-config-subheading">Headers</SubHeading>
+          <SubHeading className='script-label' testId={`${testId}-subheading`}>Headers</SubHeading>
           <PropertyTable rows={visibleHeaders.map((header) => ({ label: header.name, value: header.value }))} />
         </div>
       )}
 
       {hasAuth && (
         <div className="config-group">
-          <SubHeading className='script-label' testId="collection-config-subheading">Auth</SubHeading>
-          <AuthDetails auth={auth} authModeLabels={authModeLabels} testId="collection-config-auth" />
+          <SubHeading className='script-label' testId={`${testId}-subheading`}>Auth</SubHeading>
+          <AuthDetails auth={auth} authModeLabels={authModeLabels} testId={`${testId}-auth`} />
         </div>
       )}
 
       {hasScripts && (
         <div className="config-group">
-          <SubHeading className='script-label' testId="collection-config-subheading">Script</SubHeading>
+          <SubHeading className='script-label' testId={`${testId}-subheading`}>Script</SubHeading>
           {scripts.preRequest && (
             <div className="script-block">
               <p className="script-phase-label">Pre-Request</p>
@@ -74,8 +75,8 @@ export const CollectionConfiguration: React.FC<CollectionConfigurationProps> = (
 
       {hasTests && (
         <div className="config-group">
-          <SubHeading className='script-label' testId="collection-config-subheading">Tests</SubHeading>
-          <Code code={scripts.tests as string} language="javascript" showLineNumbers testId="collection-config-tests" />
+          <SubHeading className='script-label' testId={`${testId}-subheading`}>Tests</SubHeading>
+          <Code code={scripts.tests as string} language="javascript" showLineNumbers testId={`${testId}-tests`} />
         </div>
       )}
 

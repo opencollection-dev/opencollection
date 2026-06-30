@@ -18,6 +18,7 @@ import { AUTH_MODE_LABELS } from '../../../constants';
 import { resolvePathAndQueryParams } from '../../../utils/pathParams';
 import { computeBodySize, formatBytes, responseBodyLanguage } from '../../../utils/exampleResponse';
 import { statusToneColor } from '../../../utils/common';
+import { BODY_TYPES, CONTENT_TYPES } from '../../../constants';
 import { StyledWrapper } from './StyledWrapper';
 
 interface ExampleCardProps {
@@ -26,6 +27,7 @@ interface ExampleCardProps {
   url: string;
   onTry?: () => void;
   defaultExpanded?: boolean;
+  testId?: string;
 }
 
 interface PaneTab {
@@ -45,38 +47,38 @@ const authTypeLabel = (auth: Auth): string => (typeof auth === 'string' ? auth :
 
 const requestBodyCtype = (body: HttpRequestBody): string => {
   switch (body.type) {
-    case 'json':
-      return 'application/json';
-    case 'xml':
-      return 'application/xml';
-    case 'text':
-      return 'text/plain';
-    case 'sparql':
-      return 'application/sparql-query';
-    case 'form-urlencoded':
-      return 'application/x-www-form-urlencoded';
-    case 'multipart-form':
-      return 'multipart/form-data';
-    case 'file':
-      return 'application/octet-stream';
+    case BODY_TYPES.JSON:
+      return CONTENT_TYPES.JSON;
+    case BODY_TYPES.XML:
+      return CONTENT_TYPES.XML;
+    case BODY_TYPES.TEXT:
+      return CONTENT_TYPES.TEXT;
+    case BODY_TYPES.SPARQL:
+      return CONTENT_TYPES.SPARQL;
+    case BODY_TYPES.FORM_URLENCODED:
+      return CONTENT_TYPES.FORM_URLENCODED;
+    case BODY_TYPES.MULTIPART_FORM:
+      return CONTENT_TYPES.MULTIPART_FORM;
+    case BODY_TYPES.FILE:
+      return CONTENT_TYPES.OCTET_STREAM;
     default:
-      return 'text/plain';
+      return CONTENT_TYPES.TEXT;
   }
 };
 
 /** The full MIME content type for a response body type. */
 const responseBodyCtype = (type: string | undefined): string => {
   switch (type) {
-    case 'json':
-      return 'application/json';
-    case 'xml':
-      return 'application/xml';
-    case 'html':
-      return 'text/html';
-    case 'binary':
-      return 'application/octet-stream';
+    case BODY_TYPES.JSON:
+      return CONTENT_TYPES.JSON;
+    case BODY_TYPES.XML:
+      return CONTENT_TYPES.XML;
+    case BODY_TYPES.HTML:
+      return CONTENT_TYPES.HTML;
+    case BODY_TYPES.BINARY:
+      return CONTENT_TYPES.OCTET_STREAM;
     default:
-      return 'text/plain';
+      return CONTENT_TYPES.TEXT;
   }
 };
 
@@ -84,21 +86,21 @@ const emptyPane = (label: string): React.ReactNode => <p className="pane-empty">
 
 const RequestBodyContent: React.FC<{ body: HttpRequestBody }> = ({ body }) => {
   switch (body.type) {
-    case 'json':
-    case 'xml':
-    case 'text':
+    case BODY_TYPES.JSON:
+    case BODY_TYPES.XML:
+    case BODY_TYPES.TEXT:
       return <Code code={body.data} language={responseBodyLanguage(body.type)} showLineNumbers />;
-    case 'sparql':
+    case BODY_TYPES.SPARQL:
       return <Code code={body.data} language="text" showLineNumbers />;
-    case 'file':
+    case BODY_TYPES.FILE:
       return <PropertyTable rows={body.data.map((e) => ({ label: e.filePath, value: e.contentType }))} />;
-    case 'multipart-form':
+    case BODY_TYPES.MULTIPART_FORM:
       return (
         <PropertyTable
           rows={body.data.map((e) => ({ label: e.name, value: Array.isArray(e.value) ? e.value.join(', ') : e.value }))}
         />
       );
-    case 'form-urlencoded':
+    case BODY_TYPES.FORM_URLENCODED:
       return <PropertyTable rows={body.data.map((e) => ({ label: e.name, value: e.value }))} />;
     default:
       return emptyPane('body');
@@ -231,7 +233,7 @@ const Pane: React.FC<{
   );
 };
 
-export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, onTry, defaultExpanded }) => {
+export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, onTry, defaultExpanded, testId = 'example-card' }) => {
   const [expanded, setExpanded] = useState(Boolean(defaultExpanded));
   const [mounted, setMounted] = useState(Boolean(defaultExpanded));
   const detailId = useId();
@@ -348,7 +350,7 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
   };
 
   return (
-    <StyledWrapper className="example-card" data-testid="example-card">
+    <StyledWrapper className="example-card" data-testid={testId}>
       <div className="example-summary">
         <button
           type="button"

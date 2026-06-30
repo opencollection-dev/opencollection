@@ -9,7 +9,7 @@ interface EnvironmentSummaryProps {
   itemTestId?: string;
 }
 
-export const EnvironmentSummary: React.FC<EnvironmentSummaryProps> = ({ environments, testId, itemTestId }) => {
+export const EnvironmentSummary: React.FC<EnvironmentSummaryProps> = ({ environments, testId = 'environment-summary', itemTestId }) => {
   if (!environments.length) {
     return null;
   }

@@ -1,10 +1,10 @@
 import { test, expect } from '../../playwright';
 
-const BILLING_SCRIPT = ['billing', 'Script.js'];
+const BILLING_SCRIPT_PATH = ['billing', 'Script.js'];
 
 test.describe('Script page', () => {
   test.beforeEach(async ({ scriptPage }) => {
-    await scriptPage.open(BILLING_SCRIPT);
+    await scriptPage.open(BILLING_SCRIPT_PATH);
   });
 
   test('shows the script name as the page title', async ({ scriptPage }) => {

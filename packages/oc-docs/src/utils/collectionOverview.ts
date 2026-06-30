@@ -1,5 +1,5 @@
 import type { OpenCollection } from '@opencollection/types';
-import type { Item } from '@opencollection/types/collection/item';
+import type { Item as CollectionItem } from '@opencollection/types/collection/item';
 import type { HttpRequestHeader } from '@opencollection/types/requests/http';
 import type { Auth } from '@opencollection/types/common/auth';
 import { isFolder } from './schemaHelpers';
@@ -11,17 +11,17 @@ export interface CollectionStats {
 }
 
 export const countItems = (
-  items: Item[] | undefined
+  items: CollectionItem[] | undefined
 ): { requestCount: number; folderCount: number } => {
   let requestCount = 0;
   let folderCount = 0;
 
-  const walk = (list: Item[] | undefined): void => {
+  const walk = (list: CollectionItem[] | undefined): void => {
     if (!list?.length) return;
     for (const item of list) {
       if (isFolder(item)) {
         folderCount += 1;
-        walk((item as { items?: Item[] }).items);
+        walk((item as { items?: CollectionItem[] }).items);
       } else {
         requestCount += 1;
       }

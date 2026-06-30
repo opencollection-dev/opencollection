@@ -19,6 +19,7 @@ interface ExecutionContextProps {
   method?: string;
   url?: string;
   className?: string;
+  testId?: string;
 }
 
 const FLOW_LABEL: Record<ScriptFlow, string> = { sandwich: 'Sandwich', sequential: 'Sequential' };
@@ -48,7 +49,8 @@ export const ExecutionContext: React.FC<ExecutionContextProps> = ({
   flow = 'sandwich',
   method,
   url,
-  className
+  className,
+  testId = 'execution-context'
 }) => {
   const hasScripts = scriptChain.length > 0;
   const hasVars = preVars.length > 0 || postVars.length > 0;
@@ -58,7 +60,7 @@ export const ExecutionContext: React.FC<ExecutionContextProps> = ({
   if (!hasScripts && !hasVars && !hasAsserts && !hasTests) return null;
 
   return (
-    <StyledWrapper className={['execution-context', className].filter(Boolean).join(' ')} data-testid="execution-context">
+    <StyledWrapper className={['execution-context', className].filter(Boolean).join(' ')} data-testid={testId}>
       {hasScripts && (
         <Card title="Scripts" testId="execution-context-scripts" meta={<span className="exec-flow">{FLOW_LABEL[flow]} execution flow</span>}>
           <ScriptChain steps={scriptChain} flow={flow} method={method} url={url} />

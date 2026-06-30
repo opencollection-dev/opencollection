@@ -10,7 +10,7 @@ interface SubHeadingProps {
   className?: string;
 }
 
-export const SubHeading: React.FC<SubHeadingProps> = ({ children, as = 'h3', testId, className }) => (
+export const SubHeading: React.FC<SubHeadingProps> = ({ children, as = 'h3', testId = 'sub-heading', className }) => (
   <StyledWrapper as={as} className={className} data-testid={testId}>
     {children}
   </StyledWrapper>

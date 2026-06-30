@@ -21,7 +21,7 @@ export const Section: React.FC<SectionProps> = ({
   label,
   badge,
   children,
-  testId,
+  testId = 'section',
   className,
   collapsible = false,
   defaultOpen = true,

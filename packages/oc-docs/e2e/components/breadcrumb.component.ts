@@ -7,6 +7,7 @@ export class BreadcrumbComponent extends BaseComponent {
 
   constructor(page: Page, testId: string) {
     super(page, page.getByTestId(testId));
+
     this.current = page.getByTestId(`${testId}-current`);
     this.segments = page.getByTestId(`${testId}-segment`);
   }

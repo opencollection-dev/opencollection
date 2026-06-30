@@ -1,8 +1,6 @@
 import React from 'react';
+import { isTemplateVariable, templateVariableSplitRegex } from '../../utils/common';
 import { StyledWrapper } from './StyledWrapper';
-
-const SPLIT_PATTERN = /(\{\{[^}]+\}\})/g;
-const IS_VARIABLE = /^\{\{[^}]+\}\}$/;
 
 interface VariableTextProps {
   value: string;
@@ -10,12 +8,12 @@ interface VariableTextProps {
 }
 
 export const VariableText: React.FC<VariableTextProps> = ({ value, className }) => {
-  const parts = (value ?? '').split(SPLIT_PATTERN).filter((part) => part !== '');
+  const parts = (value ?? '').split(templateVariableSplitRegex()).filter((part) => part !== '');
 
   return (
     <StyledWrapper className={['var-text', className].filter(Boolean).join(' ')}>
       {parts.map((part, index) =>
-        IS_VARIABLE.test(part) ? (
+        isTemplateVariable(part) ? (
           <span key={index} className="var">
             {part}
           </span>

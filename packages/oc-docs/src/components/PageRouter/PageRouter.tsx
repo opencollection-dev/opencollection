@@ -18,9 +18,10 @@ import type { PageProps } from '../../routing/types';
 
 interface PageRouterProps {
   onOpenPlayground?: () => void;
+  testId?: string;
 }
 
-const PageRouter: React.FC<PageRouterProps> = ({ onOpenPlayground }) => {
+const PageRouter: React.FC<PageRouterProps> = ({ onOpenPlayground, testId = 'page' }) => {
   const resolution = useActiveResolution();
   const model = useNavModel();
   const collection = useAppSelector(selectDocsCollection);
@@ -83,7 +84,7 @@ const PageRouter: React.FC<PageRouterProps> = ({ onOpenPlayground }) => {
   };
 
   return (
-    <StyledWrapper data-testid="page" data-page-type={entry.type} data-page-slug={entry.slug}>
+    <StyledWrapper data-testid={testId} data-page-type={entry.type} data-page-slug={entry.slug}>
       <div className="page-body">{renderBody()}</div>
       <div className="page-footer">
         <PageWrapper>

@@ -14,7 +14,7 @@ interface BreadcrumbProps {
   testId?: string;
 }
 
-export const Breadcrumb: React.FC<BreadcrumbProps> = ({ segments, current, onSegmentClick, className, testId }) => {
+export const Breadcrumb: React.FC<BreadcrumbProps> = ({ segments, current, onSegmentClick, className, testId = 'breadcrumb' }) => {
   const hasSegments = segments && segments.length > 0;
   if (!hasSegments && !current) return null;
 

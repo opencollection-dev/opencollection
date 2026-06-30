@@ -15,9 +15,10 @@ import { StyledWrapper } from './StyledWrapper';
 
 interface AppShellProps {
   logo?: React.ReactNode;
+  testId?: string;
 }
 
-const AppShell: React.FC<AppShellProps> = ({ logo }) => {
+const AppShell: React.FC<AppShellProps> = ({ logo, testId = 'app-shell' }) => {
   const collection = useAppSelector(selectDocsCollection);
   const playgroundCollection = useAppSelector(selectPlaygroundCollection);
   const gitCollectionUrl = useAppSelector(selectGitCollectionUrl);
@@ -37,7 +38,7 @@ const AppShell: React.FC<AppShellProps> = ({ logo }) => {
   const handleOpenPlayground = useCallback(() => setShowDrawer(true), []);
 
   return (
-    <StyledWrapper className="appshell" data-testid="app-shell">
+    <StyledWrapper className="appshell" data-testid={testId}>
       <Topbar
         collectionName={collection?.info?.name || 'API Collection'}
         version={collection?.info?.version}
