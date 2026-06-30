@@ -1,3 +1,4 @@
+import { HTTPSnippet, type HarRequest } from '@mintlify/httpsnippet';
 import type { HttpRequestBody, HttpRequestBodyVariant } from '@opencollection/types/requests/http';
 import type { Auth } from '@opencollection/types/common/auth';
 import { selectBodyVariant } from './request';
@@ -15,13 +16,15 @@ export interface SnippetInput {
   auth?: Auth;
 }
 
-type BodySnippet =
+/** The request body reduced to the shapes a code snippet needs to render. */
+type NormalizedBody =
   | { kind: 'none' }
   | { kind: 'raw'; contentType: string; text: string }
   | { kind: 'urlencoded'; params: SnippetHeader[] }
   | { kind: 'multipart'; parts: { name: string; isFile: boolean; value: string }[] };
 
-const RAW_CONTENT_TYPE: Record<string, string> = {
+/** MIME type emitted for each raw (single-blob) body type. */
+const RAW_BODY_MIME: Record<string, string> = {
   json: 'application/json',
   xml: 'application/xml',
   text: 'text/plain',
@@ -39,7 +42,8 @@ const toBase64 = (input: string): string => {
   return nodeBuffer ? nodeBuffer.from(input, 'utf-8').toString('base64') : input;
 };
 
-const normalizeBody = (raw: SnippetInput['body']): BodySnippet => {
+/** Reduce the (possibly multi-variant) request body to a single NormalizedBody. */
+const normalizeBody = (raw: SnippetInput['body']): NormalizedBody => {
   const { body } = selectBodyVariant(raw);
   if (!body || !body.type) return { kind: 'none' };
   switch (body.type) {
@@ -48,22 +52,22 @@ const normalizeBody = (raw: SnippetInput['body']): BodySnippet => {
     case 'text':
     case 'sparql': {
       const text = typeof body.data === 'string' ? body.data.trim() : '';
-      return text ? { kind: 'raw', contentType: RAW_CONTENT_TYPE[body.type], text } : { kind: 'none' };
+      return text ? { kind: 'raw', contentType: RAW_BODY_MIME[body.type], text } : { kind: 'none' };
     }
     case 'form-urlencoded':
       return {
         kind: 'urlencoded',
-        params: (body.data || []).filter((e) => e.disabled !== true).map((e) => ({ name: e.name, value: e.value }))
+        params: (body.data || []).filter((entry) => entry.disabled !== true).map((entry) => ({ name: entry.name, value: entry.value }))
       };
     case 'multipart-form':
       return {
         kind: 'multipart',
         parts: (body.data || [])
-          .filter((e) => e.disabled !== true)
-          .map((e) => ({
-            name: e.name,
-            isFile: e.type === 'file',
-            value: Array.isArray(e.value) ? e.value.join(',') : String(e.value ?? '')
+          .filter((entry) => entry.disabled !== true)
+          .map((entry) => ({
+            name: entry.name,
+            isFile: entry.type === 'file',
+            value: Array.isArray(entry.value) ? entry.value.join(',') : String(entry.value ?? '')
           }))
       };
     default:
@@ -71,7 +75,12 @@ const normalizeBody = (raw: SnippetInput['body']): BodySnippet => {
   }
 };
 
-const authContribution = (auth: Auth | undefined): { headers: SnippetHeader[]; comment?: string } => {
+/**
+ * Express auth as request headers. Auth that can't become a deterministic header
+ * (api-key in the query, awsv4/digest, basic with variables, …) returns a
+ * `comment` instead, which the caller renders as a leading comment in the snippet.
+ */
+const authToHeaders = (auth: Auth | undefined): { headers: SnippetHeader[]; comment?: string } => {
   if (!auth || auth === 'inherit') return { headers: [] };
   switch (auth.type) {
     case 'basic': {
@@ -93,14 +102,16 @@ const authContribution = (auth: Auth | undefined): { headers: SnippetHeader[]; c
   }
 };
 
-const resolveHeaders = (
+/** Final header list for the request: explicit headers + auth headers + a body content-type. */
+const collectHeaders = (
   input: SnippetInput,
-  body: BodySnippet
+  body: NormalizedBody
 ): { headers: SnippetHeader[]; comment?: string } => {
   const headers = [...(input.headers ?? [])];
-  const auth = authContribution(input.auth);
-  auth.headers.forEach((h) => {
-    if (!headers.some((existing) => existing.name.toLowerCase() === h.name.toLowerCase())) headers.push(h);
+  const auth = authToHeaders(input.auth);
+  auth.headers.forEach((authHeader) => {
+    const alreadyPresent = headers.some((existing) => existing.name.toLowerCase() === authHeader.name.toLowerCase());
+    if (!alreadyPresent) headers.push(authHeader);
   });
   if (body.kind === 'raw' && !headers.some((h) => h.name.toLowerCase() === 'content-type')) {
     headers.push({ name: 'Content-Type', value: body.contentType });
@@ -108,77 +119,118 @@ const resolveHeaders = (
   return { headers, comment: auth.comment };
 };
 
-export const generateCurlCommand = (input: SnippetInput): string => {
-  const body = normalizeBody(input.body);
-  const { headers, comment } = resolveHeaders(input, body);
-  const lines = [`curl -X ${input.method.toUpperCase()} '${input.url}'`];
-  headers.forEach((h) => lines.push(`-H '${h.name}: ${h.value}'`));
-  if (body.kind === 'raw') lines.push(`-d '${body.text}'`);
-  else if (body.kind === 'urlencoded') body.params.forEach((p) => lines.push(`--data-urlencode '${p.name}=${p.value}'`));
-  else if (body.kind === 'multipart')
-    body.parts.forEach((p) => lines.push(`-F '${p.name}=${p.isFile ? `@${p.value}` : p.value}'`));
-  const command = lines.join(' \\\n  ');
-  return comment ? `# ${comment}\n${command}` : command;
+/** Matches an OpenCollection template variable, e.g. `{{baseUrl}}`. */
+const TEMPLATE_VARIABLE = /\{\{[^}]+\}\}/g;
+
+/**
+ * HTTPSnippet runs the URL through WHATWG parsing/encoding, which lowercases the
+ * host and percent-encodes `{{var}}` tokens. The masker swaps each variable for a
+ * lowercase, alphanumeric placeholder (which survives both transforms) before the
+ * HAR is built; `unmask` restores the originals in the finished snippet so
+ * templates stay copy-shareable.
+ */
+const createTemplateMasker = () => {
+  const originalByPlaceholder = new Map<string, string>();
+  const mask = (value: string): string =>
+    value.replace(TEMPLATE_VARIABLE, (variable) => {
+      for (const [placeholder, original] of originalByPlaceholder) if (original === variable) return placeholder;
+      // Trailing `x` terminates the index so e.g. `ocvar1x` is never a prefix of `ocvar11x`.
+      const placeholder = `ocvar${originalByPlaceholder.size}x`;
+      originalByPlaceholder.set(placeholder, variable);
+      return placeholder;
+    });
+  const unmask = (value: string): string => {
+    let restored = value;
+    for (const [placeholder, original] of originalByPlaceholder) restored = restored.split(placeholder).join(original);
+    return restored;
+  };
+  return { mask, unmask };
 };
 
-export const generateJavaScriptCode = (input: SnippetInput): string => {
-  const body = normalizeBody(input.body);
-  const { headers, comment } = resolveHeaders(input, body);
-  const headerLines = headers.map((h) => `    '${h.name}': '${h.value}'`).join(',\n');
-
-  let setup = '';
-  let bodyLine = '';
-  if (body.kind === 'raw') {
-    bodyLine = `,\n  body: ${JSON.stringify(body.text)}`;
-  } else if (body.kind === 'urlencoded') {
-    const obj = Object.fromEntries(body.params.map((p) => [p.name, p.value]));
-    bodyLine = `,\n  body: new URLSearchParams(${JSON.stringify(obj)})`;
-  } else if (body.kind === 'multipart') {
-    setup =
-      'const formData = new FormData();\n' +
-      body.parts
-        .map((p) => `formData.append('${p.name}', ${p.isFile ? `/* file */ '${p.value}'` : `'${p.value}'`});`)
-        .join('\n') +
-      '\n\n';
-    bodyLine = ',\n  body: formData';
+/** Map a NormalizedBody to a HAR `postData` block (template variables already masked). */
+const toHarPostData = (body: NormalizedBody, mask: (s: string) => string): HarRequest['postData'] | undefined => {
+  switch (body.kind) {
+    case 'raw':
+      return { mimeType: body.contentType, text: mask(body.text) };
+    case 'urlencoded':
+      return {
+        mimeType: 'application/x-www-form-urlencoded',
+        params: body.params.map((param) => ({ name: mask(param.name), value: mask(param.value) }))
+      };
+    case 'multipart':
+      return {
+        mimeType: 'multipart/form-data',
+        params: body.parts.map((part) =>
+          part.isFile
+            ? { name: mask(part.name), fileName: mask(part.value) }
+            : { name: mask(part.name), value: mask(part.value) }
+        )
+      };
+    default:
+      return undefined;
   }
-
-  const lead = comment ? `// ${comment}\n` : '';
-  return `${lead}${setup}const response = await fetch('${input.url}', {
-  method: '${input.method.toUpperCase()}',
-  headers: {
-${headerLines}
-  }${bodyLine}
-});
-
-const data = await response.json();`;
 };
 
-export const generatePythonCode = (input: SnippetInput): string => {
+/**
+ * HTTPSnippet prepends `http://` to scheme-less URLs (treating the first path
+ * segment as the host). Strip that synthetic origin so `{{baseUrl}}/x` (or a
+ * relative `/x`) renders unchanged. No-op when the URL already has a scheme.
+ */
+const stripSyntheticOrigin = (snippet: string, originalUrl: string, maskedUrl: string): string => {
+  if (/^https?:\/\//i.test(originalUrl.trim())) return snippet;
+  const urlWithoutScheme = maskedUrl.replace(/^https?:\/\//i, '');
+  const isRelative = urlWithoutScheme.startsWith('/');
+  const host = urlWithoutScheme.replace(/^\//, '').split(/[/?#]/)[0];
+  if (!host) return snippet;
+  const originalOrigin = isRelative ? `/${host}` : host;
+  return snippet.split(`http://${host}`).join(originalOrigin).split(`https://${host}`).join(originalOrigin);
+};
+
+/** Comment syntax per HTTPSnippet target (defaults to `# `). */
+const COMMENT_PREFIX_BY_TARGET: Record<string, string> = { javascript: '// ' };
+
+/**
+ * Generate a code snippet for one HTTPSnippet target/client (e.g. shell/curl).
+ * Pipeline: normalize body → mask templates → assemble HAR → HTTPSnippet.convert
+ * → strip synthetic origin → unmask templates. Falls back to a plain `METHOD url`
+ * line if HTTPSnippet ever throws, so the snippet panel never crashes the page.
+ */
+const generateSnippet = (input: SnippetInput, target: string, client: string): string => {
+  const { mask, unmask } = createTemplateMasker();
   const body = normalizeBody(input.body);
-  const { headers, comment } = resolveHeaders(input, body);
-  const headerLines = headers.map((h) => `        '${h.name}': '${h.value}'`).join(',\n');
+  const { headers, comment } = collectHeaders(input, body);
+  const withComment = (code: string): string =>
+    comment ? `${COMMENT_PREFIX_BY_TARGET[target] ?? '# '}${comment}\n${code}` : code;
 
-  let bodyArg = '';
-  if (body.kind === 'raw') {
-    bodyArg = `,\n    data=${JSON.stringify(body.text)}`;
-  } else if (body.kind === 'urlencoded') {
-    const obj = Object.fromEntries(body.params.map((p) => [p.name, p.value]));
-    bodyArg = `,\n    data=${JSON.stringify(obj)}`;
-  } else if (body.kind === 'multipart') {
-    const obj = Object.fromEntries(body.parts.map((p) => [p.name, p.value]));
-    bodyArg = `,\n    files=${JSON.stringify(obj)}`;
+  try {
+    const maskedUrl = mask(input.url);
+    const postData = toHarPostData(body, mask);
+
+    const harRequest = {
+      method: (input.method || 'GET').toUpperCase(),
+      url: maskedUrl,
+      httpVersion: 'HTTP/1.1',
+      cookies: [],
+      headers: headers.map((header) => ({ name: mask(header.name), value: mask(header.value) })),
+      queryString: [],
+      headersSize: -1,
+      bodySize: -1,
+      ...(postData ? { postData } : {})
+    } as HarRequest;
+
+    const snippet = new HTTPSnippet(harRequest);
+    const convert = snippet.convert.bind(snippet) as (t: string, c: string) => string | string[];
+    const converted = convert(target, client);
+    const snippetText = (Array.isArray(converted) ? converted[0] : converted) || '';
+    return withComment(unmask(stripSyntheticOrigin(snippetText, input.url, maskedUrl)));
+  } catch {
+    // HTTPSnippet can throw on pathological URLs/bodies — degrade to a minimal
+    // method + URL line (matches bruno-enterprise-edition's snippet-generator
+    // try/catch fallback) so the snippet panel never crashes the page.
+    return withComment(`${(input.method || 'GET').toUpperCase()} ${input.url}`);
   }
-
-  const lead = comment ? `# ${comment}\n` : '';
-  return `${lead}import requests
-
-response = requests.${input.method.toLowerCase()}(
-    '${input.url}',
-    headers={
-${headerLines}
-    }${bodyArg}
-)
-
-data = response.json()`;
 };
+
+export const generateCurlCommand = (input: SnippetInput): string => generateSnippet(input, 'shell', 'curl');
+export const generateJavaScriptCode = (input: SnippetInput): string => generateSnippet(input, 'javascript', 'fetch');
+export const generatePythonCode = (input: SnippetInput): string => generateSnippet(input, 'python', 'requests');

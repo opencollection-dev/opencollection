@@ -173,7 +173,7 @@ export const StyledWrapper = styled.div`
     font-size: 0.6875rem;
     line-height: 1;
     letter-spacing: 0;
-    color: #343434;
+    color: var(--text-primary);
   }
 
   .pane-spacer {

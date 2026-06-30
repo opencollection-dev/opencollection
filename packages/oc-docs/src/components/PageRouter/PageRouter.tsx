@@ -66,7 +66,7 @@ const PageRouter: React.FC<PageRouterProps> = ({ onOpenPlayground }) => {
         return <Overview collection={collection} />;
       case 'script':
         return item ? (
-          <Script item={item as ScriptFile} ancestry={ancestry} onBreadcrumbClick={goToUuid} />
+          <Script item={item as ScriptFile} ancestry={ancestry} collection={collection} onBreadcrumbClick={goToUuid} />
         ) : null;
       case 'request':
       default:

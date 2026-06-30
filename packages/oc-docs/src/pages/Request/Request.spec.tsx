@@ -75,7 +75,7 @@ describe('Request page', () => {
     expect(html).toContain('tenant');
     expect(html).toContain('verbose');
     // code snippet
-    expect(html).toContain('curl -X POST');
+    expect(html).toContain('curl --request POST');
     // execution context: collection-level + request-level tests inherit; asserts render
     // and the Tests card offers a "View complete code" link (counts were removed).
     expect(html).toContain('returns a token');

@@ -10,9 +10,9 @@ export class UnsupportedRequestPage extends BasePage {
   readonly title = this.page.getByTestId('unsupported-request-title');
   readonly message = this.page.getByTestId('unsupported-request-empty');
 
-  async open(trail: string[]): Promise<void> {
+  async open(path: string[]): Promise<void> {
     await this.navigate('/');
-    await this.sidebar.open(trail);
+    await this.sidebar.open(path);
     await this.root.waitFor({ state: 'visible' });
   }
 }

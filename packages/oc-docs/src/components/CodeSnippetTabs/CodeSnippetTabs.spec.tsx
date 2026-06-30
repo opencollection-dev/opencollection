@@ -16,6 +16,7 @@ describe('CodeSnippetTabs', () => {
     expect(html).toContain('cURL');
     expect(html).toContain('Javascript');
     expect(html).toContain('Python');
-    expect(html).toContain('curl -X POST');
+    expect(html).toContain('curl --request POST');
+    expect(html).toContain('{{baseUrl}}/api/v1/auth/login');
   });
 });

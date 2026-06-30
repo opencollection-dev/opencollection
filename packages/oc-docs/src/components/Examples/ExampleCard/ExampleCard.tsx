@@ -249,7 +249,7 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
     setExpanded((v) => !v);
   };
 
-  const request = example.request ?? {};
+  const request = (example.request ?? {}) as NonNullable<typeof example.request> & { auth?: Auth };
   const response = example.response ?? {};
   const status = response.status;
   const responseBody = response.body;

@@ -8,7 +8,7 @@ test.describe('Request page — Details', () => {
   });
 
   test.describe('Breadcrumb', () => {
-    test('shows the folder trail to the request', async ({ requestPage }) => {
+    test('shows the folder paths to the request', async ({ requestPage }) => {
       const { breadcrumb } = requestPage;
       await expect(breadcrumb.segment('billing')).toBeVisible();
       await expect(breadcrumb.segment('customers')).toBeVisible();

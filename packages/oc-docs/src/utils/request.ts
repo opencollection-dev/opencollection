@@ -8,7 +8,6 @@ import type {
 } from '@opencollection/types/requests/http';
 import type { Auth } from '@opencollection/types/common/auth';
 import type { Scripts } from '@opencollection/types/common/scripts';
-import type { ScriptExecutionFlow } from '@opencollection/types/config/collection';
 import type { Variable } from '@opencollection/types/common/variables';
 import {
   getRequestAuth,
@@ -159,7 +158,7 @@ export const getBodyView = (
 export type ScriptLevel = 'collection' | 'folder' | 'request';
 export type ScriptPhase = 'before-request' | 'after-response';
 
-export type ScriptFlow = ScriptExecutionFlow;
+export type ScriptFlow = 'sandwich' | 'sequential';
 
 interface ConfigExtension {
   scripts?: { flow?: unknown };
@@ -167,7 +166,7 @@ interface ConfigExtension {
 
 export const getScriptFlow = (collection: OpenCollection | null | undefined): ScriptFlow => {
   const ext = collection?.extensions?.config as ConfigExtension | undefined;
-  const flow = ext?.scripts?.flow ?? collection?.config?.scripts?.flow;
+  const flow = ext?.scripts?.flow ?? (collection?.config as ConfigExtension | undefined)?.scripts?.flow;
   return flow === 'sequential' ? 'sequential' : 'sandwich';
 };
 

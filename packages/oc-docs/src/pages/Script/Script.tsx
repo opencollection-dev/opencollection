@@ -1,6 +1,8 @@
 import React, { useMemo } from 'react';
+import type { OpenCollection } from '@opencollection/types';
 import type { Item, ScriptFile } from '@opencollection/types/collection/item';
 import { getItemName } from '../../utils/schemaHelpers';
+import { buildBreadcrumbSegments } from '../../utils/common';
 import { PageWrapper } from '../../components/PageWrapper/PageWrapper';
 import { Heading } from '../../components/Heading/Heading';
 import { Breadcrumb, type BreadcrumbSegment } from '../../ui/Breadcrumb/Breadcrumb';
@@ -10,19 +12,17 @@ import { StyledWrapper } from './StyledWrapper';
 interface ScriptProps {
   item: ScriptFile;
   ancestry?: Item[];
+  collection?: OpenCollection | null;
   onBreadcrumbClick?: (uuid: string) => void;
 }
 
-export const Script: React.FC<ScriptProps> = ({ item, ancestry = [], onBreadcrumbClick }) => {
+export const Script: React.FC<ScriptProps> = ({ item, ancestry = [], collection, onBreadcrumbClick }) => {
   const name = getItemName(item) || 'Script';
   const code = item.script ?? '';
 
   const segments = useMemo<BreadcrumbSegment[]>(
-    () =>
-      ancestry
-        .map((folder) => ({ name: getItemName(folder) || 'Folder', uuid: (folder as { uuid?: string }).uuid || '' }))
-        .filter((segment) => segment.uuid),
-    [ancestry]
+    () => buildBreadcrumbSegments(collection, ancestry),
+    [collection, ancestry]
   );
 
   return (

@@ -8,8 +8,8 @@ export class SidebarComponent extends BaseComponent {
     return this.items.filter({ hasText: name });
   }
 
-  async open(trail: string[]): Promise<void> {
-    for (const name of trail) {
+  async open(paths: string[]): Promise<void> {
+    for (const name of paths) {
       await this.item(name).first().click();
     }
   }

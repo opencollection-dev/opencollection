@@ -9,19 +9,20 @@ import { ExecutionContextComponent } from '../components/request/execution-conte
 
 export class RequestPage extends BasePage {
   readonly root = this.page.getByTestId('request-page');
+  readonly title = this.page.getByTestId('request-title');
+  readonly description = this.page.getByTestId('request-description');
 
   readonly sidebar = new SidebarComponent(this.page);
   readonly breadcrumb = new BreadcrumbComponent(this.page, 'request-breadcrumb');
-  readonly title = this.page.getByTestId('request-title');
   readonly urlBar = new RequestUrlBarComponent(this.page);
-  readonly description = this.page.getByTestId('request-description');
   readonly codeSnippet = new CodeSnippetComponent(this.page);
+
   readonly examples = new ExamplesComponent(this.page);
   readonly executionContext = new ExecutionContextComponent(this.page);
 
-  async open(trail: string[]): Promise<void> {
+  async open(path: string[]): Promise<void> {
     await this.navigate('/');
-    await this.sidebar.open(trail);
+    await this.sidebar.open(path);
     await this.root.waitFor({ state: 'visible' });
   }
 

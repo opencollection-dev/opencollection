@@ -42,7 +42,7 @@ const TestItem: React.FC<{ test: TestRow }> = ({ test }) => {
       {hasCode && (
         <Collapse open={open} lazy>
           <div className="test-code">
-            <Code code={test.code} language="javascript" surface="muted" showLineNumbers showCopy={false} />
+            <Code code={test.code} language="javascript" surface="muted" showLineNumbers showCopy />
           </div>
         </Collapse>
       )}

@@ -14,7 +14,7 @@ const ancestry = [
 ] as unknown as Item[];
 
 describe('Script page', () => {
-  it('renders the breadcrumb trail, the title and the script source', () => {
+  it('renders the breadcrumb path, the title and the script source', () => {
     const html = renderToStaticMarkup(<Script item={scriptItem} ancestry={ancestry} />);
     expect(html).toContain('aria-label="Breadcrumb"');
     expect(html).toContain('Authentication');

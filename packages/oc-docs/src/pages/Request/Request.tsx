@@ -32,6 +32,7 @@ import {
 import { collectAssertions } from '../../utils/assertions';
 import { collectTests } from '../../utils/fileUtils';
 import { resolvePathAndQueryParams } from '../../utils/pathParams';
+import { buildBreadcrumbSegments } from '../../utils/common';
 import { PageWrapper } from '../../components/PageWrapper/PageWrapper';
 import { Heading } from '../../components/Heading/Heading';
 import { Section } from '../../components/Section/Section';
@@ -58,8 +59,6 @@ interface RequestProps {
 }
 
 type RequestContentProps = Omit<RequestProps, 'item'> & { item: HttpRequest };
-
-const COLLECTION_ROOT_CRUMB = '__collection_root__';
 
 const descriptionContent = (item: HttpRequest): string => {
   const docs = getItemDocs(item);
@@ -113,13 +112,10 @@ const RequestContent: React.FC<RequestContentProps> = ({
   const assertions = useMemo(() => collectAssertions(item), [item]);
   const tests = useMemo(() => collectTests(collection, ancestry, item), [collection, ancestry, item]);
 
-  const segments = useMemo<BreadcrumbSegment[]>(() => {
-    const folderCrumbs = ancestry
-      .map((folder) => ({ name: getItemName(folder) || 'Folder', uuid: (folder as { uuid?: string }).uuid || '' }))
-      .filter((segment) => segment.uuid);
-    // Lead with the collection itself: Collection › …folders › current.
-    return [{ name: collection?.info?.name || 'Overview', uuid: COLLECTION_ROOT_CRUMB }, ...folderCrumbs];
-  }, [ancestry, collection]);
+  const segments = useMemo<BreadcrumbSegment[]>(
+    () => buildBreadcrumbSegments(collection, ancestry),
+    [collection, ancestry]
+  );
 
   const hasHeaders = headers.length > 0;
   const hasParams = pathParams.length > 0 || queryParams.length > 0;
@@ -222,7 +218,7 @@ const RequestContent: React.FC<RequestContentProps> = ({
 
 export const Request: React.FC<RequestProps> = ({ item, ancestry = [], collection, onTryClick, onBreadcrumbClick }) => {
   if (isUnsupportedRequest(item)) {
-    return <UnsupportedRequest item={item} ancestry={ancestry} onBreadcrumbClick={onBreadcrumbClick} />;
+    return <UnsupportedRequest item={item} ancestry={ancestry} collection={collection} onBreadcrumbClick={onBreadcrumbClick} />;
   }
 
   return (

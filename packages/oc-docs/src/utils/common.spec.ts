@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getInitials, statusToneColor } from './common';
+import { getInitials, statusToneColor, buildBreadcrumbSegments, COLLECTION_ROOT_CRUMB } from './common';
 
 describe('getInitials', () => {
   it('uses the first letter of the first two words', () => {
@@ -42,5 +42,37 @@ describe('statusToneColor', () => {
 
   it('falls back to muted when the status is undefined', () => {
     expect(statusToneColor()).toBe('var(--text-muted)');
+  });
+});
+
+describe('buildBreadcrumbSegments', () => {
+  const collection = { info: { name: 'Bruno Testbench' } } as any;
+
+  it('leads with the collection name as the root crumb', () => {
+    expect(buildBreadcrumbSegments(collection, [])[0]).toEqual({
+      name: 'Bruno Testbench',
+      uuid: COLLECTION_ROOT_CRUMB
+    });
+  });
+
+  it('appends the folder chain after the collection crumb', () => {
+    const ancestry = [
+      { info: { name: 'billing' }, uuid: 'u1' },
+      { info: { name: 'customers' }, uuid: 'u2' }
+    ] as any;
+    expect(buildBreadcrumbSegments(collection, ancestry)).toEqual([
+      { name: 'Bruno Testbench', uuid: COLLECTION_ROOT_CRUMB },
+      { name: 'billing', uuid: 'u1' },
+      { name: 'customers', uuid: 'u2' }
+    ]);
+  });
+
+  it('drops folders that have no uuid', () => {
+    const ancestry = [{ info: { name: 'billing' } }, { info: { name: 'customers' }, uuid: 'u2' }] as any;
+    expect(buildBreadcrumbSegments(collection, ancestry).map((s) => s.uuid)).toEqual([COLLECTION_ROOT_CRUMB, 'u2']);
+  });
+
+  it('falls back to "Overview" when the collection has no name', () => {
+    expect(buildBreadcrumbSegments(null, [])[0]).toEqual({ name: 'Overview', uuid: COLLECTION_ROOT_CRUMB });
   });
 });

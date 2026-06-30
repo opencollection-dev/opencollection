@@ -93,7 +93,7 @@ describe('ExampleCard', () => {
       <ExampleCard
         example={{
           name: 'Authed',
-          request: { auth: { type: 'bearer', token: 'super-secret-token' } },
+          request: { auth: { type: 'bearer', token: 'super-secret-token' } } as any,
           response: { status: 200, body: { type: 'json', data: '{}' } }
         }}
         method="post"

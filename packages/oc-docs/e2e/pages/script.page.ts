@@ -11,9 +11,9 @@ export class ScriptPage extends BasePage {
   readonly title = this.page.getByTestId('script-title');
   readonly content = new ScriptContentComponent(this.page);
 
-  async open(trail: string[]): Promise<void> {
+  async open(path: string[]): Promise<void> {
     await this.navigate('/');
-    await this.sidebar.open(trail);
+    await this.sidebar.open(path);
     await this.root.waitFor({ state: 'visible' });
   }
 }

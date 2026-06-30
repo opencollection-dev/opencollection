@@ -11,7 +11,7 @@ test.describe('Script page', () => {
     await expect(scriptPage.title).toHaveText('Script');
   });
 
-  test('shows the folder trail to the script as a breadcrumb', async ({ scriptPage }) => {
+  test('shows the folder path to the script as a breadcrumb', async ({ scriptPage }) => {
     await expect(scriptPage.breadcrumb.segment('billing')).toBeVisible();
     await expect(scriptPage.breadcrumb.current).toHaveText('Script');
   });
