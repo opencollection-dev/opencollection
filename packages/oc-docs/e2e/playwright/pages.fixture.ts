@@ -4,7 +4,7 @@ import { RequestPage } from '../pages/request.page';
 import { ScriptPage } from '../pages/script.page';
 import { UnsupportedRequestPage } from '../pages/unsupported-request.page';
 import { SidebarComponent } from '../components/sidebar.component';
-import { ThemeToggleComponent } from '../components/theme-toggle.component';
+import { ThemeToggleComponent } from '../components/layout/theme-toggle.component';
 import { PageHeaderComponent } from '../components/layout/page-header.component';
 
 
