@@ -3,7 +3,6 @@ import type { OpenCollection } from '@opencollection/types';
 import type { Item } from '@opencollection/types/collection/item';
 import type { HttpRequest, HttpRequestParam } from '@opencollection/types/requests/http';
 import type { Auth } from '@opencollection/types/common/auth';
-import type { Description } from '@opencollection/types/common/description';
 import type { GraphQLRequest } from '@opencollection/types/requests/graphql';
 import type { GrpcRequest } from '@opencollection/types/requests/grpc';
 import type { WebSocketRequest } from '@opencollection/types/requests/websocket';
@@ -57,6 +56,7 @@ interface RequestProps {
   collection?: OpenCollection | null;
   onTryClick?: () => void;
   onBreadcrumbClick?: (uuid: string) => void;
+  testId?: string;
 }
 
 type RequestContentProps = Omit<RequestProps, 'item'> & { item: HttpRequest };
