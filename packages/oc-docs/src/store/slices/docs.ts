@@ -5,8 +5,6 @@ import type { RootState } from '../store';
 import { hydrateWithUUIDs, findAndUpdateItem } from '../../utils/fileUtils';
 import { isFolder } from '../../utils/schemaHelpers';
 
-export type RootView = 'overview' | 'environments';
-
 export interface DocsState {
   collection: OpenCollectionCollection | null;
   selectedItemId: string | null;
@@ -14,7 +12,7 @@ export interface DocsState {
 
 const initialState: DocsState = {
   collection: null,
-  selectedItemId: null,
+  selectedItemId: null
 };
 
 // Helper function to initialize isCollapsed for folders
@@ -79,7 +77,7 @@ const docsSlice = createSlice({
         });
       }
     },
-}
+  }
 });
 
 export const { setDocsCollection, clearDocsCollection, toggleItem, selectItem, expandFolders } = docsSlice.actions;
