@@ -1713,6 +1713,23 @@
           ],
           "description": "Whether to follow redirects"
         },
+        "forwardAuthorizationHeader": {
+          "oneOf": [
+            {
+              "type": "boolean",
+              "const": true
+            },
+            {
+              "type": "boolean",
+              "const": false
+            },
+            {
+              "type": "string",
+              "const": "inherit"
+            }
+          ],
+          "description": "Whether to forward authorization headers on redirect to third party origin"
+        },
         "maxRedirects": {
           "oneOf": [
             {
@@ -1777,6 +1794,23 @@
             }
           ],
           "description": "Whether to follow redirects"
+        },
+        "forwardAuthorizationHeader": {
+          "oneOf": [
+            {
+              "type": "boolean",
+              "const": true
+            },
+            {
+              "type": "boolean",
+              "const": false
+            },
+            {
+              "type": "string",
+              "const": "inherit"
+            }
+          ],
+          "description": "Whether to forward authorization headers on redirect to third party origin"
         },
         "maxRedirects": {
           "oneOf": [
