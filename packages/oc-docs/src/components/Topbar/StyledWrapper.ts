@@ -8,7 +8,7 @@ export const StyledWrapper = styled.header`
   box-sizing: border-box;
   font-family: var(--font-sans);
   background: var(--oc-background-base);
-  border-bottom: 1px solid var(--oc-border-border1);
+  border-bottom: 1px solid var(--oc-border-border2);
 
   .topbar-bar {
     display: flex;

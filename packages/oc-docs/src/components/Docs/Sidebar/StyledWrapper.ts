@@ -1,126 +1,46 @@
 import styled from '@emotion/styled';
 
-export const SidebarContainer = styled.div`
+export const StyledWrapper = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
+  min-height: 0;
+  background-color: var(--oc-background-base);
+  color: var(--oc-sidebar-color);
 
-  &.compact {
-    min-width: var(--sidebar-width-compact);
-    max-width: var(--sidebar-width-compact);
+  ::-webkit-scrollbar {
+    width: 6px;
   }
-
-  & ::-webkit-scrollbar {
-    width: 0;
-  }
-
-  & ::-webkit-scrollbar-track {
+  ::-webkit-scrollbar-track {
     background: transparent;
   }
-
-  & ::-webkit-scrollbar-thumb {
+  ::-webkit-scrollbar-thumb {
     background-color: transparent;
+    border-radius: 20px;
   }
-
   &:hover ::-webkit-scrollbar-thumb {
     background-color: var(--oc-scrollbar-color);
   }
 
-  & .logo {
-    padding: 0 8px 12px 8px;
-    border-bottom: 1px solid var(--oc-border-border1);
-    margin-bottom: 6px;
+  .sidebar-top-links {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    padding: 10px 6px 0 6px;
   }
 
-  &.compact .logo {
-    padding: 8px;
-  }
-`;
-
-export const SidebarItems = styled.div`
-  padding: 0 6px;
-  overflow-y: auto;
-  flex-grow: 1;
-
-  ${SidebarContainer}.compact & {
-    padding: 0 4px;
-  }
-`;
-
-export const SidebarItem = styled.div`
-  cursor: pointer;
-  transition: all 0.12s ease;
-  border-radius: 6px;
-  margin-bottom: 0;
-  position: relative;
-  overflow: hidden;
-  padding: 5px 10px;
-  display: flex;
-  align-items: center;
-  color: var(--text-secondary);
-  font-size: 13px;
-
-  ${SidebarContainer}.compact & {
-    padding: 4px 8px;
-    font-size: 12px;
-    margin-bottom: 1px;
+  .sidebar-divider {
+    flex-shrink: 0;
+    height: 1px;
+    margin: 8px 0;
+    background-color: var(--oc-border-border2);
   }
 
-  &:hover, &.hovered {
-    background-color: color-mix(in srgb, var(--oc-text) 4%, transparent);
-    color: var(--text-primary);
-  }
-
-  &.active {
-    background-color: color-mix(in srgb, var(--oc-colors-accent) 8%, transparent);
-    color: var(--text-primary);
-    font-weight: 500;
-  }
-
-  &.active:hover {
-    background-color: color-mix(in srgb, var(--oc-colors-accent) 10%, transparent);
-  }
-
-  &.folder {
-    color: var(--text-primary);
-    font-weight: 500;
-    font-size: 12.5px;
-  }
-
-  &.folder:hover {
-    background-color: transparent;
-  }
-
-  & .method-badge {
-    font-size: 9px;
-    padding: 2px 5px;
-    border-radius: 3px;
-    font-weight: 700;
-    min-width: 36px;
-    text-align: center;
-    letter-spacing: 0.05em;
-    transition: all 0.12s ease;
-    text-transform: uppercase;
-    margin-right: 8px;
-    font-family: var(--font-mono);
-  }
-
-  ${SidebarContainer}.compact & .method-badge {
-    padding: 2px 4px;
-    min-width: 36px;
-    font-size: 10px;
-  }
-
-  & * {
-    pointer-events: none;
-  }
-
-  & svg {
-    pointer-events: all;
-  }
-
-  ${SidebarContainer}.compact & svg {
-    width: 14px;
-    height: 14px;
+  .sidebar-items {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 0 6px;
   }
 `;

@@ -8,8 +8,8 @@ const Button = styled.button`
   align-items: center;
   justify-content: center;
   flex: none;
-  width: 32px;
-  height: 32px;
+  width: 26px;
+  height: 26px;
   padding: 0;
   background: transparent;
   color: var(--oc-colors-text-muted, var(--oc-text));
@@ -19,8 +19,8 @@ const Button = styled.button`
   transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease;
 
   svg {
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
   }
 
   &:hover {

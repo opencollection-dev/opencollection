@@ -59,8 +59,7 @@ export const StyledWrapper = styled.nav`
   .prevnext-label {
     font-size: 0.7rem;
     line-height: 1.2;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: normal;
     color: var(--oc-colors-text-subtext2);
   }
   .prevnext-name {
