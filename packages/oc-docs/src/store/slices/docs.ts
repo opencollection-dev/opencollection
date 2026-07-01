@@ -10,13 +10,11 @@ export type RootView = 'overview' | 'environments';
 export interface DocsState {
   collection: OpenCollectionCollection | null;
   selectedItemId: string | null;
-  activeRootView: RootView;
 }
 
 const initialState: DocsState = {
   collection: null,
   selectedItemId: null,
-  activeRootView: 'overview'
 };
 
 // Helper function to initialize isCollapsed for folders
@@ -51,12 +49,10 @@ const docsSlice = createSlice({
       }
       // Reset selected item when collection changes
       state.selectedItemId = null;
-      state.activeRootView = 'overview';
     },
     clearDocsCollection: (state: DocsState) => {
       state.collection = null;
       state.selectedItemId = null;
-      state.activeRootView = 'overview';
     },
     toggleItem: (state: DocsState, action: PayloadAction<string>) => {
       const uuid = action.payload;
@@ -83,18 +79,13 @@ const docsSlice = createSlice({
         });
       }
     },
-    selectRootView: (state: DocsState, action: PayloadAction<RootView>) => {
-      state.selectedItemId = null;
-      state.activeRootView = action.payload;
-    }
 }
 });
 
-export const { setDocsCollection, clearDocsCollection, toggleItem, selectItem, expandFolders, selectRootView } = docsSlice.actions;
+export const { setDocsCollection, clearDocsCollection, toggleItem, selectItem, expandFolders } = docsSlice.actions;
 export default docsSlice.reducer;
 
 export const selectDocsCollection = (state: RootState) => state.docs.collection;
 export const selectSelectedItemId = (state: RootState) => state.docs.selectedItemId;
-export const selectActiveRootView = (state: RootState) => state.docs.activeRootView;
 
 
