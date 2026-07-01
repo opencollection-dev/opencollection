@@ -8,6 +8,6 @@ export {
   type BodyType,
   CONTENT_TYPES,
   type ContentType
-} from './common';
+} from './request';
 
 export { TEMPLATE_VARIABLE_BODY_PATTERN, TEMPLATE_VARIABLE_SOURCE_PATTERN } from './regex';
