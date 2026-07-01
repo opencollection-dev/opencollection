@@ -3,7 +3,8 @@ import type { HttpRequestBody, HttpRequestBodyVariant } from '@opencollection/ty
 import { Code } from '../../Code/Code';
 import { ContentTypeBadge } from '../../ContentTypeBadge/ContentTypeBadge';
 import { PropertyTable, type PropertyRow } from '../../PropertyTable/PropertyTable';
-import { getBodyView } from '../../../utils/request';
+import { VariableText } from '../../VariableText/VariableText';
+import { getBodyView, type BodyTableRow } from '../../../utils/request';
 import { StyledWrapper } from './StyledWrapper';
 
 interface RequestBodyProps {
@@ -11,6 +12,18 @@ interface RequestBodyProps {
   showContentType?: boolean;
   className?: string;
 }
+
+/**
+ * Multipart part value: a "File" tag for file parts, the value itself (with {{var}}
+ * highlighting), and a per-part content-type badge when one is set.
+ */
+const BodyPartValue: React.FC<{ row: BodyTableRow }> = ({ row }) => (
+  <span className="request-body-part">
+    {row.partType === 'file' ? <span className="request-body-file-tag">File</span> : null}
+    <VariableText value={row.value} />
+    {row.contentType ? <span className="request-body-content-type">{row.contentType}</span> : null}
+  </span>
+);
 
 export const RequestBody: React.FC<RequestBodyProps> = ({ body, showContentType = true, className }) => {
   const view = getBodyView(body);
@@ -25,11 +38,21 @@ export const RequestBody: React.FC<RequestBodyProps> = ({ body, showContentType 
           rows={view.rows.map<PropertyRow>((row) => ({
             label: row.name,
             value: row.value,
-            disabled: row.disabled
+            disabled: row.disabled,
+            description: row.description,
+            node: row.partType === 'file' || row.contentType ? <BodyPartValue row={row} /> : undefined
           }))}
         />
       )}
-      {view.render === 'file' && <p className="request-body-file">{view.filePath}</p>}
+      {view.render === 'file' && (
+        <PropertyTable
+          rows={view.files.map<PropertyRow>((file, index) => ({
+            label: view.files.length > 1 ? `File ${index + 1}${file.selected ? ' · selected' : ''}` : 'File',
+            value: file.filePath,
+            description: file.contentType
+          }))}
+        />
+      )}
     </StyledWrapper>
   );
 };

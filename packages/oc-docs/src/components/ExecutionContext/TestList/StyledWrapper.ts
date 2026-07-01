@@ -19,6 +19,21 @@ export const StyledWrapper = styled.div`
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  .test-name--raw {
+    font-family: var(--font-sans);
+    font-style: italic;
+    color: var(--text-secondary);
+  }
+  .test-source {
+    flex: none;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 10rem;
+  }
   .test-spacer {
     flex: 1;
   }

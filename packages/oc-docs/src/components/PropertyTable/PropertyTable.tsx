@@ -9,6 +9,7 @@ export interface PropertyRow {
   secret?: boolean;
   node?: React.ReactNode;
   disabled?: boolean;
+  description?: string;
   testId?: string;
 }
 
@@ -41,6 +42,7 @@ export const PropertyTable: React.FC<PropertyTableProps> = ({ rows, emptyMessage
             <dt className="property-key">{row.label}</dt>
             <dd className="property-value-cell" data-testid={testId && row.testId ? `${testId}-${row.testId}` : undefined}>
               <ValueCell row={row} testId={testId} />
+              {row.description ? <p className="property-description">{row.description}</p> : null}
             </dd>
           </div>
         ))}

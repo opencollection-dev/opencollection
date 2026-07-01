@@ -20,7 +20,51 @@ describe('RequestBody', () => {
     expect(html).toContain('Alice');
   });
 
+  it('tags multipart file parts and surfaces part descriptions', () => {
+    const html = renderToStaticMarkup(
+      <RequestBody
+        body={{
+          type: 'multipart-form',
+          data: [{ name: 'avatar', type: 'file', value: '/tmp/a.png', description: 'profile picture' }]
+        }}
+      />
+    );
+    expect(html).toContain('request-body-file-tag');
+    expect(html).toContain('/tmp/a.png');
+    expect(html).toContain('profile picture');
+  });
+
+  it('surfaces a per-part content type', () => {
+    const html = renderToStaticMarkup(
+      <RequestBody
+        body={{ type: 'multipart-form', data: [{ name: 'meta', type: 'text', value: '{}', contentType: 'application/json' }] }}
+      />
+    );
+    expect(html).toContain('request-body-content-type');
+    expect(html).toContain('application/json');
+  });
+
+  it('renders every file-body variant with its content type and marks the selected one', () => {
+    const html = renderToStaticMarkup(
+      <RequestBody
+        body={{
+          type: 'file',
+          data: [
+            { filePath: '/a.json', contentType: 'application/json', selected: false },
+            { filePath: '/b.xml', contentType: 'application/xml', selected: true }
+          ]
+        }}
+      />
+    );
+    expect(html).toContain('/a.json');
+    expect(html).toContain('application/json');
+    expect(html).toContain('/b.xml');
+    expect(html).toContain('selected');
+  });
+
   it('renders nothing for an empty/none body', () => {
     expect(renderToStaticMarkup(<RequestBody body={undefined} />)).toBe('');
+    expect(renderToStaticMarkup(<RequestBody body={{ type: 'form-urlencoded', data: [] }} />)).toBe('');
+    expect(renderToStaticMarkup(<RequestBody body={{ type: 'file', data: [] }} />)).toBe('');
   });
 });

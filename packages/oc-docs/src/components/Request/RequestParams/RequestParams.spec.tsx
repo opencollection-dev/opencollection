@@ -17,6 +17,14 @@ describe('RequestParams', () => {
     expect(html).toContain('alice');
   });
 
+  it('renders per-param descriptions', () => {
+    const html = renderToStaticMarkup(
+      <RequestParams query={[{ name: 'q', value: 'alice', type: 'query', description: 'search term' }]} />
+    );
+    expect(html).toContain('property-description');
+    expect(html).toContain('search term');
+  });
+
   it('renders nothing when there are no params', () => {
     expect(renderToStaticMarkup(<RequestParams />)).toBe('');
   });

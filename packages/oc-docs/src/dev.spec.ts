@@ -8,6 +8,6 @@ describe('dev.tsx sample collection YAML', () => {
   it('should parse without errors', () => {
     expect(collection).toBeDefined();
     expect(collection.opencollection).toBe('1.0.0');
-    expect(collection.info.name).toBe('Bruno Testbench');
+    expect(collection.info.name).toBe('bruno-testbench');
   });
 });

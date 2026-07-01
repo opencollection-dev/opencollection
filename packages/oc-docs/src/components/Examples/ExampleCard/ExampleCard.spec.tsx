@@ -50,11 +50,57 @@ describe('ExampleCard', () => {
     expect(html).not.toContain('>Try<');
   });
 
-  it('colours the status badge by class: 4xx error (red), 3xx info (blue)', () => {
+  it('colours the status badge: success below 300, error at 300+ (redirects included)', () => {
     const clientError = renderToStaticMarkup(<ExampleCard example={{ name: 'Bad', response: { status: 404 } }} method="get" url="/x" />);
     expect(clientError).toContain('--oc-status-danger-text');
     const redirect = renderToStaticMarkup(<ExampleCard example={{ name: 'Moved', response: { status: 301 } }} method="get" url="/x" />);
-    expect(redirect).toContain('--oc-status-info-text');
+    expect(redirect).toContain('--oc-status-danger-text');
+  });
+
+  it('shows the reason phrase: stored statusText wins, else it is derived from the code', () => {
+    const stored = renderToStaticMarkup(
+      <ExampleCard example={{ name: 'Created', response: { status: 201, statusText: 'All Good' } }} method="get" url="/x" />
+    );
+    expect(stored).toContain('201 All Good');
+    const derived = renderToStaticMarkup(
+      <ExampleCard example={{ name: 'Missing', response: { status: 404 } }} method="get" url="/x" />
+    );
+    expect(derived).toContain('404 Not Found');
+  });
+
+  it('hides the status pill entirely when there is no status', () => {
+    const html = renderToStaticMarkup(<ExampleCard example={{ name: 'No status', response: {} }} method="get" url="/x" />);
+    expect(html).not.toContain('data-testid="example-status"');
+  });
+
+  it('does not render a bare table for an empty request body (reuses getBodyView -> none)', () => {
+    const html = renderToStaticMarkup(
+      <ExampleCard
+        example={{ name: 'Empty form', request: { body: { type: 'form-urlencoded', data: [] } }, response: { status: 200 } }}
+        method="post"
+        url="/x"
+        defaultExpanded
+      />
+    );
+    // Body is empty -> the whole request pane degrades to its empty state, no populated Body tab.
+    expect(html).toContain('No request data.');
+  });
+
+  it('reuses the shared RequestBody so example bodies inherit multipart file tags', () => {
+    const html = renderToStaticMarkup(
+      <ExampleCard
+        example={{
+          name: 'Upload',
+          request: { body: { type: 'multipart-form', data: [{ name: 'avatar', type: 'file', value: '/tmp/a.png' }] } },
+          response: { status: 200 }
+        }}
+        method="post"
+        url="/x"
+        defaultExpanded
+      />
+    );
+    expect(html).toContain('request-body-file-tag');
+    expect(html).toContain('/tmp/a.png');
   });
 
   it('shows a single empty state for a side with no data', () => {
@@ -88,7 +134,7 @@ describe('ExampleCard', () => {
     expect(html).toContain('No response data.');
   });
 
-  it('renders the request auth in the Auth tab (mode label + masked secret)', () => {
+  it('does not render an Auth tab for example requests (matches Bruno + the schema)', () => {
     const html = renderToStaticMarkup(
       <ExampleCard
         example={{
@@ -101,10 +147,9 @@ describe('ExampleCard', () => {
         defaultExpanded
       />
     );
-    expect(html).toContain('Auth');
-    expect(html).toContain('Bearer Token'); // AUTH_MODE_LABELS[bearer]
-    expect(html).toContain('Token'); // field label
-    expect(html).not.toContain('super-secret-token'); // token is masked
+    // The example request pane exposes only Params / Body / Headers — never Auth.
+    expect(html).not.toContain('>Auth<');
+    expect(html).not.toContain('super-secret-token');
   });
 
   it('renders a description object and accessible tab semantics', () => {

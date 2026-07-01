@@ -4,7 +4,7 @@ import { describe, it, expect } from 'vitest';
 import { ExecutionContext } from './ExecutionContext';
 import type { ScriptChainStep } from '../../utils/request';
 import type { AssertionRow } from '../../utils/assertions';
-import type { TestRow } from '../../utils/fileUtils';
+import type { TestRow, RawTestScript } from '../../utils/fileUtils';
 
 const scriptChain: ScriptChainStep[] = [
   { level: 'collection', phase: 'before-request', label: 'Collection Pre-Request', sourceName: 'API', code: 'bru.setVar("x", 1)', order: 0 },
@@ -22,6 +22,11 @@ const tests: TestRow[] = [
   { level: 'request', name: 'returns a token', code: "test('returns a token', () => {})" }
 ];
 
+const testScripts: RawTestScript[] = [
+  { level: 'collection', sourceName: 'API', code: "test('is authenticated', () => {})" },
+  { level: 'request', code: "test('returns a token', () => {})" }
+];
+
 describe('ExecutionContext', () => {
   it('composes the script chain (with HTTP marker), variables, asserts and tests', () => {
     const html = renderToStaticMarkup(
@@ -31,6 +36,7 @@ describe('ExecutionContext', () => {
         postVars={[{ name: 'sessionId', expression: 'res.body.id', scope: 'runtime' }]}
         assertions={assertions}
         tests={tests}
+        testScripts={testScripts}
       />
     );
     expect(html).toContain('Scripts');
@@ -70,6 +76,7 @@ describe('ExecutionContext', () => {
         postVars={[]}
         assertions={assertions}
         tests={tests}
+        testScripts={testScripts}
       />
     );
     expect(html).toContain('View complete code');

@@ -8,3 +8,5 @@ export * from './ExpandIcon';
 export * from './CloseIcon';
 export * from './PlayIcon';
 export * from './EyeOffIcon';
+export * from './FileIcon';
+export * from './RefreshIcon';

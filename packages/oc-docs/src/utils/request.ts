@@ -56,17 +56,34 @@ export const resolveInheritedAuth = (
   return { auth: 'inherit' };
 };
 
+export const descriptionText = (desc: unknown): string | undefined => {
+  if (typeof desc === 'string') return desc.trim() ? desc : undefined;
+  if (desc && typeof desc === 'object' && 'content' in desc) {
+    const content = (desc as { content?: unknown }).content;
+    return typeof content === 'string' && content.trim() ? content : undefined;
+  }
+  return undefined;
+};
+
 export interface BodyTableRow {
   name: string;
   value: string;
   partType?: 'text' | 'file';
+  contentType?: string;
   disabled?: boolean;
+  description?: string;
+}
+
+export interface FileBodyRow {
+  filePath: string;
+  contentType?: string;
+  selected?: boolean;
 }
 
 export type BodyView =
   | { render: 'code'; language: string; contentTypeLabel: string; code: string }
   | { render: 'table'; variant: 'urlencoded' | 'multipart'; contentTypeLabel: string; rows: BodyTableRow[] }
-  | { render: 'file'; contentTypeLabel: string; filePath: string }
+  | { render: 'file'; contentTypeLabel: string; files: FileBodyRow[] }
   | { render: 'none' };
 
 const RAW_LANGUAGE: Record<string, string> = { json: 'json', xml: 'markup', text: 'text', sparql: 'text' };
@@ -121,34 +138,39 @@ export const getBodyView = (
         code: data
       };
     }
-    case 'form-urlencoded':
-      return {
-        render: 'table',
-        variant: 'urlencoded',
-        contentTypeLabel: bodyContentTypeLabel(body.type),
-        rows: (body.data || []).map((entry) => ({
+    case 'form-urlencoded': {
+      const rows: BodyTableRow[] = (body.data || [])
+        .map((entry) => ({
           name: entry.name,
           value: entry.value,
-          disabled: entry.disabled
+          disabled: entry.disabled,
+          description: descriptionText((entry as { description?: unknown }).description)
         }))
-      };
-    case 'multipart-form':
-      return {
-        render: 'table',
-        variant: 'multipart',
-        contentTypeLabel: bodyContentTypeLabel(body.type),
-        rows: (body.data || []).map((entry) => ({
+        .filter((row) => row.name || row.value);
+      if (rows.length === 0) return { render: 'none' };
+      return { render: 'table', variant: 'urlencoded', contentTypeLabel: bodyContentTypeLabel(body.type), rows };
+    }
+    case 'multipart-form': {
+      const rows: BodyTableRow[] = (body.data || [])
+        .map((entry) => ({
           name: entry.name,
           value: Array.isArray(entry.value) ? entry.value.join(', ') : String(entry.value ?? ''),
           partType: entry.type,
-          disabled: entry.disabled
+          contentType: entry.contentType,
+          disabled: entry.disabled,
+          description: descriptionText((entry as { description?: unknown }).description)
         }))
-      };
+        .filter((row) => row.name || row.value);
+      if (rows.length === 0) return { render: 'none' };
+      return { render: 'table', variant: 'multipart', contentTypeLabel: bodyContentTypeLabel(body.type), rows };
+    }
     case 'file': {
       const variants: FileBodyVariant[] = body.data || [];
-      const selected = variants.find((v) => v.selected) ?? variants[0];
-      if (!selected) return { render: 'none' };
-      return { render: 'file', contentTypeLabel: bodyContentTypeLabel('file'), filePath: selected.filePath };
+      const files: FileBodyRow[] = variants
+        .map((v) => ({ filePath: v.filePath, contentType: v.contentType, selected: v.selected }))
+        .filter((f) => f.filePath || f.contentType);
+      if (files.length === 0) return { render: 'none' };
+      return { render: 'file', contentTypeLabel: bodyContentTypeLabel('file'), files };
     }
     default:
       return { render: 'none' };
