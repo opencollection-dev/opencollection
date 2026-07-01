@@ -24,7 +24,3 @@ export const CONTENT_TYPES = {
 } as const;
 
 export type ContentType = (typeof CONTENT_TYPES)[keyof typeof CONTENT_TYPES];
-
-export const TEMPLATE_VARIABLE_BODY = '[^}]+';
-
-export const TEMPLATE_VARIABLE_SOURCE = `\\{\\{${TEMPLATE_VARIABLE_BODY}\\}\\}`;

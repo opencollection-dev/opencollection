@@ -7,7 +7,7 @@ export {
   BODY_TYPES,
   type BodyType,
   CONTENT_TYPES,
-  type ContentType,
-  TEMPLATE_VARIABLE_BODY,
-  TEMPLATE_VARIABLE_SOURCE
+  type ContentType
 } from './common';
+
+export { TEMPLATE_VARIABLE_BODY_PATTERN, TEMPLATE_VARIABLE_SOURCE_PATTERN } from './request';
