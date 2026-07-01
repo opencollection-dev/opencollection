@@ -35,11 +35,6 @@ const Sidebar: React.FC = () => {
     return map;
   }, [model]);
 
-  // Auto-reveal the active node by expanding only its ANCESTOR folders, and only
-  // when the active slug changes (i.e. on navigation). A folder's own open/close
-  // is left to the user's toggle: since toggling mutates the collection (and thus
-  // the memoised nav model), guarding on the slug keeps a manual collapse from
-  // being undone on the next render.
   const autoRevealedSlug = useRef<string | null>(null);
   useEffect(() => {
     if (autoRevealedSlug.current === activeSlug) return;

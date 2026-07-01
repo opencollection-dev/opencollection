@@ -4,6 +4,7 @@ import type { Item, Folder as FolderItem } from '@opencollection/types/collectio
 import { useMarkdownRenderer } from '../../hooks';
 import { AUTH_MODE_LABELS } from '../../constants';
 import { getItemName, getItemDocs } from '../../utils/schemaHelpers';
+import { buildBreadcrumbSegments } from '../../utils/common';
 import { getFolderConfig, hasFolderConfig, countFolderRequests } from '../../utils/folder';
 import { PageWrapper } from '../../components/PageWrapper/PageWrapper';
 import { Heading } from '../../components/Heading/Heading';
@@ -38,11 +39,8 @@ export const Folder: React.FC<FolderProps> = ({ item, ancestry = [], collection,
   }, [item, md]);
 
   const segments = useMemo<BreadcrumbSegment[]>(
-    () =>
-      ancestry
-        .map((folder) => ({ name: getItemName(folder) || 'Folder', uuid: (folder as { uuid?: string }).uuid || '' }))
-        .filter((segment) => segment.uuid),
-    [ancestry]
+    () => buildBreadcrumbSegments(collection, ancestry),
+    [collection, ancestry]
   );
 
   return (

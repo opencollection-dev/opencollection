@@ -5,15 +5,15 @@ import { FolderConfigurationComponent } from '../components/folder/folder-config
 
 export class FolderPage extends BasePage {
   readonly root = this.page.getByTestId('folder-page');
-
-  readonly sidebar = new SidebarComponent(this.page);
-  readonly breadcrumb = new BreadcrumbComponent(this.page, 'folder-breadcrumb');
   readonly title = this.page.getByTestId('folder-title');
   readonly requestCount = this.page.getByTestId('folder-request-count');
   readonly folderMarkdownDocs = this.page.getByTestId('folder-docs');
   readonly folderMarkdownDocsToggle = this.page.getByTestId('folder-docs-toggle');
-  readonly configuration = new FolderConfigurationComponent(this.page);
   readonly emptyState = this.page.getByTestId('folder-config-empty');
+
+  readonly sidebar = new SidebarComponent(this.page);
+  readonly breadcrumb = new BreadcrumbComponent(this.page, 'folder-breadcrumb');
+  readonly configuration = new FolderConfigurationComponent(this.page);
 
   async open(trail: string[]): Promise<void> {
     await this.navigate('/');
