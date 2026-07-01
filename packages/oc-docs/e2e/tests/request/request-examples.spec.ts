@@ -17,10 +17,10 @@ test.describe('Request page — Examples', () => {
     await expect(examples.example(BAD_REQUEST_EXAMPLE)).toBeVisible();
   });
 
-  test('shows the status code of each example', async ({ requestPage }) => {
+  test('shows the status code and reason phrase of each example', async ({ requestPage }) => {
     const { examples } = requestPage;
-    await expect(examples.statusCode(OK_EXAMPLE)).toHaveText('200');
-    await expect(examples.statusCode(BAD_REQUEST_EXAMPLE)).toHaveText('400');
+    await expect(examples.statusCode(OK_EXAMPLE)).toHaveText('200 OK');
+    await expect(examples.statusCode(BAD_REQUEST_EXAMPLE)).toHaveText('400 Bad Request');
   });
 
   test.describe('Request pane', () => {
@@ -35,13 +35,6 @@ test.describe('Request page — Examples', () => {
       await examples.selectRequestTab(OK_EXAMPLE, 'headers');
       await expect(examples.requestBody(OK_EXAMPLE)).toContainText('Accept');
       await expect(examples.requestBody(OK_EXAMPLE)).toContainText('application/json');
-    });
-
-    test('switches to the Auth tab to reveal the bearer auth', async ({ requestPage }) => {
-      const { examples } = requestPage;
-      await examples.selectRequestTab(OK_EXAMPLE, 'auth');
-      await expect(examples.requestBody(OK_EXAMPLE)).toContainText('Mode');
-      await expect(examples.requestBody(OK_EXAMPLE)).toContainText('Bearer');
     });
   });
 

@@ -84,7 +84,7 @@ describe('Request page', () => {
     expect(html).toContain('View complete code');
   });
 
-  it('omits sections that have no content', () => {
+  it('shows empty states (not bare sections) when nothing is configured, and always shows the code snippet', () => {
     const bare: HttpRequest = {
       info: { name: 'Ping', type: 'http' },
       http: { method: 'get', url: '/ping' }
@@ -92,9 +92,16 @@ describe('Request page', () => {
     const html = renderToStaticMarkup(<Request item={bare} />);
     expect(html).toContain('Ping');
     expect(html).toContain('/ping');
-    expect(html).not.toContain('Examples');
-    expect(html).not.toContain('Execution Context');
+    // No params/body/headers/auth -> a single "No request configuration" empty state, not the individual sections.
+    expect(html).toContain('No request configuration');
     expect(html).not.toContain('Params');
+    // The code snippet is always shown (on the right).
+    expect(html).toContain('Code Snippet');
+    // No examples authored -> the Examples section is hidden entirely (no empty state).
+    expect(html).not.toContain('Examples');
+    // No scripts/vars/asserts/tests -> the Execution Context section shows its own empty state.
+    expect(html).toContain('Execution Context');
+    expect(html).toContain('No execution context');
   });
 
   it('renders the Auth section for auth declared in the http block (http.auth: inherit)', () => {

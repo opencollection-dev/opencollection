@@ -33,7 +33,10 @@ export const ScriptStep: React.FC<ScriptStepProps> = ({ step, position }) => {
       >
         <span className="step-num">{position}</span>
         <ChevronArrow open={open} className="script-chevron" />
-        <span className="script-step-label">{step.label}</span>
+        <span className="script-step-main">
+          <span className="script-step-label">{step.label}</span>
+          {step.sourceName && <span className="script-step-source">{step.sourceName}</span>}
+        </span>
         <button
           type="button"
           className="code-toggle"

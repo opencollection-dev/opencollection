@@ -32,12 +32,14 @@ describe('getInitials', () => {
 });
 
 describe('statusToneColor', () => {
-  it('maps status ranges to their tone token', () => {
+  it('maps status ranges to their tone token (success below 300, error at 300+)', () => {
+    expect(statusToneColor(100)).toBe('var(--oc-status-success-text)');
     expect(statusToneColor(200)).toBe('var(--oc-status-success-text)');
     expect(statusToneColor(204)).toBe('var(--oc-status-success-text)');
+    // Redirects are treated as errors (no separate 3xx tone), matching the request client.
+    expect(statusToneColor(301)).toBe('var(--oc-status-danger-text)');
     expect(statusToneColor(404)).toBe('var(--oc-status-danger-text)');
     expect(statusToneColor(500)).toBe('var(--oc-status-danger-text)');
-    expect(statusToneColor(301)).toBe('var(--oc-status-info-text)');
   });
 
   it('falls back to muted when the status is undefined', () => {

@@ -41,4 +41,18 @@ describe('TestList', () => {
   it('keeps a test\'s source collapsed until it is expanded (lazy)', () => {
     expect(renderToStaticMarkup(<TestList tests={[tests[0]]} />)).not.toContain('expect(ok).to.equal(true)');
   });
+
+  it('renders the ancestor sourceName so sibling folders are distinguishable', () => {
+    const html = renderToStaticMarkup(<TestList tests={[tests[0]]} />);
+    expect(html).toContain('test-source');
+    expect(html).toContain('API');
+  });
+
+  it('renders a raw-script row (no test()/it() wrapper) with a view-code toggle', () => {
+    const raw: TestRow[] = [{ level: 'request', name: 'Test script', raw: true, code: 'expect(res.status).to.equal(200);' }];
+    const html = renderToStaticMarkup(<TestList tests={raw} />);
+    expect(html).toContain('Test script');
+    expect(html).toContain('test-name--raw');
+    expect(html).toContain('view code'); // raw scripts are still viewable
+  });
 });

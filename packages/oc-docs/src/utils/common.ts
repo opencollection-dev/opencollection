@@ -34,9 +34,10 @@ export const getInitials = (collectionName?: string | null): string => {
 
 export const statusToneColor = (status?: number): string => {
   if (status === undefined) return 'var(--text-muted)';
-  if (status >= 200 && status < 300) return 'var(--oc-status-success-text)';
-  if (status >= 400) return 'var(--oc-status-danger-text)';
-  return 'var(--oc-status-info-text)';
+  // Matches the request client's read-only status colouring: success below 300,
+  // error at 300+ (redirects included — there is no separate 3xx tone).
+  if (status < 300) return 'var(--oc-status-success-text)';
+  return 'var(--oc-status-danger-text)';
 };
 
 export const COLLECTION_ROOT_CRUMB = '__collection_root__';

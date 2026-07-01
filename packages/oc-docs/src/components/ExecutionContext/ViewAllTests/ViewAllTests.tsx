@@ -2,20 +2,32 @@ import React, { Fragment, useMemo, useState } from 'react';
 import { Code } from '../../Code/Code';
 import { Modal } from '../../../ui/Modal/Modal';
 import { SectionLabel } from '../../SectionLabel/SectionLabel';
-import type { TestRow } from '../../../utils/fileUtils';
+import type { RawTestScript } from '../../../utils/fileUtils';
 import { StyledWrapper } from './StyledWrapper';
 
 interface ViewAllTestsProps {
-  tests: TestRow[];
+  scripts: RawTestScript[];
 }
 
-export const ViewAllTests: React.FC<ViewAllTestsProps> = ({ tests }) => {
+const SCOPE_LABEL: Record<RawTestScript['level'], string> = {
+  collection: 'Collection',
+  folder: 'Folder',
+  request: 'Request'
+};
+
+export const ViewAllTests: React.FC<ViewAllTestsProps> = ({ scripts }) => {
   const [open, setOpen] = useState(false);
 
-  const code = useMemo(
-    () => tests.map((test) => test.code.trim()).filter(Boolean).join('\n\n'),
-    [tests]
-  );
+  // Show the complete authored scripts (setup + all blocks), not just parsed test() snippets.
+  // When more than one level contributes, prefix each with a scope comment for attribution.
+  const code = useMemo(() => {
+    const parts = scripts.filter((s) => s.code.trim());
+    if (parts.length === 0) return '';
+    if (parts.length === 1) return parts[0].code;
+    return parts
+      .map((s) => `// ${SCOPE_LABEL[s.level]}${s.sourceName ? `: ${s.sourceName}` : ''}\n${s.code}`)
+      .join('\n\n');
+  }, [scripts]);
 
   if (!code) return null;
 

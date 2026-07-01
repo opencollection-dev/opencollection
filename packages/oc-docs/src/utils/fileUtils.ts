@@ -287,6 +287,8 @@ export interface TestRow {
   sourceName?: string;
   name: string;
   code: string;
+  /** True when the script has no test()/it() wrapper and we surface the raw script instead. */
+  raw?: boolean;
 }
 
 const testsCode = (scripts: Scripts | undefined): string | undefined => scriptsArrayToObject(scripts).tests;
@@ -301,7 +303,15 @@ export const collectTests = (
 ): TestRow[] => {
   const rows: TestRow[] = [];
   const add = (level: TestRow['level'], code: string | undefined, sourceName?: string): void => {
-    extractTests(code).forEach((test) => rows.push({ level, name: test.name, code: test.code, sourceName }));
+    if (!code || !code.trim()) return;
+    const parsed = extractTests(code);
+    if (parsed.length > 0) {
+      parsed.forEach((test) => rows.push({ level, name: test.name, code: test.code, sourceName }));
+    } else {
+      // Free-form test script (bare assertions / setup, no test()/it() wrapper): keep the
+      // Tests section visible by surfacing the raw script rather than dropping it silently.
+      rows.push({ level, name: 'Test script', code: code.trim(), sourceName, raw: true });
+    }
   };
 
   add('collection', testsCode(collection?.request?.scripts), collection?.info?.name);
@@ -309,4 +319,28 @@ export const collectTests = (
   add('request', testsCode(getRequestScripts(item)));
 
   return rows;
+};
+
+export interface RawTestScript {
+  level: TestRow['level'];
+  sourceName?: string;
+  code: string;
+}
+
+/** The complete authored tests script at each level (collection -> folders -> request), unparsed. */
+export const collectRawTestScripts = (
+  collection: OpenCollection | null | undefined,
+  ancestors: Item[],
+  item: HttpRequest
+): RawTestScript[] => {
+  const scripts: RawTestScript[] = [];
+  const push = (level: TestRow['level'], code: string | undefined, sourceName?: string): void => {
+    if (code && code.trim()) scripts.push({ level, code: code.trim(), sourceName });
+  };
+
+  push('collection', testsCode(collection?.request?.scripts), collection?.info?.name);
+  ancestors.forEach((folder) => push('folder', testsCode(folderScripts(folder)), getItemName(folder)));
+  push('request', testsCode(getRequestScripts(item)));
+
+  return scripts;
 };

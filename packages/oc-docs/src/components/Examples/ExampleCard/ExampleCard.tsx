@@ -2,21 +2,19 @@ import React, { Fragment, useEffect, useId, useMemo, useRef, useState } from 're
 import type {
   HttpRequestExample,
   HttpRequestHeader,
-  HttpResponseHeader,
-  HttpRequestBody
+  HttpResponseHeader
 } from '@opencollection/types/requests/http';
-import type { Auth } from '@opencollection/types/common/auth';
 import { MethodBadge } from '../../MethodBadge/MethodBadge';
 import { ChevronArrow } from '../../ChevronArrow/ChevronArrow';
 import { CopyButton } from '../../../ui/CopyButton/CopyButton';
 import { PropertyTable, type PropertyRow } from '../../PropertyTable/PropertyTable';
 import { RequestParams } from '../../Request/RequestParams/RequestParams';
-import { AuthDetails } from '../../AuthDetails/AuthDetails';
+import { RequestBody } from '../../Request/RequestBody/RequestBody';
 import { Code } from '../../Code/Code';
 import { PlayIcon } from '../../../assets/icons';
-import { AUTH_MODE_LABELS } from '../../../constants';
 import { resolvePathAndQueryParams } from '../../../utils/pathParams';
-import { computeBodySize, formatBytes, responseBodyLanguage } from '../../../utils/exampleResponse';
+import { getBodyView, descriptionText } from '../../../utils/request';
+import { computeBodySize, formatBytes, responseBodyLanguage, statusCodePhrase } from '../../../utils/exampleResponse';
 import { statusToneColor } from '../../../utils/common';
 import { BODY_TYPES, CONTENT_TYPES } from '../../../constants';
 import { StyledWrapper } from './StyledWrapper';
@@ -39,32 +37,14 @@ interface PaneTab {
 }
 
 const headerRows = (headers: (HttpRequestHeader | HttpResponseHeader)[]): PropertyRow[] =>
-  headers.map((h) => ({ label: h.name, value: h.value, disabled: 'disabled' in h ? h.disabled : undefined }));
+  headers.map((h) => ({
+    label: h.name,
+    value: h.value,
+    disabled: 'disabled' in h ? h.disabled : undefined,
+    description: 'description' in h ? descriptionText(h.description) : undefined
+  }));
 
 const headerCtype = (count: number): string => `${count} header${count === 1 ? '' : 's'}`;
-
-const authTypeLabel = (auth: Auth): string => (typeof auth === 'string' ? auth : auth.type);
-
-const requestBodyCtype = (body: HttpRequestBody): string => {
-  switch (body.type) {
-    case BODY_TYPES.JSON:
-      return CONTENT_TYPES.JSON;
-    case BODY_TYPES.XML:
-      return CONTENT_TYPES.XML;
-    case BODY_TYPES.TEXT:
-      return CONTENT_TYPES.TEXT;
-    case BODY_TYPES.SPARQL:
-      return CONTENT_TYPES.SPARQL;
-    case BODY_TYPES.FORM_URLENCODED:
-      return CONTENT_TYPES.FORM_URLENCODED;
-    case BODY_TYPES.MULTIPART_FORM:
-      return CONTENT_TYPES.MULTIPART_FORM;
-    case BODY_TYPES.FILE:
-      return CONTENT_TYPES.OCTET_STREAM;
-    default:
-      return CONTENT_TYPES.TEXT;
-  }
-};
 
 /** The full MIME content type for a response body type. */
 const responseBodyCtype = (type: string | undefined): string => {
@@ -83,29 +63,6 @@ const responseBodyCtype = (type: string | undefined): string => {
 };
 
 const emptyPane = (label: string): React.ReactNode => <p className="pane-empty">No {label}.</p>;
-
-const RequestBodyContent: React.FC<{ body: HttpRequestBody }> = ({ body }) => {
-  switch (body.type) {
-    case BODY_TYPES.JSON:
-    case BODY_TYPES.XML:
-    case BODY_TYPES.TEXT:
-      return <Code code={body.data} language={responseBodyLanguage(body.type)} showLineNumbers />;
-    case BODY_TYPES.SPARQL:
-      return <Code code={body.data} language="text" showLineNumbers />;
-    case BODY_TYPES.FILE:
-      return <PropertyTable rows={body.data.map((e) => ({ label: e.filePath, value: e.contentType }))} />;
-    case BODY_TYPES.MULTIPART_FORM:
-      return (
-        <PropertyTable
-          rows={body.data.map((e) => ({ label: e.name, value: Array.isArray(e.value) ? e.value.join(', ') : e.value }))}
-        />
-      );
-    case BODY_TYPES.FORM_URLENCODED:
-      return <PropertyTable rows={body.data.map((e) => ({ label: e.name, value: e.value }))} />;
-    default:
-      return emptyPane('body');
-  }
-};
 
 const Pane: React.FC<{
   title: string;
@@ -251,9 +208,11 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
     setExpanded((v) => !v);
   };
 
-  const request = (example.request ?? {}) as NonNullable<typeof example.request> & { auth?: Auth };
+  const request = (example.request ?? {}) as NonNullable<typeof example.request>;
   const response = example.response ?? {};
   const status = response.status;
+  // Prefer the stored reason phrase; fall back to the standard phrase for the code.
+  const statusText = response.statusText || statusCodePhrase(status);
   const responseBody = response.body;
   const name = example.name ?? 'Example';
   const description =
@@ -261,6 +220,8 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
 
   const size = useMemo(() => computeBodySize(responseBody?.data), [responseBody]);
   const toneColor = statusToneColor(status);
+  // Prefer the example's own method/url; fall back to the request-level values.
+  const displayMethod = request.method || method;
   const displayUrl = request.url || url;
 
   const requestTabs: PaneTab[] = useMemo(() => {
@@ -272,7 +233,11 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
 
     const headers = request.headers ?? [];
     const body = request.body;
-    const auth = request.auth;
+    // Reuse the shared body model so examples inherit every request-body edge case:
+    // empty/whitespace/empty-collection -> 'none', descriptions, multipart part-type +
+    // per-part content type, file variants + selected, and {{var}} highlighting.
+    const bodyView = getBodyView(body);
+    const hasBody = bodyView.render !== 'none';
 
     return [
       {
@@ -285,19 +250,10 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
       {
         id: 'body',
         label: 'Body',
-        hasData: Boolean(body),
-        ctype: body ? requestBodyCtype(body) : '',
-        content: body ? <RequestBodyContent body={body} /> : emptyPane('body')
+        hasData: hasBody,
+        ctype: hasBody ? bodyView.contentTypeLabel : '',
+        content: hasBody ? <RequestBody body={body} showContentType={false} /> : emptyPane('body')
       },
-      ...(auth
-        ? [{
-            id: 'auth',
-            label: 'Auth',
-            hasData: true,
-            ctype: authTypeLabel(auth),
-            content: <AuthDetails auth={auth} authModeLabels={AUTH_MODE_LABELS} />
-          }]
-        : []),
       {
         id: 'headers',
         label: 'Headers',
@@ -306,11 +262,11 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
         content: headers.length ? <PropertyTable rows={headerRows(headers)} /> : emptyPane('headers')
       }
     ];
-  }, [request.params, request.body, request.auth, request.headers, displayUrl]);
+  }, [request.params, request.body, request.headers, displayUrl]);
 
   const responseTabs: PaneTab[] = useMemo(() => {
     const headers = response.headers ?? [];
-    const hasBody = Boolean(responseBody?.data);
+    const hasBody = Boolean(responseBody?.data?.trim());
     return [
       {
         id: 'body',
@@ -333,15 +289,15 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
     ];
   }, [responseBody, response.headers]);
 
-  const responseMeta =
-    status !== undefined ? (
-      <span className="pane-meta">
-        <span className="pane-meta-status" style={{ color: toneColor }}>
-          {status}
-        </span>
-        {responseBody?.data ? ` · ${formatBytes(size)}` : ''}
+  const responseMeta = status ? (
+    <span className="pane-meta">
+      <span className="pane-meta-status" style={{ color: toneColor }}>
+        {status}
+        {statusText ? ` ${statusText}` : ''}
       </span>
-    ) : undefined;
+      {responseBody?.data?.trim() ? ` · ${formatBytes(size)}` : ''}
+    </span>
+  ) : undefined;
 
   const handleTry = () => {
     setMounted(true);
@@ -361,15 +317,16 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
           onClick={toggle}
         >
           <ChevronArrow open={expanded} size={14} className="example-chevron" />
-          {status !== undefined && (
+          {status ? (
             <span
               className="example-status"
               data-testid="example-status"
               style={{ color: toneColor, background: `color-mix(in srgb, ${toneColor} 12%, transparent)` }}
             >
               {status}
+              {statusText ? ` ${statusText}` : ''}
             </span>
-          )}
+          ) : null}
           <span className="example-name" data-testid="example-name">{name}</span>
         </button>
         {onTry && (
@@ -388,7 +345,7 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
               {description && <p className="example-description">{description}</p>}
 
               <div className="example-url-row">
-                <MethodBadge method={method} />
+                <MethodBadge method={displayMethod} />
                 <span className="example-url-text">{displayUrl}</span>
                 <CopyButton text={displayUrl} />
               </div>

@@ -29,13 +29,33 @@ export const StyledWrapper = styled.div`
     color: var(--text-muted);
   }
 
-  .script-step-label {
+  .script-step-main {
     min-width: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .script-step-label {
+    flex: none;
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--text-primary);
     text-transform: uppercase;
     letter-spacing: 0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .script-step-source {
+    min-width: 0;
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+    text-transform: none;
+    letter-spacing: normal;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
