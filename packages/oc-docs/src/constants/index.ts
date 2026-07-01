@@ -10,4 +10,4 @@ export {
   type ContentType
 } from './common';
 
-export { TEMPLATE_VARIABLE_BODY_PATTERN, TEMPLATE_VARIABLE_SOURCE_PATTERN } from './request';
+export { TEMPLATE_VARIABLE_BODY_PATTERN, TEMPLATE_VARIABLE_SOURCE_PATTERN } from './regex';
