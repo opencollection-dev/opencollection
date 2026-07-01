@@ -35,7 +35,7 @@ export class SearchComponent extends BaseComponent {
   }
 
   folderOption(name: string): Locator {
-    return this.root.getByRole('button', { name, exact: true });
+    return this.folderMenu.getByRole('button', { name, exact: true });
   }
 
   result(text: string): Locator {

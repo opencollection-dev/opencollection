@@ -10,6 +10,7 @@ export const StyledWrapper = styled.div`
     display: flex;
     flex: 1;
     min-height: 0;
+    position: relative;
   }
 
   .appshell-sidebar {
@@ -17,8 +18,8 @@ export const StyledWrapper = styled.div`
     flex-shrink: 0;
     height: 100%;
     overflow: hidden;
-    border-right: 1px solid var(--oc-border-border1, var(--border-color));
-    background-color: var(--oc-sidebar-bg);
+    border-right: 1px solid var(--oc-border-border0);
+    background-color: var(--oc-background-base);
   }
 
   .appshell-content {
@@ -29,9 +30,46 @@ export const StyledWrapper = styled.div`
     overscroll-behavior-y: contain;
   }
 
-  @media (max-width: 768px) {
-    .appshell-sidebar {
-      display: none;
-    }
+  .appshell-collapse,
+  .appshell-reopen {
+    position: absolute;
+    z-index: calc(var(--z-sidebar, 5) + 1);
+    width: 22px;
+    height: 22px;
+    border: 1px solid var(--oc-border-border0);
+    border-radius: 6px;
+    background-color: var(--oc-background-base);
+    color: var(--oc-colors-text-subtext0);
+  }
+
+  .appshell-collapse svg,
+  .appshell-reopen svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .appshell-collapse:hover,
+  .appshell-reopen:hover {
+    background-color: var(--oc-background-surface0);
+    color: var(--text-secondary);
+  }
+
+  .appshell-collapse {
+    top: 14px;
+    left: calc(var(--sidebar-width) - 12px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+  }
+
+  .appshell-sidebar:hover ~ .appshell-collapse,
+  .appshell-collapse:hover {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .appshell-reopen {
+    top: 14px;
+    left: 12px;
   }
 `;

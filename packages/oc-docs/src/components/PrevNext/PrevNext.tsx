@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import type { SeqNeighbor } from '../../routing/types';
 import { getMethodColorVar } from '../../theme/methodColors';
+import { getShortMethod } from '../../utils/request';
 import { StyledWrapper } from './StyledWrapper';
 
 const toPath = (slug: string) => `/${slug}`;
@@ -9,7 +10,7 @@ const toPath = (slug: string) => `/${slug}`;
 const MethodTag: React.FC<{ method?: string }> = ({ method }) =>
   method ? (
     <span className="prevnext-method" style={{ color: getMethodColorVar(method) }}>
-      {method.toUpperCase()}
+      {getShortMethod(method)}
     </span>
   ) : null;
 

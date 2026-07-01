@@ -7,7 +7,8 @@ export {
   BODY_TYPES,
   type BodyType,
   CONTENT_TYPES,
-  type ContentType
+  type ContentType,
+  PROTOCOL_BADGE_LABELS
 } from './request';
 
 export { TEMPLATE_VARIABLE_BODY_PATTERN, TEMPLATE_VARIABLE_SOURCE_PATTERN } from './regex';

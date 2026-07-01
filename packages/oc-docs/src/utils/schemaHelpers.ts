@@ -17,6 +17,7 @@ import type { GraphQLRequest } from '@opencollection/types/requests/graphql';
 import type { GrpcRequest } from '@opencollection/types/requests/grpc';
 import type { WebSocketRequest } from '@opencollection/types/requests/websocket';
 import type { Script, Scripts, ScriptType } from '@opencollection/types/common/scripts';
+import { PROTOCOL_BADGE_LABELS } from '../constants';
 
 type RequestItem = HttpRequest | GraphQLRequest | GrpcRequest | WebSocketRequest;
 
@@ -139,8 +140,21 @@ export const getHttpMethod = (item: HttpRequest | null | undefined): string => {
   if ('method' in item && (item as any).method) {
     return (item as any).method;
   }
-  
+
   return 'GET';
+};
+
+/**
+ * The badge label for a request item: its HTTP method (GET, POST, ...) or the
+ * protocol short-label (GQL, GRPC, WS). Returns undefined for anything that
+ * carries no badge (folders, scripts, built-in pages). Single source of truth
+ * for every place that shows a request badge (sidebar tree, prev/next, etc.);
+ * colour comes from getMethodColorVar keyed on the same label.
+ */
+export const getRequestBadgeLabel = (item: OpenCollectionItem | null | undefined): string | undefined => {
+  const type = getItemType(item);
+  if (type === 'http') return getHttpMethod(item as HttpRequest);
+  return type ? PROTOCOL_BADGE_LABELS[type] : undefined;
 };
 
 /**

@@ -18,7 +18,7 @@ export class EnvironmentsPage extends BasePage {
 
   async open(): Promise<void> {
     await this.navigate('/');
-    await this.page.getByTestId('sidebar-environments-link').click();
+    await this.page.getByTestId('sidebar-environments').click();
     await this.root.waitFor({ state: 'visible' });
   }
 
