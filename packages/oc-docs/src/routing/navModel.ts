@@ -1,7 +1,6 @@
 import type { OpenCollection } from '@opencollection/types';
 import type { Item as OpenCollectionItem, Folder } from '@opencollection/types/collection/item';
-import type { HttpRequest } from '@opencollection/types/requests/http';
-import { getItemName, getItemSeq, getItemType, isFolder, getHttpMethod } from '../utils/schemaHelpers';
+import { getItemName, getItemSeq, getItemType, isFolder, getRequestBadgeLabel } from '../utils/schemaHelpers';
 import { slugifySegment, dedupeSiblingSlugs } from './slug';
 import type { BreadcrumbSegment, NavEntry, NavModel, PageType } from './types';
 
@@ -52,6 +51,7 @@ const walk = (
     const slug = parentSlug ? `${parentSlug}/${segments[i]}` : segments[i];
     const name = getItemName(item) || 'Untitled';
     const type = pageTypeOf(item);
+    const badge = getRequestBadgeLabel(item);
 
     const entry: NavEntry = {
       slug,
@@ -60,7 +60,7 @@ const walk = (
       item,
       ancestors,
       depth,
-      ...(getItemType(item) === 'http' ? { method: getHttpMethod(item as HttpRequest) } : {}),
+      ...(badge ? { method: badge } : {}),
     };
     out.push(entry);
 

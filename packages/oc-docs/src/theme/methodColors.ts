@@ -1,6 +1,7 @@
 /**
- * Single source of truth mapping HTTP methods to their theme-token CSS vars.
- * Used by every place that colours a method label (Item badge, drawer drag bar,
+ * Single source of truth mapping request kinds (HTTP methods and non-HTTP
+ * protocols) to their theme-token CSS vars. Used by every place that colours a
+ * method or protocol label (Item badge, sidebar tree, drawer drag bar,
  * playground query bar) so the mapping can't drift between components.
  */
 export const methodColorVars: Record<string, string> = {
@@ -11,6 +12,11 @@ export const methodColorVars: Record<string, string> = {
   DELETE: 'var(--oc-request-methods-delete)',
   HEAD: 'var(--oc-request-methods-head)',
   OPTIONS: 'var(--oc-request-methods-options)',
+  GRAPHQL: 'var(--oc-request-gql)',
+  GQL: 'var(--oc-request-gql)',
+  GRPC: 'var(--oc-request-grpc)',
+  WEBSOCKET: 'var(--oc-request-ws)',
+  WS: 'var(--oc-request-ws)',
 };
 
 /** Method colour var, case-insensitive, with a muted fallback for unknown methods. */

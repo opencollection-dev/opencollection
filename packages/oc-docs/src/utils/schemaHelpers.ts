@@ -139,8 +139,28 @@ export const getHttpMethod = (item: HttpRequest | null | undefined): string => {
   if ('method' in item && (item as any).method) {
     return (item as any).method;
   }
-  
+
   return 'GET';
+};
+
+/** Short labels for non-HTTP protocols, keyed by item type. */
+const PROTOCOL_BADGE_LABELS: Record<string, string> = {
+  graphql: 'GQL',
+  grpc: 'GRPC',
+  websocket: 'WS',
+};
+
+/**
+ * The badge label for a request item: its HTTP method (GET, POST, ...) or the
+ * protocol short-label (GQL, GRPC, WS). Returns undefined for anything that
+ * carries no badge (folders, scripts, built-in pages). Single source of truth
+ * for every place that shows a request badge (sidebar tree, prev/next, etc.);
+ * colour comes from getMethodColorVar keyed on the same label.
+ */
+export const getRequestBadgeLabel = (item: OpenCollectionItem | null | undefined): string | undefined => {
+  const type = getItemType(item);
+  if (type === 'http') return getHttpMethod(item as HttpRequest);
+  return type ? PROTOCOL_BADGE_LABELS[type] : undefined;
 };
 
 /**

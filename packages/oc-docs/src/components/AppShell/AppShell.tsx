@@ -1,8 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { Folder } from '@opencollection/types/collection/item';
 import Topbar from '../Topbar/Topbar';
 import Sidebar from '../Docs/Sidebar/Sidebar';
+import SidebarDrawer from '../SidebarDrawer/SidebarDrawer';
+import IconButton from '../../ui/IconButton/IconButton';
+import { ChevronLeftIcon, ChevronRightIcon } from '../../assets/icons';
 import PageRouter from '../PageRouter/PageRouter';
 import PlaygroundDrawer from '../PlaygroundDrawer/PlaygroundDrawer';
 import { useAppSelector } from '../../store/hooks';
@@ -10,6 +14,7 @@ import { selectDocsCollection } from '../../store/slices/docs';
 import { selectPlaygroundCollection } from '../../store/slices/playground';
 import { selectGitCollectionUrl } from '../../store/slices/app';
 import { useActiveResolution } from '../../routing/hooks';
+import { useTopbarLayout } from '../../hooks/useTopbarLayout';
 import { buildFetchInBrunoUrl } from '../../utils/buildFetchInBrunoUrl';
 import { StyledWrapper } from './StyledWrapper';
 
@@ -24,8 +29,24 @@ const AppShell: React.FC<AppShellProps> = ({ logo, testId = 'app-shell' }) => {
   const gitCollectionUrl = useAppSelector(selectGitCollectionUrl);
   const resolution = useActiveResolution();
 
-  const [showDrawer, setShowDrawer] = useState(false);
+  const [showDrawer, setShowDrawer] = useState<boolean>(false);
   const [playgroundItem, setPlaygroundItem] = useState<HttpRequest | Folder | null>(null);
+
+  const mode = useTopbarLayout();
+  const isDesktop = mode === 'desktop';
+  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    setDrawerOpen(false);
+  }, [pathname]);
+
+  const closeDrawer = useCallback(() => setDrawerOpen(false), []);
+  const toggleSidebar = useCallback(() => {
+    if (mode === 'desktop') setSidebarCollapsed((collapsed) => !collapsed);
+    else setDrawerOpen((open) => !open);
+  }, [mode]);
 
   const activeItem = resolution?.entry.item ?? null;
   const activeType = resolution?.entry.type;
@@ -43,17 +64,48 @@ const AppShell: React.FC<AppShellProps> = ({ logo, testId = 'app-shell' }) => {
         collectionName={collection?.info?.name || 'API Collection'}
         version={collection?.info?.version}
         logo={logo}
+        onToggleSidebar={toggleSidebar}
         openInBrunoHref={buildFetchInBrunoUrl(gitCollectionUrl)}
       />
 
       <div className="appshell-row">
-        <aside className="appshell-sidebar">
-          <Sidebar />
-        </aside>
+        {isDesktop && !sidebarCollapsed && (
+          <>
+            <aside className="appshell-sidebar" data-testid="app-sidebar">
+              <Sidebar />
+            </aside>
+            <IconButton
+              className="appshell-collapse"
+              label="Collapse sidebar"
+              title="Collapse sidebar"
+              data-testid="sidebar-collapse"
+              onClick={() => setSidebarCollapsed(true)}
+            >
+              <ChevronLeftIcon />
+            </IconButton>
+          </>
+        )}
+        {isDesktop && sidebarCollapsed && (
+          <IconButton
+            className="appshell-reopen"
+            label="Expand sidebar"
+            title="Expand sidebar"
+            data-testid="sidebar-expand"
+            onClick={() => setSidebarCollapsed(false)}
+          >
+            <ChevronRightIcon />
+          </IconButton>
+        )}
         <main className="appshell-content">
           <PageRouter onOpenPlayground={handleOpenPlayground} />
         </main>
       </div>
+
+      {!isDesktop && (
+        <SidebarDrawer open={drawerOpen} onClose={closeDrawer}>
+          <Sidebar onNavigate={closeDrawer} />
+        </SidebarDrawer>
+      )}
 
       <PlaygroundDrawer
         isOpen={showDrawer}
