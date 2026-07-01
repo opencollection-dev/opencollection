@@ -127,4 +127,14 @@ describe('getEnvironmentVariables', () => {
     };
     expect(getEnvironmentVariables(env).externalSecrets?.typeLabel).toBe('My Custom Vault');
   });
+
+  it('labels the Bruno secret manager types (vault / aws / azure)', () => {
+    const withType = (type: string) =>
+      ({ name: 'Prod', externalSecrets: { type, variables: [{ name: 'x', secretName: 'y' }] } }) as any;
+    expect(getEnvironmentVariables(withType('vault')).externalSecrets?.typeLabel).toBe('Vault');
+    expect(getEnvironmentVariables(withType('aws-secrets-manager')).externalSecrets?.typeLabel).toBe(
+      'AWS Secrets Manager'
+    );
+    expect(getEnvironmentVariables(withType('azure-key-vault')).externalSecrets?.typeLabel).toBe('Azure Key Vault');
+  });
 });

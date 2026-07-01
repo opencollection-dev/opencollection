@@ -1,4 +1,4 @@
-import React, { useId, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import type { OpenCollection } from '@opencollection/types';
 import { getEnvironmentVariables } from '../../utils/environments';
 import { Table, type TableColumn, type TableGroup } from '../../ui/Table/Table';
@@ -47,8 +47,8 @@ export const Environments: React.FC<EnvironmentsProps> = ({ collection }) => {
   const environments = collection.config?.environments ?? [];
   const [activeIndex, setActiveIndex] = useState(0);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const tablistId = useId();
-  const panelId = useId();
+  const tablistId = 'environments-tab';
+  const panelId = 'environments-panel';
 
   const activeTab = environments.length ? Math.min(activeIndex, environments.length - 1) : 0;
   const active = environments[activeTab];

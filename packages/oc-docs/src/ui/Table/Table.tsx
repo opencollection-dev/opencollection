@@ -123,9 +123,11 @@ export const Table: React.FC<TableProps> = ({
             {group.label !== undefined && (
               <tr className="table-group-row">
                 <th scope="colgroup" colSpan={columns.length} className="table-group-cell">
-                  <span className="table-group-label">{group.label}</span>
-                  {group.badge !== undefined && <span className="table-group-badge">{group.badge}</span>}
-                  {group.meta !== undefined && <span className="table-group-meta">{group.meta}</span>}
+                  <div className="table-group-inner">
+                    <span className="table-group-label">{group.label}</span>
+                    {group.badge !== undefined && <span className="table-group-badge">{group.badge}</span>}
+                    {group.meta !== undefined && <span className="table-group-meta">{group.meta}</span>}
+                  </div>
                 </th>
               </tr>
             )}

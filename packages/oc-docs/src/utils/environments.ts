@@ -5,21 +5,7 @@ import type {
   VariableValueOrVariants,
   VariableValueType
 } from '@opencollection/types/common/variables';
-
-const TYPE_LABELS: Record<VariableValueType, string> = {
-  string: 'String',
-  number: 'Number',
-  boolean: 'Boolean',
-  null: 'Null',
-  object: 'Object'
-};
-
-const MANAGER_LABELS: Record<string, string> = {
-  'aws-secrets-manager': 'AWS Secrets Manager',
-  'azure-key-vault': 'Azure Key Vault',
-  'gcp-secret-manager': 'GCP Secret Manager',
-  'hashicorp-vault': 'HashiCorp Vault'
-};
+import { MANAGER_LABELS, TYPE_LABELS } from '../constants';
 
 const humanizeType = (type: VariableValueType | undefined): string => (type && TYPE_LABELS[type]) || 'String';
 

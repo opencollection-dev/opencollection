@@ -26,7 +26,7 @@ export const StyledWrapper = styled.div`
     border: none;
     background: transparent;
     font-family: var(--font-sans);
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     font-weight: 500;
     line-height: 1;
     letter-spacing: 0;
@@ -41,7 +41,7 @@ export const StyledWrapper = styled.div`
   .environment-tab.is-active {
     color: var(--text-primary);
     font-weight: 600;
-    background: color-mix(in srgb, var(--oc-text) 6%, transparent);
+    background: var(--oc-background-surface0);
   }
   .environment-tab:focus-visible {
     outline: 2px solid var(--primary-color);
@@ -49,16 +49,19 @@ export const StyledWrapper = styled.div`
   }
 
   .environment-panel {
-    margin-top: 1rem;
+    margin-top: 0.625rem;
   }
 
   .environment-name {
-    font-family: var(--font-sans);
-    font-weight: 400;
+    font-family: 'Fira Code', var(--font-mono);
+    font-weight: 500;
     font-size: 0.75rem;
     line-height: 1;
     letter-spacing: 0;
     color: var(--oc-primary-strong);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .environment-value {
@@ -67,13 +70,16 @@ export const StyledWrapper = styled.div`
     font-size: 0.75rem;
     line-height: 1;
     letter-spacing: 0;
-    color: var(--text-primary);
+    color: var(--text-primary); /* #343434 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .environment-empty {
     font-style: italic;
     font-size: 0.75rem;
-    color: var(--oc-colors-text-subtext0);
+    color: var(--text-muted); /* #838383 */
   }
 
   .environment-secret {
@@ -82,7 +88,7 @@ export const StyledWrapper = styled.div`
     gap: 0.375rem;
     font-style: italic;
     font-size: 0.75rem;
-    color: var(--oc-colors-text-subtext0);
+    color: var(--text-muted); /* #838383 */
   }
   .environment-secret svg {
     width: 0.875rem;
@@ -95,7 +101,7 @@ export const StyledWrapper = styled.div`
     font-size: 0.75rem;
     line-height: 1;
     letter-spacing: 0;
-    color: var(--oc-overlay-overlay2);
+    color: var(--text-secondary); /* #666666 */
   }
   .environment-empty {
     margin-top: 0.8rem;

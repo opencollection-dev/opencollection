@@ -1,8 +1,14 @@
 import React from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect } from 'vitest';
 import type { OpenCollection } from '@opencollection/types';
+import { useRenderToDom } from '../../hooks/useRenderToDom';
 import { Environments } from './Environments';
+
+const groupLabels = (root: ReturnType<typeof useRenderToDom>) =>
+  root.querySelectorAll('.table-group-label').map((el) => el.text.trim());
+
+const cellText = (root: ReturnType<typeof useRenderToDom>, selector: string) =>
+  root.querySelectorAll(selector).map((el) => el.text.trim());
 
 describe('Environments', () => {
   it('renders a tab per environment and the active environment variable table', () => {
@@ -23,18 +29,17 @@ describe('Environments', () => {
       }
     };
 
-    const html = renderToStaticMarkup(<Environments collection={collection} />);
+    const root = useRenderToDom(<Environments collection={collection} />);
 
-    expect(html).toContain('Environments');
-    expect(html).toContain('role="tablist"');
-    expect(html).toContain('Development');
-    expect(html).toContain('Prod');
-    expect(html).toContain('role="tabpanel"');
-    expect(html).toContain('Variables');
-    expect(html).toContain('Secret Variables');
-    expect(html).toContain('baseUrl');
-    expect(html).toContain('https://api.dev');
-    expect(html).toContain('Secret');
+    expect(root.querySelector('[data-testid="environments-title"]')?.text.trim()).toBe('Environments');
+    expect(root.querySelector('[role="tablist"]')).toBeTruthy();
+    expect(root.querySelectorAll('[role="tab"]').map((t) => t.text.trim())).toEqual(['Development', 'Prod']);
+    expect(root.querySelector('[role="tabpanel"]')).toBeTruthy();
+
+    expect(groupLabels(root)).toEqual(['Variables', 'Secret Variables']);
+    expect(cellText(root, '.environment-name')).toContain('baseUrl');
+    expect(cellText(root, '.environment-value')).toContain('https://api.dev');
+    expect(root.querySelector('.environment-secret')?.text).toContain('Secret');
   });
 
   it('renders an external secret variables section with the manager label', () => {
@@ -54,12 +59,12 @@ describe('Environments', () => {
       }
     } as unknown as OpenCollection;
 
-    const html = renderToStaticMarkup(<Environments collection={collection} />);
+    const root = useRenderToDom(<Environments collection={collection} />);
 
-    expect(html).toContain('External Secret Variables');
-    expect(html).toContain('AWS Secrets Manager');
-    expect(html).toContain('dbPassword');
-    expect(html).toContain('prod/db/credentials');
+    expect(groupLabels(root)).toContain('External Secret Variables');
+    expect(root.querySelector('.table-group-meta')?.text.trim()).toBe('AWS Secrets Manager');
+    expect(cellText(root, '.environment-name')).toContain('dbPassword');
+    expect(cellText(root, '.environment-value')).toContain('prod/db/credentials');
   });
 
   it('omits sections that have no entries', () => {
@@ -68,11 +73,8 @@ describe('Environments', () => {
       config: { environments: [{ name: 'Dev', variables: [{ name: 'baseUrl', value: 'x' }] }] }
     };
 
-    const html = renderToStaticMarkup(<Environments collection={collection} />);
-
-    expect(html).toContain('Variables');
-    expect(html).not.toContain('Secret Variables');
-    expect(html).not.toContain('External Secret Variables');
+    const root = useRenderToDom(<Environments collection={collection} />);
+    expect(groupLabels(root)).toEqual(['Variables']);
   });
 
   it('shows "(empty)" for both the value and the data type when a variable has no value', () => {
@@ -81,15 +83,14 @@ describe('Environments', () => {
       config: { environments: [{ name: 'Dev', variables: [{ name: 'transactionId', value: '' }] }] }
     };
 
-    const html = renderToStaticMarkup(<Environments collection={collection} />);
-    const matches = html.match(/\(empty\)/g) ?? [];
-    expect(matches.length).toBe(2);
+    const root = useRenderToDom(<Environments collection={collection} />);
+    expect(root.querySelectorAll('.environment-empty').length).toBe(2);
   });
 
   it('renders an empty state when there are no environments', () => {
     const collection: OpenCollection = { info: { name: 'Empty API', version: '1.0.0' } };
-    const html = renderToStaticMarkup(<Environments collection={collection} />);
-    expect(html).toContain('No environments configured');
-    expect(html).not.toContain('role="tablist"');
+    const root = useRenderToDom(<Environments collection={collection} />);
+    expect(root.querySelector('.empty-state-heading')?.text.trim()).toBe('No environments configured');
+    expect(root.querySelector('[role="tablist"]')).toBeNull();
   });
 });
