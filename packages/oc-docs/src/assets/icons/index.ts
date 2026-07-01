@@ -3,6 +3,7 @@ export * from './HamburgerIcon';
 export * from './OverflowIcon';
 export * from './BrunoGlyph';
 export * from './GlobeIcon';
+export * from './FolderIcon';
 export * from './BookIcon';
 export * from './ExpandIcon';
 export * from './CloseIcon';

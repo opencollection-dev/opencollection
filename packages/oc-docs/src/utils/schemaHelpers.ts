@@ -475,6 +475,19 @@ export const getItemDocs = (item: OpenCollectionItem | null | undefined): string
 };
 
 /**
+ * Get the short description from an item's info block.
+ * Handles both string format and object format { content, type }.
+ */
+export const getItemDescription = (item: OpenCollectionItem | null | undefined): string => {
+  const description = (item as { info?: { description?: unknown } } | null | undefined)?.info?.description;
+  if (typeof description === 'string') return description;
+  if (description && typeof description === 'object' && 'content' in description) {
+    return (description as { content?: string }).content || '';
+  }
+  return '';
+};
+
+/**
  * Get settings from a request (from settings block or root)
  */
 export const getRequestSettings = (item: RequestItem | null | undefined): any => {

@@ -17,7 +17,8 @@ test.describe('Request page — Details', () => {
 
     test('returns to a parent folder when its segment is clicked', async ({ requestPage, page }) => {
       await requestPage.breadcrumb.segment('customers').click();
-      await expect(page.getByTestId('overview')).toBeVisible();
+      await expect(page.getByTestId('folder-page')).toBeVisible();
+      await expect(page.getByTestId('folder-title')).toHaveText('customers');
     });
   });
 

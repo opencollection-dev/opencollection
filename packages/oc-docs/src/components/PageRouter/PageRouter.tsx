@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import type { HttpRequest } from '@opencollection/types/requests/http';
-import type { ScriptFile } from '@opencollection/types/collection/item';
+import type { ScriptFile, Folder as FolderItem } from '@opencollection/types/collection/item';
 import { useActiveResolution, useNavModel } from '../../routing/hooks';
 import { useAppSelector } from '../../store/hooks';
 import { selectDocsCollection } from '../../store/slices/docs';
@@ -13,6 +13,7 @@ import { StyledWrapper } from './StyledWrapper';
 import { Overview } from '../../pages/Overview/Overview';
 import Request from '../../pages/Request/Request';
 import Script from '../../pages/Script/Script';
+import Folder from '../../pages/Folder/Folder';
 import Environments from '../../pages/Environments/Environments';
 import type { PageProps } from '../../routing/types';
 
@@ -63,8 +64,11 @@ const PageRouter: React.FC<PageRouterProps> = ({ onOpenPlayground, testId = 'pag
       case 'environments':
         return <Environments {...pageProps} />;
       case 'folder':
-        // A folder shows the collection overview (matches the pre-routing behaviour).
-        return <Overview collection={collection} />;
+        return item ? (
+          <Folder item={item as FolderItem} ancestry={ancestry} collection={collection} onBreadcrumbClick={goToUuid} />
+        ) : (
+          <Overview collection={collection} />
+        );
       case 'script':
         return item ? (
           <Script item={item as ScriptFile} ancestry={ancestry} collection={collection} onBreadcrumbClick={goToUuid} />

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import type { Item as OpenCollectionItem, Folder } from '@opencollection/types/collection/item';
 import type { HttpRequest } from '@opencollection/types/requests/http';
@@ -35,19 +35,17 @@ const Sidebar: React.FC = () => {
     return map;
   }, [model]);
 
-  // Auto-expand (expand-only) the active node's ancestor folders — and the
-  // active folder itself — so a deep-linked item is always visible.
+  const autoRevealedSlug = useRef<string | null>(null);
   useEffect(() => {
+    if (autoRevealedSlug.current === activeSlug) return;
+    autoRevealedSlug.current = activeSlug;
+
     const entry = model.bySlug.get(activeSlug);
     if (!entry) return;
 
     const uuids: string[] = [];
     for (const ancestor of entry.ancestors) {
       const uuid = getItemUuid(model.bySlug.get(ancestor.slug)?.item);
-      if (uuid) uuids.push(uuid);
-    }
-    if (entry.type === 'folder') {
-      const uuid = getItemUuid(entry.item);
       if (uuid) uuids.push(uuid);
     }
     if (uuids.length) dispatch(expandFolders(uuids));
@@ -91,7 +89,11 @@ const Sidebar: React.FC = () => {
             transition-all duration-200
           `}
           style={{ paddingLeft: `${level * 16 + 8}px` }}
-          onClick={() => itemSlug !== undefined && goTo(itemSlug)}
+          onClick={() => {
+            // A folder click both opens/closes it and shows its folder page.
+            if (itemIsFolder && itemUuid) dispatch(toggleItem(itemUuid));
+            if (itemSlug !== undefined) goTo(itemSlug);
+          }}
         >
           {level > 0 && (
             <div
@@ -101,16 +103,7 @@ const Sidebar: React.FC = () => {
           )}
 
           {itemIsFolder ? (
-            <div
-              className="mr-2 flex-shrink-0"
-              role="button"
-              aria-label={isExpanded ? 'Collapse folder' : 'Expand folder'}
-              onClick={(e) => {
-                // Chevron toggles collapse independently of navigating to the folder page.
-                e.stopPropagation();
-                if (itemUuid) dispatch(toggleItem(itemUuid));
-              }}
-            >
+            <div className="mr-2 flex-shrink-0" aria-hidden="true">
               {renderFolderIcon(isExpanded)}
             </div>
           ) : itemIsScript ? null : (

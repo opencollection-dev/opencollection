@@ -3,7 +3,6 @@ import type { OpenCollection } from '@opencollection/types';
 import type { Item } from '@opencollection/types/collection/item';
 import type { HttpRequest, HttpRequestParam } from '@opencollection/types/requests/http';
 import type { Auth } from '@opencollection/types/common/auth';
-import type { Description } from '@opencollection/types/common/description';
 import type { GraphQLRequest } from '@opencollection/types/requests/graphql';
 import type { GrpcRequest } from '@opencollection/types/requests/grpc';
 import type { WebSocketRequest } from '@opencollection/types/requests/websocket';
@@ -18,6 +17,7 @@ import {
   getHttpBody,
   getRequestAuth,
   getItemDocs,
+  getItemDescription,
   getRequestExamples,
   isUnsupportedRequest
 } from '../../utils/schemaHelpers';
@@ -56,17 +56,12 @@ interface RequestProps {
   collection?: OpenCollection | null;
   onTryClick?: () => void;
   onBreadcrumbClick?: (uuid: string) => void;
+  testId?: string;
 }
 
-type RequestContentProps = Omit<RequestProps, 'item'> & { item: HttpRequest; testId?: string };
+type RequestContentProps = Omit<RequestProps, 'item'> & { item: HttpRequest };
 
-const descriptionContent = (item: HttpRequest): string => {
-  const docs = getItemDocs(item);
-  if (docs) return docs;
-  const info = (item.info?.description ?? '') as Description;
-  if (typeof info === 'string') return info;
-  return (info && typeof info === 'object' && 'content' in info ? info.content : '') || '';
-};
+const descriptionContent = (item: HttpRequest): string => getItemDocs(item) || getItemDescription(item);
 
 const RequestContent: React.FC<RequestContentProps> = ({
   item,
@@ -96,12 +91,10 @@ const RequestContent: React.FC<RequestContentProps> = ({
     return content ? md.render(content) : '';
   }, [item, md]);
 
-  // Auth: resolve `inherit` to its effective source for display + code generation.
   const ownAuth = getRequestAuth(item) as Auth | undefined;
   const resolved = useMemo(() => resolveInheritedAuth(collection, ancestry, item), [collection, ancestry, item]);
   const effectiveAuth = ownAuth === 'inherit' ? resolved.auth : ownAuth;
   const showAuth = ownAuth !== undefined;
-  // Heading badge for inherited auth, e.g. "Inherited from collection".
   const authInheritedBadge =
     ownAuth === 'inherit' ? (resolved.source ? `Inherited from ${resolved.source.level}` : 'Inherited') : undefined;
 
@@ -126,7 +119,6 @@ const RequestContent: React.FC<RequestContentProps> = ({
   const hasExecutionContext = scriptChain.length > 0 || hasVars || assertions.length > 0 || tests.length > 0;
   const hasLeftColumn = showAuth || hasParams || hasBody || hasHeaders;
 
-  // Content-type label shown as a badge on the BODY heading (e.g. "application/json").
   const bodyContentType = useMemo(() => {
     const view = getBodyView(body);
     return view.render !== 'none' ? view.contentTypeLabel : undefined;
@@ -179,7 +171,6 @@ const RequestContent: React.FC<RequestContentProps> = ({
                   <AuthDetails auth={effectiveAuth} authModeLabels={AUTH_MODE_LABELS} />
                 </Section>
               )}
-
             </div>
 
             <div className="request-col-right">
