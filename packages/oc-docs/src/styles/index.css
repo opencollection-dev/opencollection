@@ -807,6 +807,8 @@ tr.themed-row:nth-child(even) {
   max-width: 100% !important;
   overflow-x: auto !important;
   margin: 1em 0 !important;
+  border: 1px solid var(--oc-border-border1) !important;
+  border-radius: 0.5rem !important;
 }
 
 .markdown-documentation table {
@@ -814,26 +816,24 @@ tr.themed-row:nth-child(even) {
   border-collapse: collapse !important;
   margin: 0 !important;
   font-size: 0.875em !important;
-  border: 1px solid var(--border-color) !important;
-  border-radius: 6px !important;
-  overflow: hidden !important;
 }
 
 .markdown-documentation th,
 .markdown-documentation td {
   padding: 0.5em 0.75em !important;
-  border: 1px solid var(--border-color) !important;
+  border-bottom: 1px solid var(--oc-table-border) !important;
   text-align: left !important;
+}
+
+.markdown-documentation tr:last-child td,
+.markdown-documentation tr:last-child th {
+  border-bottom: none !important;
 }
 
 .markdown-documentation th {
   background-color: var(--table-header-bg) !important;
   font-weight: 600 !important;
   color: var(--text-secondary) !important;
-}
-
-.markdown-documentation tr:nth-child(even) {
-  background-color: var(--table-row-even-bg) !important;
 }
 
 .markdown-documentation strong {

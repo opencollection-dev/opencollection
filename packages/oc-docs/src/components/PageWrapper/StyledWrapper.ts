@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 export const StyledWrapper = styled.div`
-  max-width: 1200px;
+  max-width: 1280px;
   margin-inline: auto;
   padding: 0.9375rem 3rem;
 
