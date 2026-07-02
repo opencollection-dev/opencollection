@@ -55,7 +55,8 @@ export const StyledWrapper = styled.header`
   .topbar-search-row {
     display: flex;
     align-items: center;
-    padding: 0 20px 10px;
+    height: 0;
+    padding: 0;
     box-sizing: border-box;
 
     .topbar-search-inner {

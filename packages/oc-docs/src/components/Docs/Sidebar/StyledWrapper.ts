@@ -45,6 +45,24 @@ export const SidebarItems = styled.div`
   ${SidebarContainer}.compact & {
     padding: 0 4px;
   }
+
+  .sidebar-root-nav {
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .sidebar-nav-icon {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 8px;
+    flex-shrink: 0;
+    color: var(--text-tertiary);
+  }
+  .sidebar-nav-icon svg {
+    width: 15px;
+    height: 15px;
+  }
 `;
 
 export const SidebarItem = styled.div`

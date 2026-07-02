@@ -7,17 +7,30 @@ info:
 config:
   environments:
     - name: "Local"
+      color: "#16a34a"
       variables:
         - name: "host"
           value: "http://localhost:8081"
         - name: "bearer_auth_token"
-          value: "your_secret_token"
+          secret: true
+          type: "string"
     - name: "Prod"
+      color: "#dc2626"
       variables:
         - name: "host"
           value: "https://echo.usebruno.com"
         - name: "bearer_auth_token"
-          value: "your_secret_token"
+          secret: true
+          type: "string"
+      externalSecrets:
+        type: aws-secrets-manager
+        variables:
+          - name: dbPassword
+            secretName: prod/db/credentials
+            enabled: true
+          - name: apiKey
+            secretName: prod/payment-gateway/api-key
+            enabled: true
 request:
   headers:
     - name: "collection-header"

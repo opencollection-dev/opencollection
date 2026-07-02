@@ -10,21 +10,10 @@ export const StyledWrapper = styled.li`
   font-size: 0.75rem;
   line-height: 1.125rem;
   letter-spacing: normal;
+  color: var(--oc-text);
 
   &:last-child {
     border-bottom: none;
-  }
-
-  .environment-summary-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    background: var(--text-tertiary);
-  }
-
-  .environment-summary-name {
-    color: var(--oc-text);
   }
 
   .environment-summary-spacer {

@@ -1,5 +1,6 @@
 import { test as base } from '@playwright/test';
 import { OverviewPage } from '../pages/overview.page';
+import { EnvironmentsPage } from '../pages/environments.page';
 import { RequestPage } from '../pages/request.page';
 import { ScriptPage } from '../pages/script.page';
 import { FolderPage } from '../pages/folder.page';
@@ -7,9 +8,11 @@ import { UnsupportedRequestPage } from '../pages/unsupported-request.page';
 import { SidebarComponent } from '../components/sidebar.component';
 import { ThemeToggleComponent } from '../components/layout/theme-toggle.component';
 import { PageHeaderComponent } from '../components/layout/page-header.component';
+import { SearchComponent } from '../components/search/search.component';
 
 type Fixtures = {
   overviewPage: OverviewPage;
+  environmentsPage: EnvironmentsPage;
   requestPage: RequestPage;
   scriptPage: ScriptPage;
   folderPage: FolderPage;
@@ -17,11 +20,15 @@ type Fixtures = {
   sidebar: SidebarComponent;
   pageHeader: PageHeaderComponent;
   themeToggle: ThemeToggleComponent;
+  search: SearchComponent;
 };
 
 export const test = base.extend<Fixtures>({
   overviewPage: async ({ page }, use) => {
     await use(new OverviewPage(page));
+  },
+  environmentsPage: async ({ page }, use) => {
+    await use(new EnvironmentsPage(page));
   },
   requestPage: async ({ page }, use) => {
     await use(new RequestPage(page));
@@ -43,5 +50,8 @@ export const test = base.extend<Fixtures>({
   },
   themeToggle: async ({ page }, use) => {
     await use(new ThemeToggleComponent(page));
+  },
+  search: async ({ page }, use) => {
+    await use(new SearchComponent(page));
   }
 });

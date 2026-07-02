@@ -7,12 +7,17 @@ import OpenCollectionLogo from '../../../assets/opencollection-logo.svg';
 import { SidebarContainer, SidebarItems, SidebarItem } from './StyledWrapper';
 import ThemeToggle from '../../ThemeToggle/ThemeToggle';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { toggleItem, expandFolders, selectDocsCollection } from '../../../store/slices/docs';
+import {
+  toggleItem,
+  expandFolders,
+  selectDocsCollection
+} from '../../../store/slices/docs';
 import { getItemType, getItemName, getHttpMethod, isFolder, isScriptFile } from '../../../utils/schemaHelpers';
 import { getItemUuid } from '../../../utils/itemUtils';
 import { useNavModel } from '../../../routing/hooks';
 import { normalizeSlug } from '../../../routing/resolve';
 import { OVERVIEW_SLUG, ENVIRONMENTS_SLUG, sortSiblings } from '../../../routing/navModel';
+import { GlobeIcon, BookIcon } from '../../../assets/icons';
 
 const Sidebar: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -147,18 +152,22 @@ const Sidebar: React.FC = () => {
         {/* Built-in pages */}
         <SidebarItem
           className={`flex items-center select-none text-sm cursor-pointer ${activeSlug === OVERVIEW_SLUG ? 'active' : ''}`}
+          data-testid="sidebar-overview-link"
           style={{ paddingLeft: '8px' }}
           onClick={() => goTo(OVERVIEW_SLUG)}
         >
+          <span className="sidebar-nav-icon"><BookIcon /></span>
           <div className="truncate flex-1">Overview</div>
         </SidebarItem>
 
         {hasEnvironments && (
           <SidebarItem
+            data-testid="sidebar-environments-link"
             className={`flex items-center select-none text-sm cursor-pointer ${activeSlug === ENVIRONMENTS_SLUG ? 'active' : ''}`}
             style={{ paddingLeft: '8px' }}
             onClick={() => goTo(ENVIRONMENTS_SLUG)}
           >
+            <span className="sidebar-nav-icon"><GlobeIcon /></span>
             <div className="truncate flex-1">Environments</div>
           </SidebarItem>
         )}
