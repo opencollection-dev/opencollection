@@ -30,7 +30,11 @@ export const foldersFixtureCollection = {
         { name: 'Get Room', type: 'http', seq: 2, method: 'GET', url: '{{host}}/rooms/:id' },
         { name: 'Create Room', type: 'http', seq: 3, method: 'POST', url: '{{host}}/rooms' },
         { name: 'Update Room', type: 'http', seq: 4, method: 'PUT', url: '{{host}}/rooms/:id' },
-        { name: 'Delete Room', type: 'http', seq: 5, method: 'DELETE', url: '{{host}}/rooms/:id' },
+        { name: 'Patch Room', type: 'http', seq: 5, method: 'PATCH', url: '{{host}}/rooms/:id' },
+        { name: 'Room Headers', type: 'http', seq: 6, method: 'HEAD', url: '{{host}}/rooms/:id' },
+        { name: 'Room Options', type: 'http', seq: 7, method: 'OPTIONS', url: '{{host}}/rooms' },
+        { name: 'Purge Room Cache', type: 'http', seq: 8, method: 'PURGE', url: '{{host}}/rooms/:id/cache' },
+        { name: 'Delete Room', type: 'http', seq: 9, method: 'DELETE', url: '{{host}}/rooms/:id' },
         {
           name: 'Availability',
           type: 'folder',

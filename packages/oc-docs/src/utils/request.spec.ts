@@ -7,7 +7,8 @@ import {
   buildScriptChain,
   getScriptFlow,
   getPreRequestVars,
-  getPostResponseVars
+  getPostResponseVars,
+  getShortMethod
 } from './request';
 import { AUTH_MODE_LABELS } from '../constants';
 
@@ -226,5 +227,17 @@ describe('requestVars', () => {
     expect(getPostResponseVars(item)).toEqual([
       { name: 'authToken', expression: 'res.body.token', scope: 'environment', disabled: undefined }
     ]);
+  });
+});
+
+describe('getShortMethod', () => {
+  it('abbreviates DELETE and OPTIONS', () => {
+    expect(getShortMethod('DELETE')).toBe('DEL');
+    expect(getShortMethod('OPTIONS')).toBe('OPT');
+  });
+  it('uppercases and passes other methods through', () => {
+    expect(getShortMethod('get')).toBe('GET');
+    expect(getShortMethod('PATCH')).toBe('PATCH');
+    expect(getShortMethod('purge')).toBe('PURGE');
   });
 });

@@ -305,3 +305,15 @@ export const getPostResponseVars = (item: HttpRequest): PostResponseVarRow[] => 
       disabled: a.disabled
     }));
 };
+
+/**
+ * Short, uppercased method name matching the design (DELETE -> DEL, OPTIONS ->
+ * OPT); every other method is shown as-is. Single source for the method badges
+ * and filter chips so the abbreviations can't drift between components.
+ */
+export const getShortMethod = (method: string): string => {
+  const m = method.toUpperCase();
+  if (m === 'DELETE') return 'DEL';
+  if (m === 'OPTIONS') return 'OPT';
+  return m;
+};

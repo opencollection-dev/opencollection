@@ -60,7 +60,7 @@ export const Overview: React.FC<OverviewProps> = ({ collection, testId = 'overvi
         <header className="overview-headline">
           <div>
             {version ? (
-              <div className="overview-version" data-testid="overview-collection-version">{`version : ${version}`}</div>
+              <div className="overview-version" data-testid="overview-collection-version">{`Version : ${version}`}</div>
             ) : null}
             <Heading testId="overview-collection-name">{name}</Heading>
           </div>

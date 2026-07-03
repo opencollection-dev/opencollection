@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import type { Item as OpenCollectionItem, Folder } from '@opencollection/types/collection/item';
 import type { HttpRequest } from '@opencollection/types/requests/http';
@@ -7,12 +7,17 @@ import OpenCollectionLogo from '../../../assets/opencollection-logo.svg';
 import { SidebarContainer, SidebarItems, SidebarItem } from './StyledWrapper';
 import ThemeToggle from '../../ThemeToggle/ThemeToggle';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { toggleItem, expandFolders, selectDocsCollection } from '../../../store/slices/docs';
+import {
+  toggleItem,
+  expandFolders,
+  selectDocsCollection
+} from '../../../store/slices/docs';
 import { getItemType, getItemName, getHttpMethod, isFolder, isScriptFile } from '../../../utils/schemaHelpers';
 import { getItemUuid } from '../../../utils/itemUtils';
 import { useNavModel } from '../../../routing/hooks';
 import { normalizeSlug } from '../../../routing/resolve';
 import { OVERVIEW_SLUG, ENVIRONMENTS_SLUG, sortSiblings } from '../../../routing/navModel';
+import { GlobeIcon, BookIcon } from '../../../assets/icons';
 
 const Sidebar: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -35,19 +40,17 @@ const Sidebar: React.FC = () => {
     return map;
   }, [model]);
 
-  // Auto-expand (expand-only) the active node's ancestor folders — and the
-  // active folder itself — so a deep-linked item is always visible.
+  const autoRevealedSlug = useRef<string | null>(null);
   useEffect(() => {
+    if (autoRevealedSlug.current === activeSlug) return;
+    autoRevealedSlug.current = activeSlug;
+
     const entry = model.bySlug.get(activeSlug);
     if (!entry) return;
 
     const uuids: string[] = [];
     for (const ancestor of entry.ancestors) {
       const uuid = getItemUuid(model.bySlug.get(ancestor.slug)?.item);
-      if (uuid) uuids.push(uuid);
-    }
-    if (entry.type === 'folder') {
-      const uuid = getItemUuid(entry.item);
       if (uuid) uuids.push(uuid);
     }
     if (uuids.length) dispatch(expandFolders(uuids));
@@ -91,7 +94,11 @@ const Sidebar: React.FC = () => {
             transition-all duration-200
           `}
           style={{ paddingLeft: `${level * 16 + 8}px` }}
-          onClick={() => itemSlug !== undefined && goTo(itemSlug)}
+          onClick={() => {
+            // A folder click both opens/closes it and shows its folder page.
+            if (itemIsFolder && itemUuid) dispatch(toggleItem(itemUuid));
+            if (itemSlug !== undefined) goTo(itemSlug);
+          }}
         >
           {level > 0 && (
             <div
@@ -101,16 +108,7 @@ const Sidebar: React.FC = () => {
           )}
 
           {itemIsFolder ? (
-            <div
-              className="mr-2 flex-shrink-0"
-              role="button"
-              aria-label={isExpanded ? 'Collapse folder' : 'Expand folder'}
-              onClick={(e) => {
-                // Chevron toggles collapse independently of navigating to the folder page.
-                e.stopPropagation();
-                if (itemUuid) dispatch(toggleItem(itemUuid));
-              }}
-            >
+            <div className="mr-2 flex-shrink-0" aria-hidden="true">
               {renderFolderIcon(isExpanded)}
             </div>
           ) : itemIsScript ? null : (
@@ -154,18 +152,22 @@ const Sidebar: React.FC = () => {
         {/* Built-in pages */}
         <SidebarItem
           className={`flex items-center select-none text-sm cursor-pointer ${activeSlug === OVERVIEW_SLUG ? 'active' : ''}`}
+          data-testid="sidebar-overview-link"
           style={{ paddingLeft: '8px' }}
           onClick={() => goTo(OVERVIEW_SLUG)}
         >
+          <span className="sidebar-nav-icon"><BookIcon /></span>
           <div className="truncate flex-1">Overview</div>
         </SidebarItem>
 
         {hasEnvironments && (
           <SidebarItem
+            data-testid="sidebar-environments-link"
             className={`flex items-center select-none text-sm cursor-pointer ${activeSlug === ENVIRONMENTS_SLUG ? 'active' : ''}`}
             style={{ paddingLeft: '8px' }}
             onClick={() => goTo(ENVIRONMENTS_SLUG)}
           >
+            <span className="sidebar-nav-icon"><GlobeIcon /></span>
             <div className="truncate flex-1">Environments</div>
           </SidebarItem>
         )}

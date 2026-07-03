@@ -5,9 +5,9 @@ test.describe('Collection Overview', () => {
     await overviewPage.goto();
   });
 
-  test('header shows the collection version ("version : 1.0.0") and name ("Bruno Testbench")', async ({ overviewPage }) => {
+  test('header shows the collection version ("Version : 1.0.0") and name ("Bruno Testbench")', async ({ overviewPage }) => {
     await test.step('the raw version is shown, unformatted', async () => {
-      await expect(overviewPage.header.collectionVersion).toHaveText('version : 1.0.0');
+      await expect(overviewPage.header.collectionVersion).toHaveText('Version : 1.0.0');
     });
 
     await test.step('the collection name is shown as the page title', async () => {
