@@ -79,7 +79,7 @@ test.describe('Request page — Details', () => {
       await expect(codeSnippet.code).toContainText('requests');
     });
 
-    test('opens the expanded modal on the language shown inline', async ({ requestPage }) => {
+    test('the expanded view opens on the same language currently selected inline', async ({ requestPage }) => {
       const { codeSnippet } = requestPage;
       await codeSnippet.selectLanguage('python');
       await codeSnippet.openExpandedView();
