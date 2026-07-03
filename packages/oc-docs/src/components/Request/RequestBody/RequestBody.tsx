@@ -35,6 +35,7 @@ export const RequestBody: React.FC<RequestBodyProps> = ({ body, showContentType 
       {view.render === 'code' && <Code code={view.code} language={view.language} showLineNumbers />}
       {view.render === 'table' && (
         <PropertyTable
+          hideRowBorders
           rows={view.rows.map<PropertyRow>((row) => ({
             label: row.name,
             value: row.value,
@@ -46,6 +47,7 @@ export const RequestBody: React.FC<RequestBodyProps> = ({ body, showContentType 
       )}
       {view.render === 'file' && (
         <PropertyTable
+          hideRowBorders
           rows={view.files.map<PropertyRow>((file, index) => ({
             label: view.files.length > 1 ? `File ${index + 1}${file.selected ? ' · selected' : ''}` : 'File',
             value: file.filePath,

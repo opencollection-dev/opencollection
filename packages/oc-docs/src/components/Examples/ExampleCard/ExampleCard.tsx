@@ -259,7 +259,7 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
         label: 'Headers',
         hasData: headers.length > 0,
         ctype: headers.length ? headerCtype(headers.length) : '',
-        content: headers.length ? <PropertyTable rows={headerRows(headers)} /> : emptyPane('headers')
+        content: headers.length ? <PropertyTable hideRowBorders rows={headerRows(headers)} /> : emptyPane('headers')
       }
     ];
   }, [request.params, request.body, request.headers, displayUrl]);
@@ -284,7 +284,7 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
         label: 'Headers',
         hasData: headers.length > 0,
         ctype: headers.length ? headerCtype(headers.length) : '',
-        content: headers.length ? <PropertyTable rows={headerRows(headers)} /> : emptyPane('headers')
+        content: headers.length ? <PropertyTable hideRowBorders rows={headerRows(headers)} /> : emptyPane('headers')
       }
     ];
   }, [responseBody, response.headers]);

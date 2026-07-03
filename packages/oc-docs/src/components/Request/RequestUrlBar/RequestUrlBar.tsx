@@ -2,6 +2,7 @@ import React from 'react';
 import { MethodBadge } from '../../MethodBadge/MethodBadge';
 import { VariableText } from '../../VariableText/VariableText';
 import { CopyButton } from '../../../ui/CopyButton/CopyButton';
+import { SendIcon } from '../../../assets/icons';
 import { StyledWrapper } from './StyledWrapper';
 
 interface RequestUrlBarProps {
@@ -43,9 +44,7 @@ export const RequestUrlBar: React.FC<RequestUrlBarProps> = ({
       />
       {onTry && (
         <button type="button" className="request-try" onClick={onTry} data-testid="request-try-button">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style={{ display: 'block' }}>
-            <polygon points="6 4 20 12 6 20 6 4" />
-          </svg>
+          <SendIcon />
           {tryLabel}
         </button>
       )}

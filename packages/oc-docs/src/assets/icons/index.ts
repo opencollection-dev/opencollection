@@ -10,6 +10,7 @@ export * from './FolderIcon';
 export * from './BookIcon';
 export * from './ExpandIcon';
 export * from './PlayIcon';
+export * from './SendIcon';
 export * from './EyeOffIcon';
 export * from './FileIcon';
 export * from './RefreshIcon';

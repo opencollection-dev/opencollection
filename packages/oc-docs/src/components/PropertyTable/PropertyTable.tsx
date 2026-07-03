@@ -18,6 +18,7 @@ interface PropertyTableProps {
   emptyMessage?: string;
   className?: string;
   testId?: string;
+  hideRowBorders?: boolean;
 }
 
 const ValueCell: React.FC<{ row: PropertyRow; testId?: string }> = ({ row, testId }) => {
@@ -26,8 +27,11 @@ const ValueCell: React.FC<{ row: PropertyRow; testId?: string }> = ({ row, testI
   return <VariableText value={row.value ?? ''} />;
 };
 
-export const PropertyTable: React.FC<PropertyTableProps> = ({ rows, emptyMessage, className, testId = 'property-table' }) => (
-  <StyledWrapper className={['property-table', className].filter(Boolean).join(' ')} data-testid={testId}>
+export const PropertyTable: React.FC<PropertyTableProps> = ({ rows, emptyMessage, className, testId = 'property-table', hideRowBorders = false }) => (
+  <StyledWrapper
+    className={['property-table', hideRowBorders ? 'property-table--no-row-borders' : '', className].filter(Boolean).join(' ')}
+    data-testid={testId}
+  >
     {rows.length === 0 ? (
       emptyMessage ? (
         <p className="property-empty-message" data-testid={testId ? `${testId}-empty` : undefined}>{emptyMessage}</p>

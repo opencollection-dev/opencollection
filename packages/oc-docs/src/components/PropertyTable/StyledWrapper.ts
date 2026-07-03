@@ -31,6 +31,9 @@ export const StyledWrapper = styled.div`
   .property-row + .property-row {
     border-top: 1px solid var(--border-color);
   }
+  &.property-table--no-row-borders .property-row + .property-row {
+    border-top: none;
+  }
   .property-row--disabled {
     opacity: 0.55;
   }

@@ -163,6 +163,7 @@ const RequestContent: React.FC<RequestContentProps> = ({
                 {hasHeaders && (
                   <Section label="Headers" testId="request-section-headers">
                     <PropertyTable
+                      hideRowBorders
                       rows={headers.map((h) => ({
                         label: h.name,
                         value: h.value,
