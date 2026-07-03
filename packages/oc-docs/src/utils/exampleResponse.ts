@@ -1,4 +1,4 @@
-import { BODY_TYPES, CONTENT_TYPES } from '../constants';
+import { RESPONSE_LANGUAGE, RESPONSE_CONTENT_TYPE, STATUS_CODE_PHRASES } from './request';
 
 /** Byte length of a response body (UTF-8 aware). */
 export const computeBodySize = (data: string | undefined): number => {
@@ -22,92 +22,13 @@ export const formatBytes = (bytes: number): string => {
   return `${format(bytes / 1024 / 1024)}MB`;
 };
 
-const RESPONSE_LANGUAGE: Record<string, string> = {
-  json: 'json',
-  xml: 'markup',
-  html: 'markup',
-  text: 'text',
-  binary: 'text'
-};
-
 /** Map an example response body `type` to a Prism language. */
 export const responseBodyLanguage = (type: string | undefined): string =>
   (type && RESPONSE_LANGUAGE[type]) || 'text';
 
-const RESPONSE_CONTENT_TYPE: Record<string, string> = {
-  [BODY_TYPES.JSON]: CONTENT_TYPES.JSON,
-  [BODY_TYPES.XML]: CONTENT_TYPES.XML,
-  [BODY_TYPES.HTML]: CONTENT_TYPES.HTML,
-  [BODY_TYPES.BINARY]: CONTENT_TYPES.OCTET_STREAM
-};
-
+/** The full MIME content type for an example response body `type` (falls back to text/plain). */
 export const responseBodyContentType = (type: string | undefined): string =>
-  (type && RESPONSE_CONTENT_TYPE[type]) || CONTENT_TYPES.TEXT;
-
-const STATUS_CODE_PHRASES: Record<number, string> = {
-  100: 'Continue',
-  101: 'Switching Protocols',
-  102: 'Processing',
-  103: 'Early Hints',
-  200: 'OK',
-  201: 'Created',
-  202: 'Accepted',
-  203: 'Non-Authoritative Information',
-  204: 'No Content',
-  205: 'Reset Content',
-  206: 'Partial Content',
-  207: 'Multi-Status',
-  208: 'Already Reported',
-  226: 'IM Used',
-  300: 'Multiple Choice',
-  301: 'Moved Permanently',
-  302: 'Found',
-  303: 'See Other',
-  304: 'Not Modified',
-  305: 'Use Proxy',
-  307: 'Temporary Redirect',
-  308: 'Permanent Redirect',
-  400: 'Bad Request',
-  401: 'Unauthorized',
-  402: 'Payment Required',
-  403: 'Forbidden',
-  404: 'Not Found',
-  405: 'Method Not Allowed',
-  406: 'Not Acceptable',
-  407: 'Proxy Authentication Required',
-  408: 'Request Timeout',
-  409: 'Conflict',
-  410: 'Gone',
-  411: 'Length Required',
-  412: 'Precondition Failed',
-  413: 'Payload Too Large',
-  414: 'URI Too Long',
-  415: 'Unsupported Media Type',
-  416: 'Range Not Satisfiable',
-  417: 'Expectation Failed',
-  418: "I'm a teapot",
-  421: 'Misdirected Request',
-  422: 'Unprocessable Entity',
-  423: 'Locked',
-  424: 'Failed Dependency',
-  425: 'Too Early',
-  426: 'Upgrade Required',
-  428: 'Precondition Required',
-  429: 'Too Many Requests',
-  431: 'Request Header Fields Too Large',
-  451: 'Unavailable For Legal Reasons',
-  500: 'Internal Server Error',
-  501: 'Not Implemented',
-  502: 'Bad Gateway',
-  503: 'Service Unavailable',
-  504: 'Gateway Timeout',
-  505: 'HTTP Version Not Supported',
-  506: 'Variant Also Negotiates',
-  507: 'Insufficient Storage',
-  508: 'Loop Detected',
-  510: 'Not Extended',
-  511: 'Network Authentication Required'
-};
+  (type && RESPONSE_CONTENT_TYPE[type]) || 'text/plain';
 
 /** The reason phrase for an HTTP status code (e.g. 404 -> "Not Found"), or undefined. */
 export const statusCodePhrase = (status: number | undefined): string | undefined =>
