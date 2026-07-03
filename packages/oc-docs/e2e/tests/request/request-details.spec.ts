@@ -82,7 +82,7 @@ test.describe('Request page — Details', () => {
     test('opens the expanded modal on the language shown inline', async ({ requestPage }) => {
       const { codeSnippet } = requestPage;
       await codeSnippet.selectLanguage('python');
-      await codeSnippet.openModal();
+      await codeSnippet.openExpandedView();
       await expect(codeSnippet.modalLanguageTab('python')).toHaveAttribute('aria-selected', 'true');
     });
 
@@ -90,7 +90,7 @@ test.describe('Request page — Details', () => {
       const { codeSnippet } = requestPage;
       await expect(codeSnippet.languageTab('curl')).toHaveAttribute('aria-selected', 'true');
 
-      await codeSnippet.openModal();
+      await codeSnippet.openExpandedView();
       await codeSnippet.selectModalLanguage('python');
 
       await expect(codeSnippet.modalLanguageTab('python')).toHaveAttribute('aria-selected', 'true');

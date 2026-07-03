@@ -24,7 +24,8 @@ export class CodeSnippetComponent extends BaseComponent {
     await this.languageTab(language).click();
   }
 
-  async openModal(): Promise<void> {
+  /** Open the enlarged code-snippet view via the expand control. */
+  async openExpandedView(): Promise<void> {
     await this.expandButton.click();
     await this.modal.waitFor({ state: 'visible' });
   }
