@@ -28,7 +28,7 @@ import {
   buildScriptChain,
   getScriptFlow,
   getBodyView,
-  descriptionText
+  getDescription
 } from '../../utils/request';
 import { collectAssertions } from '../../utils/assertions';
 import { collectTests, collectRawTestScripts } from '../../utils/fileUtils';
@@ -167,7 +167,7 @@ const RequestContent: React.FC<RequestContentProps> = ({
                         label: h.name,
                         value: h.value,
                         disabled: h.disabled,
-                        description: descriptionText((h as { description?: unknown }).description)
+                        description: getDescription(h)
                       }))}
                     />
                   </Section>

@@ -2,7 +2,7 @@ import React from 'react';
 import type { HttpRequestParam } from '@opencollection/types/requests/http';
 import { SubHeading } from '../../SubHeading/SubHeading';
 import { PropertyTable, type PropertyRow } from '../../PropertyTable/PropertyTable';
-import { descriptionText } from '../../../utils/request';
+import { getDescription } from '../../../utils/request';
 import { StyledWrapper } from './StyledWrapper';
 
 const toRows = (params: HttpRequestParam[]): PropertyRow[] =>
@@ -10,7 +10,7 @@ const toRows = (params: HttpRequestParam[]): PropertyRow[] =>
     label: param.name,
     value: param.value,
     disabled: param.disabled,
-    description: descriptionText((param as { description?: unknown }).description)
+    description: getDescription(param)
   }));
 
 interface RequestParamsProps {

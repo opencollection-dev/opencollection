@@ -16,6 +16,7 @@ import {
   scriptsArrayToObject,
   getRequestVariables
 } from './schemaHelpers';
+import { getItemUuid } from './itemUtils';
 import { COLLECTION_ROOT_CRUMB } from './common';
 
 export const humanizeAuthMode = (auth: Auth | undefined, labels: Record<string, string>): string => {
@@ -64,6 +65,11 @@ export const descriptionText = (desc: unknown): string | undefined => {
     return typeof content === 'string' && content.trim() ? content : undefined;
   }
   return undefined;
+};
+
+export const getDescription = (item: unknown): string | undefined => {
+  if (!item || typeof item !== 'object') return undefined;
+  return descriptionText((item as { description?: unknown }).description);
 };
 
 export interface BodyTableRow {
@@ -145,7 +151,7 @@ export const getBodyView = (
           name: entry.name,
           value: entry.value,
           disabled: entry.disabled,
-          description: descriptionText((entry as { description?: unknown }).description)
+          description: getDescription(entry)
         }))
         .filter((row) => row.name || row.value);
       if (rows.length === 0) return { render: 'none' };
@@ -159,7 +165,7 @@ export const getBodyView = (
           partType: entry.type,
           contentType: entry.contentType,
           disabled: entry.disabled,
-          description: descriptionText((entry as { description?: unknown }).description)
+          description: getDescription(entry)
         }))
         .filter((row) => row.name || row.value);
       if (rows.length === 0) return { render: 'none' };
@@ -231,7 +237,7 @@ export const buildScriptChain = (
   ];
   ancestors.forEach((folder) => {
     const s = scriptsArrayToObject(folderScripts(folder));
-    sources.push({ level: 'folder', order: sources.length, sourceName: getItemName(folder), sourceUuid: (folder as { uuid?: string }).uuid, pre: s.preRequest, post: s.postResponse });
+    sources.push({ level: 'folder', order: sources.length, sourceName: getItemName(folder), sourceUuid: getItemUuid(folder), pre: s.preRequest, post: s.postResponse });
   });
   const requestScripts = scriptsArrayToObject(getRequestScripts(item));
   sources.push({ level: 'request', order: sources.length, pre: requestScripts.preRequest, post: requestScripts.postResponse });

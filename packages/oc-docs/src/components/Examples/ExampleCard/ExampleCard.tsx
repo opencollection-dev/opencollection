@@ -13,10 +13,9 @@ import { RequestBody } from '../../Request/RequestBody/RequestBody';
 import { Code } from '../../Code/Code';
 import { PlayIcon } from '../../../assets/icons';
 import { resolvePathAndQueryParams } from '../../../utils/pathParams';
-import { getBodyView, descriptionText } from '../../../utils/request';
-import { computeBodySize, formatBytes, responseBodyLanguage, statusCodePhrase } from '../../../utils/exampleResponse';
+import { getBodyView, getDescription } from '../../../utils/request';
+import { computeBodySize, formatBytes, responseBodyLanguage, responseBodyContentType, statusCodePhrase } from '../../../utils/exampleResponse';
 import { statusToneColor } from '../../../utils/common';
-import { BODY_TYPES, CONTENT_TYPES } from '../../../constants';
 import { StyledWrapper } from './StyledWrapper';
 
 interface ExampleCardProps {
@@ -41,26 +40,10 @@ const headerRows = (headers: (HttpRequestHeader | HttpResponseHeader)[]): Proper
     label: h.name,
     value: h.value,
     disabled: 'disabled' in h ? h.disabled : undefined,
-    description: 'description' in h ? descriptionText(h.description) : undefined
+    description: getDescription(h)
   }));
 
 const headerCtype = (count: number): string => `${count} header${count === 1 ? '' : 's'}`;
-
-/** The full MIME content type for a response body type. */
-const responseBodyCtype = (type: string | undefined): string => {
-  switch (type) {
-    case BODY_TYPES.JSON:
-      return CONTENT_TYPES.JSON;
-    case BODY_TYPES.XML:
-      return CONTENT_TYPES.XML;
-    case BODY_TYPES.HTML:
-      return CONTENT_TYPES.HTML;
-    case BODY_TYPES.BINARY:
-      return CONTENT_TYPES.OCTET_STREAM;
-    default:
-      return CONTENT_TYPES.TEXT;
-  }
-};
 
 const emptyPane = (label: string): React.ReactNode => <p className="pane-empty">No {label}.</p>;
 
@@ -272,7 +255,7 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
         id: 'body',
         label: 'Body',
         hasData: hasBody,
-        ctype: hasBody ? responseBodyCtype(responseBody?.type) : '',
+        ctype: hasBody ? responseBodyContentType(responseBody?.type) : '',
         content: hasBody ? (
           <Code code={responseBody!.data} language={responseBodyLanguage(responseBody?.type)} showLineNumbers />
         ) : (

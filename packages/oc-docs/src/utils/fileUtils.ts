@@ -296,13 +296,25 @@ const testsCode = (scripts: Scripts | undefined): string | undefined => scriptsA
 const folderScripts = (folder: Item): Scripts | undefined =>
   (folder as { request?: { scripts?: Scripts } }).request?.scripts;
 
+/** Walk the test-script sources in execution order (collection -> folders -> request). */
+const forEachTestSource = (
+  collection: OpenCollection | null | undefined,
+  ancestors: Item[],
+  item: HttpRequest,
+  visit: (level: TestRow['level'], code: string | undefined, sourceName?: string) => void
+): void => {
+  visit('collection', testsCode(collection?.request?.scripts), collection?.info?.name);
+  ancestors.forEach((folder) => visit('folder', testsCode(folderScripts(folder)), getItemName(folder)));
+  visit('request', testsCode(getRequestScripts(item)));
+};
+
 export const collectTests = (
   collection: OpenCollection | null | undefined,
   ancestors: Item[],
   item: HttpRequest
 ): TestRow[] => {
   const rows: TestRow[] = [];
-  const add = (level: TestRow['level'], code: string | undefined, sourceName?: string): void => {
+  forEachTestSource(collection, ancestors, item, (level, code, sourceName) => {
     if (!code || !code.trim()) return;
     const parsed = extractTests(code);
     if (parsed.length > 0) {
@@ -312,11 +324,7 @@ export const collectTests = (
       // Tests section visible by surfacing the raw script rather than dropping it silently.
       rows.push({ level, name: 'Test script', code: code.trim(), sourceName, raw: true });
     }
-  };
-
-  add('collection', testsCode(collection?.request?.scripts), collection?.info?.name);
-  ancestors.forEach((folder) => add('folder', testsCode(folderScripts(folder)), getItemName(folder)));
-  add('request', testsCode(getRequestScripts(item)));
+  });
 
   return rows;
 };
@@ -334,13 +342,9 @@ export const collectRawTestScripts = (
   item: HttpRequest
 ): RawTestScript[] => {
   const scripts: RawTestScript[] = [];
-  const push = (level: TestRow['level'], code: string | undefined, sourceName?: string): void => {
+  forEachTestSource(collection, ancestors, item, (level, code, sourceName) => {
     if (code && code.trim()) scripts.push({ level, code: code.trim(), sourceName });
-  };
-
-  push('collection', testsCode(collection?.request?.scripts), collection?.info?.name);
-  ancestors.forEach((folder) => push('folder', testsCode(folderScripts(folder)), getItemName(folder)));
-  push('request', testsCode(getRequestScripts(item)));
+  });
 
   return scripts;
 };

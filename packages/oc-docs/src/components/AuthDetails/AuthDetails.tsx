@@ -1,5 +1,12 @@
 import React from 'react';
-import type { Auth } from '@opencollection/types/common/auth';
+import type {
+  Auth,
+  OAuth2ClientCredentials,
+  OAuth2ResourceOwner,
+  OAuth2PKCE,
+  OAuth2TokenConfig,
+  OAuth2Settings
+} from '@opencollection/types/common/auth';
 import { PropertyTable, type PropertyRow } from '../PropertyTable/PropertyTable';
 import { AUTH_TYPES } from '../../constants';
 
@@ -9,6 +16,21 @@ interface AuthDetailsProps {
   inheritedFrom?: string;
   emptyMessage?: string;
   testId?: string;
+}
+
+interface OAuth2AuthView {
+  flow?: string;
+  scope?: string;
+  state?: string;
+  accessTokenUrl?: string;
+  refreshTokenUrl?: string;
+  authorizationUrl?: string;
+  callbackUrl?: string;
+  credentials?: OAuth2ClientCredentials;
+  resourceOwner?: OAuth2ResourceOwner;
+  pkce?: OAuth2PKCE;
+  tokenConfig?: OAuth2TokenConfig;
+  settings?: OAuth2Settings;
 }
 
 const modeLabel = (auth: Auth, labels: Record<string, string>): string =>
@@ -112,20 +134,7 @@ const buildAuthRows = (auth: Exclude<Auth, 'inherit'>): PropertyRow[] => {
       pushRow(rows, 'placement', 'Placement', placementLabel(auth.placement));
       break;
     case AUTH_TYPES.OAUTH2: {
-      const o = auth as {
-        flow?: string;
-        scope?: string;
-        state?: string;
-        accessTokenUrl?: string;
-        refreshTokenUrl?: string;
-        authorizationUrl?: string;
-        callbackUrl?: string;
-        credentials?: { clientId?: string; clientSecret?: string; placement?: string };
-        resourceOwner?: { username?: string; password?: string };
-        pkce?: { disabled?: boolean; method?: string };
-        tokenConfig?: { source?: string; placement?: { header?: string; query?: string } };
-        settings?: { autoFetchToken?: boolean; autoRefreshToken?: boolean };
-      };
+      const o = auth as OAuth2AuthView;
       pushRow(rows, 'flow', 'Flow', humanizeToken(o.flow));
       pushRow(rows, 'client-id', 'Client Id', o.credentials?.clientId);
       pushRow(rows, 'client-secret', 'Client Secret', o.credentials?.clientSecret, true);

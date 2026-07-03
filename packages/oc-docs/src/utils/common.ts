@@ -34,9 +34,9 @@ export const getInitials = (collectionName?: string | null): string => {
 
 export const statusToneColor = (status?: number): string => {
   if (status === undefined) return 'var(--text-muted)';
-  // Matches the request client's read-only status colouring: success below 300,
-  // error at 300+ (redirects included — there is no separate 3xx tone).
   if (status < 300) return 'var(--oc-status-success-text)';
+  // 3xx redirects are not errors — give them a neutral/info tone; reserve danger for 4xx/5xx.
+  if (status < 400) return 'var(--oc-status-info-text)';
   return 'var(--oc-status-danger-text)';
 };
 

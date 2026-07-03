@@ -50,11 +50,11 @@ describe('ExampleCard', () => {
     expect(html).not.toContain('>Try<');
   });
 
-  it('colours the status badge: success below 300, error at 300+ (redirects included)', () => {
+  it('colours the status badge by tone: danger for 4xx/5xx, info for 3xx redirects', () => {
     const clientError = renderToStaticMarkup(<ExampleCard example={{ name: 'Bad', response: { status: 404 } }} method="get" url="/x" />);
     expect(clientError).toContain('--oc-status-danger-text');
     const redirect = renderToStaticMarkup(<ExampleCard example={{ name: 'Moved', response: { status: 301 } }} method="get" url="/x" />);
-    expect(redirect).toContain('--oc-status-danger-text');
+    expect(redirect).toContain('--oc-status-info-text');
   });
 
   it('shows only the status code in the badge, no reason phrase', () => {

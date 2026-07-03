@@ -1,3 +1,5 @@
+import { BODY_TYPES, CONTENT_TYPES } from '../constants';
+
 /** Byte length of a response body (UTF-8 aware). */
 export const computeBodySize = (data: string | undefined): number => {
   if (!data) return 0;
@@ -32,6 +34,16 @@ const RESPONSE_LANGUAGE: Record<string, string> = {
 export const responseBodyLanguage = (type: string | undefined): string =>
   (type && RESPONSE_LANGUAGE[type]) || 'text';
 
+const RESPONSE_CONTENT_TYPE: Record<string, string> = {
+  [BODY_TYPES.JSON]: CONTENT_TYPES.JSON,
+  [BODY_TYPES.XML]: CONTENT_TYPES.XML,
+  [BODY_TYPES.HTML]: CONTENT_TYPES.HTML,
+  [BODY_TYPES.BINARY]: CONTENT_TYPES.OCTET_STREAM
+};
+
+export const responseBodyContentType = (type: string | undefined): string =>
+  (type && RESPONSE_CONTENT_TYPE[type]) || CONTENT_TYPES.TEXT;
+
 const STATUS_CODE_PHRASES: Record<number, string> = {
   100: 'Continue',
   101: 'Switching Protocols',
@@ -53,7 +65,6 @@ const STATUS_CODE_PHRASES: Record<number, string> = {
   303: 'See Other',
   304: 'Not Modified',
   305: 'Use Proxy',
-  306: 'unused',
   307: 'Temporary Redirect',
   308: 'Permanent Redirect',
   400: 'Bad Request',
