@@ -32,9 +32,6 @@ const RESPONSE_LANGUAGE: Record<string, string> = {
 export const responseBodyLanguage = (type: string | undefined): string =>
   (type && RESPONSE_LANGUAGE[type]) || 'text';
 
-// Reason phrases for standard HTTP status codes — used to derive a label when the
-// example doesn't store an explicit statusText (mirrors the request client).
-// https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
 const STATUS_CODE_PHRASES: Record<number, string> = {
   100: 'Continue',
   101: 'Switching Protocols',

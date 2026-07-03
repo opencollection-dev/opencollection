@@ -142,7 +142,7 @@ describe('ExampleCard', () => {
     expect(html).toContain('No response data.');
   });
 
-  it('does not render an Auth tab for example requests (matches Bruno + the schema)', () => {
+  it('shows only Params, Body and Headers tabs for an example never an Auth tab, consistent with Bruno and the OpenCollection schema', () => {
     const html = renderToStaticMarkup(
       <ExampleCard
         example={{
