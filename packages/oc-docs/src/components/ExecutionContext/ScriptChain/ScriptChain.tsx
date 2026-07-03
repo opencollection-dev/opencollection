@@ -9,6 +9,7 @@ interface ScriptChainProps {
   flow: ScriptFlow;
   method?: string;
   url?: string;
+  onNavigate?: (uuid: string) => void;
 }
 
 const HttpMarker: React.FC<{ position: number; url?: string }> = ({ position, url }) => (
@@ -29,7 +30,7 @@ const HttpMarker: React.FC<{ position: number; url?: string }> = ({ position, ur
   </div>
 );
 
-export const ScriptChain: React.FC<ScriptChainProps> = ({ steps, flow, url }) => {
+export const ScriptChain: React.FC<ScriptChainProps> = ({ steps, flow, url, onNavigate }) => {
   const { pre, post } = useMemo(() => {
     const byOrderAsc = (a: ScriptChainStep, b: ScriptChainStep) => a.order - b.order;
     const pre = steps.filter((s) => s.phase === 'before-request').sort(byOrderAsc);
@@ -46,11 +47,11 @@ export const ScriptChain: React.FC<ScriptChainProps> = ({ steps, flow, url }) =>
   return (
     <StyledWrapper>
       {pre.map((step, index) => (
-        <ScriptStep key={`pre-${step.order}-${index}`} step={step} position={next()} />
+        <ScriptStep key={`pre-${step.order}-${index}`} step={step} position={next()} onNavigate={onNavigate} />
       ))}
       <HttpMarker position={next()} url={url} />
       {post.map((step, index) => (
-        <ScriptStep key={`post-${step.order}-${index}`} step={step} position={next()} />
+        <ScriptStep key={`post-${step.order}-${index}`} step={step} position={next()} onNavigate={onNavigate} />
       ))}
     </StyledWrapper>
   );

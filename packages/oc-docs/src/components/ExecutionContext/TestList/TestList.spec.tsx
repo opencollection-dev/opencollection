@@ -42,10 +42,9 @@ describe('TestList', () => {
     expect(renderToStaticMarkup(<TestList tests={[tests[0]]} />)).not.toContain('expect(ok).to.equal(true)');
   });
 
-  it('renders the ancestor sourceName so sibling folders are distinguishable', () => {
+  it('does not show the collection or folder name on a test row, since the scope pill already indicates the level', () => {
     const html = renderToStaticMarkup(<TestList tests={[tests[0]]} />);
-    expect(html).toContain('test-source');
-    expect(html).toContain('API');
+    expect(html).not.toContain('test-source');
   });
 
   it('renders a raw-script row (no test()/it() wrapper) with a view-code toggle', () => {

@@ -24,6 +24,17 @@ test.describe('Request page — Execution Context', () => {
     await expect(executionContext.scripts.getByText('HTTP')).toBeVisible();
   });
 
+  test('navigates to a folder overview when its name is clicked in the scripts', async ({ requestPage, page }) => {
+    await requestPage.executionContext.scriptSource('customers').first().click();
+    await expect(page.getByTestId('folder-page')).toBeVisible();
+    await expect(page.getByTestId('folder-title')).toHaveText('customers');
+  });
+
+  test('navigates to the collection overview when the collection name is clicked in the scripts', async ({ requestPage, page }) => {
+    await requestPage.executionContext.scriptSource('Bruno Testbench').first().click();
+    await expect(page.getByTestId('overview')).toBeVisible();
+  });
+
   test('shows the script execution flow', async ({ requestPage }) => {
     await expect(requestPage.executionContext.scripts.getByText('Sandwich execution flow')).toBeVisible();
   });

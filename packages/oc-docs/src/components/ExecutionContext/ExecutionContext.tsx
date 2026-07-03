@@ -21,6 +21,7 @@ interface ExecutionContextProps {
   url?: string;
   className?: string;
   testId?: string;
+  onNavigate?: (uuid: string) => void;
 }
 
 const FLOW_LABEL: Record<ScriptFlow, string> = { sandwich: 'Sandwich', sequential: 'Sequential' };
@@ -52,7 +53,8 @@ export const ExecutionContext: React.FC<ExecutionContextProps> = ({
   method,
   url,
   className,
-  testId = 'execution-context'
+  testId = 'execution-context',
+  onNavigate
 }) => {
   const hasScripts = scriptChain.length > 0;
   const hasVars = preVars.length > 0 || postVars.length > 0;
@@ -65,7 +67,7 @@ export const ExecutionContext: React.FC<ExecutionContextProps> = ({
     <StyledWrapper className={['execution-context', className].filter(Boolean).join(' ')} data-testid={testId}>
       {hasScripts && (
         <Card title="Scripts" testId="execution-context-scripts" meta={<span className="exec-flow">{FLOW_LABEL[flow]} execution flow</span>}>
-          <ScriptChain steps={scriptChain} flow={flow} method={method} url={url} />
+          <ScriptChain steps={scriptChain} flow={flow} method={method} url={url} onNavigate={onNavigate} />
         </Card>
       )}
       {hasVars && (

@@ -12,6 +12,7 @@ export const StyledWrapper = styled.div`
     cursor: pointer;
   }
   .test-name {
+    min-width: 0;
     font-family: var(--font-mono);
     font-size: 12.5px;
     color: var(--text-primary);
@@ -24,16 +25,6 @@ export const StyledWrapper = styled.div`
     font-style: italic;
     color: var(--text-secondary);
   }
-  .test-source {
-    flex: none;
-    font-family: var(--font-sans);
-    font-size: 11px;
-    color: var(--text-secondary);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 10rem;
-  }
   .test-spacer {
     flex: 1;
   }
@@ -42,6 +33,8 @@ export const StyledWrapper = styled.div`
   }
 
   .code-toggle {
+    flex: none;
+    white-space: nowrap;
     background: none;
     border: none;
     padding: 0;

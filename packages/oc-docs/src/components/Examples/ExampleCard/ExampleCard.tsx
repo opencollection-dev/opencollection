@@ -245,14 +245,14 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
         label: 'Params',
         hasData: hasParams,
         ctype: paramsCtype,
-        content: hasParams ? <RequestParams path={pathParams} query={queryParams} /> : emptyPane('params')
+        content: hasParams ? <RequestParams path={pathParams} query={queryParams} hideRowBorders /> : emptyPane('params')
       },
       {
         id: 'body',
         label: 'Body',
         hasData: hasBody,
         ctype: hasBody ? bodyView.contentTypeLabel : '',
-        content: hasBody ? <RequestBody body={body} showContentType={false} /> : emptyPane('body')
+        content: hasBody ? <RequestBody body={body} showContentType={false} hideRowBorders /> : emptyPane('body')
       },
       {
         id: 'headers',
@@ -324,7 +324,6 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
               style={{ color: toneColor, background: `color-mix(in srgb, ${toneColor} 12%, transparent)` }}
             >
               {status}
-              {statusText ? ` ${statusText}` : ''}
             </span>
           ) : null}
           <span className="example-name" data-testid="example-name">{name}</span>

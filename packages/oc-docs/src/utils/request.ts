@@ -16,6 +16,7 @@ import {
   scriptsArrayToObject,
   getRequestVariables
 } from './schemaHelpers';
+import { COLLECTION_ROOT_CRUMB } from './common';
 
 export const humanizeAuthMode = (auth: Auth | undefined, labels: Record<string, string>): string => {
   if (!auth) return 'No Auth';
@@ -197,6 +198,7 @@ export interface ScriptChainStep {
   phase: ScriptPhase;
   label: string;
   sourceName?: string;
+  sourceUuid?: string;
   code: string;
   order: number;
 }
@@ -205,6 +207,7 @@ interface ScriptSource {
   level: ScriptLevel;
   order: number;
   sourceName?: string;
+  sourceUuid?: string;
   pre?: string;
   post?: string;
 }
@@ -224,11 +227,11 @@ export const buildScriptChain = (
 ): ScriptChainStep[] => {
   const collectionScripts = scriptsArrayToObject(collection?.request?.scripts);
   const sources: ScriptSource[] = [
-    { level: 'collection', order: 0, sourceName: collection?.info?.name, pre: collectionScripts.preRequest, post: collectionScripts.postResponse }
+    { level: 'collection', order: 0, sourceName: collection?.info?.name, sourceUuid: COLLECTION_ROOT_CRUMB, pre: collectionScripts.preRequest, post: collectionScripts.postResponse }
   ];
   ancestors.forEach((folder) => {
     const s = scriptsArrayToObject(folderScripts(folder));
-    sources.push({ level: 'folder', order: sources.length, sourceName: getItemName(folder), pre: s.preRequest, post: s.postResponse });
+    sources.push({ level: 'folder', order: sources.length, sourceName: getItemName(folder), sourceUuid: (folder as { uuid?: string }).uuid, pre: s.preRequest, post: s.postResponse });
   });
   const requestScripts = scriptsArrayToObject(getRequestScripts(item));
   sources.push({ level: 'request', order: sources.length, pre: requestScripts.preRequest, post: requestScripts.postResponse });
@@ -242,6 +245,7 @@ export const buildScriptChain = (
         phase: 'before-request',
         label: stepLabel(source.level, 'before-request'),
         sourceName: source.sourceName,
+        sourceUuid: source.sourceUuid,
         code: source.pre,
         order: source.order
       });
@@ -255,6 +259,7 @@ export const buildScriptChain = (
         phase: 'after-response',
         label: stepLabel(source.level, 'after-response'),
         sourceName: source.sourceName,
+        sourceUuid: source.sourceUuid,
         code: source.post,
         order: source.order
       });

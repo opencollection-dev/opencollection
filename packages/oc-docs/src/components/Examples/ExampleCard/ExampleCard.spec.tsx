@@ -57,13 +57,21 @@ describe('ExampleCard', () => {
     expect(redirect).toContain('--oc-status-danger-text');
   });
 
-  it('shows the reason phrase: stored statusText wins, else it is derived from the code', () => {
-    const stored = renderToStaticMarkup(
+  it('shows only the status code in the badge, no reason phrase', () => {
+    const collapsed = renderToStaticMarkup(
       <ExampleCard example={{ name: 'Created', response: { status: 201, statusText: 'All Good' } }} method="get" url="/x" />
+    );
+    expect(collapsed).toContain('201');
+    expect(collapsed).not.toContain('All Good');
+  });
+
+  it('keeps the reason phrase in the expanded response meta: stored statusText wins, else derived from the code', () => {
+    const stored = renderToStaticMarkup(
+      <ExampleCard example={{ name: 'Created', response: { status: 201, statusText: 'All Good' } }} method="get" url="/x" defaultExpanded />
     );
     expect(stored).toContain('201 All Good');
     const derived = renderToStaticMarkup(
-      <ExampleCard example={{ name: 'Missing', response: { status: 404 } }} method="get" url="/x" />
+      <ExampleCard example={{ name: 'Missing', response: { status: 404 } }} method="get" url="/x" defaultExpanded />
     );
     expect(derived).toContain('404 Not Found');
   });

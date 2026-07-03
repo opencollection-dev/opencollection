@@ -41,8 +41,8 @@ export const StyledWrapper = styled.div`
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--text-primary);
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
+    text-transform: none;
+    letter-spacing: normal;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -59,6 +59,22 @@ export const StyledWrapper = styled.div`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+  button.script-step-source {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+  button.script-step-source:hover {
+    color: var(--text-primary);
+    text-decoration: underline;
+  }
+  button.script-step-source:focus-visible {
+    outline: 2px solid var(--oc-status-info-text);
+    outline-offset: 0.125rem;
+    border-radius: 0.125rem;
   }
 
   .code-toggle {

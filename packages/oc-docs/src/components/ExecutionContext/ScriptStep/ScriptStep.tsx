@@ -9,10 +9,11 @@ interface ScriptStepProps {
   step: ScriptChainStep;
   /** 1-based position of this step within the displayed chain. */
   position: number;
+  onNavigate?: (uuid: string) => void;
 }
 
 /** One numbered step in the script-execution chain; click/Enter/Space reveals its source. */
-export const ScriptStep: React.FC<ScriptStepProps> = ({ step, position }) => {
+export const ScriptStep: React.FC<ScriptStepProps> = ({ step, position, onNavigate }) => {
   const [open, setOpen] = useState(false);
   const toggle = () => setOpen((v) => !v);
 
@@ -35,7 +36,22 @@ export const ScriptStep: React.FC<ScriptStepProps> = ({ step, position }) => {
         <ChevronArrow open={open} className="script-chevron" />
         <span className="script-step-main">
           <span className="script-step-label">{step.label}</span>
-          {step.sourceName && <span className="script-step-source">{step.sourceName}</span>}
+          {step.sourceName &&
+            (step.sourceUuid && onNavigate ? (
+              <button
+                type="button"
+                className="script-step-source"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onNavigate(step.sourceUuid!);
+                }}
+                onKeyDown={(e) => e.stopPropagation()}
+              >
+                {step.sourceName}
+              </button>
+            ) : (
+              <span className="script-step-source">{step.sourceName}</span>
+            ))}
         </span>
         <button
           type="button"

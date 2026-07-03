@@ -31,7 +31,6 @@ const TestItem: React.FC<{ test: TestRow }> = ({ test }) => {
         }}
       >
         <ScopeTag scope={test.level} />
-        {test.sourceName && <span className="test-source">{test.sourceName}</span>}
         <span className={['test-name', test.raw ? 'test-name--raw' : ''].filter(Boolean).join(' ')}>{test.name}</span>
         <span className="test-spacer" />
         {hasCode && (

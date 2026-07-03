@@ -17,10 +17,10 @@ test.describe('Request page — Examples', () => {
     await expect(examples.example(BAD_REQUEST_EXAMPLE)).toBeVisible();
   });
 
-  test('shows the status code and reason phrase of each example', async ({ requestPage }) => {
+  test('shows the status code of each example', async ({ requestPage }) => {
     const { examples } = requestPage;
-    await expect(examples.statusCode(OK_EXAMPLE)).toHaveText('200 OK');
-    await expect(examples.statusCode(BAD_REQUEST_EXAMPLE)).toHaveText('400 Bad Request');
+    await expect(examples.statusCode(OK_EXAMPLE)).toHaveText('200');
+    await expect(examples.statusCode(BAD_REQUEST_EXAMPLE)).toHaveText('400');
   });
 
   test.describe('Request pane', () => {

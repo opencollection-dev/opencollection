@@ -13,6 +13,10 @@ export class ExecutionContextComponent extends BaseComponent {
     return this.scripts.getByText(label);
   }
 
+  scriptSource(name: string): Locator {
+    return this.scripts.locator('button.script-step-source').filter({ hasText: name });
+  }
+
   variable(name: string): Locator {
     return this.variables.getByText(name, { exact: true });
   }
