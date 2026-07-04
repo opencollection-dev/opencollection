@@ -2,18 +2,25 @@ import React from 'react';
 import type { HttpRequestParam } from '@opencollection/types/requests/http';
 import { SubHeading } from '../../SubHeading/SubHeading';
 import { PropertyTable, type PropertyRow } from '../../PropertyTable/PropertyTable';
+import { getDescription } from '../../../utils/request';
 import { StyledWrapper } from './StyledWrapper';
 
 const toRows = (params: HttpRequestParam[]): PropertyRow[] =>
-  params.map((param) => ({ label: param.name, value: param.value, disabled: param.disabled }));
+  params.map((param) => ({
+    label: param.name,
+    value: param.value,
+    disabled: param.disabled,
+    description: getDescription(param)
+  }));
 
 interface RequestParamsProps {
   path?: HttpRequestParam[];
   query?: HttpRequestParam[];
   className?: string;
+  hideRowBorders?: boolean;
 }
 
-export const RequestParams: React.FC<RequestParamsProps> = ({ path = [], query = [], className }) => {
+export const RequestParams: React.FC<RequestParamsProps> = ({ path = [], query = [], className, hideRowBorders = false }) => {
   if (path.length === 0 && query.length === 0) return null;
 
   return (
@@ -21,13 +28,13 @@ export const RequestParams: React.FC<RequestParamsProps> = ({ path = [], query =
       {path.length > 0 && (
         <div className="request-params-group">
           <SubHeading className="request-params-heading">Path</SubHeading>
-          <PropertyTable rows={toRows(path)} />
+          <PropertyTable rows={toRows(path)} hideRowBorders={hideRowBorders} />
         </div>
       )}
       {query.length > 0 && (
         <div className="request-params-group">
           <SubHeading className="request-params-heading">Query</SubHeading>
-          <PropertyTable rows={toRows(query)} />
+          <PropertyTable rows={toRows(query)} hideRowBorders={hideRowBorders} />
         </div>
       )}
     </StyledWrapper>

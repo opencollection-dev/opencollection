@@ -7,7 +7,7 @@ import { ViewAllTests } from './ViewAllTests/ViewAllTests';
 import { StyledWrapper } from './StyledWrapper';
 import type { ScriptChainStep, ScriptFlow, PreRequestVarRow, PostResponseVarRow } from '../../utils/request';
 import type { AssertionRow } from '../../utils/assertions';
-import type { TestRow } from '../../utils/fileUtils';
+import type { TestRow, RawTestScript } from '../../utils/fileUtils';
 
 interface ExecutionContextProps {
   scriptChain: ScriptChainStep[];
@@ -15,11 +15,13 @@ interface ExecutionContextProps {
   postVars: PostResponseVarRow[];
   assertions: AssertionRow[];
   tests: TestRow[];
+  testScripts?: RawTestScript[];
   flow?: ScriptFlow;
   method?: string;
   url?: string;
   className?: string;
   testId?: string;
+  onNavigate?: (uuid: string) => void;
 }
 
 const FLOW_LABEL: Record<ScriptFlow, string> = { sandwich: 'Sandwich', sequential: 'Sequential' };
@@ -46,11 +48,13 @@ export const ExecutionContext: React.FC<ExecutionContextProps> = ({
   postVars,
   assertions,
   tests,
+  testScripts = [],
   flow = 'sandwich',
   method,
   url,
   className,
-  testId = 'execution-context'
+  testId = 'execution-context',
+  onNavigate
 }) => {
   const hasScripts = scriptChain.length > 0;
   const hasVars = preVars.length > 0 || postVars.length > 0;
@@ -63,7 +67,7 @@ export const ExecutionContext: React.FC<ExecutionContextProps> = ({
     <StyledWrapper className={['execution-context', className].filter(Boolean).join(' ')} data-testid={testId}>
       {hasScripts && (
         <Card title="Scripts" testId="execution-context-scripts" meta={<span className="exec-flow">{FLOW_LABEL[flow]} execution flow</span>}>
-          <ScriptChain steps={scriptChain} flow={flow} method={method} url={url} />
+          <ScriptChain steps={scriptChain} flow={flow} method={method} url={url} onNavigate={onNavigate} />
         </Card>
       )}
       {hasVars && (
@@ -77,7 +81,7 @@ export const ExecutionContext: React.FC<ExecutionContextProps> = ({
         </Card>
       )}
       {hasTests && (
-        <Card title="Tests" testId="execution-context-tests" meta={<ViewAllTests tests={tests} />}>
+        <Card title="Tests" testId="execution-context-tests" meta={<ViewAllTests scripts={testScripts} />}>
           <TestList tests={tests} />
         </Card>
       )}

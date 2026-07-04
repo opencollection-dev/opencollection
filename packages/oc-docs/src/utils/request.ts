@@ -16,6 +16,8 @@ import {
   scriptsArrayToObject,
   getRequestVariables
 } from './schemaHelpers';
+import { getItemUuid } from './itemUtils';
+import { COLLECTION_ROOT_CRUMB } from './common';
 
 export const humanizeAuthMode = (auth: Auth | undefined, labels: Record<string, string>): string => {
   if (!auth) return 'No Auth';
@@ -56,17 +58,39 @@ export const resolveInheritedAuth = (
   return { auth: 'inherit' };
 };
 
+export const descriptionText = (desc: unknown): string | undefined => {
+  if (typeof desc === 'string') return desc.trim() ? desc : undefined;
+  if (desc && typeof desc === 'object' && 'content' in desc) {
+    const content = (desc as { content?: unknown }).content;
+    return typeof content === 'string' && content.trim() ? content : undefined;
+  }
+  return undefined;
+};
+
+export const getDescription = (item: unknown): string | undefined => {
+  if (!item || typeof item !== 'object') return undefined;
+  return descriptionText((item as { description?: unknown }).description);
+};
+
 export interface BodyTableRow {
   name: string;
   value: string;
   partType?: 'text' | 'file';
+  contentType?: string;
   disabled?: boolean;
+  description?: string;
+}
+
+export interface FileBodyRow {
+  filePath: string;
+  contentType?: string;
+  selected?: boolean;
 }
 
 export type BodyView =
   | { render: 'code'; language: string; contentTypeLabel: string; code: string }
   | { render: 'table'; variant: 'urlencoded' | 'multipart'; contentTypeLabel: string; rows: BodyTableRow[] }
-  | { render: 'file'; contentTypeLabel: string; filePath: string }
+  | { render: 'file'; contentTypeLabel: string; files: FileBodyRow[] }
   | { render: 'none' };
 
 const RAW_LANGUAGE: Record<string, string> = { json: 'json', xml: 'markup', text: 'text', sparql: 'text' };
@@ -82,6 +106,89 @@ const BODY_CONTENT_TYPE: Record<string, string> = {
 };
 
 export const bodyContentTypeLabel = (type: string): string => BODY_CONTENT_TYPE[type] || type;
+
+/** Example response body `type` -> Prism language. */
+export const RESPONSE_LANGUAGE: Record<string, string> = {
+  json: 'json',
+  xml: 'markup',
+  html: 'markup',
+  text: 'text',
+  binary: 'text'
+};
+
+/** Example response body `type` -> full MIME content type. */
+export const RESPONSE_CONTENT_TYPE: Record<string, string> = {
+  json: 'application/json',
+  xml: 'application/xml',
+  html: 'text/html',
+  binary: 'application/octet-stream'
+};
+
+/** HTTP status code -> reason phrase (e.g. 404 -> "Not Found"). */
+export const STATUS_CODE_PHRASES: Record<number, string> = {
+  100: 'Continue',
+  101: 'Switching Protocols',
+  102: 'Processing',
+  103: 'Early Hints',
+  200: 'OK',
+  201: 'Created',
+  202: 'Accepted',
+  203: 'Non-Authoritative Information',
+  204: 'No Content',
+  205: 'Reset Content',
+  206: 'Partial Content',
+  207: 'Multi-Status',
+  208: 'Already Reported',
+  226: 'IM Used',
+  300: 'Multiple Choice',
+  301: 'Moved Permanently',
+  302: 'Found',
+  303: 'See Other',
+  304: 'Not Modified',
+  305: 'Use Proxy',
+  307: 'Temporary Redirect',
+  308: 'Permanent Redirect',
+  400: 'Bad Request',
+  401: 'Unauthorized',
+  402: 'Payment Required',
+  403: 'Forbidden',
+  404: 'Not Found',
+  405: 'Method Not Allowed',
+  406: 'Not Acceptable',
+  407: 'Proxy Authentication Required',
+  408: 'Request Timeout',
+  409: 'Conflict',
+  410: 'Gone',
+  411: 'Length Required',
+  412: 'Precondition Failed',
+  413: 'Payload Too Large',
+  414: 'URI Too Long',
+  415: 'Unsupported Media Type',
+  416: 'Range Not Satisfiable',
+  417: 'Expectation Failed',
+  418: "I'm a teapot",
+  421: 'Misdirected Request',
+  422: 'Unprocessable Entity',
+  423: 'Locked',
+  424: 'Failed Dependency',
+  425: 'Too Early',
+  426: 'Upgrade Required',
+  428: 'Precondition Required',
+  429: 'Too Many Requests',
+  431: 'Request Header Fields Too Large',
+  451: 'Unavailable For Legal Reasons',
+  500: 'Internal Server Error',
+  501: 'Not Implemented',
+  502: 'Bad Gateway',
+  503: 'Service Unavailable',
+  504: 'Gateway Timeout',
+  505: 'HTTP Version Not Supported',
+  506: 'Variant Also Negotiates',
+  507: 'Insufficient Storage',
+  508: 'Loop Detected',
+  510: 'Not Extended',
+  511: 'Network Authentication Required'
+};
 
 export interface SelectedBody {
   body?: HttpRequestBody;
@@ -121,34 +228,39 @@ export const getBodyView = (
         code: data
       };
     }
-    case 'form-urlencoded':
-      return {
-        render: 'table',
-        variant: 'urlencoded',
-        contentTypeLabel: bodyContentTypeLabel(body.type),
-        rows: (body.data || []).map((entry) => ({
+    case 'form-urlencoded': {
+      const rows: BodyTableRow[] = (body.data || [])
+        .map((entry) => ({
           name: entry.name,
           value: entry.value,
-          disabled: entry.disabled
+          disabled: entry.disabled,
+          description: getDescription(entry)
         }))
-      };
-    case 'multipart-form':
-      return {
-        render: 'table',
-        variant: 'multipart',
-        contentTypeLabel: bodyContentTypeLabel(body.type),
-        rows: (body.data || []).map((entry) => ({
+        .filter((row) => row.name || row.value);
+      if (rows.length === 0) return { render: 'none' };
+      return { render: 'table', variant: 'urlencoded', contentTypeLabel: bodyContentTypeLabel(body.type), rows };
+    }
+    case 'multipart-form': {
+      const rows: BodyTableRow[] = (body.data || [])
+        .map((entry) => ({
           name: entry.name,
           value: Array.isArray(entry.value) ? entry.value.join(', ') : String(entry.value ?? ''),
           partType: entry.type,
-          disabled: entry.disabled
+          contentType: entry.contentType,
+          disabled: entry.disabled,
+          description: getDescription(entry)
         }))
-      };
+        .filter((row) => row.name || row.value);
+      if (rows.length === 0) return { render: 'none' };
+      return { render: 'table', variant: 'multipart', contentTypeLabel: bodyContentTypeLabel(body.type), rows };
+    }
     case 'file': {
       const variants: FileBodyVariant[] = body.data || [];
-      const selected = variants.find((v) => v.selected) ?? variants[0];
-      if (!selected) return { render: 'none' };
-      return { render: 'file', contentTypeLabel: bodyContentTypeLabel('file'), filePath: selected.filePath };
+      const files: FileBodyRow[] = variants
+        .map((v) => ({ filePath: v.filePath, contentType: v.contentType, selected: v.selected }))
+        .filter((f) => f.filePath || f.contentType);
+      if (files.length === 0) return { render: 'none' };
+      return { render: 'file', contentTypeLabel: bodyContentTypeLabel('file'), files };
     }
     default:
       return { render: 'none' };
@@ -175,6 +287,7 @@ export interface ScriptChainStep {
   phase: ScriptPhase;
   label: string;
   sourceName?: string;
+  sourceUuid?: string;
   code: string;
   order: number;
 }
@@ -183,6 +296,7 @@ interface ScriptSource {
   level: ScriptLevel;
   order: number;
   sourceName?: string;
+  sourceUuid?: string;
   pre?: string;
   post?: string;
 }
@@ -202,11 +316,11 @@ export const buildScriptChain = (
 ): ScriptChainStep[] => {
   const collectionScripts = scriptsArrayToObject(collection?.request?.scripts);
   const sources: ScriptSource[] = [
-    { level: 'collection', order: 0, sourceName: collection?.info?.name, pre: collectionScripts.preRequest, post: collectionScripts.postResponse }
+    { level: 'collection', order: 0, sourceName: collection?.info?.name, sourceUuid: COLLECTION_ROOT_CRUMB, pre: collectionScripts.preRequest, post: collectionScripts.postResponse }
   ];
   ancestors.forEach((folder) => {
     const s = scriptsArrayToObject(folderScripts(folder));
-    sources.push({ level: 'folder', order: sources.length, sourceName: getItemName(folder), pre: s.preRequest, post: s.postResponse });
+    sources.push({ level: 'folder', order: sources.length, sourceName: getItemName(folder), sourceUuid: getItemUuid(folder), pre: s.preRequest, post: s.postResponse });
   });
   const requestScripts = scriptsArrayToObject(getRequestScripts(item));
   sources.push({ level: 'request', order: sources.length, pre: requestScripts.preRequest, post: requestScripts.postResponse });
@@ -220,6 +334,7 @@ export const buildScriptChain = (
         phase: 'before-request',
         label: stepLabel(source.level, 'before-request'),
         sourceName: source.sourceName,
+        sourceUuid: source.sourceUuid,
         code: source.pre,
         order: source.order
       });
@@ -233,6 +348,7 @@ export const buildScriptChain = (
         phase: 'after-response',
         label: stepLabel(source.level, 'after-response'),
         sourceName: source.sourceName,
+        sourceUuid: source.sourceUuid,
         code: source.post,
         order: source.order
       });

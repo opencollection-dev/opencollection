@@ -27,16 +27,19 @@ import {
   getPostResponseVars,
   buildScriptChain,
   getScriptFlow,
-  getBodyView
+  getBodyView,
+  getDescription
 } from '../../utils/request';
 import { collectAssertions } from '../../utils/assertions';
-import { collectTests } from '../../utils/fileUtils';
+import { collectTests, collectRawTestScripts } from '../../utils/fileUtils';
 import { resolvePathAndQueryParams } from '../../utils/pathParams';
 import { buildBreadcrumbSegments } from '../../utils/common';
 import { PageWrapper } from '../../components/PageWrapper/PageWrapper';
 import { Heading } from '../../components/Heading/Heading';
 import { Section } from '../../components/Section/Section';
 import { Breadcrumb, type BreadcrumbSegment } from '../../ui/Breadcrumb/Breadcrumb';
+import { EmptyState } from '../../ui/EmptyState/EmptyState';
+import { FileIcon, RefreshIcon } from '../../assets/icons';
 import { RequestUrlBar } from '../../components/Request/RequestUrlBar/RequestUrlBar';
 import { RequestDescription } from '../../components/Request/RequestDescription/RequestDescription';
 import { AuthDetails } from '../../components/AuthDetails/AuthDetails';
@@ -105,24 +108,24 @@ const RequestContent: React.FC<RequestContentProps> = ({
   const scriptFlow = useMemo(() => getScriptFlow(collection), [collection]);
   const assertions = useMemo(() => collectAssertions(item), [item]);
   const tests = useMemo(() => collectTests(collection, ancestry, item), [collection, ancestry, item]);
+  const testScripts = useMemo(() => collectRawTestScripts(collection, ancestry, item), [collection, ancestry, item]);
 
   const segments = useMemo<BreadcrumbSegment[]>(
     () => buildBreadcrumbSegments(collection, ancestry),
     [collection, ancestry]
   );
 
+  // Resolve the body once — drives whether the section renders at all and its heading badge.
+  const bodyView = useMemo(() => getBodyView(body), [body]);
   const hasHeaders = headers.length > 0;
   const hasParams = pathParams.length > 0 || queryParams.length > 0;
-  const hasBody = Boolean(body) && (!Array.isArray(body) || body.length > 0);
+  const hasBody = bodyView.render !== 'none';
   const hasVars = preVars.length > 0 || postVars.length > 0;
   const hasExamples = examples.length > 0;
   const hasExecutionContext = scriptChain.length > 0 || hasVars || assertions.length > 0 || tests.length > 0;
   const hasLeftColumn = showAuth || hasParams || hasBody || hasHeaders;
 
-  const bodyContentType = useMemo(() => {
-    const view = getBodyView(body);
-    return view.render !== 'none' ? view.contentTypeLabel : undefined;
-  }, [body]);
+  const bodyContentType = bodyView.render !== 'none' ? bodyView.contentTypeLabel : undefined;
 
   const codeSnippet = <CodeSnippetTabs method={method} url={url} headers={headers} body={body} auth={effectiveAuth} />;
 
@@ -137,51 +140,63 @@ const RequestContent: React.FC<RequestContentProps> = ({
 
         {descHtml && <RequestDescription html={descHtml} style={{ marginTop: '0.9375rem' }} />}
 
-        {hasLeftColumn ? (
-          <div className="request-columns">
-            <div className="request-col-left">
-              {hasParams && (
-                <Section label="Params" testId="request-section-params">
-                  <RequestParams path={pathParams} query={queryParams} />
-                </Section>
-              )}
+        <div className="request-columns">
+          <div className="request-col-left">
+            {hasLeftColumn ? (
+              <>
+                {hasParams && (
+                  <Section label="Params" testId="request-section-params">
+                    <RequestParams path={pathParams} query={queryParams} />
+                  </Section>
+                )}
 
-              {hasBody && (
-                <Section
-                  label="Body"
-                  testId="request-section-body"
-                  badge={bodyContentType ? <ContentTypeBadge label={bodyContentType} /> : undefined}
-                >
-                  <RequestBody body={body} showContentType={false} />
-                </Section>
-              )}
+                {hasBody && (
+                  <Section
+                    label="Body"
+                    testId="request-section-body"
+                    badge={bodyContentType ? <ContentTypeBadge label={bodyContentType} /> : undefined}
+                  >
+                    <RequestBody body={body} showContentType={false} />
+                  </Section>
+                )}
 
-              {hasHeaders && (
-                <Section label="Headers" testId="request-section-headers">
-                  <PropertyTable rows={headers.map((h) => ({ label: h.name, value: h.value, disabled: h.disabled }))} />
-                </Section>
-              )}
+                {hasHeaders && (
+                  <Section label="Headers" testId="request-section-headers">
+                    <PropertyTable
+                      rows={headers.map((h) => ({
+                        label: h.name,
+                        value: h.value,
+                        disabled: h.disabled,
+                        description: getDescription(h)
+                      }))}
+                    />
+                  </Section>
+                )}
 
-              {showAuth && (
-                <Section
-                  label="Auth"
-                  testId="request-section-auth"
-                  badge={authInheritedBadge ? <ContentTypeBadge label={authInheritedBadge} /> : undefined}
-                >
-                  <AuthDetails auth={effectiveAuth} authModeLabels={AUTH_MODE_LABELS} />
-                </Section>
-              )}
-            </div>
-
-            <div className="request-col-right">
-              <Section label="Code Snippet" testId="request-section-code-snippet">{codeSnippet}</Section>
-            </div>
+                {showAuth && (
+                  <Section
+                    label="Auth"
+                    testId="request-section-auth"
+                    badge={authInheritedBadge ? <ContentTypeBadge label={authInheritedBadge} /> : undefined}
+                  >
+                    <AuthDetails auth={effectiveAuth} authModeLabels={AUTH_MODE_LABELS} emptyMessage="No auth" />
+                  </Section>
+                )}
+              </>
+            ) : (
+              <EmptyState
+                testId="request-config-empty"
+                icon={<FileIcon />}
+                heading="No request configuration"
+                subheading="This request has no parameters, body, headers, or authentication configured. These may be inherited from the collection or folder."
+              />
+            )}
           </div>
-        ) : (
-          <Section label="Code Snippet" testId="request-section-code-snippet" className="request-fullwidth">
-            {codeSnippet}
-          </Section>
-        )}
+
+          <div className="request-col-right">
+            <Section label="Code Snippet" testId="request-section-code-snippet">{codeSnippet}</Section>
+          </div>
+        </div>
 
         {hasExamples && (
           <Section label="Examples" testId="request-section-examples" className="request-fullwidth">
@@ -189,20 +204,34 @@ const RequestContent: React.FC<RequestContentProps> = ({
           </Section>
         )}
 
-        {hasExecutionContext && (
-          <Section label="Execution Context" testId="request-section-execution-context" className="request-fullwidth" collapsible>
+        <Section
+          label="Execution Context"
+          testId="request-section-execution-context"
+          className="request-fullwidth"
+          collapsible={hasExecutionContext}
+        >
+          {hasExecutionContext ? (
             <ExecutionContext
               scriptChain={scriptChain}
               preVars={preVars}
               postVars={postVars}
               assertions={assertions}
               tests={tests}
+              testScripts={testScripts}
               flow={scriptFlow}
               method={method}
               url={url}
+              onNavigate={onBreadcrumbClick}
             />
-          </Section>
-        )}
+          ) : (
+            <EmptyState
+              testId="execution-context-empty"
+              icon={<RefreshIcon />}
+              heading="No execution context"
+              subheading="This request has no scripts, variables, asserts, or tests configured."
+            />
+          )}
+        </Section>
       </StyledWrapper>
     </PageWrapper>
   );

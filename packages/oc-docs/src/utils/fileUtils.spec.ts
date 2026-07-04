@@ -3,6 +3,7 @@ import {
   extractTests,
   extractTestNames,
   collectTests,
+  collectRawTestScripts,
   findItemByUuid,
   getAncestorsByUuid
 } from './fileUtils';
@@ -52,6 +53,31 @@ describe('collectTests', () => {
     const rows = collectTests(collection, [folder], item);
     expect(rows.map((r) => `${r.level}:${r.name}`)).toEqual(['collection:coll', 'folder:fold', 'request:req']);
     expect(rows[0].code).toBe("test('coll', () => {})");
+  });
+
+  it('surfaces a raw-script row when a tests script has no test()/it() wrapper (not dropped)', () => {
+    const item: any = { runtime: { scripts: [{ type: 'tests', code: 'expect(res.status).to.equal(200);' }] } };
+    const rows = collectTests(null, [], item);
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({ level: 'request', name: 'Test script', raw: true, code: 'expect(res.status).to.equal(200);' });
+  });
+
+  it('does not surface a raw row for an empty/whitespace tests script', () => {
+    const item: any = { runtime: { scripts: [{ type: 'tests', code: '   \n ' }] } };
+    expect(collectTests(null, [], item)).toEqual([]);
+  });
+});
+
+describe('collectRawTestScripts', () => {
+  it('returns the complete authored script per non-empty level, in order', () => {
+    const collection: any = { info: { name: 'C' }, request: { scripts: [{ type: 'tests', code: 'const s = 1;\ntest("coll", () => {})' }] } };
+    const folder: any = { info: { type: 'folder', name: 'F' }, request: { scripts: [{ type: 'tests', code: '   ' }] } };
+    const item: any = { runtime: { scripts: [{ type: 'tests', code: "test('req', () => {})" }] } };
+    const scripts = collectRawTestScripts(collection, [folder], item);
+    // The blank folder script is skipped; collection keeps its full setup + test source.
+    expect(scripts.map((s) => s.level)).toEqual(['collection', 'request']);
+    expect(scripts[0].code).toBe('const s = 1;\ntest("coll", () => {})');
+    expect(scripts[0].sourceName).toBe('C');
   });
 });
 

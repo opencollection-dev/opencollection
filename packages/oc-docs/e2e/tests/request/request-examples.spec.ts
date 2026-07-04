@@ -36,13 +36,6 @@ test.describe('Request page — Examples', () => {
       await expect(examples.requestBody(OK_EXAMPLE)).toContainText('Accept');
       await expect(examples.requestBody(OK_EXAMPLE)).toContainText('application/json');
     });
-
-    test('switches to the Auth tab to reveal the bearer auth', async ({ requestPage }) => {
-      const { examples } = requestPage;
-      await examples.selectRequestTab(OK_EXAMPLE, 'auth');
-      await expect(examples.requestBody(OK_EXAMPLE)).toContainText('Mode');
-      await expect(examples.requestBody(OK_EXAMPLE)).toContainText('Bearer');
-    });
   });
 
   test.describe('Response pane', () => {

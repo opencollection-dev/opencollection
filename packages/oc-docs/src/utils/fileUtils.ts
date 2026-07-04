@@ -287,6 +287,8 @@ export interface TestRow {
   sourceName?: string;
   name: string;
   code: string;
+  /** True when the script has no test()/it() wrapper and we surface the raw script instead. */
+  raw?: boolean;
 }
 
 const testsCode = (scripts: Scripts | undefined): string | undefined => scriptsArrayToObject(scripts).tests;
@@ -294,19 +296,55 @@ const testsCode = (scripts: Scripts | undefined): string | undefined => scriptsA
 const folderScripts = (folder: Item): Scripts | undefined =>
   (folder as { request?: { scripts?: Scripts } }).request?.scripts;
 
+/** Walk the test-script sources in execution order (collection -> folders -> request). */
+const forEachTestSource = (
+  collection: OpenCollection | null | undefined,
+  ancestors: Item[],
+  item: HttpRequest,
+  visit: (level: TestRow['level'], code: string | undefined, sourceName?: string) => void
+): void => {
+  visit('collection', testsCode(collection?.request?.scripts), collection?.info?.name);
+  ancestors.forEach((folder) => visit('folder', testsCode(folderScripts(folder)), getItemName(folder)));
+  visit('request', testsCode(getRequestScripts(item)));
+};
+
 export const collectTests = (
   collection: OpenCollection | null | undefined,
   ancestors: Item[],
   item: HttpRequest
 ): TestRow[] => {
   const rows: TestRow[] = [];
-  const add = (level: TestRow['level'], code: string | undefined, sourceName?: string): void => {
-    extractTests(code).forEach((test) => rows.push({ level, name: test.name, code: test.code, sourceName }));
-  };
-
-  add('collection', testsCode(collection?.request?.scripts), collection?.info?.name);
-  ancestors.forEach((folder) => add('folder', testsCode(folderScripts(folder)), getItemName(folder)));
-  add('request', testsCode(getRequestScripts(item)));
+  forEachTestSource(collection, ancestors, item, (level, code, sourceName) => {
+    if (!code || !code.trim()) return;
+    const parsed = extractTests(code);
+    if (parsed.length > 0) {
+      parsed.forEach((test) => rows.push({ level, name: test.name, code: test.code, sourceName }));
+    } else {
+      // Free-form test script (bare assertions / setup, no test()/it() wrapper): keep the
+      // Tests section visible by surfacing the raw script rather than dropping it silently.
+      rows.push({ level, name: 'Test script', code: code.trim(), sourceName, raw: true });
+    }
+  });
 
   return rows;
+};
+
+export interface RawTestScript {
+  level: TestRow['level'];
+  sourceName?: string;
+  code: string;
+}
+
+/** The complete authored tests script at each level (collection -> folders -> request), unparsed. */
+export const collectRawTestScripts = (
+  collection: OpenCollection | null | undefined,
+  ancestors: Item[],
+  item: HttpRequest
+): RawTestScript[] => {
+  const scripts: RawTestScript[] = [];
+  forEachTestSource(collection, ancestors, item, (level, code, sourceName) => {
+    if (code && code.trim()) scripts.push({ level, code: code.trim(), sourceName });
+  });
+
+  return scripts;
 };

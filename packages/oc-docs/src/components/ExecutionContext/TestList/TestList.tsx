@@ -31,7 +31,7 @@ const TestItem: React.FC<{ test: TestRow }> = ({ test }) => {
         }}
       >
         <ScopeTag scope={test.level} />
-        <span className="test-name">{test.name}</span>
+        <span className={['test-name', test.raw ? 'test-name--raw' : ''].filter(Boolean).join(' ')}>{test.name}</span>
         <span className="test-spacer" />
         {hasCode && (
           <button type="button" className="code-toggle" onClick={(e) => { e.stopPropagation(); toggle(); }}>

@@ -34,6 +34,7 @@ export const StyledWrapper = styled.nav`
   }
   .breadcrumb-link:hover {
     color: var(--oc-breadcrumb-color-current, var(--text-primary));
+    text-decoration: underline;
   }
   .breadcrumb-link:focus-visible {
     outline: 2px solid var(--primary-color);

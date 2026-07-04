@@ -31,6 +31,9 @@ export const StyledWrapper = styled.div`
   .property-row + .property-row {
     border-top: 1px solid var(--border-color);
   }
+  &.property-table--no-row-borders .property-row + .property-row {
+    border-top: none;
+  }
   .property-row--disabled {
     opacity: 0.55;
   }
@@ -61,5 +64,17 @@ export const StyledWrapper = styled.div`
   }
   .property-value-cell .secret-value-text {
     font-family: inherit;
+  }
+
+  .property-description {
+    margin: 0.25rem 0 0;
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 0.6875rem;
+    line-height: 1.35;
+    letter-spacing: normal;
+    color: var(--text-secondary);
+    white-space: normal;
+    word-break: break-word;
   }
 `;

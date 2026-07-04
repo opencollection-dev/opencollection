@@ -63,14 +63,50 @@ describe('requestBody', () => {
     });
   });
 
-  it('renders multipart preserving text/file part types', () => {
+  it('treats an empty / all-blank form-urlencoded body as none', () => {
+    expect(getBodyView({ type: 'form-urlencoded', data: [] } as any).render).toBe('none');
+    expect(getBodyView({ type: 'form-urlencoded', data: [{ name: '', value: '' }] } as any).render).toBe('none');
+  });
+
+  it('treats an empty / all-blank multipart body as none', () => {
+    expect(getBodyView({ type: 'multipart-form', data: [] } as any).render).toBe('none');
+    expect(getBodyView({ type: 'multipart-form', data: [{ name: '', value: '' }] } as any).render).toBe('none');
+  });
+
+  it('carries entry descriptions through to the table rows', () => {
+    const view = getBodyView({
+      type: 'form-urlencoded',
+      data: [{ name: 'a', value: '1', description: 'the a field' }]
+    } as any) as any;
+    expect(view.rows[0].description).toBe('the a field');
+  });
+
+  it('renders multipart preserving text/file part types and per-part content types', () => {
     const view = getBodyView({
       type: 'multipart-form',
-      data: [{ name: 'file', type: 'file', value: '/x.pdf' }]
+      data: [{ name: 'file', type: 'file', value: '/x.pdf', contentType: 'application/pdf' }]
     } as any) as any;
     expect(view.render).toBe('table');
     expect(view.variant).toBe('multipart');
     expect(view.rows[0].partType).toBe('file');
+    expect(view.rows[0].contentType).toBe('application/pdf');
+  });
+
+  it('reports every file-body variant with its content type and selected flag', () => {
+    const view = getBodyView({
+      type: 'file',
+      data: [
+        { filePath: '/a.json', contentType: 'application/json', selected: true },
+        { filePath: '/b.xml', contentType: 'application/xml', selected: false }
+      ]
+    } as any) as any;
+    expect(view.render).toBe('file');
+    expect(view.files).toHaveLength(2);
+    expect(view.files[0]).toMatchObject({ filePath: '/a.json', contentType: 'application/json', selected: true });
+  });
+
+  it('treats an empty file body as none', () => {
+    expect(getBodyView({ type: 'file', data: [] } as any).render).toBe('none');
   });
 
   it('selects the chosen body variant and reports variants', () => {

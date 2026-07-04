@@ -33,6 +33,7 @@ const LANGUAGES = [
 
 export const CodeSnippetTabs: React.FC<CodeSnippetTabsProps> = ({ method, url, headers, body, auth, className, testId = 'request-code-snippet' }) => {
   const [active, setActive] = useState<string>(LANGUAGES[0].id);
+  const [modalActive, setModalActive] = useState<string>(LANGUAGES[0].id);
   const [expanded, setExpanded] = useState(false);
 
   const snippetHeaders: SnippetHeader[] = useMemo(
@@ -51,50 +52,61 @@ export const CodeSnippetTabs: React.FC<CodeSnippetTabsProps> = ({ method, url, h
     }, {});
   }, [method, url, snippetHeaders, body, auth]);
 
-  const activeLang = LANGUAGES.find((lang) => lang.id === active) ?? LANGUAGES[0];
+  const openModal = () => {
+    setModalActive(active);
+    setExpanded(true);
+  };
 
-  const renderSnippetBox = (variant: 'inline' | 'modal') => (
-    <div className="snippet-box">
-      <div className="snippet-head">
-        <div className="snippet-tabs" role="tablist" aria-label="Snippet language">
-          {LANGUAGES.map((lang) => (
+  const renderSnippetBox = (
+    variant: 'inline' | 'modal',
+    activeId: string,
+    setActiveId: (id: string) => void
+  ) => {
+    const activeLang = LANGUAGES.find((lang) => lang.id === activeId) ?? LANGUAGES[0];
+    return (
+      <div className="snippet-box">
+        <div className="snippet-head">
+          <div className="snippet-tabs" role="tablist" aria-label="Snippet language">
+            {LANGUAGES.map((lang) => (
+              <button
+                key={lang.id}
+                type="button"
+                role="tab"
+                aria-selected={activeId === lang.id}
+                data-testid={`code-snippet-tab-${lang.id}`}
+                className={['snippet-tab', activeId === lang.id ? 'is-active' : ''].filter(Boolean).join(' ')}
+                onClick={() => setActiveId(lang.id)}
+              >
+                {lang.label}
+              </button>
+            ))}
+          </div>
+          <span className="snippet-head-spacer" />
+          {variant === 'inline' ? (
             <button
-              key={lang.id}
               type="button"
-              role="tab"
-              aria-selected={active === lang.id}
-              data-testid={`code-snippet-tab-${lang.id}`}
-              className={['snippet-tab', active === lang.id ? 'is-active' : ''].filter(Boolean).join(' ')}
-              onClick={() => setActive(lang.id)}
+              className="code-snippet-expand"
+              aria-label="Expand code snippet"
+              data-testid="code-snippet-expand"
+              onClick={openModal}
             >
-              {lang.label}
+              <ExpandIcon />
             </button>
-          ))}
+          ) : (
+            <CopyButton text={snippets[activeId]} label="Copy code" className="snippet-copy" />
+          )}
         </div>
-        <span className="snippet-head-spacer" />
-        {variant === 'inline' ? (
-          <button
-            type="button"
-            className="code-snippet-expand"
-            aria-label="Expand code snippet"
-            onClick={() => setExpanded(true)}
-          >
-            <ExpandIcon />
-          </button>
-        ) : (
-          <CopyButton text={snippets[active]} label="Copy code" className="snippet-copy" />
-        )}
+        <Code code={snippets[activeId]} language={activeLang.language} showLineNumbers showCopy={variant === 'inline'} testId="code-snippet-code" />
       </div>
-      <Code code={snippets[active]} language={activeLang.language} showLineNumbers showCopy={variant === 'inline'} />
-    </div>
-  );
+    );
+  };
 
   return (
     <StyledWrapper className={['code-snippet-tabs', className].filter(Boolean).join(' ')} data-testid={testId}>
-      {renderSnippetBox('inline')}
+      {renderSnippetBox('inline', active, setActive)}
       <Modal open={expanded} onClose={() => setExpanded(false)} title={<SectionLabel>Code snippet</SectionLabel>} ariaLabel="Code snippet">
         {expanded && (
-          <StyledWrapper className="code-snippet-tabs">{renderSnippetBox('modal')}</StyledWrapper>
+          <StyledWrapper className="code-snippet-tabs" data-testid="code-snippet-modal">{renderSnippetBox('modal', modalActive, setModalActive)}</StyledWrapper>
         )}
       </Modal>
     </StyledWrapper>

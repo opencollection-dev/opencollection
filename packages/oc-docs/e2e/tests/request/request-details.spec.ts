@@ -78,5 +78,27 @@ test.describe('Request page — Details', () => {
       await expect(codeSnippet.languageTab('python')).toHaveAttribute('aria-selected', 'true');
       await expect(codeSnippet.code).toContainText('requests');
     });
+
+    test('the expanded view opens on the same language currently selected inline', async ({ requestPage }) => {
+      const { codeSnippet } = requestPage;
+      await codeSnippet.selectLanguage('python');
+      await codeSnippet.openExpandedView();
+      await expect(codeSnippet.modalLanguageTab('python')).toHaveAttribute('aria-selected', 'true');
+    });
+
+    test('switching the language in the modal does not change the language tab in the request details', async ({ requestPage }) => {
+      const { codeSnippet } = requestPage;
+      await expect(codeSnippet.languageTab('curl')).toHaveAttribute('aria-selected', 'true');
+
+      await codeSnippet.openExpandedView();
+      await codeSnippet.selectModalLanguage('python');
+
+      await expect(codeSnippet.modalLanguageTab('python')).toHaveAttribute('aria-selected', 'true');
+      await expect(codeSnippet.modalCode).toContainText('requests');
+
+      await expect(codeSnippet.languageTab('curl')).toHaveAttribute('aria-selected', 'true');
+      await expect(codeSnippet.languageTab('python')).toHaveAttribute('aria-selected', 'false');
+      await expect(codeSnippet.code).toContainText('curl');
+    });
   });
 });

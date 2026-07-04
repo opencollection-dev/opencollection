@@ -48,6 +48,6 @@ export const StyledWrapper = styled.div`
   }
 
   .folder-fullwidth {
-    margin-top: 1rem;
+    margin-top: 1.5rem;
   }
 `;

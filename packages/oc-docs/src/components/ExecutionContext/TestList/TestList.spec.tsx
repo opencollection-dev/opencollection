@@ -41,4 +41,17 @@ describe('TestList', () => {
   it('keeps a test\'s source collapsed until it is expanded (lazy)', () => {
     expect(renderToStaticMarkup(<TestList tests={[tests[0]]} />)).not.toContain('expect(ok).to.equal(true)');
   });
+
+  it('does not show the collection or folder name on a test row, since the scope pill already indicates the level', () => {
+    const html = renderToStaticMarkup(<TestList tests={[tests[0]]} />);
+    expect(html).not.toContain('test-source');
+  });
+
+  it('renders a raw-script row (no test()/it() wrapper) with a view-code toggle', () => {
+    const raw: TestRow[] = [{ level: 'request', name: 'Test script', raw: true, code: 'expect(res.status).to.equal(200);' }];
+    const html = renderToStaticMarkup(<TestList tests={raw} />);
+    expect(html).toContain('Test script');
+    expect(html).toContain('test-name--raw');
+    expect(html).toContain('view code'); // raw scripts are still viewable
+  });
 });

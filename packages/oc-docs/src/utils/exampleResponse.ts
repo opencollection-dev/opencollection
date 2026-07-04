@@ -1,3 +1,5 @@
+import { RESPONSE_LANGUAGE, RESPONSE_CONTENT_TYPE, STATUS_CODE_PHRASES } from './request';
+
 /** Byte length of a response body (UTF-8 aware). */
 export const computeBodySize = (data: string | undefined): number => {
   if (!data) return 0;
@@ -20,14 +22,14 @@ export const formatBytes = (bytes: number): string => {
   return `${format(bytes / 1024 / 1024)}MB`;
 };
 
-const RESPONSE_LANGUAGE: Record<string, string> = {
-  json: 'json',
-  xml: 'markup',
-  html: 'markup',
-  text: 'text',
-  binary: 'text'
-};
-
 /** Map an example response body `type` to a Prism language. */
 export const responseBodyLanguage = (type: string | undefined): string =>
   (type && RESPONSE_LANGUAGE[type]) || 'text';
+
+/** The full MIME content type for an example response body `type` (falls back to text/plain). */
+export const responseBodyContentType = (type: string | undefined): string =>
+  (type && RESPONSE_CONTENT_TYPE[type]) || 'text/plain';
+
+/** The reason phrase for an HTTP status code (e.g. 404 -> "Not Found"), or undefined. */
+export const statusCodePhrase = (status: number | undefined): string | undefined =>
+  status === undefined ? undefined : STATUS_CODE_PHRASES[status];
