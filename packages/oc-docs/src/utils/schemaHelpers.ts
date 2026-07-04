@@ -154,7 +154,7 @@ export const getHttpMethod = (item: HttpRequest | null | undefined): string => {
 export const getRequestBadgeLabel = (item: OpenCollectionItem | null | undefined): string | undefined => {
   const type = getItemType(item);
   if (type === 'http') return getHttpMethod(item as HttpRequest);
-  return type ? PROTOCOL_BADGE_LABELS[type] : undefined;
+  return type ? PROTOCOL_BADGE_LABELS[type.toUpperCase()] : undefined;
 };
 
 /**

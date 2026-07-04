@@ -17,6 +17,14 @@ export class SidebarComponent extends BaseComponent {
     return this.items.filter({ hasText: name });
   }
 
+  folderChevron(name: string): Locator {
+    return this.item(name).first().locator('.navlink-chevron');
+  }
+
+  async toggleFolder(name: string): Promise<void> {
+    await this.folderChevron(name).click();
+  }
+
   async open(paths: string[]): Promise<void> {
     for (const name of paths) {
       await this.item(name).first().click();

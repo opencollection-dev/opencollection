@@ -33,6 +33,20 @@ test.describe('sidebar - desktop (inline, collapsible)', () => {
     await expect(page.getByTestId('page')).toHaveAttribute('data-page-type', 'overview');
     await expect(sidebar.item('Cancel Booking')).toBeVisible();
   });
+
+  test('collapses a folder holding the active item without changing the view', async ({ page, sidebar }) => {
+    await page.goto(`${FOLDERS}#/bookings/lifecycle/create-booking`);
+    await expect(page.getByTestId('page')).toHaveAttribute('data-page-type', 'request');
+    await expect(sidebar.folderChevron('Lifecycle')).toHaveClass(/expanded/);
+    await expect(sidebar.item('Cancel Booking')).toBeVisible();
+
+    await sidebar.toggleFolder('Lifecycle');
+
+    await expect(sidebar.folderChevron('Lifecycle')).not.toHaveClass(/expanded/);
+    await expect(sidebar.item('Cancel Booking')).toHaveCount(0);
+    await expect(page.getByTestId('page')).toHaveAttribute('data-page-type', 'request');
+    await expect(page).toHaveURL(/#\/bookings\/lifecycle\/create-booking$/);
+  });
 });
 
 test.describe('sidebar - mobile (off-canvas drawer)', () => {
