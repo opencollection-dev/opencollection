@@ -4,6 +4,7 @@ import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { Scripts } from '@opencollection/types/common/scripts';
 import { getItemName, getRequestScripts, scriptsArrayToObject, isFolder } from './schemaHelpers';
 import { isYamlFile, parseYaml } from './yamlUtils';
+import type { ScriptFlow } from './request';
 
 const loadOpenCollectionData = async (source: string | File): Promise<any> => {
   let content: string;
@@ -296,25 +297,41 @@ const testsCode = (scripts: Scripts | undefined): string | undefined => scriptsA
 const folderScripts = (folder: Item): Scripts | undefined =>
   (folder as { request?: { scripts?: Scripts } }).request?.scripts;
 
-/** Walk the test-script sources in execution order (collection -> folders -> request). */
+interface TestSource {
+  level: TestRow['level'];
+  code: string | undefined;
+  sourceName?: string;
+}
+
 const forEachTestSource = (
   collection: OpenCollection | null | undefined,
   ancestors: Item[],
   item: HttpRequest,
+  flow: ScriptFlow,
   visit: (level: TestRow['level'], code: string | undefined, sourceName?: string) => void
 ): void => {
-  visit('collection', testsCode(collection?.request?.scripts), collection?.info?.name);
-  ancestors.forEach((folder) => visit('folder', testsCode(folderScripts(folder)), getItemName(folder)));
-  visit('request', testsCode(getRequestScripts(item)));
+  const sources: TestSource[] = [
+    { level: 'collection', code: testsCode(collection?.request?.scripts), sourceName: collection?.info?.name },
+    ...ancestors.map((folder): TestSource => ({
+      level: 'folder',
+      code: testsCode(folderScripts(folder)),
+      sourceName: getItemName(folder)
+    })),
+    { level: 'request', code: testsCode(getRequestScripts(item)) }
+  ];
+
+  const ordered = flow === 'sequential' ? sources : [...sources].reverse();
+  ordered.forEach((source) => visit(source.level, source.code, source.sourceName));
 };
 
 export const collectTests = (
   collection: OpenCollection | null | undefined,
   ancestors: Item[],
-  item: HttpRequest
+  item: HttpRequest,
+  flow: ScriptFlow = 'sandwich'
 ): TestRow[] => {
   const rows: TestRow[] = [];
-  forEachTestSource(collection, ancestors, item, (level, code, sourceName) => {
+  forEachTestSource(collection, ancestors, item, flow, (level, code, sourceName) => {
     if (!code || !code.trim()) return;
     const parsed = extractTests(code);
     if (parsed.length > 0) {
@@ -335,14 +352,15 @@ export interface RawTestScript {
   code: string;
 }
 
-/** The complete authored tests script at each level (collection -> folders -> request), unparsed. */
+/** The complete authored tests script at each level, in EE execution order (flow-aware), unparsed. */
 export const collectRawTestScripts = (
   collection: OpenCollection | null | undefined,
   ancestors: Item[],
-  item: HttpRequest
+  item: HttpRequest,
+  flow: ScriptFlow = 'sandwich'
 ): RawTestScript[] => {
   const scripts: RawTestScript[] = [];
-  forEachTestSource(collection, ancestors, item, (level, code, sourceName) => {
+  forEachTestSource(collection, ancestors, item, flow, (level, code, sourceName) => {
     if (code && code.trim()) scripts.push({ level, code: code.trim(), sourceName });
   });
 

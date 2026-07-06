@@ -4,10 +4,12 @@ import { getEnvironmentVariables } from '../../utils/environments';
 import { Table, type TableColumn, type TableGroup } from '../../ui/Table/Table';
 import { EnvironmentLabel } from '../../components/EnvironmentLabel/EnvironmentLabel';
 import { VariableText } from '../../components/VariableText/VariableText';
+import { TruncatedText } from '../../components/TruncatedText/TruncatedText';
+import { SecretValue } from '../../ui/SecretValue/SecretValue';
 import { EmptyState } from '../../ui/EmptyState/EmptyState';
 import { PageWrapper } from '../../components/PageWrapper/PageWrapper';
 import { Heading } from '../../components/Heading/Heading';
-import { GlobeIcon, EyeOffIcon } from '../../assets/icons';
+import { GlobeIcon } from '../../assets/icons';
 import { StyledWrapper } from './StyledWrapper';
 
 const COLUMNS: TableColumn[] = [
@@ -18,26 +20,22 @@ const COLUMNS: TableColumn[] = [
 
 const emptyCell = <span className="environment-empty">(empty)</span>;
 
-const nameCell = (name: string): React.ReactNode => <span className="environment-name">{name}</span>;
+const nameCell = (name: string): React.ReactNode => <TruncatedText className="environment-name" text={name} />;
 
 const valueCell = (value: string): React.ReactNode =>
   value ? (
-    <span className="environment-value">
+    <TruncatedText className="environment-value" text={value}>
       <VariableText value={value} />
-    </span>
+    </TruncatedText>
   ) : (
     emptyCell
   );
 
-const secretCell: React.ReactNode = (
-  <span className="environment-secret">
-    <EyeOffIcon />
-    Secret
-  </span>
-);
+const secretCell = (value: string): React.ReactNode =>
+  value ? <SecretValue value={value} align="start" testId="environment-secret-value" /> : emptyCell;
 
 const typeCell = (dataType: string): React.ReactNode =>
-  dataType ? <span className="environment-type">{dataType}</span> : emptyCell;
+  dataType ? <TruncatedText className="environment-type" text={dataType} /> : emptyCell;
 
 interface EnvironmentsProps {
   collection: OpenCollection;
@@ -91,7 +89,7 @@ export const Environments: React.FC<EnvironmentsProps> = ({ collection }) => {
           testId: 'environment-secret-variable-row',
           cells: {
             name: nameCell(row.name),
-            value: secretCell,
+            value: secretCell(row.value),
             type: typeCell(row.dataType)
           }
         }))

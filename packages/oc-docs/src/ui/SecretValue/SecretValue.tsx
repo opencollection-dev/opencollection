@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { StyledWrapper } from './StyledWrapper';
 
-export const SECRET_MASK = '•'.repeat(12);
+export const SECRET_MASK = '*'.repeat(14);
 
 interface SecretValueProps {
   value: string;
+  align?: 'between' | 'start';
   testId?: string;
 }
 
@@ -24,11 +25,14 @@ const EyeIcon: React.FC<{ off?: boolean }> = ({ off }) => (
   </svg>
 );
 
-export const SecretValue: React.FC<SecretValueProps> = ({ value, testId = 'secret-value' }) => {
+export const SecretValue: React.FC<SecretValueProps> = ({ value, align = 'between', testId = 'secret-value' }) => {
   const [revealed, setRevealed] = useState(false);
 
   return (
-    <StyledWrapper className="secret-value" data-testid={testId}>
+    <StyledWrapper
+      className={['secret-value', align === 'start' ? 'secret-value--start' : ''].filter(Boolean).join(' ')}
+      data-testid={testId}
+    >
       <span className="secret-value-text" aria-hidden={!revealed} data-testid={testId ? `${testId}-text` : undefined}>
         {revealed ? value : SECRET_MASK}
       </span>

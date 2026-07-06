@@ -6,6 +6,11 @@ export const StyledWrapper = styled.span`
   justify-content: space-between;
   gap: 0.5rem;
 
+  &.secret-value--start {
+    justify-content: flex-start;
+    gap: 0.7rem;
+  }
+
   .secret-value-text {
     font-family: var(--font-mono);
     color: var(--text-primary);

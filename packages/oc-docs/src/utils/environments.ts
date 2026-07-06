@@ -87,10 +87,15 @@ export const getEnvironmentVariables = (environment: Environment | null | undefi
 
   (environment?.variables ?? []).forEach((variable) => {
     if (isSecretVariable(variable)) {
+      const resolved = resolveValue((variable as { value?: VariableValueOrVariants }).value);
       secretVariables.push({
         name: variable.name ?? '',
-        value: '',
-        dataType: variable.type ? humanizeType(variable.type) : '',
+        value: resolved.value,
+        dataType: variable.type
+          ? humanizeType(variable.type)
+          : resolved.value
+            ? humanizeType(resolved.type)
+            : '',
         secret: true,
         disabled: variable.disabled === true
       });

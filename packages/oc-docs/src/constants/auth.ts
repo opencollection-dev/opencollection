@@ -7,7 +7,8 @@ export const AUTH_TYPES = {
   API_KEY: 'apikey',
   AWS_V4: 'awsv4',
   OAUTH1: 'oauth1',
-  OAUTH2: 'oauth2'
+  OAUTH2: 'oauth2',
+  EDGEGRID: 'akamai-edgegrid'
 } as const;
 
 export type AuthType = (typeof AUTH_TYPES)[keyof typeof AUTH_TYPES];
@@ -21,5 +22,6 @@ export const AUTH_MODE_LABELS: Record<string, string> = {
   digest: 'Digest Auth',
   awsv4: 'AWS Signature v4',
   ntlm: 'NTLM',
-  wsse: 'WSSE'
+  wsse: 'WSSE',
+  'akamai-edgegrid': 'Akamai EdgeGrid'
 };

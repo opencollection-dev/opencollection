@@ -400,6 +400,47 @@ export const getPostResponseVars = (item: HttpRequest): PostResponseVarRow[] => 
     }));
 };
 
+type RequestDefaultsHolder =
+  | {
+      request?: {
+        variables?: Variable[];
+        actions?: Array<{
+          type?: string;
+          phase?: string;
+          disabled?: boolean;
+          variable?: { name?: string; scope?: string };
+          selector?: { expression?: string };
+        }>;
+      };
+    }
+  | null
+  | undefined;
+
+export const getRequestDefaultsVars = (
+  node: RequestDefaultsHolder
+): { preVars: PreRequestVarRow[]; postVars: PostResponseVarRow[] } => {
+  const request = node?.request ?? {};
+
+  const preVars: PreRequestVarRow[] = (request.variables ?? [])
+    .filter((v): v is Variable => Boolean(v && v.name))
+    .map((v) => ({ name: v.name, value: flattenValue(v.value), disabled: v.disabled }));
+
+  const postVars: PostResponseVarRow[] = (request.actions ?? [])
+    .filter((a) => a && a.type === 'set-variable' && (a.phase ?? 'after-response') === 'after-response' && a.variable?.name)
+    .map((a) => ({
+      name: a.variable!.name as string,
+      expression: a.selector?.expression ?? '',
+      scope: a.variable?.scope,
+      disabled: a.disabled
+    }));
+
+  return { preVars, postVars };
+};
+
+export const getCollectionVariables = (
+  collection: OpenCollection | null | undefined
+): { preVars: PreRequestVarRow[]; postVars: PostResponseVarRow[] } => getRequestDefaultsVars(collection);
+
 /**
  * Short, uppercased method name matching the design (DELETE -> DEL, OPTIONS ->
  * OPT); every other method is shown as-is. Single source for the method badges

@@ -47,11 +47,16 @@ export interface CollectionScripts {
   tests?: string;
 }
 
+export const hasConfiguredAuth = (auth?: Auth): boolean =>
+  Boolean(auth) && (typeof auth !== 'object' || (auth as { type?: string }).type !== 'none');
+
 export const hasCollectionConfiguration = (
   headers: HttpRequestHeader[] = [],
   auth?: Auth,
-  scripts: CollectionScripts = {}
+  scripts: CollectionScripts = {},
+  hasVars = false
 ): boolean =>
-  headers.some((header) => header && header.name && header.disabled !== true) ||
-  Boolean(auth) ||
+  headers.some((header) => header && header.name) ||
+  hasConfiguredAuth(auth) ||
+  hasVars ||
   Boolean(scripts.preRequest || scripts.postResponse || scripts.tests);

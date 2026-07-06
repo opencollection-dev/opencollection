@@ -31,13 +31,13 @@ test.describe('Environments page', () => {
     });
   });
 
-  test('shows secret variables masked under a Secret Variables group', async ({ environmentsPage }) => {
+  test('shows an empty value for a secret variable that has no value in the yml', async ({ environmentsPage }) => {
     const { table } = environmentsPage;
     const row = table.secretVariableRow('bearer_auth_token');
 
     await expect(environmentsPage.secretVariablesGroup).toBeVisible();
     await expect(row).toBeVisible();
-    await expect(row).toContainText('Secret');
+    await expect(row.getByTestId('table-cell-value')).toContainText('(empty)');
     await expect(row).not.toContainText('your_secret_token');
   });
 

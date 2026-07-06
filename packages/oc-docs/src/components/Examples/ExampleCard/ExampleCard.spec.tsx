@@ -185,6 +185,35 @@ describe('ExampleCard', () => {
     expect(html).toContain('role="tabpanel"');
   });
 
+  it("uses the example's own method (and url) in the header, not the parent request's", () => {
+    const html = renderToStaticMarkup(
+      <ExampleCard
+        example={{
+          name: 'Patch user',
+          request: { method: 'patch', url: '{{host}}/users/1', body: { type: 'json', data: '{}' } },
+          response: { status: 200 }
+        }}
+        method="get"
+        url="{{host}}/parent"
+        defaultExpanded
+      />
+    );
+    expect(html).toContain('>PATCH<');
+    expect(html).toContain('{{host}}/users/1');
+  });
+
+  it("falls back to the parent method when the example request omits one", () => {
+    const html = renderToStaticMarkup(
+      <ExampleCard
+        example={{ name: 'No method', request: { url: '{{host}}/x' }, response: { status: 200 } }}
+        method="delete"
+        url="{{host}}/parent"
+        defaultExpanded
+      />
+    );
+    expect(html).toContain('>DELETE<');
+  });
+
   it('splits Params into Path and Query and labels the tab "path & query"', () => {
     const html = renderToStaticMarkup(
       <ExampleCard

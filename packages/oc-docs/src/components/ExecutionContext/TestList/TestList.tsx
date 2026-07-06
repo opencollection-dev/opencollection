@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ScopeTag } from '../ScopeTag/ScopeTag';
 import { Code } from '../../Code/Code';
 import { Collapse } from '../../../ui/Collapse/Collapse';
+import { TruncatedText } from '../../TruncatedText/TruncatedText';
 import type { TestRow } from '../../../utils/fileUtils';
 import { StyledWrapper } from './StyledWrapper';
 
@@ -31,7 +32,11 @@ const TestItem: React.FC<{ test: TestRow }> = ({ test }) => {
         }}
       >
         <ScopeTag scope={test.level} />
-        <span className={['test-name', test.raw ? 'test-name--raw' : ''].filter(Boolean).join(' ')}>{test.name}</span>
+        <TruncatedText
+          className={['test-name', test.raw ? 'test-name--raw' : ''].filter(Boolean).join(' ')}
+          text={test.name}
+          touch={!hasCode}
+        />
         <span className="test-spacer" />
         {hasCode && (
           <button type="button" className="code-toggle" onClick={(e) => { e.stopPropagation(); toggle(); }}>

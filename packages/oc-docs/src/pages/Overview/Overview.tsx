@@ -4,6 +4,7 @@ import type { StructuredText } from '@opencollection/types/common/description';
 import { useMarkdownRenderer } from '../../hooks';
 import { getCollectionStats, hasCollectionConfiguration } from '../../utils/collectionOverview';
 import { scriptsArrayToObject } from '../../utils/schemaHelpers';
+import { getCollectionVariables } from '../../utils/request';
 import { AUTH_MODE_LABELS } from '../../constants';
 import { CollectionStats } from '../../components/CollectionStats/CollectionStats';
 import { EnvironmentSummary } from '../../components/OverviewEnvironments/EnvironmentSummary/EnvironmentSummary';
@@ -38,6 +39,7 @@ export const Overview: React.FC<OverviewProps> = ({ collection, testId = 'overvi
     [counts]
   );
   const scripts = useMemo(() => scriptsArrayToObject(collection.request?.scripts), [collection.request]);
+  const { preVars, postVars } = useMemo(() => getCollectionVariables(collection), [collection.request]);
   const version = collection.info?.version;
   const name = collection.info?.name || 'Untitled Collection';
   const environments = collection.config?.environments ?? [];
@@ -50,8 +52,13 @@ export const Overview: React.FC<OverviewProps> = ({ collection, testId = 'overvi
   const hasEnvironments = environments.length > 0;
   const hasOverview = Boolean(docsHtml);
   const hasConfig = useMemo(
-    () => hasCollectionConfiguration(collection.request?.headers, collection.request?.auth, scripts),
-    [collection.request, scripts]
+    () => hasCollectionConfiguration(
+      collection.request?.headers,
+      collection.request?.auth,
+      scripts,
+      preVars.length > 0 || postVars.length > 0
+    ),
+    [collection.request, scripts, preVars, postVars]
   );
 
   return (
@@ -114,6 +121,8 @@ export const Overview: React.FC<OverviewProps> = ({ collection, testId = 'overvi
                   headers={collection.request?.headers}
                   auth={collection.request?.auth}
                   scripts={scripts}
+                  preVars={preVars}
+                  postVars={postVars}
                   authModeLabels={AUTH_MODE_LABELS}
                 />
               ) : (

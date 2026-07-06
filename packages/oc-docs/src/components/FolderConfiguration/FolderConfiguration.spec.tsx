@@ -11,7 +11,8 @@ const baseConfig: FolderConfig = {
   preRequest: undefined,
   postResponse: undefined,
   tests: undefined,
-  variables: []
+  variables: [],
+  postVariables: []
 };
 
 describe('FolderConfiguration', () => {
@@ -59,5 +60,49 @@ describe('FolderConfiguration', () => {
       .map((el) => el.text.trim());
     expect(phases).toEqual(['Pre-Request', 'Post-Response']);
     expect(root.querySelector('[data-testid="folder-config-tests"]')).toBeTruthy();
+  });
+
+  it('renders disabled headers (dimmed) and their descriptions', () => {
+    const config: FolderConfig = {
+      ...baseConfig,
+      headers: [{ name: 'X-Debug', value: 'on', disabled: true, description: 'toggles debug logging' }]
+    };
+    const root = useRenderToDom(<FolderConfiguration config={config} />);
+
+    const headers = root.querySelector('[data-testid="folder-config-headers"]');
+    expect(headers).toBeTruthy();
+    expect(headers?.querySelector('.property-key')?.text.trim()).toBe('X-Debug');
+    expect(headers?.querySelector('.property-row--disabled')).toBeTruthy();
+    expect(headers?.text).toContain('toggles debug logging');
+  });
+
+  it('renders both Pre-Request and Post-Response variable columns', () => {
+    const config: FolderConfig = {
+      ...baseConfig,
+      variables: [{ name: 'baseUrl', value: 'https://api.example.com' }],
+      postVariables: [{ name: 'token', expression: 'res.body.token', scope: 'runtime' }]
+    };
+    const root = useRenderToDom(<FolderConfiguration config={config} />);
+
+    const vars = root.querySelector('[data-testid="folder-config-vars"]');
+    expect(vars).toBeTruthy();
+    const phases = vars?.querySelectorAll('.config-phase-label').map((el) => el.text.trim());
+    expect(phases).toEqual(['Pre-Request', 'Post-Response']);
+    expect(vars?.text).toContain('baseUrl');
+    expect(vars?.text).toContain('token');
+    expect(vars?.text).toContain('res.body.token');
+  });
+
+  it('shows only the Post-Response column when there are no pre-request vars', () => {
+    const config: FolderConfig = {
+      ...baseConfig,
+      postVariables: [{ name: 'sessionId', expression: 'res.body.id', scope: 'runtime' }]
+    };
+    const root = useRenderToDom(<FolderConfiguration config={config} />);
+
+    const vars = root.querySelector('[data-testid="folder-config-vars"]');
+    expect(vars).toBeTruthy();
+    const phases = vars?.querySelectorAll('.config-phase-label').map((el) => el.text.trim());
+    expect(phases).toEqual(['Post-Response']);
   });
 });

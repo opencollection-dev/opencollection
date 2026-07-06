@@ -46,13 +46,17 @@ describe('extractTests (source capture)', () => {
 });
 
 describe('collectTests', () => {
-  it('collects tests from collection, folders and request in order, each with its source', () => {
+  it('orders tests by script flow, each with its source', () => {
     const collection: any = { info: { name: 'C' }, request: { scripts: [{ type: 'tests', code: "test('coll', () => {})" }] } };
     const folder: any = { info: { type: 'folder', name: 'F' }, request: { scripts: [{ type: 'tests', code: "test('fold', () => {})" }] } };
     const item: any = { runtime: { scripts: [{ type: 'tests', code: "test('req', () => {})" }] } };
-    const rows = collectTests(collection, [folder], item);
-    expect(rows.map((r) => `${r.level}:${r.name}`)).toEqual(['collection:coll', 'folder:fold', 'request:req']);
-    expect(rows[0].code).toBe("test('coll', () => {})");
+
+    const sequential = collectTests(collection, [folder], item, 'sequential');
+    expect(sequential.map((r) => `${r.level}:${r.name}`)).toEqual(['collection:coll', 'folder:fold', 'request:req']);
+
+    const sandwich = collectTests(collection, [folder], item, 'sandwich');
+    expect(sandwich.map((r) => `${r.level}:${r.name}`)).toEqual(['request:req', 'folder:fold', 'collection:coll']);
+    expect(collectTests(collection, [folder], item).map((r) => r.level)).toEqual(['request', 'folder', 'collection']);
   });
 
   it('surfaces a raw-script row when a tests script has no test()/it() wrapper (not dropped)', () => {
@@ -69,15 +73,18 @@ describe('collectTests', () => {
 });
 
 describe('collectRawTestScripts', () => {
-  it('returns the complete authored script per non-empty level, in order', () => {
+  it('returns the complete authored script per non-empty level, in flow order', () => {
     const collection: any = { info: { name: 'C' }, request: { scripts: [{ type: 'tests', code: 'const s = 1;\ntest("coll", () => {})' }] } };
     const folder: any = { info: { type: 'folder', name: 'F' }, request: { scripts: [{ type: 'tests', code: '   ' }] } };
     const item: any = { runtime: { scripts: [{ type: 'tests', code: "test('req', () => {})" }] } };
-    const scripts = collectRawTestScripts(collection, [folder], item);
-    // The blank folder script is skipped; collection keeps its full setup + test source.
-    expect(scripts.map((s) => s.level)).toEqual(['collection', 'request']);
-    expect(scripts[0].code).toBe('const s = 1;\ntest("coll", () => {})');
-    expect(scripts[0].sourceName).toBe('C');
+
+    const sequential = collectRawTestScripts(collection, [folder], item, 'sequential');
+    expect(sequential.map((s) => s.level)).toEqual(['collection', 'request']);
+    expect(sequential[0].code).toBe('const s = 1;\ntest("coll", () => {})');
+    expect(sequential[0].sourceName).toBe('C');
+
+    const sandwich = collectRawTestScripts(collection, [folder], item);
+    expect(sandwich.map((s) => s.level)).toEqual(['request', 'collection']);
   });
 });
 

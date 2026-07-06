@@ -14,6 +14,8 @@ export const StyledWrapper = styled.div`
     opacity: 0.55;
   }
   .assert-expr {
+    flex: 1;
+    min-width: 0;
     font-family: var(--font-mono);
     font-size: 12.5px;
     color: var(--text-primary);

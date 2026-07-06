@@ -3,8 +3,11 @@ import type { HttpRequestHeader } from '@opencollection/types/requests/http';
 import type { Auth } from '@opencollection/types/common/auth';
 import { Code } from '../Code/Code';
 import { SubHeading } from '../SubHeading/SubHeading';
-import { PropertyTable } from '../PropertyTable/PropertyTable';
+import { PropertyTable, type PropertyRow } from '../PropertyTable/PropertyTable';
 import { AuthDetails } from '../AuthDetails/AuthDetails';
+import { VariablesPanel } from '../ExecutionContext/VariablesPanel/VariablesPanel';
+import { getDescription, type PreRequestVarRow, type PostResponseVarRow } from '../../utils/request';
+import { hasConfiguredAuth } from '../../utils/collectionOverview';
 import { StyledWrapper } from './StyledWrapper';
 
 interface CollectionScripts {
@@ -17,6 +20,8 @@ interface CollectionConfigurationProps {
   headers?: HttpRequestHeader[];
   auth?: Auth;
   scripts?: CollectionScripts;
+  preVars?: PreRequestVarRow[];
+  postVars?: PostResponseVarRow[];
   authModeLabels?: Record<string, string>;
   testId?: string;
 }
@@ -25,15 +30,26 @@ export const CollectionConfiguration: React.FC<CollectionConfigurationProps> = (
   headers = [],
   auth,
   scripts = {},
+  preVars = [],
+  postVars = [],
   authModeLabels = {},
   testId = 'collection-config',
 }) => {
-  const visibleHeaders = headers.filter((header) => header && header.name && header.disabled !== true);
-  const hasHeaders = visibleHeaders.length > 0;
-  const hasAuth = Boolean(auth) && (typeof auth !== 'object' || (auth as { type?: string }).type !== 'none');
+  const headerRows: PropertyRow[] = headers
+    .filter((header) => header && header.name)
+    .map((header) => ({
+      label: header.name,
+      value: header.value,
+      disabled: header.disabled,
+      description: getDescription(header)
+    }));
+
+  const hasHeaders = headerRows.length > 0;
+  const hasAuth = hasConfiguredAuth(auth);
+  const hasVars = preVars.length > 0 || postVars.length > 0;
   const hasScripts = Boolean(scripts.preRequest || scripts.postResponse);
   const hasTests = Boolean(scripts.tests);
-  const hasConfig = hasHeaders || hasAuth || hasScripts || hasTests;
+  const hasConfig = hasHeaders || hasAuth || hasVars || hasScripts || hasTests;
 
   if (!hasConfig) {
     return null;
@@ -44,7 +60,7 @@ export const CollectionConfiguration: React.FC<CollectionConfigurationProps> = (
       {hasHeaders && (
         <div className="config-group">
           <SubHeading className='script-label' testId={`${testId}-subheading`}>Headers</SubHeading>
-          <PropertyTable rows={visibleHeaders.map((header) => ({ label: header.name, value: header.value }))} />
+          <PropertyTable rows={headerRows} testId={`${testId}-headers`} />
         </div>
       )}
 
@@ -52,6 +68,13 @@ export const CollectionConfiguration: React.FC<CollectionConfigurationProps> = (
         <div className="config-group">
           <SubHeading className='script-label' testId={`${testId}-subheading`}>Auth</SubHeading>
           <AuthDetails auth={auth} authModeLabels={authModeLabels} testId={`${testId}-auth`} />
+        </div>
+      )}
+
+      {hasVars && (
+        <div className="config-group">
+          <SubHeading className='script-label' testId={`${testId}-subheading`}>Variables</SubHeading>
+          <VariablesPanel preVars={preVars} postVars={postVars} variant="stacked" />
         </div>
       )}
 

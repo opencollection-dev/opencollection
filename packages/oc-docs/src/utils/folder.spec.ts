@@ -48,13 +48,44 @@ describe('getFolderConfig', () => {
 
     const config = getFolderConfig(collection, [], folder);
 
-    expect(config.headers).toEqual([{ name: 'Accept', value: 'application/json', disabled: undefined }]);
+    expect(config.headers).toEqual([
+      { name: 'Accept', value: 'application/json', disabled: undefined, description: undefined },
+      { name: 'X-Disabled', value: 'x', disabled: true, description: undefined }
+    ]);
     expect(config.auth).toMatchObject({ type: 'bearer' });
     expect(config.authSource).toEqual({ level: 'collection', name: 'Hotel Booking API' });
     expect(config.preRequest).toBe('pre');
     expect(config.postResponse).toBe('post');
     expect(config.tests).toBe('test()');
     expect(config.variables).toEqual([{ name: 'sessionId', value: '{{$randomUUID}}', disabled: undefined }]);
+    expect(config.postVariables).toEqual([]);
+  });
+
+  it('reads header descriptions and post-response (actions) variables', () => {
+    const folder: any = {
+      request: {
+        headers: [{ name: 'Accept', value: 'json', description: 'content negotiation', disabled: true }],
+        variables: [{ name: 'pre', value: '1' }],
+        actions: [
+          {
+            type: 'set-variable',
+            phase: 'after-response',
+            selector: { expression: 'res.body.token', method: 'jsonq' },
+            variable: { name: 'token', scope: 'runtime' }
+          },
+          { type: 'set-variable', phase: 'before-request', selector: { expression: 'x' }, variable: { name: 'skip' } }
+        ]
+      }
+    };
+
+    const config = getFolderConfig(null, [], folder);
+    expect(config.headers).toEqual([
+      { name: 'Accept', value: 'json', disabled: true, description: 'content negotiation' }
+    ]);
+    expect(config.variables).toEqual([{ name: 'pre', value: '1', disabled: undefined }]);
+    expect(config.postVariables).toEqual([
+      { name: 'token', expression: 'res.body.token', scope: 'runtime', disabled: undefined }
+    ]);
   });
 
   it('leaves auth undefined when inheritance cannot resolve to a concrete value', () => {
@@ -71,6 +102,17 @@ describe('hasFolderConfig', () => {
 
   it('is true when any configuration is present', () => {
     const folder: any = { request: { scripts: [{ type: 'before-request', code: 'x' }] } };
+    expect(hasFolderConfig(getFolderConfig(null, [], folder))).toBe(true);
+  });
+
+  it('is true when only post-response (actions) vars are present', () => {
+    const folder: any = {
+      request: {
+        actions: [
+          { type: 'set-variable', phase: 'after-response', selector: { expression: 'x' }, variable: { name: 'v' } }
+        ]
+      }
+    };
     expect(hasFolderConfig(getFolderConfig(null, [], folder))).toBe(true);
   });
 });

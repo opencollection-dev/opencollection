@@ -2,6 +2,7 @@ import React from 'react';
 import { MethodBadge } from '../../MethodBadge/MethodBadge';
 import { VariableText } from '../../VariableText/VariableText';
 import { CopyButton } from '../../../ui/CopyButton/CopyButton';
+import { TruncatedText } from '../../TruncatedText/TruncatedText';
 import { SendIcon } from '../../../assets/icons';
 import { StyledWrapper } from './StyledWrapper';
 
@@ -28,9 +29,9 @@ export const RequestUrlBar: React.FC<RequestUrlBarProps> = ({
     <span className="request-url-bar-method" data-testid="request-method">
       <MethodBadge method={method} />
     </span>
-    <span className="request-url-bar-url" data-testid="request-url">
+    <TruncatedText className="request-url-bar-url" testId="request-url" text={url}>
       <VariableText value={url} />
-    </span>
+    </TruncatedText>
     <span className="request-url-bar-actions">
       <CopyButton
         text={url}

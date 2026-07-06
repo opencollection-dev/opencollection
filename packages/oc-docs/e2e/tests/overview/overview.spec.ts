@@ -46,7 +46,7 @@ test.describe('Collection Overview', () => {
   });
 
   test.describe('Collection Configuration', () => {
-    test('shows the Headers, Auth, Script and Tests groups with their values', async ({ overviewPage }) => {
+    test('shows the Headers, Auth, Variables, Script and Tests groups with their values', async ({ overviewPage }) => {
       const { configuration } = overviewPage;
       await expect(overviewPage.sectionLabel('Collection Configuration')).toBeVisible();
 
@@ -60,6 +60,12 @@ test.describe('Collection Overview', () => {
         await expect(configuration.root.getByText('Bearer Token')).toBeVisible();
       });
 
+      await test.step('the Variables group lists the collection-level pre-request variables', async () => {
+        await expect(configuration.subHeading('Variables')).toBeVisible();
+        await expect(configuration.root.getByText('collection_pre_var_value', { exact: true })).toBeVisible();
+        await expect(configuration.root.getByText('collection-var-value', { exact: true })).toBeVisible();
+      });
+
       await test.step('the Script and Tests groups are present', async () => {
         await expect(configuration.subHeading('Script')).toBeVisible();
         await expect(configuration.subHeading('Tests')).toBeVisible();
@@ -69,8 +75,8 @@ test.describe('Collection Overview', () => {
     test('keeps the auth token masked until the reveal toggle is clicked', async ({ overviewPage }) => {
       const { secret } = overviewPage.configuration;
 
-      await test.step('the token is shown as dots, not the raw value', async () => {
-        await expect(secret.value).toContainText('•');
+      await test.step('the token is shown as stars, not the raw value', async () => {
+        await expect(secret.value).toContainText('*');
         await expect(secret.value).not.toHaveText('{{bearer_auth_token}}');
       });
 
