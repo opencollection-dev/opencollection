@@ -5,7 +5,7 @@ import { ChevronRightIcon } from '../../../../assets/icons';
 import { StyledWrapper } from './StyledWrapper';
 import { getItemName, isFolder, isScriptFile, getRequestBadgeLabel } from '../../../../utils/schemaHelpers';
 import { getItemUuid } from '../../../../utils/itemUtils';
-import { sortSiblings } from '../../../../routing/navModel';
+import { orderSiblings } from '../../../../routing/navModel';
 
 interface SidebarTreeProps {
   items: OpenCollectionItem[];
@@ -25,7 +25,7 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
   onToggleFolder,
 }) => (
   <>
-    {sortSiblings(items).map((item: OpenCollectionItem) => {
+    {orderSiblings(items).map((item: OpenCollectionItem) => {
       const uuid = getItemUuid(item);
       const name = getItemName(item) || 'Untitled';
       const slug = uuid !== undefined ? uuidToSlug.get(uuid) : undefined;
