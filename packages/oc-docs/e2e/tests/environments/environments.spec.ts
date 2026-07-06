@@ -37,20 +37,18 @@ test.describe('Environments page', () => {
     const { table } = environmentsPage;
     await expect(environmentsPage.secretVariablesGroup).toBeVisible();
 
-    const valueCell = table.secretVariableRow('bearer_auth_token').getByTestId('table-cell-value');
-    await expect(valueCell).toBeVisible();
-    await expect(valueCell).toContainText('*');
-    await expect(valueCell).not.toContainText('(empty)');
-    // Display only: no reveal toggle / button.
-    await expect(valueCell.locator('button')).toHaveCount(0);
+    await expect(table.secretValueOf('bearer_auth_token')).toBeVisible();
+    await expect(table.secretMaskOf('bearer_auth_token')).toContainText('*');
+    await expect(table.secretValueOf('bearer_auth_token')).not.toContainText('(empty)');
+    // Display only: no reveal toggle.
+    await expect(table.secretRevealToggleOf('bearer_auth_token')).toHaveCount(0);
   });
 
   test('greys the masked secret stars to match the icon', async ({ environmentsPage }) => {
     const { table } = environmentsPage;
-    const valueCell = table.secretVariableRow('bearer_auth_token').getByTestId('table-cell-value');
 
-    const starsColor = await valueCell.locator('.secret-value-text').evaluate((el) => getComputedStyle(el).color);
-    const iconColor = await valueCell.locator('.secret-value-icon').evaluate((el) => getComputedStyle(el).color);
+    const starsColor = await table.secretMaskOf('bearer_auth_token').evaluate((el) => getComputedStyle(el).color);
+    const iconColor = await table.secretIconOf('bearer_auth_token').evaluate((el) => getComputedStyle(el).color);
     expect(starsColor).toBe(iconColor);
   });
 

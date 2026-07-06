@@ -50,14 +50,6 @@ interface AnchorProps {
   onTouchStart?: React.TouchEventHandler<HTMLElement>;
 }
 
-/**
- * Hover/focus tooltip that clones its single child as the anchor.
- *
- * The bubble is purely visual: it is `aria-hidden` and `pointer-events: none`, so
- * assistive tech never reads it. Any information conveyed through `content` must
- * therefore also be available on the anchor itself (its visible text, `title`, or
- * `aria-label`) — the tooltip enhances labelling, it does not replace it.
- */
 export const Tooltip: React.FC<TooltipProps> = ({
   content,
   children,
@@ -65,7 +57,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
   shouldOpen,
   touch = true,
   className,
-  testId
+  testId = 'tooltip'
 }) => {
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState<Position | null>(null);

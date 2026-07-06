@@ -6,6 +6,7 @@ import { ScriptPage } from '../pages/script.page';
 import { FolderPage } from '../pages/folder.page';
 import { UnsupportedRequestPage } from '../pages/unsupported-request.page';
 import { SidebarComponent } from '../components/sidebar.component';
+import { TooltipComponent } from '../components/tooltip.component';
 import { ThemeToggleComponent } from '../components/layout/theme-toggle.component';
 import { PageHeaderComponent } from '../components/layout/page-header.component';
 import { SearchComponent } from '../components/search/search.component';
@@ -18,6 +19,7 @@ type Fixtures = {
   folderPage: FolderPage;
   unsupportedRequestPage: UnsupportedRequestPage;
   sidebar: SidebarComponent;
+  tooltip: TooltipComponent;
   pageHeader: PageHeaderComponent;
   themeToggle: ThemeToggleComponent;
   search: SearchComponent;
@@ -44,6 +46,9 @@ export const test = base.extend<Fixtures>({
   },
   sidebar: async ({ page }, use) => {
     await use(new SidebarComponent(page));
+  },
+  tooltip: async ({ page }, use) => {
+    await use(new TooltipComponent(page));
   },
   pageHeader: async ({ page }, use) => {
     await use(new PageHeaderComponent(page));

@@ -41,7 +41,11 @@ export const SecretValue: React.FC<SecretValueProps> = ({ value = '', align = 'b
         {showValue ? value : SECRET_MASK}
       </span>
       {readOnly ? (
-        <span className="secret-value-icon" aria-hidden="true">
+        <span
+          className="secret-value-icon"
+          aria-hidden="true"
+          data-testid={testId ? `${testId}-icon` : undefined}
+        >
           <EyeIcon off />
         </span>
       ) : (
