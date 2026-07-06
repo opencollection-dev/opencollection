@@ -31,8 +31,9 @@ const valueCell = (value: string): React.ReactNode =>
     emptyCell
   );
 
-const secretCell = (value: string): React.ReactNode =>
-  value ? <SecretValue value={value} align="start" testId="environment-secret-value" /> : emptyCell;
+const secretCell = (): React.ReactNode => (
+  <SecretValue value="" align="start" readOnly testId="environment-secret-value" />
+);
 
 const typeCell = (dataType: string): React.ReactNode =>
   dataType ? <TruncatedText className="environment-type" text={dataType} /> : emptyCell;
@@ -89,7 +90,7 @@ export const Environments: React.FC<EnvironmentsProps> = ({ collection }) => {
           testId: 'environment-secret-variable-row',
           cells: {
             name: nameCell(row.name),
-            value: secretCell(row.value),
+            value: secretCell(),
             type: typeCell(row.dataType)
           }
         }))

@@ -31,14 +31,28 @@ test.describe('Environments page', () => {
     });
   });
 
-  test('shows an empty value for a secret variable that has no value in the yml', async ({ environmentsPage }) => {
+  test('shows secret variables as masked, display-only values (never empty, no reveal toggle)', async ({
+    environmentsPage
+  }) => {
     const { table } = environmentsPage;
-    const row = table.secretVariableRow('bearer_auth_token');
-
     await expect(environmentsPage.secretVariablesGroup).toBeVisible();
-    await expect(row).toBeVisible();
-    await expect(row.getByTestId('table-cell-value')).toContainText('(empty)');
-    await expect(row).not.toContainText('your_secret_token');
+
+    for (const name of ['bearer_auth_token', 'api_secret_key']) {
+      const valueCell = table.secretVariableRow(name).getByTestId('table-cell-value');
+      await expect(valueCell).toBeVisible();
+      await expect(valueCell).toContainText('*');
+      await expect(valueCell).not.toContainText('(empty)');
+      await expect(valueCell.locator('button')).toHaveCount(0);
+    }
+  });
+
+  test('greys the masked secret stars to match the icon', async ({ environmentsPage }) => {
+    const { table } = environmentsPage;
+    const valueCell = table.secretVariableRow('bearer_auth_token').getByTestId('table-cell-value');
+
+    const starsColor = await valueCell.locator('.secret-value-text').evaluate((el) => getComputedStyle(el).color);
+    const iconColor = await valueCell.locator('.secret-value-icon').evaluate((el) => getComputedStyle(el).color);
+    expect(starsColor).toBe(iconColor);
   });
 
   test('switches the table when another environment tab is selected', async ({ environmentsPage }) => {

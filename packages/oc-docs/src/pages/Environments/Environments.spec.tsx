@@ -40,14 +40,14 @@ describe('Environments', () => {
     expect(cellText(root, '.environment-name')).toContain('baseUrl');
     expect(cellText(root, '.environment-value')).toContain('https://api.dev');
     expect(cellText(root, '.environment-name')).toContain('authToken');
-    expect(root.querySelector('[data-testid="environment-secret-value"]')).toBeNull();
+    expect(root.querySelector('[data-testid="environment-secret-value"]')).toBeTruthy();
   });
 
-  it('renders the reveal component for a secret variable that has a value in the yml', () => {
+  it('always shows a secret as a masked, display-only value (no value in the yml, no reveal toggle)', () => {
     const collection = {
       info: { name: 'API', version: '1.0.0' },
       config: {
-        environments: [{ name: 'Dev', variables: [{ name: 'apiKey', secret: true, value: 'sk-live-123' }] }]
+        environments: [{ name: 'Dev', variables: [{ name: 'apiKey', secret: true }] }]
       }
     } as unknown as OpenCollection;
 
@@ -55,9 +55,9 @@ describe('Environments', () => {
 
     const secret = root.querySelector('[data-testid="environment-secret-value"]');
     expect(secret).toBeTruthy();
-    expect(secret?.querySelector('[data-testid="environment-secret-value-toggle"]')).toBeTruthy();
     expect(secret?.text).toContain('*');
-    expect(root.text).not.toContain('sk-live-123');
+    expect(secret?.querySelector('[data-testid="environment-secret-value-toggle"]')).toBeNull();
+    expect(root.querySelector('[data-testid="environment-secret-value"].secret-value--readonly')).toBeTruthy();
   });
 
   it('renders an external secret variables section with the manager label', () => {

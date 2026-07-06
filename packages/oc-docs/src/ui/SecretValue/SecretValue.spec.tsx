@@ -9,4 +9,17 @@ describe('SecretValue', () => {
     expect(html).not.toContain('s3cr3t-token');
     expect(html).toContain(SECRET_MASK);
   });
+
+  it('renders a reveal toggle button by default', () => {
+    const html = renderToStaticMarkup(<SecretValue value="s3cr3t-token" testId="secret" />);
+    expect(html).toContain('data-testid="secret-toggle"');
+  });
+
+  it('is display-only when readOnly: masked, no toggle button', () => {
+    const html = renderToStaticMarkup(<SecretValue value="s3cr3t-token" readOnly testId="secret" />);
+    expect(html).toContain(SECRET_MASK);
+    expect(html).not.toContain('s3cr3t-token');
+    expect(html).not.toContain('<button');
+    expect(html).not.toContain('data-testid="secret-toggle"');
+  });
 });

@@ -17,6 +17,10 @@ export const StyledWrapper = styled.span`
     word-break: break-all;
   }
 
+  &.secret-value--readonly .secret-value-text {
+    color: var(--text-tertiary);
+  }
+
   .secret-value-toggle {
     display: inline-flex;
     align-items: center;
@@ -29,5 +33,12 @@ export const StyledWrapper = styled.span`
   }
   .secret-value-toggle:hover {
     color: var(--text-secondary);
+  }
+
+  .secret-value-icon {
+    display: inline-flex;
+    align-items: center;
+    color: var(--text-tertiary);
+    flex-shrink: 0;
   }
 `;

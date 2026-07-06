@@ -6,6 +6,7 @@ export const SECRET_MASK = '*'.repeat(14);
 interface SecretValueProps {
   value: string;
   align?: 'between' | 'start';
+  readOnly?: boolean;
   testId?: string;
 }
 
@@ -25,27 +26,36 @@ const EyeIcon: React.FC<{ off?: boolean }> = ({ off }) => (
   </svg>
 );
 
-export const SecretValue: React.FC<SecretValueProps> = ({ value, align = 'between', testId = 'secret-value' }) => {
+export const SecretValue: React.FC<SecretValueProps> = ({ value, align = 'between', readOnly = false, testId = 'secret-value' }) => {
   const [revealed, setRevealed] = useState(false);
+  const showValue = revealed && !readOnly;
 
   return (
     <StyledWrapper
-      className={['secret-value', align === 'start' ? 'secret-value--start' : ''].filter(Boolean).join(' ')}
+      className={['secret-value', align === 'start' ? 'secret-value--start' : '', readOnly ? 'secret-value--readonly' : '']
+        .filter(Boolean)
+        .join(' ')}
       data-testid={testId}
     >
-      <span className="secret-value-text" aria-hidden={!revealed} data-testid={testId ? `${testId}-text` : undefined}>
-        {revealed ? value : SECRET_MASK}
+      <span className="secret-value-text" aria-hidden={!showValue} data-testid={testId ? `${testId}-text` : undefined}>
+        {showValue ? value : SECRET_MASK}
       </span>
-      <button
-        type="button"
-        className="secret-value-toggle"
-        aria-label={revealed ? 'Hide value' : 'Show value'}
-        aria-pressed={revealed}
-        data-testid={testId ? `${testId}-toggle` : undefined}
-        onClick={() => setRevealed((prev) => !prev)}
-      >
-        <EyeIcon off={revealed} />
-      </button>
+      {readOnly ? (
+        <span className="secret-value-icon" aria-hidden="true">
+          <EyeIcon off />
+        </span>
+      ) : (
+        <button
+          type="button"
+          className="secret-value-toggle"
+          aria-label={revealed ? 'Hide value' : 'Show value'}
+          aria-pressed={revealed}
+          data-testid={testId ? `${testId}-toggle` : undefined}
+          onClick={() => setRevealed((prev) => !prev)}
+        >
+          <EyeIcon off={revealed} />
+        </button>
+      )}
     </StyledWrapper>
   );
 };
