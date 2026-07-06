@@ -10,6 +10,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from '../../assets/icons';
 import PageRouter from '../PageRouter/PageRouter';
 import PlaygroundDrawer from '../PlaygroundDrawer/PlaygroundDrawer';
 import SearchBar from '../Search/SearchBar/SearchBar';
+import EnvironmentSwitcher from '../EnvironmentSwitcher/EnvironmentSwitcher';
 import { useSearchHotkey } from '../../hooks';
 import { useAppSelector } from '../../store/hooks';
 import { selectDocsCollection } from '../../store/slices/docs';
@@ -90,6 +91,7 @@ const AppShell: React.FC<AppShellProps> = ({ logo, testId = 'app-shell' }) => {
         searchSlot={<SearchBar open={searchOpen} onOpenChange={setSearchOpen} focusNonce={searchFocusNonce} />}
         searchOpen={searchOpen}
         onSearchOpenChange={setSearchOpen}
+        envSwitcherSlot={<EnvironmentSwitcher />}
         onToggleSidebar={toggleSidebar}
         openInBrunoHref={buildFetchInBrunoUrl(gitCollectionUrl)}
       />

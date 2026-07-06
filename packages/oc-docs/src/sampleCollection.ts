@@ -179,6 +179,11 @@ items:
               method: GET
               url: '{{baseUrl}}/billing/customers'
               auth: inherit
+              headers:
+                - name: Authorization
+                  value: 'Bearer {{bearer_auth_token}}'
+                - name: X-Api-Host
+                  value: '{{host}}'
             runtime:
               variables:
                 - name: expectedStatus

@@ -8,11 +8,13 @@ import { isFolder } from '../../utils/schemaHelpers';
 export interface DocsState {
   collection: OpenCollectionCollection | null;
   selectedItemId: string | null;
+  activeEnvironmentName: string | null;
 }
 
 const initialState: DocsState = {
   collection: null,
-  selectedItemId: null
+  selectedItemId: null,
+  activeEnvironmentName: null
 };
 
 // Helper function to initialize isCollapsed for folders
@@ -45,12 +47,16 @@ const docsSlice = createSlice({
       if (state.collection && state.collection.items) {
         initializeCollapsedState(state.collection.items);
       }
-      // Reset selected item when collection changes
       state.selectedItemId = null;
+      state.activeEnvironmentName = null;
     },
     clearDocsCollection: (state: DocsState) => {
       state.collection = null;
       state.selectedItemId = null;
+      state.activeEnvironmentName = null;
+    },
+    setActiveEnvironment: (state: DocsState, action: PayloadAction<string | null>) => {
+      state.activeEnvironmentName = action.payload;
     },
     toggleItem: (state: DocsState, action: PayloadAction<string>) => {
       const uuid = action.payload;
@@ -80,10 +86,12 @@ const docsSlice = createSlice({
   }
 });
 
-export const { setDocsCollection, clearDocsCollection, toggleItem, selectItem, expandFolders } = docsSlice.actions;
+export const { setDocsCollection, clearDocsCollection, toggleItem, selectItem, expandFolders, setActiveEnvironment } =
+  docsSlice.actions;
 export default docsSlice.reducer;
 
 export const selectDocsCollection = (state: RootState) => state.docs.collection;
 export const selectSelectedItemId = (state: RootState) => state.docs.selectedItemId;
+export const selectActiveEnvironmentName = (state: RootState) => state.docs.activeEnvironmentName;
 
 
