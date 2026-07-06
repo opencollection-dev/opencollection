@@ -13,6 +13,6 @@ export const StyledWrapper = styled.div`
   line-height: 1.35;
   white-space: normal;
   overflow-wrap: anywhere;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 4px 12px var(--oc-info-tip-box-shadow);
   pointer-events: none;
 `;
