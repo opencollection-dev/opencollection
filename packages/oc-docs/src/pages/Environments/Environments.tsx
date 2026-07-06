@@ -32,7 +32,7 @@ const valueCell = (value: string): React.ReactNode =>
   );
 
 const secretCell = (): React.ReactNode => (
-  <SecretValue value="" align="start" readOnly testId="environment-secret-value" />
+  <SecretValue align="start" readOnly testId="environment-secret-value" />
 );
 
 const typeCell = (dataType: string): React.ReactNode =>

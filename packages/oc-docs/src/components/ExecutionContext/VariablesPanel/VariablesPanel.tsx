@@ -30,12 +30,10 @@ export const VariablesPanel: React.FC<VariablesPanelProps> = ({ preVars, postVar
   const showPre = !stacked || preVars.length > 0;
   const showPost = !stacked || postVars.length > 0;
 
-  const postLabel = stacked ? 'Post-Response' : 'Post Response';
-
   return (
     <StyledWrapper className={stacked ? 'vars-grid vars-stacked' : 'vars-grid'}>
       {showPre && <Field label="Pre-Request" rows={preRows(preVars)} />}
-      {showPost && <Field label={postLabel} rows={postRows(postVars)} />}
+      {showPost && <Field label="Post-Response" rows={postRows(postVars)} />}
     </StyledWrapper>
   );
 };

@@ -21,7 +21,7 @@ describe('VariablesPanel', () => {
     const html = renderToStaticMarkup(
       <VariablesPanel preVars={[]} postVars={[{ name: 'sessionId', expression: 'res.body.id', scope: 'runtime' }]} />
     );
-    expect(html).toContain('Post Response');
+    expect(html).toContain('Post-Response');
     expect(html).toContain('sessionId');
     expect(html).toContain('res.body.id');
   });

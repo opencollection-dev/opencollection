@@ -43,7 +43,6 @@ export interface EnvironmentVariableRow {
   name: string;
   value: string;
   dataType: string;
-  secret: boolean;
   disabled: boolean;
 }
 
@@ -91,7 +90,6 @@ export const getEnvironmentVariables = (environment: Environment | null | undefi
         name: variable.name ?? '',
         value: '',
         dataType: variable.type ? humanizeType(variable.type) : '',
-        secret: true,
         disabled: variable.disabled === true
       });
       return;
@@ -101,7 +99,6 @@ export const getEnvironmentVariables = (environment: Environment | null | undefi
       name: variable.name,
       value: resolved.value,
       dataType: resolved.value ? humanizeType(resolved.type) : '',
-      secret: false,
       disabled: variable.disabled === true
     });
   });

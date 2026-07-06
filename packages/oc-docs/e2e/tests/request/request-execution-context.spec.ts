@@ -44,7 +44,7 @@ test.describe('Request page — Execution Context', () => {
     await expect(executionContext.variables.getByText('Pre-Request')).toBeVisible();
     await expect(executionContext.variable('expectedStatus')).toBeVisible();
     await expect(executionContext.variable('customersPath')).toBeVisible();
-    await expect(executionContext.variables.getByText('Post Response')).toBeVisible();
+    await expect(executionContext.variables.getByText('Post-Response')).toBeVisible();
     await expect(executionContext.variable('firstCustomerId')).toBeVisible();
   });
 

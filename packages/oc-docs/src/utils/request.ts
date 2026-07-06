@@ -9,6 +9,7 @@ import type {
 import type { Auth } from '@opencollection/types/common/auth';
 import type { Scripts } from '@opencollection/types/common/scripts';
 import type { Variable } from '@opencollection/types/common/variables';
+import type { Action } from '@opencollection/types/common/actions';
 import {
   getRequestAuth,
   getItemName,
@@ -401,18 +402,7 @@ export const getPostResponseVars = (item: HttpRequest): PostResponseVarRow[] => 
 };
 
 type RequestDefaultsHolder =
-  | {
-      request?: {
-        variables?: Variable[];
-        actions?: Array<{
-          type?: string;
-          phase?: string;
-          disabled?: boolean;
-          variable?: { name?: string; scope?: string };
-          selector?: { expression?: string };
-        }>;
-      };
-    }
+  | { request?: { variables?: Variable[]; actions?: Action[] } }
   | null
   | undefined;
 
@@ -426,11 +416,11 @@ export const getRequestDefaultsVars = (
     .map((v) => ({ name: v.name, value: flattenValue(v.value), disabled: v.disabled }));
 
   const postVars: PostResponseVarRow[] = (request.actions ?? [])
-    .filter((a) => a && a.type === 'set-variable' && (a.phase ?? 'after-response') === 'after-response' && a.variable?.name)
+    .filter((a) => a.type === 'set-variable' && (a.phase ?? 'after-response') === 'after-response' && Boolean(a.variable?.name))
     .map((a) => ({
-      name: a.variable!.name as string,
-      expression: a.selector?.expression ?? '',
-      scope: a.variable?.scope,
+      name: a.variable.name,
+      expression: a.selector.expression,
+      scope: a.variable.scope,
       disabled: a.disabled
     }));
 

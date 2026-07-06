@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { isTemplateVariable, templateVariableSplitRegex } from '../../utils/common';
 import { StyledWrapper } from './StyledWrapper';
 
@@ -8,7 +8,10 @@ interface VariableTextProps {
 }
 
 export const VariableText: React.FC<VariableTextProps> = ({ value, className }) => {
-  const parts = (value ?? '').split(templateVariableSplitRegex()).filter((part) => part !== '');
+  const parts = useMemo(
+    () => (value ?? '').split(templateVariableSplitRegex()).filter((part) => part !== ''),
+    [value]
+  );
 
   return (
     <StyledWrapper className={['var-text', className].filter(Boolean).join(' ')}>

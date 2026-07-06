@@ -25,3 +25,12 @@ export const AUTH_MODE_LABELS: Record<string, string> = {
   wsse: 'WSSE',
   'akamai-edgegrid': 'Akamai EdgeGrid'
 };
+
+export const ADDITIONAL_PARAM_GROUPS: Array<{
+  key: 'authorizationRequest' | 'accessTokenRequest' | 'refreshTokenRequest';
+  label: string;
+}> = [
+  { key: 'authorizationRequest', label: 'Authorization Request' },
+  { key: 'accessTokenRequest', label: 'Access Token Request' },
+  { key: 'refreshTokenRequest', label: 'Refresh Token Request' }
+];

@@ -4,7 +4,7 @@ import { StyledWrapper } from './StyledWrapper';
 export const SECRET_MASK = '*'.repeat(14);
 
 interface SecretValueProps {
-  value: string;
+  value?: string;
   align?: 'between' | 'start';
   readOnly?: boolean;
   testId?: string;
@@ -26,7 +26,7 @@ const EyeIcon: React.FC<{ off?: boolean }> = ({ off }) => (
   </svg>
 );
 
-export const SecretValue: React.FC<SecretValueProps> = ({ value, align = 'between', readOnly = false, testId = 'secret-value' }) => {
+export const SecretValue: React.FC<SecretValueProps> = ({ value = '', align = 'between', readOnly = false, testId = 'secret-value' }) => {
   const [revealed, setRevealed] = useState(false);
   const showValue = revealed && !readOnly;
 

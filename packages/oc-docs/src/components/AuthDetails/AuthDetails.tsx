@@ -9,7 +9,7 @@ import type {
   OAuth2AdditionalParameter
 } from '@opencollection/types/common/auth';
 import { PropertyTable, type PropertyRow } from '../PropertyTable/PropertyTable';
-import { AUTH_TYPES } from '../../constants';
+import { ADDITIONAL_PARAM_GROUPS, AUTH_TYPES } from '../../constants';
 
 interface AuthDetailsProps {
   auth?: Auth;
@@ -107,12 +107,6 @@ const pushBool = (rows: PropertyRow[], testId: string, label: string, value: unk
 const pushNumber = (rows: PropertyRow[], testId: string, label: string, value: unknown): void => {
   if (typeof value === 'number' && Number.isFinite(value)) rows.push({ label, value: String(value), testId });
 };
-
-const ADDITIONAL_PARAM_GROUPS: Array<{ key: 'authorizationRequest' | 'accessTokenRequest' | 'refreshTokenRequest'; label: string }> = [
-  { key: 'authorizationRequest', label: 'Authorization Request' },
-  { key: 'accessTokenRequest', label: 'Access Token Request' },
-  { key: 'refreshTokenRequest', label: 'Refresh Token Request' }
-];
 
 const pushAdditionalParameters = (
   rows: PropertyRow[],

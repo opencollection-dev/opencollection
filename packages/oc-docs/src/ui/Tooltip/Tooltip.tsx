@@ -21,11 +21,9 @@ interface TooltipProps {
   testId?: string;
 }
 
-type Placement = 'top' | 'bottom';
 interface Position {
   top: number;
   left: number;
-  placement: Placement;
 }
 
 const GAP = 8; // space between the anchor and the bubble
@@ -44,6 +42,22 @@ const chain =
     next(event);
   };
 
+interface AnchorProps {
+  onMouseEnter?: React.MouseEventHandler<HTMLElement>;
+  onMouseLeave?: React.MouseEventHandler<HTMLElement>;
+  onFocus?: React.FocusEventHandler<HTMLElement>;
+  onBlur?: React.FocusEventHandler<HTMLElement>;
+  onTouchStart?: React.TouchEventHandler<HTMLElement>;
+}
+
+/**
+ * Hover/focus tooltip that clones its single child as the anchor.
+ *
+ * The bubble is purely visual: it is `aria-hidden` and `pointer-events: none`, so
+ * assistive tech never reads it. Any information conveyed through `content` must
+ * therefore also be available on the anchor itself (its visible text, `title`, or
+ * `aria-label`) — the tooltip enhances labelling, it does not replace it.
+ */
 export const Tooltip: React.FC<TooltipProps> = ({
   content,
   children,
@@ -68,10 +82,8 @@ export const Tooltip: React.FC<TooltipProps> = ({
 
     const roomAbove = rect.top - GAP;
     const roomBelow = viewportHeight - rect.bottom - GAP;
-    let placement: Placement = 'top';
     let top = rect.top - GAP - bubbleHeight;
     if (bubbleHeight > roomAbove && (roomBelow >= bubbleHeight || roomBelow >= roomAbove)) {
-      placement = 'bottom';
       top = rect.bottom + GAP;
     }
     top = Math.min(Math.max(top, MARGIN), Math.max(MARGIN, viewportHeight - MARGIN - bubbleHeight));
@@ -80,7 +92,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
     const maxLeft = Math.max(MARGIN, window.innerWidth - MARGIN - bubbleWidth);
     left = Math.min(Math.max(left, MARGIN), maxLeft);
 
-    setPos({ top, left, placement });
+    setPos({ top, left });
   }, []);
 
   const show = useCallback(
@@ -142,29 +154,20 @@ export const Tooltip: React.FC<TooltipProps> = ({
     return children;
   }
 
-  const child = children as ReactElement<{
-    onMouseEnter?: (e: React.MouseEvent<HTMLElement>) => void;
-    onMouseLeave?: (e: React.MouseEvent<HTMLElement>) => void;
-    onFocus?: (e: React.FocusEvent<HTMLElement>) => void;
-    onBlur?: (e: React.FocusEvent<HTMLElement>) => void;
-    onTouchStart?: (e: React.TouchEvent<HTMLElement>) => void;
-  }>;
+  const child = children as ReactElement<AnchorProps>;
   const { props } = child;
 
-  const handlers: Record<string, (e: never) => void> = {
-    onMouseEnter: chain(props.onMouseEnter, (e: React.MouseEvent<HTMLElement>) => show(e.currentTarget)),
+  const handlers: AnchorProps = {
+    onMouseEnter: chain(props.onMouseEnter, (e) => show(e.currentTarget)),
     onMouseLeave: chain(props.onMouseLeave, hide),
-    onFocus: chain(props.onFocus, (e: React.FocusEvent<HTMLElement>) => show(e.currentTarget)),
+    onFocus: chain(props.onFocus, (e) => show(e.currentTarget)),
     onBlur: chain(props.onBlur, hide)
-  } as Record<string, (e: never) => void>;
+  };
   if (touch) {
-    handlers.onTouchStart = chain(props.onTouchStart, (e: React.TouchEvent<HTMLElement>) => {
-      if (open) hide();
-      else show(e.currentTarget);
-    }) as (e: never) => void;
+    handlers.onTouchStart = chain(props.onTouchStart, (e) => (open ? hide() : show(e.currentTarget)));
   }
 
-  const trigger = cloneElement(child, handlers as Partial<typeof child.props>);
+  const trigger = cloneElement(child, handlers);
 
   return (
     <>
