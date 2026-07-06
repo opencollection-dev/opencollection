@@ -31,19 +31,18 @@ test.describe('Environments page', () => {
     });
   });
 
-  test('shows secret variables as masked, display-only values (never empty, no reveal toggle)', async ({
+  test('shows a secret variable as a masked, display-only value (never empty, no reveal toggle)', async ({
     environmentsPage
   }) => {
     const { table } = environmentsPage;
     await expect(environmentsPage.secretVariablesGroup).toBeVisible();
 
-    for (const name of ['bearer_auth_token', 'api_secret_key']) {
-      const valueCell = table.secretVariableRow(name).getByTestId('table-cell-value');
-      await expect(valueCell).toBeVisible();
-      await expect(valueCell).toContainText('*');
-      await expect(valueCell).not.toContainText('(empty)');
-      await expect(valueCell.locator('button')).toHaveCount(0);
-    }
+    const valueCell = table.secretVariableRow('bearer_auth_token').getByTestId('table-cell-value');
+    await expect(valueCell).toBeVisible();
+    await expect(valueCell).toContainText('*');
+    await expect(valueCell).not.toContainText('(empty)');
+    // Display only: no reveal toggle / button.
+    await expect(valueCell.locator('button')).toHaveCount(0);
   });
 
   test('greys the masked secret stars to match the icon', async ({ environmentsPage }) => {

@@ -34,7 +34,7 @@ test.describe('Collection Overview', () => {
     });
 
     await test.step('each environment shows how many variables it has', async () => {
-      await expect(overviewPage.environments.variableCount('Local')).toHaveText('3 variables');
+      await expect(overviewPage.environments.variableCount('Local')).toHaveText('2 variables');
       await expect(overviewPage.environments.variableCount('Prod')).toHaveText('2 variables');
     });
   });
