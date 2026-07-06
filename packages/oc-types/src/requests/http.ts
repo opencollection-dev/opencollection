@@ -65,6 +65,7 @@ export interface FileBodyVariant {
   filePath: string;
   contentType: string;
   selected: boolean;
+  description?: Description;
 }
 
 /** @deprecated Use FileBodyVariant instead */

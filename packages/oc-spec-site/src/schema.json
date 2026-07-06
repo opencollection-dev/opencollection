@@ -820,6 +820,10 @@
         "selected": {
           "type": "boolean",
           "description": "Whether the file is selected"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the file variant"
         }
       },
       "required": ["filePath", "contentType", "selected"],

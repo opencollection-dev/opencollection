@@ -96,13 +96,18 @@ describe('requestBody', () => {
     const view = getBodyView({
       type: 'file',
       data: [
-        { filePath: '/a.json', contentType: 'application/json', selected: true },
+        { filePath: '/a.json', contentType: 'application/json', selected: true, description: 'Primary payload' },
         { filePath: '/b.xml', contentType: 'application/xml', selected: false }
       ]
     } as any) as any;
     expect(view.render).toBe('file');
     expect(view.files).toHaveLength(2);
-    expect(view.files[0]).toMatchObject({ filePath: '/a.json', contentType: 'application/json', selected: true });
+    expect(view.files[0]).toMatchObject({
+      filePath: '/a.json',
+      contentType: 'application/json',
+      selected: true,
+      description: 'Primary payload'
+    });
   });
 
   it('treats an empty file body as none', () => {
