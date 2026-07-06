@@ -382,24 +382,29 @@ const flattenValue = (value: Variable['value']): string => {
   return typeof value.data === 'string' ? value.data : '';
 };
 
-export const getPreRequestVars = (item: HttpRequest): PreRequestVarRow[] =>
-  getRequestVariables(item).map((v: Variable) => ({
-    name: v.name,
-    value: flattenValue(v.value),
-    disabled: v.disabled
-  }));
+// Shared row-builders. Request items keep vars/actions under `runtime`; collection
+// and folder defaults keep them under `request` — but both map to the same rows.
+const toPreRequestVarRow = (variable: Variable): PreRequestVarRow => ({
+  name: variable.name,
+  value: flattenValue(variable.value),
+  disabled: variable.disabled
+});
 
-export const getPostResponseVars = (item: HttpRequest): PostResponseVarRow[] => {
-  const actions = item.runtime?.actions ?? [];
-  return actions
-    .filter((a) => a.type === 'set-variable' && (a.phase ?? 'after-response') === 'after-response')
-    .map((a) => ({
-      name: a.variable.name,
-      expression: a.selector.expression,
-      scope: a.variable.scope,
-      disabled: a.disabled
-    }));
-};
+const isAfterResponseCapture = (action: Action): boolean =>
+  action.type === 'set-variable' && (action.phase ?? 'after-response') === 'after-response';
+
+const toPostResponseVarRow = (action: Action): PostResponseVarRow => ({
+  name: action.variable.name,
+  expression: action.selector.expression,
+  scope: action.variable.scope,
+  disabled: action.disabled
+});
+
+export const getPreRequestVars = (item: HttpRequest): PreRequestVarRow[] =>
+  getRequestVariables(item).map(toPreRequestVarRow);
+
+export const getPostResponseVars = (item: HttpRequest): PostResponseVarRow[] =>
+  (item.runtime?.actions ?? []).filter(isAfterResponseCapture).map(toPostResponseVarRow);
 
 type RequestDefaultsHolder =
   | { request?: { variables?: Variable[]; actions?: Action[] } }
@@ -411,18 +416,13 @@ export const getRequestDefaultsVars = (
 ): { preVars: PreRequestVarRow[]; postVars: PostResponseVarRow[] } => {
   const request = node?.request ?? {};
 
-  const preVars: PreRequestVarRow[] = (request.variables ?? [])
+  const preVars = (request.variables ?? [])
     .filter((v): v is Variable => Boolean(v && v.name))
-    .map((v) => ({ name: v.name, value: flattenValue(v.value), disabled: v.disabled }));
+    .map(toPreRequestVarRow);
 
-  const postVars: PostResponseVarRow[] = (request.actions ?? [])
-    .filter((a) => a.type === 'set-variable' && (a.phase ?? 'after-response') === 'after-response' && Boolean(a.variable?.name))
-    .map((a) => ({
-      name: a.variable.name,
-      expression: a.selector.expression,
-      scope: a.variable.scope,
-      disabled: a.disabled
-    }));
+  const postVars = (request.actions ?? [])
+    .filter((a) => isAfterResponseCapture(a) && Boolean(a.variable?.name))
+    .map(toPostResponseVarRow);
 
   return { preVars, postVars };
 };
