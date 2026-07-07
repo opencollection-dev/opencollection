@@ -26,6 +26,7 @@ import {
   setGitCollectionUrl
 } from '@slices/app';
 import { createOpenCollectionStore, type AppStore } from '../../store/store';
+import { VariableResolverProvider } from '../../hooks';
 import { applyTheme } from '../../theme/applyTheme';
 
 // Set data-theme on the root element before the component first paints to avoid a flash.
@@ -159,7 +160,9 @@ const OpenCollection: React.FC<OpenCollectionProps> = (props) => {
   return (
     <HashRouter>
       <Provider store={storeRef.current!}>
-        <OpenCollectionContent {...props} />
+        <VariableResolverProvider>
+          <OpenCollectionContent {...props} />
+        </VariableResolverProvider>
       </Provider>
     </HashRouter>
   );

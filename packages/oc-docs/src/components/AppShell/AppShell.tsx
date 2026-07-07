@@ -3,6 +3,8 @@ import { useLocation } from 'react-router-dom';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { Folder } from '@opencollection/types/collection/item';
 import Topbar from '../Topbar/Topbar';
+import EnvSwitcher from '../EnvSwitcher/EnvSwitcher';
+import ShowVarsToggle from '../ShowVarsToggle/ShowVarsToggle';
 import Sidebar from '../Docs/Sidebar/Sidebar';
 import SidebarDrawer from '../SidebarDrawer/SidebarDrawer';
 import IconButton from '../../ui/IconButton/IconButton';
@@ -91,6 +93,12 @@ const AppShell: React.FC<AppShellProps> = ({ logo, testId = 'app-shell' }) => {
         searchOpen={searchOpen}
         onSearchOpenChange={setSearchOpen}
         onToggleSidebar={toggleSidebar}
+        envSwitcherSlot={
+          <>
+            <ShowVarsToggle />
+            <EnvSwitcher />
+          </>
+        }
         openInBrunoHref={buildFetchInBrunoUrl(gitCollectionUrl)}
       />
 

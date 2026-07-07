@@ -9,9 +9,14 @@ export const StyledWrapper = styled.span`
   .environment-label-dot {
     width: 0.5rem;
     height: 0.5rem;
+    box-sizing: border-box;
     border-radius: 50%;
     flex-shrink: 0;
-    background: var(--text-tertiary);
+  }
+
+  .environment-label-dot--empty {
+    background: transparent;
+    border: 1px solid var(--text-tertiary);
   }
 
   .environment-label-name {
