@@ -86,6 +86,7 @@ export interface FileBodyRow {
   filePath: string;
   contentType?: string;
   selected?: boolean;
+  description?: string;
 }
 
 export type BodyView =
@@ -258,7 +259,7 @@ export const getBodyView = (
     case 'file': {
       const variants: FileBodyVariant[] = body.data || [];
       const files: FileBodyRow[] = variants
-        .map((v) => ({ filePath: v.filePath, contentType: v.contentType, selected: v.selected }))
+        .map((v) => ({ filePath: v.filePath, contentType: v.contentType, selected: v.selected, description: getDescription(v) }))
         .filter((f) => f.filePath || f.contentType);
       if (files.length === 0) return { render: 'none' };
       return { render: 'file', contentTypeLabel: bodyContentTypeLabel('file'), files };
@@ -362,6 +363,7 @@ export const buildScriptChain = (
 export interface PreRequestVarRow {
   name: string;
   value: string;
+  description?: string;
   disabled?: boolean;
 }
 
@@ -369,6 +371,7 @@ export interface PostResponseVarRow {
   name: string;
   expression: string;
   scope?: string;
+  description?: string;
   disabled?: boolean;
 }
 
@@ -387,6 +390,7 @@ const flattenValue = (value: Variable['value']): string => {
 const toPreRequestVarRow = (variable: Variable): PreRequestVarRow => ({
   name: variable.name,
   value: flattenValue(variable.value),
+  description: descriptionText(variable.description),
   disabled: variable.disabled
 });
 
@@ -397,6 +401,7 @@ const toPostResponseVarRow = (action: Action): PostResponseVarRow => ({
   name: action.variable.name,
   expression: action.selector.expression,
   scope: action.variable.scope,
+  description: descriptionText(action.description),
   disabled: action.disabled
 });
 

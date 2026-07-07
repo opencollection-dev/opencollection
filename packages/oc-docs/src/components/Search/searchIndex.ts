@@ -10,7 +10,7 @@
  */
 
 import type { NavEntry } from '../../routing/types';
-import { getItemDocs, getRequestUrl, getHttpParams } from '../../utils/schemaHelpers';
+import { getItemDocs, getItemDescription, getRequestUrl, getHttpParams } from '../../utils/schemaHelpers';
 import { getItemUuid } from '../../utils/itemUtils';
 import { fuzzyScore } from '../../utils/fuzzyMatch';
 
@@ -47,8 +47,7 @@ const paramsToText = (item: NavEntry['item']): string => {
 
 const descriptionOf = (item: NavEntry['item']): string => {
   const docs = getItemDocs(item) || '';
-  const infoDesc = (item as { info?: { description?: string } } | null)?.info?.description || '';
-  return [infoDesc, docs].filter(Boolean).join(' ');
+  return [getItemDescription(item), docs].filter(Boolean).join(' ');
 };
 
 /** Build the searchable records (request nodes only) from the nav model. */

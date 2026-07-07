@@ -2,6 +2,7 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect } from 'vitest';
 import { PropertyTable } from './PropertyTable';
+import { useRenderToDom } from '../../hooks/useRenderToDom';
 
 describe('PropertyTable', () => {
   it('renders label/value rows', () => {
@@ -30,5 +31,19 @@ describe('PropertyTable', () => {
       <PropertyTable rows={[{ label: 'Custom', node: <em>hi</em> }]} />
     );
     expect(html).toContain('<em>hi</em>');
+  });
+
+  it('renders a description as a truncatable line under the value (reuses Description)', () => {
+    const root = useRenderToDom(
+      <PropertyTable rows={[{ label: 'baseURL', value: 'https://api', description: 'API base URL' }]} />
+    );
+    const description = root.querySelector('.oc-description.oc-truncate');
+    expect(description).not.toBeNull();
+    expect(description!.text.trim()).toBe('API base URL');
+  });
+
+  it('omits the description line when a row has none', () => {
+    const root = useRenderToDom(<PropertyTable rows={[{ label: 'baseURL', value: 'https://api' }]} />);
+    expect(root.querySelector('.oc-description')).toBeNull();
   });
 });

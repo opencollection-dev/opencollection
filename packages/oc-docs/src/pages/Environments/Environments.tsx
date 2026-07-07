@@ -1,10 +1,14 @@
 import React, { useMemo, useRef, useState } from 'react';
 import type { OpenCollection } from '@opencollection/types';
 import { getEnvironmentVariables } from '../../utils/environments';
+import { descriptionText } from '../../utils/request';
+import { useMarkdownRenderer } from '../../hooks';
 import { Table, type TableColumn, type TableGroup } from '../../ui/Table/Table';
 import { EnvironmentLabel } from '../../components/EnvironmentLabel/EnvironmentLabel';
 import { VariableText } from '../../components/VariableText/VariableText';
 import { TruncatedText } from '../../components/TruncatedText/TruncatedText';
+import { Description } from '../../components/Description/Description';
+import { RequestDescription } from '../../components/Request/RequestDescription/RequestDescription';
 import { SecretValue } from '../../ui/SecretValue/SecretValue';
 import { EmptyState } from '../../ui/EmptyState/EmptyState';
 import { PageWrapper } from '../../components/PageWrapper/PageWrapper';
@@ -51,6 +55,11 @@ export const Environments: React.FC<EnvironmentsProps> = ({ collection }) => {
 
   const activeTab = environments.length ? Math.min(activeIndex, environments.length - 1) : 0;
   const active = environments[activeTab];
+  const md = useMarkdownRenderer();
+  const descriptionHtml = useMemo(() => {
+    const content = descriptionText(active?.description);
+    return content ? md.render(content) : '';
+  }, [active, md]);
 
   const groups = useMemo<TableGroup[]>(() => {
     if (!active) return [];
@@ -72,7 +81,8 @@ export const Environments: React.FC<EnvironmentsProps> = ({ collection }) => {
             name: nameCell(row.name),
             value: valueCell(row.value),
             type: typeCell(row.dataType)
-          }
+          },
+          description: row.description ? <Description text={row.description} /> : undefined
         }))
       });
     }
@@ -92,7 +102,8 @@ export const Environments: React.FC<EnvironmentsProps> = ({ collection }) => {
             name: nameCell(row.name),
             value: secretCell(),
             type: typeCell(row.dataType)
-          }
+          },
+          description: row.description ? <Description text={row.description} /> : undefined
         }))
       });
     }
@@ -169,6 +180,7 @@ export const Environments: React.FC<EnvironmentsProps> = ({ collection }) => {
               aria-labelledby={`${tablistId}-${activeTab}`}
               className="environment-panel"
             >
+              {descriptionHtml && <RequestDescription html={descriptionHtml} className="environment-description" testId="environment-description" />}
               <Table
                 columns={COLUMNS}
                 groups={groups}

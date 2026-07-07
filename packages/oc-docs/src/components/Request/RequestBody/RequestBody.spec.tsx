@@ -62,6 +62,25 @@ describe('RequestBody', () => {
     expect(html).toContain('selected');
   });
 
+  it('surfaces a file-body variant description alongside its content type', () => {
+    const html = renderToStaticMarkup(
+      <RequestBody
+        body={
+          {
+            type: 'file',
+            data: [
+              { filePath: '/payload.json', contentType: 'application/json', selected: true, description: 'Primary upload payload' }
+            ]
+          } as any
+        }
+      />
+    );
+    expect(html).toContain('/payload.json');
+    expect(html).toContain('application/json');
+    expect(html).toContain('Primary upload payload');
+    expect(html).toContain('oc-description');
+  });
+
   it('renders nothing for an empty/none body', () => {
     expect(renderToStaticMarkup(<RequestBody body={undefined} />)).toBe('');
     expect(renderToStaticMarkup(<RequestBody body={{ type: 'form-urlencoded', data: [] }} />)).toBe('');

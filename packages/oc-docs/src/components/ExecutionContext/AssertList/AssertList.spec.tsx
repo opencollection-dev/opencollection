@@ -30,4 +30,11 @@ describe('AssertList', () => {
   it('marks a disabled assertion with the is-disabled class', () => {
     expect(renderToStaticMarkup(<AssertList assertions={[disabled]} />)).toContain('is-disabled');
   });
+
+  it('shows the assertion description beneath the expression when present', () => {
+    const described: AssertionRow = { ...binary, description: 'Status must be OK' };
+    const html = renderToStaticMarkup(<AssertList assertions={[described]} />);
+    expect(html).toContain('Status must be OK');
+    expect(html).toContain('oc-description');
+  });
 });

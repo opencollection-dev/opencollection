@@ -19,6 +19,19 @@ describe('getEnvironmentVariables', () => {
     ]);
   });
 
+  it('carries plain and secret variable descriptions through, flattening string and { content }', () => {
+    const env: any = {
+      name: 'Dev',
+      variables: [
+        { name: 'baseUrl', value: 'https://api.test', description: 'API base URL' },
+        { name: 'authToken', secret: true, type: 'string', description: { content: 'Bearer token', type: 'text' } }
+      ]
+    };
+    const { variables, secretVariables } = getEnvironmentVariables(env);
+    expect(variables[0].description).toBe('API base URL');
+    expect(secretVariables[0].description).toBe('Bearer token');
+  });
+
   it('humanizes typed values and reads the typed data', () => {
     const env: any = {
       name: 'Dev',

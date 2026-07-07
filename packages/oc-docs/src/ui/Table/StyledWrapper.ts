@@ -122,8 +122,17 @@ export const StyledWrapper = styled.div`
     color: var(--text-muted);
   }
 
-  .table-row:not(:last-child) {
-    border-bottom: 1px solid var(--oc-table-border); /* #efefef */
+  .table-row:not(:last-child):not(.table-row--has-description) {
+    border-bottom: 1px solid var(--oc-table-border);
+  }
+  .table-row-description:not(:last-child) {
+    border-bottom: 1px solid var(--oc-table-border);
+  }
+  .table-row--has-description .table-cell {
+    padding-bottom: 0;
+  }
+  .table-description-cell {
+    padding: 0 0.875rem 0.5rem;
   }
   .table-row--disabled {
     opacity: 0.55;

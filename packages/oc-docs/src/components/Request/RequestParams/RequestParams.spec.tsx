@@ -21,7 +21,7 @@ describe('RequestParams', () => {
     const html = renderToStaticMarkup(
       <RequestParams query={[{ name: 'q', value: 'alice', type: 'query', description: 'search term' }]} />
     );
-    expect(html).toContain('property-description');
+    expect(html).toContain('oc-description');
     expect(html).toContain('search term');
   });
 

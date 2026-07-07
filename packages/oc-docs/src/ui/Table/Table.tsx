@@ -14,6 +14,7 @@ export interface TableRow {
   rowHeaderKey?: string;
   disabled?: boolean;
   testId?: string;
+  description?: React.ReactNode;
 }
 
 export interface TableGroup {
@@ -65,13 +66,26 @@ const Cells: React.FC<{ row: TableRow; columns: TableColumn[] }> = ({ row, colum
 
 const Rows: React.FC<{ rows: TableRow[]; columns: TableColumn[] }> = ({ rows, columns }) =>
   rows.map((row) => (
-    <tr
-      key={row.id}
-      className={['table-row', row.disabled ? 'table-row--disabled' : ''].filter(Boolean).join(' ')}
-      data-testid={row.testId}
-    >
-      <Cells row={row} columns={columns} />
-    </tr>
+    <React.Fragment key={row.id}>
+      <tr
+        className={['table-row', row.disabled ? 'table-row--disabled' : '', row.description ? 'table-row--has-description' : '']
+          .filter(Boolean)
+          .join(' ')}
+        data-testid={row.testId}
+      >
+        <Cells row={row} columns={columns} />
+      </tr>
+      {row.description && (
+        <tr
+          className={['table-row-description', row.disabled ? 'table-row--disabled' : ''].filter(Boolean).join(' ')}
+          data-testid={row.testId ? `${row.testId}-description` : undefined}
+        >
+          <td colSpan={columns.length} className="table-description-cell">
+            {row.description}
+          </td>
+        </tr>
+      )}
+    </React.Fragment>
   ));
 
 export const Table: React.FC<TableProps> = ({

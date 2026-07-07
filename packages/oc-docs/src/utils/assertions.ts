@@ -1,6 +1,7 @@
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { Assertion } from '@opencollection/types/common/assertions';
 import { getRequestAssertions } from './schemaHelpers';
+import { descriptionText } from './request';
 
 const OPERATOR_LABELS: Record<string, string> = {
   eq: 'equals',
@@ -47,6 +48,7 @@ export interface AssertionRow {
   operatorLabel: string;
   value?: string;
   isUnary: boolean;
+  description?: string;
   disabled?: boolean;
 }
 
@@ -59,6 +61,7 @@ export const collectAssertions = (item: HttpRequest): AssertionRow[] =>
       operatorLabel: humanizeOperator(assertion.operator),
       value: unary ? undefined : assertion.value,
       isUnary: unary,
+      description: descriptionText(assertion.description),
       disabled: assertion.disabled
     };
   });

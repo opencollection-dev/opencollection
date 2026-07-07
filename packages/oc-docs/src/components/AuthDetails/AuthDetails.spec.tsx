@@ -171,8 +171,9 @@ describe('AuthDetails', () => {
     );
     const audience = getByTestId('auth-additional-param-authorizationRequest-0');
     expect(audience.text).toContain('https://api');
-    expect(audience.text).toContain('Authorization Request');
-    expect(audience.text).toContain('Query Params');
+    const audienceRow = audience.parentNode;
+    expect(audienceRow.text).toContain('Authorization Request');
+    expect(audienceRow.text).toContain('Query Params');
     expect(html).toContain('audience');
     expect(html).toContain('resource');
     expect(html).toContain('Access Token Request');
