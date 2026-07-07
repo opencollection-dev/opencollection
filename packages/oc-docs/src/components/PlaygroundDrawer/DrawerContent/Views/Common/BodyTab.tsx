@@ -85,6 +85,7 @@ export const BodyTab: React.FC<BodyTabProps> = ({
             <option value="text">Text</option>
             <option value="xml">XML</option>
             <option value="form-urlencoded">Form URL Encoded</option>
+            <option value='sparql'>SPARQL</option>
           </select>
         </div>
       </div>
@@ -107,7 +108,15 @@ export const BodyTab: React.FC<BodyTabProps> = ({
               });
             }
           }}
-          language={body.type === 'json' ? 'jsonc' : body.type === 'xml' ? 'xml' : 'text'}
+          language={
+            body.type === 'json'
+              ? 'jsonc'
+              : body.type === 'xml'
+                ? 'xml'
+                : body.type === 'sparql'
+                  ? 'sparql'
+                  : 'text'
+          }
           height="300px"
         />
       ) : Array.isArray(body) || (body?.type === 'form-urlencoded' && Array.isArray(body?.data)) ? (
