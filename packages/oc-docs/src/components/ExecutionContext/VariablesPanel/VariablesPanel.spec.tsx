@@ -2,7 +2,6 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect } from 'vitest';
 import { VariablesPanel } from './VariablesPanel';
-import { useRenderToDom } from '../../../hooks/useRenderToDom';
 
 describe('VariablesPanel', () => {
   it('renders nothing when there are no variables on either side', () => {
