@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect } from 'vitest';
 import { AssertList } from './AssertList';
 import type { AssertionRow } from '../../../utils/assertions';
+import { useRenderToDom } from '../../../hooks/useRenderToDom';
 
 const binary: AssertionRow = { level: 'request', expression: 'res.status', operatorLabel: 'equals', value: '200', isUnary: false };
 const unary: AssertionRow = { level: 'collection', expression: 'res.body.token', operatorLabel: 'is defined', isUnary: true };

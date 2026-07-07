@@ -7,6 +7,7 @@ import { StyledWrapper } from './StyledWrapper';
 
 interface ViewAllTestsProps {
   scripts: RawTestScript[];
+  testId?: string;
 }
 
 const SCOPE_LABEL: Record<RawTestScript['level'], string> = {
@@ -15,7 +16,7 @@ const SCOPE_LABEL: Record<RawTestScript['level'], string> = {
   request: 'Request'
 };
 
-export const ViewAllTests: React.FC<ViewAllTestsProps> = ({ scripts }) => {
+export const ViewAllTests: React.FC<ViewAllTestsProps> = ({ scripts, testId }) => {
   const [open, setOpen] = useState(false);
 
   // Show the complete authored scripts (setup + all blocks), not just parsed test() snippets.
@@ -33,7 +34,7 @@ export const ViewAllTests: React.FC<ViewAllTestsProps> = ({ scripts }) => {
 
   return (
     <Fragment>
-      <StyledWrapper type="button" onClick={() => setOpen(true)}>
+      <StyledWrapper type="button" onClick={() => setOpen(true)} data-testid={testId}>
         View complete code
       </StyledWrapper>
       <Modal open={open} onClose={() => setOpen(false)} title={<SectionLabel>Tests</SectionLabel>} ariaLabel="All tests">

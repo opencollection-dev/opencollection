@@ -1,7 +1,7 @@
 import React from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect } from 'vitest';
 import { ExecutionContext } from './ExecutionContext';
+import { useRenderToDom } from '../../hooks/useRenderToDom';
 import type { ScriptChainStep } from '../../utils/request';
 import type { AssertionRow } from '../../utils/assertions';
 import type { TestRow, RawTestScript } from '../../utils/fileUtils';
@@ -27,85 +27,102 @@ const testScripts: RawTestScript[] = [
   { level: 'request', code: "test('returns a token', () => {})" }
 ];
 
+const full = (props: Partial<React.ComponentProps<typeof ExecutionContext>> = {}) => (
+  <ExecutionContext
+    scriptChain={scriptChain}
+    preVars={[{ name: 'token', value: '{{authToken}}' }]}
+    postVars={[{ name: 'sessionId', expression: 'res.body.id', scope: 'runtime' }]}
+    assertions={assertions}
+    tests={tests}
+    testScripts={testScripts}
+    {...props}
+  />
+);
+
+type Root = ReturnType<typeof useRenderToDom>;
+const tab = (root: Root, id: string) => root.querySelector(`[data-testid="execution-context-tabs-tab-${id}"]`);
+const panel = (root: Root, id: string) => root.querySelector(`[data-testid="execution-context-${id}"]`);
+const flow = (root: Root) => root.querySelector('[data-testid="execution-context-flow"]');
+
 describe('ExecutionContext', () => {
-  it('composes the script chain (with HTTP marker), variables, asserts and tests', () => {
-    const html = renderToStaticMarkup(
-      <ExecutionContext
-        scriptChain={scriptChain}
-        preVars={[{ name: 'token', value: '{{authToken}}' }]}
-        postVars={[{ name: 'sessionId', expression: 'res.body.id', scope: 'runtime' }]}
-        assertions={assertions}
-        tests={tests}
-        testScripts={testScripts}
-      />
-    );
-    expect(html).toContain('Scripts');
-    expect(html).toContain('Collection Pre-Request');
-    expect(html).toContain('HTTP');
-    expect(html).toContain('Variables');
-    expect(html).toContain('Pre-Request');
-    expect(html).toContain('Post-Response');
-    expect(html).toContain('sessionId');
-    expect(html).toContain('res.body.id');
-    expect(html).toContain('equals');
-    expect(html).toContain('is defined');
-    expect(html).toContain('returns a token');
-    expect(html).toContain('View complete code');
+  describe('tabs variant (default)', () => {
+    it('renders a tab per non-empty section, each with its item count', () => {
+      const root = useRenderToDom(full());
+      expect(tab(root, 'variables')?.querySelector('.tab-count')?.text).toBe('2');
+      expect(tab(root, 'scripts')?.querySelector('.tab-count')?.text).toBe('3');
+      expect(tab(root, 'asserts')?.querySelector('.tab-count')?.text).toBe('2');
+      expect(tab(root, 'tests')?.querySelector('.tab-count')?.text).toBe('2');
+    });
+
+    it('mounts only the active tab panel (Variables first)', () => {
+      const root = useRenderToDom(full());
+      expect(panel(root, 'variables')?.text).toContain('sessionId');
+      expect(panel(root, 'scripts')).toBeNull();
+      expect(panel(root, 'asserts')).toBeNull();
+      expect(panel(root, 'tests')).toBeNull();
+    });
+
+    it('hides tabs that have no items', () => {
+      const root = useRenderToDom(
+        <ExecutionContext
+          scriptChain={scriptChain}
+          preVars={[{ name: 'token', value: 'x' }]}
+          postVars={[]}
+          assertions={[]}
+          tests={[]}
+        />
+      );
+      expect(tab(root, 'variables')).not.toBeNull();
+      expect(tab(root, 'scripts')).not.toBeNull();
+      expect(tab(root, 'asserts')).toBeNull();
+      expect(tab(root, 'tests')).toBeNull();
+    });
+
+    it('shows the execution-flow indicator only while the Scripts tab is active', () => {
+      expect(flow(useRenderToDom(full()))).toBeNull();
+      const scriptsOnly = useRenderToDom(
+        <ExecutionContext scriptChain={scriptChain} preVars={[]} postVars={[]} assertions={[]} tests={[]} />
+      );
+      expect(flow(scriptsOnly)?.text).toBe('Sandwich execution flow');
+      const sequential = useRenderToDom(
+        <ExecutionContext scriptChain={scriptChain} preVars={[]} postVars={[]} assertions={[]} tests={[]} flow="sequential" />
+      );
+      expect(flow(sequential)?.text).toBe('Sequential execution flow');
+    });
+
+    it('shows "View complete code" in the header only while the Tests tab is active', () => {
+      const testsOnly = useRenderToDom(
+        <ExecutionContext scriptChain={[]} preVars={[]} postVars={[]} assertions={[]} tests={tests} testScripts={testScripts} />
+      );
+      expect(testsOnly.querySelector('[data-testid="execution-context-view-complete-code"]')).not.toBeNull();
+      expect(useRenderToDom(full()).querySelector('[data-testid="execution-context-view-complete-code"]')).toBeNull();
+    });
+
+    it('exposes an accessible tablist with the first tab selected', () => {
+      const root = useRenderToDom(full());
+      expect(root.querySelector('[role="tablist"]')).not.toBeNull();
+      expect(tab(root, 'variables')?.getAttribute('role')).toBe('tab');
+      expect(tab(root, 'variables')?.getAttribute('aria-selected')).toBe('true');
+    });
   });
 
-  it('shows the execution-flow chip from the schema (defaults to sandwich); no "inherited" tag', () => {
-    const def = renderToStaticMarkup(
-      <ExecutionContext scriptChain={scriptChain} preVars={[]} postVars={[]} assertions={[]} tests={[]} />
-    );
-    expect(def).toContain('Sandwich execution flow');
-    expect(def).not.toContain('Sequential execution flow');
-    expect(def).not.toContain('inherited');
-
-    const seq = renderToStaticMarkup(
-      <ExecutionContext scriptChain={scriptChain} preVars={[]} postVars={[]} assertions={[]} tests={[]} flow="sequential" />
-    );
-    expect(seq).toContain('Sequential execution flow');
-    expect(seq).not.toContain('Sandwich execution flow');
-  });
-
-  it('omits per-section counts and offers a "View complete code" link', () => {
-    const html = renderToStaticMarkup(
-      <ExecutionContext
-        scriptChain={[]}
-        preVars={[{ name: 'token', value: 'x' }]}
-        postVars={[]}
-        assertions={assertions}
-        tests={tests}
-        testScripts={testScripts}
-      />
-    );
-    expect(html).toContain('View complete code');
-    // The "N vars / N asserts / N tests" count labels no longer appear in the headings.
-    expect(html).not.toContain('2 asserts');
-    expect(html).not.toContain('2 tests');
-    expect(html).not.toContain('1 var');
-  });
-
-  it('gates each card independently — shows only Scripts and Variables when asserts/tests are absent', () => {
-    const html = renderToStaticMarkup(
-      <ExecutionContext
-        scriptChain={scriptChain}
-        preVars={[{ name: 'token', value: 'x' }]}
-        postVars={[]}
-        assertions={[]}
-        tests={[]}
-      />
-    );
-    expect(html).toContain('Scripts');
-    expect(html).toContain('Variables');
-    expect(html).not.toContain('Asserts');
-    expect(html).not.toContain('>Tests<');
+  describe('docs variant', () => {
+    it('stacks every section at once (scripts, variables, asserts, tests)', () => {
+      const root = useRenderToDom(full({ variant: 'docs' }));
+      expect(panel(root, 'scripts')?.text).toContain('Collection Pre-Request');
+      expect(panel(root, 'scripts')?.text).toContain('HTTP');
+      expect(panel(root, 'variables')?.text).toContain('sessionId');
+      expect(panel(root, 'asserts')?.text).toContain('is defined');
+      expect(panel(root, 'tests')?.text).toContain('returns a token');
+      expect(flow(root)?.text).toBe('Sandwich execution flow');
+      expect(root.querySelector('[data-testid="execution-context-view-complete-code"]')).not.toBeNull();
+    });
   });
 
   it('renders nothing when every section is empty', () => {
-    const html = renderToStaticMarkup(
+    const root = useRenderToDom(
       <ExecutionContext scriptChain={[]} preVars={[]} postVars={[]} assertions={[]} tests={[]} />
     );
-    expect(html).toBe('');
+    expect(root.querySelector('[data-testid="execution-context"]')).toBeNull();
   });
 });
