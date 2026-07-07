@@ -186,3 +186,79 @@ export const buildRequestUrl = (
   const queryString = pairs.join('&');
   return `${base}${queryString ? `?${queryString}` : ''}${fragment}`;
 };
+
+const parseUrlQueryParams = (url: string | undefined | null): { name: string; value: string }[] => {
+  if (!url || typeof url !== 'string') return [];
+
+  const beforeHash = url.split('#')[0];
+  const qIndex = beforeHash.indexOf('?');
+  if (qIndex === -1) return [];
+
+  const pairs: { name: string; value: string }[] = [];
+  for (const part of beforeHash.slice(qIndex + 1).split('&')) {
+    if (!part) continue;
+    const eq = part.indexOf('=');
+    const name = eq === -1 ? part : part.slice(0, eq);
+    const value = eq === -1 ? '' : part.slice(eq + 1);
+    if (name) pairs.push({ name, value });
+  }
+  return pairs;
+};
+
+
+export const syncQueryParams = (
+  params: HttpRequestParam[] | undefined,
+  url: string
+): HttpRequestParam[] => {
+  const existing = params ?? [];
+  const urlQuery = parseUrlQueryParams(url);
+  const existingQuery = existing.filter((p) => p?.type !== 'path');
+
+  if (urlQuery.length === 0 && existingQuery.length === 0) {
+    return existing;
+  }
+
+  const existingByName = new Map<string, HttpRequestParam>();
+  for (const p of existingQuery) {
+    if (p?.name && !p.disabled && !existingByName.has(p.name)) existingByName.set(p.name, p);
+  }
+
+  const fromUrl: HttpRequestParam[] = urlQuery.map((q) => {
+    const prev = existingByName.get(q.name);
+    if (!prev) return { name: q.name, value: q.value, type: 'query' as const };
+    if (prev.value === q.value) return prev;
+    return { ...prev, value: q.value };
+  });
+  const keptDisabled = existingQuery.filter((p) => p?.disabled);
+  const nextQuery = [...fromUrl, ...keptDisabled];
+
+  const unchanged =
+    existingQuery.length === nextQuery.length &&
+    existingQuery.every((p, i) => p === nextQuery[i]);
+  if (unchanged) {
+    return existing;
+  }
+
+  const pathParams = existing.filter((p) => p?.type === 'path');
+  return [...nextQuery, ...pathParams];
+};
+
+
+export const setUrlQueryParams = (
+  url: string | undefined | null,
+  params: HttpRequestParam[] | undefined
+): string => {
+  if (!url || typeof url !== 'string') return url ?? '';
+
+  const enabled = (params ?? []).filter((p) => p?.type !== 'path' && !p.disabled && p.name);
+
+  const hashIndex = url.indexOf('#');
+  const fragment = hashIndex === -1 ? '' : url.slice(hashIndex);
+  const beforeHash = hashIndex === -1 ? url : url.slice(0, hashIndex);
+  const qIndex = beforeHash.indexOf('?');
+  const base = qIndex === -1 ? beforeHash : beforeHash.slice(0, qIndex);
+
+  const queryString = enabled.map((p) => `${p.name}=${p.value ?? ''}`).join('&');
+
+  return `${base}${queryString ? `?${queryString}` : ''}${fragment}`;
+};

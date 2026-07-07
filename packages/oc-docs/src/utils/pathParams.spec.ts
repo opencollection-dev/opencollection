@@ -4,7 +4,9 @@ import {
   syncPathParams,
   applyPathParams,
   resolvePathAndQueryParams,
-  buildRequestUrl
+  buildRequestUrl,
+  syncQueryParams,
+  setUrlQueryParams
 } from './pathParams';
 
 describe('parsePathParamNames', () => {
@@ -351,5 +353,111 @@ describe('buildRequestUrl', () => {
     expect(buildRequestUrl('', [query('q', 'x')])).toBe('');
     expect(buildRequestUrl(undefined, [query('q', 'x')])).toBe('');
     expect(buildRequestUrl(null, [query('q', 'x')])).toBe('');
+  });
+});
+
+describe('syncQueryParams', () => {
+  const query = (name: string, value = '', extra: object = {}): any => ({ name, value, type: 'query', ...extra });
+  const path = (name: string, value = ''): any => ({ name, value, type: 'path' });
+
+  it('adds query params when the URL gains a ?a=b string', () => {
+    const result = syncQueryParams([], 'https://api.com/search?q=alice&role=admin');
+    expect(result).toEqual([
+      { name: 'q', value: 'alice', type: 'query' },
+      { name: 'role', value: 'admin', type: 'query' }
+    ]);
+  });
+
+  it('updates the value of an existing query param from the URL', () => {
+    const result = syncQueryParams([query('page', '1')], 'https://api.com/x?page=5');
+    expect(result).toEqual([{ name: 'page', value: '5', type: 'query' }]);
+  });
+
+  it('removes an enabled query param dropped from the URL', () => {
+    const result = syncQueryParams([query('q', 'alice'), query('role', 'admin')], 'https://api.com/x?q=alice');
+    expect(result.map((p) => p.name)).toEqual(['q']);
+  });
+
+  it('preserves a disabled query param the URL does not mention', () => {
+    const result = syncQueryParams([query('q', 'alice'), query('debug', 'true', { disabled: true })], 'https://api.com/x?q=alice');
+    expect(result).toEqual([
+      { name: 'q', value: 'alice', type: 'query' },
+      { name: 'debug', value: 'true', type: 'query', disabled: true }
+    ]);
+  });
+
+  it('leaves path params untouched', () => {
+    const result = syncQueryParams([path('id', '7'), query('q', 'alice')], 'https://api.com/x/:id?q=bob');
+    expect(result).toEqual([
+      { name: 'q', value: 'bob', type: 'query' },
+      { name: 'id', value: '7', type: 'path' }
+    ]);
+  });
+
+  it('keeps values raw (no decode), preserving {{variables}}', () => {
+    const result = syncQueryParams([], 'https://api.com/x?q=a%20b&id={{userId}}');
+    expect(result).toEqual([
+      { name: 'q', value: 'a%20b', type: 'query' },
+      { name: 'id', value: '{{userId}}', type: 'query' }
+    ]);
+  });
+
+  it('keeps a disabled row even when the URL has the same name (dup, like the app)', () => {
+    const result = syncQueryParams(
+      [query('q', 'live'), query('q', 'off', { disabled: true })],
+      'https://api.com/x?q=live'
+    );
+    expect(result).toEqual([
+      { name: 'q', value: 'live', type: 'query' },
+      { name: 'q', value: 'off', type: 'query', disabled: true }
+    ]);
+  });
+
+  it('returns the same reference when nothing changed', () => {
+    const existing = [query('q', 'alice')];
+    expect(syncQueryParams(existing, 'https://api.com/x?q=alice')).toBe(existing);
+  });
+
+  it('handles no query / nullish', () => {
+    const existing = [path('id', '1')];
+    expect(syncQueryParams(existing, 'https://api.com/x/:id')).toBe(existing);
+    expect(syncQueryParams(undefined, 'https://api.com/x')).toEqual([]);
+  });
+});
+
+describe('setUrlQueryParams', () => {
+  const query = (name: string, value = '', extra: object = {}): any => ({ name, value, type: 'query', ...extra });
+  const path = (name: string, value = ''): any => ({ name, value, type: 'path' });
+
+  it('writes enabled query params into the URL', () => {
+    expect(setUrlQueryParams('https://api.com/search', [query('q', 'alice'), query('role', 'admin')])).toBe(
+      'https://api.com/search?q=alice&role=admin'
+    );
+  });
+
+  it('drops disabled query params', () => {
+    expect(setUrlQueryParams('https://api.com/x', [query('q', 'alice'), query('debug', 'true', { disabled: true })])).toBe(
+      'https://api.com/x?q=alice'
+    );
+  });
+
+  it('replaces the existing query string', () => {
+    expect(setUrlQueryParams('https://api.com/x?old=1', [query('new', '2')])).toBe('https://api.com/x?new=2');
+  });
+
+  it('strips the query when there are no enabled query params', () => {
+    expect(setUrlQueryParams('https://api.com/x?old=1', [])).toBe('https://api.com/x');
+  });
+
+  it('preserves the path (incl. :name) and fragment; ignores path params', () => {
+    expect(setUrlQueryParams('https://api.com/users/:id#frag', [path('id', '7'), query('q', 'x')])).toBe(
+      'https://api.com/users/:id?q=x#frag'
+    );
+  });
+
+  it('keeps names/values raw (no encode), preserving {{variables}}', () => {
+    expect(setUrlQueryParams('https://api.com/x', [query('id', '{{userId}}')])).toBe(
+      'https://api.com/x?id={{userId}}'
+    );
   });
 });

@@ -20,8 +20,10 @@ import {
   getRequestAssertions,
   getRequestScripts,
   scriptsArrayToObject,
-  scriptsObjectToArray
+  scriptsObjectToArray,
+  getRequestUrl
 } from '../../../../../../utils/schemaHelpers';
+import { setUrlQueryParams } from '../../../../../../utils/pathParams';
 
 interface RequestPaneProps {
   item: HttpRequest;
@@ -38,12 +40,14 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
       disabled: !p?.enabled,
       type: p?.type
     }));
-    onItemChange({ 
+    const url = setUrlQueryParams(getRequestUrl(item), updatedParams);
+    onItemChange({
       ...item, 
       http: { 
         ...item.http, 
-        params: updatedParams 
-      } 
+        params: updatedParams,
+        url
+      }
     });
   };
 
