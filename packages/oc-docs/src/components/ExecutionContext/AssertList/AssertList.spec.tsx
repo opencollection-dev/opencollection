@@ -1,40 +1,32 @@
 import React from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect } from 'vitest';
 import { AssertList } from './AssertList';
+import { useRenderToDom } from '../../../hooks/useRenderToDom';
 import type { AssertionRow } from '../../../utils/assertions';
 
-const binary: AssertionRow = { level: 'request', expression: 'res.status', operatorLabel: 'equals', value: '200', isUnary: false };
+const binary: AssertionRow = { level: 'request', expression: 'res.status', operatorLabel: 'equals', value: '200', isUnary: false, description: 'Status must be OK' };
 const unary: AssertionRow = { level: 'collection', expression: 'res.body.token', operatorLabel: 'is defined', isUnary: true };
 const disabled: AssertionRow = { level: 'request', expression: 'res.time', operatorLabel: 'less than', value: '500', isUnary: false, disabled: true };
 
 describe('AssertList', () => {
   it('renders nothing when there are no assertions', () => {
-    expect(renderToStaticMarkup(<AssertList assertions={[]} />)).toBe('');
+    expect(useRenderToDom(<AssertList assertions={[]} />).querySelector('.assert-item')).toBeNull();
   });
 
-  it('shows each assertion as scope + expression + operator + value', () => {
-    const html = renderToStaticMarkup(<AssertList assertions={[binary]} />);
-    expect(html).toContain('request'); // the scope pill
-    expect(html).toContain('res.status');
-    expect(html).toContain('equals');
-    expect(html).toContain('200');
+  it('shows each assertion as scope + expression + operator + value, with its description beneath', () => {
+    const root = useRenderToDom(<AssertList assertions={[binary]} />);
+    expect(root.querySelector('.scope-tag')?.text.trim()).toBe('request');
+    expect(root.querySelector('.assert-expr')?.text.trim()).toBe('res.status equals 200');
+    expect(root.querySelector('.description')?.text.trim()).toBe('Status must be OK');
   });
 
   it('omits the value for a unary operator like "is defined"', () => {
-    const html = renderToStaticMarkup(<AssertList assertions={[unary]} />);
-    expect(html).toContain('res.body.token');
-    expect(html).toContain('is defined');
+    const root = useRenderToDom(<AssertList assertions={[unary]} />);
+    expect(root.querySelector('.assert-expr')?.text.trim()).toBe('res.body.token is defined');
   });
 
   it('marks a disabled assertion with the is-disabled class', () => {
-    expect(renderToStaticMarkup(<AssertList assertions={[disabled]} />)).toContain('is-disabled');
-  });
-
-  it('shows the assertion description beneath the expression when present', () => {
-    const described: AssertionRow = { ...binary, description: 'Status must be OK' };
-    const html = renderToStaticMarkup(<AssertList assertions={[described]} />);
-    expect(html).toContain('Status must be OK');
-    expect(html).toContain('oc-description');
+    const root = useRenderToDom(<AssertList assertions={[disabled]} />);
+    expect(root.querySelector('.assert-item.is-disabled')).not.toBeNull();
   });
 });

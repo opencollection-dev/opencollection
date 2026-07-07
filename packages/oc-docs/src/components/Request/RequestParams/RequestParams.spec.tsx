@@ -2,6 +2,7 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect } from 'vitest';
 import { RequestParams } from './RequestParams';
+import { useRenderToDom } from '../../../hooks/useRenderToDom';
 
 describe('RequestParams', () => {
   it('renders Path and Query groups for the params present', () => {
@@ -18,11 +19,12 @@ describe('RequestParams', () => {
   });
 
   it('renders per-param descriptions', () => {
-    const html = renderToStaticMarkup(
+    const root = useRenderToDom(
       <RequestParams query={[{ name: 'q', value: 'alice', type: 'query', description: 'search term' }]} />
     );
-    expect(html).toContain('oc-description');
-    expect(html).toContain('search term');
+    const description = root.querySelector('.description');
+    expect(description).not.toBeNull();
+    expect(description?.text.trim()).toBe('search term');
   });
 
   it('renders nothing when there are no params', () => {

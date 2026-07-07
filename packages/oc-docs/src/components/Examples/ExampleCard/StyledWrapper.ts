@@ -101,9 +101,7 @@ export const StyledWrapper = styled.div`
     min-height: 0;
   }
   .example-description {
-    margin-left: 0.5rem;
-    margin-right: 0.5rem;
-    margin-bottom: 0.5rem;
+    margin: 0 0.5rem 0.5rem 0.5rem
   }
 
   .example-url-row {

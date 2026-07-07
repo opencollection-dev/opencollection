@@ -6,7 +6,7 @@ import type {
   VariableValueType
 } from '@opencollection/types/common/variables';
 import { MANAGER_LABELS, TYPE_LABELS } from '../constants';
-import { descriptionText } from './request';
+import { getDescription } from './request';
 
 const humanizeType = (type: VariableValueType | undefined): string => (type && TYPE_LABELS[type]) || 'String';
 
@@ -92,7 +92,7 @@ export const getEnvironmentVariables = (environment: Environment | null | undefi
         name: variable.name ?? '',
         value: '',
         dataType: variable.type ? humanizeType(variable.type) : '',
-        description: descriptionText(variable.description),
+        description: getDescription(variable),
         disabled: variable.disabled === true
       });
       return;
@@ -102,7 +102,7 @@ export const getEnvironmentVariables = (environment: Environment | null | undefi
       name: variable.name,
       value: resolved.value,
       dataType: resolved.value ? humanizeType(resolved.type) : '',
-      description: descriptionText(variable.description),
+      description: getDescription(variable),
       disabled: variable.disabled === true
     });
   });

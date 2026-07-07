@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import type { OpenCollection } from '@opencollection/types';
 import { getEnvironmentVariables } from '../../utils/environments';
-import { descriptionText } from '../../utils/request';
+import { getDescription } from '../../utils/request';
 import { useMarkdownRenderer } from '../../hooks';
 import { Table, type TableColumn, type TableGroup } from '../../ui/Table/Table';
 import { EnvironmentLabel } from '../../components/EnvironmentLabel/EnvironmentLabel';
@@ -57,7 +57,7 @@ export const Environments: React.FC<EnvironmentsProps> = ({ collection }) => {
   const active = environments[activeTab];
   const md = useMarkdownRenderer();
   const descriptionHtml = useMemo(() => {
-    const content = descriptionText(active?.description);
+    const content = getDescription(active);
     return content ? md.render(content) : '';
   }, [active, md]);
 
@@ -180,7 +180,7 @@ export const Environments: React.FC<EnvironmentsProps> = ({ collection }) => {
               aria-labelledby={`${tablistId}-${activeTab}`}
               className="environment-panel"
             >
-              {descriptionHtml && <RequestDescription html={descriptionHtml} className="environment-description" testId="environment-description" />}
+              <RequestDescription html={descriptionHtml} className="environment-description" testId="environment-description" />
               <Table
                 columns={COLUMNS}
                 groups={groups}

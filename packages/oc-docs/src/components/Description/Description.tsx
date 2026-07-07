@@ -6,9 +6,11 @@ interface DescriptionProps {
   className?: string;
 }
 
-export const Description: React.FC<DescriptionProps> = ({ text, className }) =>
-  text && text.trim() ? (
-    <StyledWrapper text={text} className={['oc-description', className].filter(Boolean).join(' ')} />
+export const Description: React.FC<DescriptionProps> = ({ text, className }) => {
+  const trimmed = text?.trim();
+  return trimmed ? (
+    <StyledWrapper text={trimmed} className={['description', className].filter(Boolean).join(' ')} />
   ) : null;
+};
 
 export default Description;

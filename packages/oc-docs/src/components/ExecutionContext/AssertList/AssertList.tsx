@@ -25,7 +25,7 @@ export const AssertList: React.FC<AssertListProps> = ({ assertions }) => {
       {assertions.map((assert, index) => {
         const text = assertionText(assert);
         return (
-          <div key={`${assert.expression}-${index}`} className={`assert-item${assert.disabled ? ' is-disabled' : ''}`}>
+          <div key={`${assert.expression}-${index}`} className={`assert-item ${assert.disabled ? 'is-disabled' : ''}`}>
             <div className="assert-row">
               <ScopeTag scope={assert.level} />
               <code className="assert-expr">

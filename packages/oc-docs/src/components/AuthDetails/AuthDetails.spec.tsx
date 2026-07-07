@@ -4,6 +4,7 @@ import { parse } from 'node-html-parser';
 import { describe, it, expect } from 'vitest';
 import { AuthDetails } from './AuthDetails';
 import { AUTH_MODE_LABELS } from '../../constants';
+import { SECRET_MASK } from '../../ui/SecretValue/SecretValue';
 
 const renderAuth = (ui: React.ReactElement) => {
   const html = renderToStaticMarkup(ui);
@@ -29,16 +30,14 @@ describe('AuthDetails', () => {
     );
     expect(getByTestId('auth-mode').text.trim()).toBe('Basic Auth');
     expect(getByTestId('auth-username').text.trim()).toBe('user@example.com');
-    expect(getByTestId('auth-password').text).toMatch(/\*/);
-    expect(getByTestId('auth-password').text).not.toContain('s3cr3t');
+    expect(getByTestId('auth-password').text.trim()).toBe(SECRET_MASK);
     expect(html).not.toContain('s3cr3t');
   });
 
   it('masks the bearer token and falls back to the raw type without a label', () => {
     const { getByTestId, html } = renderAuth(<AuthDetails auth={{ type: 'bearer', token: 'abc123' }} testId="auth" />);
     expect(getByTestId('auth-mode').text.trim()).toBe('bearer');
-    expect(getByTestId('auth-token').text).toMatch(/\*/);
-    expect(getByTestId('auth-token').text).not.toContain('abc123');
+    expect(getByTestId('auth-token').text.trim()).toBe(SECRET_MASK);
     expect(html).not.toContain('abc123');
   });
 
@@ -86,8 +85,8 @@ describe('AuthDetails', () => {
     expect(getByTestId('auth-access-key-id').text.trim()).toBe('AKIAEXAMPLE');
     expect(getByTestId('auth-service').text.trim()).toBe('execute-api');
     expect(getByTestId('auth-region').text.trim()).toBe('us-east-1');
-    expect(getByTestId('auth-secret-access-key').text).toMatch(/\*/);
-    expect(getByTestId('auth-session-token').text).toMatch(/\*/);
+    expect(getByTestId('auth-secret-access-key').text.trim()).toBe(SECRET_MASK);
+    expect(getByTestId('auth-session-token').text.trim()).toBe(SECRET_MASK);
     expect(html).not.toContain('secretKeyValue');
     expect(html).not.toContain('sessionTokenValue');
   });
@@ -116,7 +115,7 @@ describe('AuthDetails', () => {
     expect(getByTestId('auth-realm').text.trim()).toBe('my-realm');
     expect(getByTestId('auth-include-body-hash').text.trim()).toBe('Yes');
     expect(getByTestId('auth-placement').text.trim()).toBe('Body');
-    expect(getByTestId('auth-private-key').text).toMatch(/\*/);
+    expect(getByTestId('auth-private-key').text.trim()).toBe(SECRET_MASK);
     expect(html).not.toContain('pem-secret');
   });
 
@@ -152,7 +151,7 @@ describe('AuthDetails', () => {
   });
 
   it('renders oauth2 additional parameters grouped by request phase', () => {
-    const { getByTestId, html } = renderAuth(
+    const { getByTestId } = renderAuth(
       <AuthDetails
         auth={
           {
@@ -170,13 +169,16 @@ describe('AuthDetails', () => {
       />
     );
     const audience = getByTestId('auth-additional-param-authorizationRequest-0');
-    expect(audience.text).toContain('https://api');
     const audienceRow = audience.parentNode;
-    expect(audienceRow.text).toContain('Authorization Request');
-    expect(audienceRow.text).toContain('Query Params');
-    expect(html).toContain('audience');
-    expect(html).toContain('resource');
-    expect(html).toContain('Access Token Request');
+    expect(audience.text.trim()).toBe('https://api');
+    expect(audienceRow.querySelector('.property-key')?.text.trim()).toBe('audience');
+    expect(audienceRow.querySelector('.description')?.text.trim()).toBe('Authorization Request · Query Params');
+
+    const resource = getByTestId('auth-additional-param-accessTokenRequest-0');
+    const resourceRow = resource.parentNode;
+    expect(resource.text.trim()).toBe('r1');
+    expect(resourceRow.querySelector('.property-key')?.text.trim()).toBe('resource');
+    expect(resourceRow.querySelector('.description')?.text.trim()).toBe('Access Token Request · Body');
   });
 
   it('renders Akamai EdgeGrid auth and masks the secret credentials', () => {
@@ -203,9 +205,9 @@ describe('AuthDetails', () => {
     expect(getByTestId('auth-base-url').text.trim()).toBe('https://akaa-base.luna.akamaiapis.net');
     expect(getByTestId('auth-headers-to-sign').text.trim()).toBe('X-Custom');
     expect(getByTestId('auth-max-body-size').text.trim()).toBe('2048');
-    expect(getByTestId('auth-access-token').text).toMatch(/\*/);
-    expect(getByTestId('auth-client-token').text).toMatch(/\*/);
-    expect(getByTestId('auth-client-secret').text).toMatch(/\*/);
+    expect(getByTestId('auth-access-token').text.trim()).toBe(SECRET_MASK);
+    expect(getByTestId('auth-client-token').text.trim()).toBe(SECRET_MASK);
+    expect(getByTestId('auth-client-secret').text.trim()).toBe(SECRET_MASK);
     expect(html).not.toContain('atValue');
     expect(html).not.toContain('ctValue');
     expect(html).not.toContain('csValue');

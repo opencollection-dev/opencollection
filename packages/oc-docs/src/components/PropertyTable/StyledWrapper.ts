@@ -29,7 +29,7 @@ export const StyledWrapper = styled.div`
     padding: 0.5rem 0.875rem;
     min-height: 2rem;
   }
-  .property-row .oc-description {
+  .property-row .description {
     grid-column: 1 / -1;
   }
   .property-row + .property-row {

@@ -6,7 +6,7 @@ import KeyValueTable, { KeyValueRow } from '../../../../../ui/KeyValueTable/KeyV
 import { SidebarContainer, SidebarItems, SidebarItem } from '../../../Sidebar/StyledWrapper';
 import { useAppDispatch } from '../../../../../store/hooks';
 import { updateCollectionEnvironments } from '@slices/playground';
-import { descriptionText } from '../../../../../utils/request';
+import { getDescription } from '../../../../../utils/request';
 
 interface EnvironmentsViewProps {
   collection: OpenCollection | null;
@@ -26,7 +26,7 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection }) => {
     if (selectedEnvironmentIndex === null || !environments[selectedEnvironmentIndex]) return null;
     return { ...environments[selectedEnvironmentIndex] };
   }, [environments, selectedEnvironmentIndex]);
-  const selectedDescription = descriptionText(selectedEnvironment?.description);
+  const selectedDescription = getDescription(selectedEnvironment);
 
   const variableToRow = useCallback((variable: Variable, index: number): KeyValueRow => {
     let value = '';
