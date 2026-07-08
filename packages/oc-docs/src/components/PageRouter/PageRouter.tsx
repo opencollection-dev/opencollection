@@ -41,6 +41,12 @@ const PageRouter: React.FC<PageRouterProps> = ({ onOpenPlayground, testId = 'pag
     return map;
   }, [model]);
 
+  const item = resolution?.entry?.item ?? null;
+  const ancestry = useMemo(
+    () => (item && collection ? getAncestorsByUuid(collection, getItemUuid(item) ?? '') : []),
+    [collection, item]
+  );
+
   if (!resolution) return <Navigate to="/" replace />;
   if (!collection) return null;
 
@@ -53,11 +59,6 @@ const PageRouter: React.FC<PageRouterProps> = ({ onOpenPlayground, testId = 'pag
     // unknown uuid) falls back to the overview.
     navigate(slug !== undefined ? `/${slug}` : '/');
   };
-
-  // Resolve the active node's item and its folder ancestry (used for breadcrumbs
-  // and for resolving inherited auth/scripts up the folder chain).
-  const item = entry.item;
-  const ancestry = item ? getAncestorsByUuid(collection, getItemUuid(item) ?? '') : [];
 
   const renderBody = () => {
     switch (entry.type) {

@@ -20,6 +20,14 @@ import {
   type VariableSource
 } from '../utils/variableResolution';
 
+export interface VariableLookup {
+  name: string;
+  scope: VariableScope;
+  value: string;
+  secret: boolean;
+  valid: boolean;
+}
+
 /**
  * Shared variable resolution hook, the contract redesigned doc sections
  * consume. It resolves `{{var}}` against the active environment (the env slice),
@@ -32,15 +40,6 @@ import {
  *   exactly a secret reference is reported by `secretRefName()` so the caller
  *   can mask the whole cell.
  */
-export interface VariableLookup {
-  name: string;
-  scope: VariableScope;
-  displayValue: string;
-  copyValue: string;
-  secret: boolean;
-  valid: boolean;
-}
-
 export interface VariableResolver {
   showVars: boolean;
   activeEnvName: string | null;
@@ -52,7 +51,7 @@ export interface VariableResolver {
 
 const lookupVariable = (rawName: string, model: ScopedVariableModel): VariableLookup => {
   const name = (rawName ?? '').trim();
-  const base = { name, displayValue: '', copyValue: '', secret: false };
+  const base = { name, value: '', secret: false };
 
   const special = detectSpecialScope(name);
   if (special) return { ...base, scope: special, valid: true };
@@ -61,9 +60,10 @@ const lookupVariable = (rawName: string, model: ScopedVariableModel): VariableLo
   const entry = model.entries[name];
   if (!entry) return { ...base, scope: 'undefined', valid: true };
 
-  const value = formatEntryValue(entry, model.fullValues);
-  const secret = entry.secret || model.secretNames.has(name) || referencesSecret(entry.value, model.secretNames);
-  return { name, scope: entry.scope, displayValue: value, copyValue: value, secret, valid: true };
+  const safeValue = formatEntryValue(entry, model.values);
+  const secret = entry.secret || model.secretNames.has(name) || referencesSecret(safeValue, model.secretNames);
+  const value = secret ? formatEntryValue(entry, model.fullValues) : safeValue;
+  return { name, scope: entry.scope, value, secret, valid: true };
 };
 
 const makeResolver = (
@@ -123,7 +123,7 @@ const PASSTHROUGH_RESOLVER: VariableResolver = {
   resolve: (raw) => raw,
   isSecret: () => false,
   secretRefName: () => null,
-  lookup: (name) => ({ name: (name ?? '').trim(), scope: 'undefined', displayValue: '', copyValue: '', secret: false, valid: true })
+  lookup: (name) => ({ name: (name ?? '').trim(), scope: 'undefined', value: '', secret: false, valid: true })
 };
 
 const VariableResolverContext = createContext<VariableResolver>(PASSTHROUGH_RESOLVER);

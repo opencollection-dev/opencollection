@@ -9,7 +9,6 @@ export const SCOPE_LABELS: Record<VariableScope, string> = {
   dynamic: 'Dynamic',
   oauth2: 'OAuth2',
   $secrets: 'Secret',
-  pathParam: 'Path Param',
   undefined: 'Undefined'
 };
 

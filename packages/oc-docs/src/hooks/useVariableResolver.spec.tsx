@@ -85,7 +85,7 @@ const LookupProbe: React.FC<{ name: string }> = ({ name }) => {
   return (
     <div>
       <span data-testid="scope">{info.scope}</span>
-      <span data-testid="value">{info.displayValue}</span>
+      <span data-testid="value">{info.value}</span>
       <span data-testid="secret">{String(info.secret)}</span>
       <span data-testid="valid">{String(info.valid)}</span>
     </div>

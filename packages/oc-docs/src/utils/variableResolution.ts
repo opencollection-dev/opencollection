@@ -101,7 +101,6 @@ export type VariableScope =
   | 'dynamic'
   | 'oauth2'
   | '$secrets'
-  | 'pathParam'
   | 'undefined';
 
 export type ConcreteScope = 'collection' | 'environment' | 'folder' | 'request';
@@ -196,7 +195,7 @@ export const referencesSecret = (raw: string, secretNames: Set<string>): boolean
   return false;
 };
 
-export const isValidVariableName = (name: string): boolean => variableNameRegex.test(name);
+export const isValidVariableName = (name: string): boolean => name.length > 0 && variableNameRegex.test(name);
 
 export const formatEntryValue = (entry: VariableEntry, values: VariableMap): string => {
   if (entry.dataType === 'object') {

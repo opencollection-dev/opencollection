@@ -11,7 +11,7 @@ interface VariableInfoCardProps {
 }
 
 export const VariableInfoCard: React.FC<VariableInfoCardProps> = ({ name, testId = 'variable-info-card' }) => {
-  const { lookup } = useResolvedVariables();
+  const { lookup, activeEnvName } = useResolvedVariables();
   const info = lookup(name);
   const [revealed, setRevealed] = useState(false);
 
@@ -52,10 +52,12 @@ export const VariableInfoCard: React.FC<VariableInfoCardProps> = ({ name, testId
     info.scope === 'process.env' || info.scope === 'oauth2' || info.scope === '$secrets'
       ? 'read-only'
       : info.scope === 'undefined'
-        ? 'No active environment'
+        ? activeEnvName
+          ? 'Variable is not defined'
+          : 'No active environment'
         : null;
 
-  const displayText = info.secret && !revealed ? '*'.repeat(info.displayValue.length) : info.displayValue;
+  const displayText = info.secret && !revealed ? '*'.repeat(info.value.length) : info.value;
 
   return (
     <StyledWrapper className="variable-info-card" data-testid={testId}>
@@ -72,13 +74,13 @@ export const VariableInfoCard: React.FC<VariableInfoCardProps> = ({ name, testId
               aria-pressed={revealed}
               aria-label={revealed ? 'Hide value' : 'Show value'}
               data-testid={`${testId}-reveal`}
-              onClick={() => setRevealed((value) => !value)}
+              onClick={() => setRevealed((prev) => !prev)}
             >
               {revealed ? <EyeOffIcon /> : <EyeIcon />}
             </button>
           )}
           <CopyButton
-            text={info.copyValue}
+            text={info.value}
             label="Copy value"
             resetAfterMs={1000}
             className="copy-button"

@@ -96,6 +96,6 @@ describe('VariableInfoCard', () => {
   it('reports an undefined variable with a note', () => {
     const root = useRenderToDom(cardTree('nope'));
     expect(part(root, 'scope')?.text).toBe('Undefined');
-    expect(part(root, 'note')?.text).toBe('No active environment');
+    expect(part(root, 'note')?.text).toBe('Variable is not defined');
   });
 });
