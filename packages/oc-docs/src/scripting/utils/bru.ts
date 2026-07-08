@@ -1,5 +1,6 @@
+import { variableNameRegex } from '../../constants/regex';
+
 const _interpolate = (str: string, _vars: any) => str;
-const variableNameRegex = /^[\w-.]*$/;
 
 interface TestResultsResponse {
   summary: {

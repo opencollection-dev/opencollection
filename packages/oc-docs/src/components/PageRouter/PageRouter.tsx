@@ -7,6 +7,8 @@ import { useAppSelector } from '../../store/hooks';
 import { selectDocsCollection } from '../../store/slices/docs';
 import { getItemUuid } from '../../utils/itemUtils';
 import { getAncestorsByUuid } from '../../utils/fileUtils';
+import { ItemVariableResolverProvider } from '../../hooks';
+import type { Item } from '@opencollection/types/collection/item';
 import PrevNext from '../PrevNext/PrevNext';
 import { PageWrapper } from '../PageWrapper/PageWrapper';
 import { StyledWrapper } from './StyledWrapper';
@@ -65,7 +67,9 @@ const PageRouter: React.FC<PageRouterProps> = ({ onOpenPlayground, testId = 'pag
         return <Environments {...pageProps} />;
       case 'folder':
         return item ? (
-          <Folder item={item as FolderItem} ancestry={ancestry} collection={collection} onBreadcrumbClick={goToUuid} />
+          <ItemVariableResolverProvider collection={collection} ancestry={ancestry} item={item as Item}>
+            <Folder item={item as FolderItem} ancestry={ancestry} collection={collection} onBreadcrumbClick={goToUuid} />
+          </ItemVariableResolverProvider>
         ) : (
           <Overview collection={collection} />
         );
@@ -76,13 +80,15 @@ const PageRouter: React.FC<PageRouterProps> = ({ onOpenPlayground, testId = 'pag
       case 'request':
       default:
         return item ? (
-          <Request
-            item={item as HttpRequest}
-            ancestry={ancestry}
-            collection={collection}
-            onTryClick={onOpenPlayground}
-            onBreadcrumbClick={goToUuid}
-          />
+          <ItemVariableResolverProvider collection={collection} ancestry={ancestry} item={item as Item}>
+            <Request
+              item={item as HttpRequest}
+              ancestry={ancestry}
+              collection={collection}
+              onTryClick={onOpenPlayground}
+              onBreadcrumbClick={goToUuid}
+            />
+          </ItemVariableResolverProvider>
         ) : null;
     }
   };

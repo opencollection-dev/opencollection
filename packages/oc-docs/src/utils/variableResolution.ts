@@ -2,9 +2,11 @@ import type { Environment } from '@opencollection/types/config/environments';
 import type {
   Variable,
   SecretVariable,
-  VariableValueOrVariants
+  VariableValueOrVariants,
+  VariableValueType
 } from '@opencollection/types/common/variables';
 import { isTemplateVariable, templateVariableGlobalRegex } from './common';
+import { variableNameRegex } from '../constants/regex';
 
 /**
  * Pure, DOM-free variable resolution for read-only display. Kept separate from
@@ -88,4 +90,121 @@ export const singleReferenceName = (raw: string): string | null => {
   const trimmed = raw.trim();
   if (!isTemplateVariable(trimmed)) return null;
   return trimmed.slice(2, -2).trim();
+};
+
+export type VariableScope =
+  | 'collection'
+  | 'environment'
+  | 'folder'
+  | 'request'
+  | 'process.env'
+  | 'dynamic'
+  | 'oauth2'
+  | '$secrets'
+  | 'pathParam'
+  | 'undefined';
+
+export type ConcreteScope = 'collection' | 'environment' | 'folder' | 'request';
+
+export interface VariableSource {
+  scope: ConcreteScope;
+  variables: (Variable | SecretVariable)[] | undefined;
+}
+
+export interface VariableEntry {
+  value: string;
+  scope: ConcreteScope;
+  secret: boolean;
+  dataType?: VariableValueType;
+}
+
+export interface ScopedVariableModel extends VariableModel {
+  entries: Record<string, VariableEntry>;
+  fullValues: VariableMap;
+}
+
+export const unwrapVariableTyped = (
+  value: VariableValueOrVariants | undefined
+): { value: string; dataType?: VariableValueType } => {
+  if (value === undefined || value === null) return { value: '' };
+  if (typeof value === 'string') return { value };
+  if (Array.isArray(value)) {
+    const chosen = value.find((variant) => variant.selected) ?? value[0];
+    return chosen ? unwrapVariableTyped(chosen.value) : { value: '' };
+  }
+  if (typeof value === 'object' && 'data' in value) {
+    const typed = value as { type?: VariableValueType; data?: unknown };
+    const { data } = typed;
+    const flat = data === undefined || data === null ? '' : typeof data === 'object' ? JSON.stringify(data) : String(data);
+    return { value: flat, dataType: typed.type };
+  }
+  return { value: String(value) };
+};
+
+export const buildScopedVariableModel = (sources: VariableSource[]): ScopedVariableModel => {
+  const values: VariableMap = {};
+  const fullValues: VariableMap = {};
+  const secretNames = new Set<string>();
+  const entries: Record<string, VariableEntry> = {};
+
+  for (const source of sources) {
+    for (const variable of source.variables ?? []) {
+      if (!variable.name || variable.disabled) continue;
+      const secret = isSecretVariable(variable);
+      const { value, dataType } = unwrapVariableTyped((variable as Variable).value);
+      entries[variable.name] = { value, scope: source.scope, secret, dataType };
+      fullValues[variable.name] = value;
+      if (secret) {
+        secretNames.add(variable.name);
+      } else {
+        values[variable.name] = value;
+      }
+    }
+  }
+
+  for (const name of secretNames) delete values[name];
+
+  return { values, secretNames, entries, fullValues };
+};
+
+export const resolveValueDeep = (raw: string, values: VariableMap, maxDepth = 10): string => {
+  let current = raw;
+  for (let depth = 0; depth < maxDepth; depth += 1) {
+    const next = resolveVariables(current, values);
+    if (next === current) break;
+    current = next;
+  }
+  return current;
+};
+
+export const detectSpecialScope = (name: string): VariableScope | null => {
+  if (name.startsWith('$oauth2.')) return 'oauth2';
+  if (name.startsWith('$secrets.')) return '$secrets';
+  if (name.startsWith('$')) return 'dynamic';
+  if (name.startsWith('process.env.')) return 'process.env';
+  return null;
+};
+
+export const referencesSecret = (raw: string, secretNames: Set<string>): boolean => {
+  if (!raw || typeof raw !== 'string' || secretNames.size === 0) return false;
+  const pattern = templateVariableGlobalRegex();
+  let match: RegExpExecArray | null = pattern.exec(raw);
+  while (match !== null) {
+    if (secretNames.has(match[1].trim())) return true;
+    match = pattern.exec(raw);
+  }
+  return false;
+};
+
+export const isValidVariableName = (name: string): boolean => variableNameRegex.test(name);
+
+export const formatEntryValue = (entry: VariableEntry, values: VariableMap): string => {
+  if (entry.dataType === 'object') {
+    try {
+      return JSON.stringify(JSON.parse(entry.value), null, 2);
+    } catch {
+      return entry.value;
+    }
+  }
+  return resolveValueDeep(entry.value, values);
 };

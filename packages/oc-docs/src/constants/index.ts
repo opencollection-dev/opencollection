@@ -14,3 +14,5 @@ export {
 export { TEMPLATE_VARIABLE_BODY_PATTERN, TEMPLATE_VARIABLE_SOURCE_PATTERN } from './regex';
 
 export { TYPE_LABELS, MANAGER_LABELS } from './environment';
+
+export { SCOPE_LABELS, INVALID_NAME_WARNING } from './variable';

@@ -16,10 +16,16 @@ import OpenCollection from './components/OpenCollection/OpenCollection';
 import { createOpenCollectionStore } from './store/store';
 import { sampleCollectionYaml } from './sampleCollection';
 import { foldersFixtureCollection } from './e2eFixtures/foldersCollection';
+import { variablesFixtureCollection } from './e2eFixtures/variablesCollection';
 
-// `?fixture=folders` mounts a nested-folder collection for routing e2e tests.
+// `?fixture=folders` mounts a nested-folder collection for routing e2e tests;
 const fixture = new URLSearchParams(window.location.search).get('fixture');
-const devCollection = fixture === 'folders' ? foldersFixtureCollection : sampleCollectionYaml;
+const devCollection =
+  fixture === 'folders'
+    ? foldersFixtureCollection
+    : fixture === 'vars'
+      ? variablesFixtureCollection
+      : sampleCollectionYaml;
 
 // Ensure Prism is available globally for any code that might access it
 if (typeof window !== 'undefined') {

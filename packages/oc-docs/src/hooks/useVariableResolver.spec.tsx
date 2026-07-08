@@ -5,7 +5,7 @@ import { describe, it, expect } from 'vitest';
 import { createOpenCollectionStore } from '../store/store';
 import { setDocsCollection } from '../store/slices/docs';
 import { setActiveEnv, setShowVars } from '../store/slices/env';
-import { useVariableResolver } from './useVariableResolver';
+import { useVariableResolver, useResolvedVariables, ItemVariableResolverProvider } from './useVariableResolver';
 
 const collection: any = {
   request: { variables: [{ name: 'collectionVar', value: 'cval' }] },
@@ -77,5 +77,67 @@ describe('useVariableResolver', () => {
     });
     expect(html).toContain('<span data-testid="secret-ref">authToken</span>');
     expect(html).toContain('<span data-testid="secret-resolve">Bearer {{authToken}}</span>');
+  });
+});
+
+const LookupProbe: React.FC<{ name: string }> = ({ name }) => {
+  const info = useResolvedVariables().lookup(name);
+  return (
+    <div>
+      <span data-testid="scope">{info.scope}</span>
+      <span data-testid="value">{info.displayValue}</span>
+      <span data-testid="secret">{String(info.secret)}</span>
+      <span data-testid="valid">{String(info.valid)}</span>
+    </div>
+  );
+};
+
+describe('lookup (variable hover card)', () => {
+  const folder: any = { type: 'folder', name: 'F', request: { variables: [{ name: 'folderScope', value: 'from-folder' }, { name: 'shared', value: 'folderVal' }] } };
+  const requestItem: any = { type: 'http', name: 'R', runtime: { variables: [{ name: 'reqScope', value: 'from-req' }, { name: 'shared', value: 'reqVal' }] } };
+
+  const renderLookup = (name: string, showVars = false): string => {
+    const store = createOpenCollectionStore();
+    store.dispatch(setDocsCollection(collection));
+    store.dispatch(setActiveEnv('Dev'));
+    if (showVars) store.dispatch(setShowVars(true));
+    return renderToStaticMarkup(
+      <Provider store={store}>
+        <ItemVariableResolverProvider collection={collection} ancestry={[folder]} item={requestItem}>
+          <LookupProbe name={name} />
+        </ItemVariableResolverProvider>
+      </Provider>
+    );
+  };
+
+  it("resolves a variable's value and scope even when show-variables is off", () => {
+    const html = renderLookup('baseUrl');
+    expect(html).toContain('<span data-testid="scope">environment</span>');
+    expect(html).toContain('<span data-testid="value">https://dev.test</span>');
+  });
+
+  it('applies precedence request > folder > environment > collection', () => {
+    expect(renderLookup('shared')).toContain('<span data-testid="scope">request</span>');
+    expect(renderLookup('reqScope')).toContain('<span data-testid="scope">request</span>');
+    expect(renderLookup('folderScope')).toContain('<span data-testid="scope">folder</span>');
+    expect(renderLookup('collectionVar')).toContain('<span data-testid="scope">collection</span>');
+  });
+
+  it('flags secret env vars and never shows their value', () => {
+    const html = renderLookup('authToken');
+    expect(html).toContain('<span data-testid="scope">environment</span>');
+    expect(html).toContain('<span data-testid="secret">true</span>');
+  });
+
+  it('classifies special references (process.env, $dynamic) and flags invalid/unknown names', () => {
+    expect(renderLookup('process.env.HOME')).toContain('<span data-testid="scope">process.env</span>');
+    expect(renderLookup('$randomInt')).toContain('<span data-testid="scope">dynamic</span>');
+    expect(renderLookup('bad name')).toContain('<span data-testid="valid">false</span>');
+    expect(renderLookup('unknownVar')).toContain('<span data-testid="scope">undefined</span>');
+  });
+
+  it('degrades to an undefined scope with no provider', () => {
+    const html = renderToStaticMarkup(<LookupProbe name="anything" />);
+    expect(html).toContain('<span data-testid="scope">undefined</span>');
   });
 });

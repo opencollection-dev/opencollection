@@ -1,22 +1,22 @@
 import React from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
 import { Provider } from 'react-redux';
 import { describe, it, expect } from 'vitest';
 import { createOpenCollectionStore } from '../../store/store';
 import { setDocsCollection } from '../../store/slices/docs';
 import { setActiveEnv, setShowVars } from '../../store/slices/env';
 import { VariableResolverProvider } from '../../hooks';
+import { useRenderToDom } from '../../hooks/useRenderToDom';
 import { VariableText } from './VariableText';
 
 const collection: any = {
   config: { environments: [{ name: 'Dev', variables: [{ name: 'baseUrl', value: 'https://dev.test' }] }] }
 };
 
-const render = (value: string, configure?: (s: ReturnType<typeof createOpenCollectionStore>) => void): string => {
+const tree = (value: string, configure?: (store: ReturnType<typeof createOpenCollectionStore>) => void) => {
   const store = createOpenCollectionStore();
   store.dispatch(setDocsCollection(collection));
   configure?.(store);
-  return renderToStaticMarkup(
+  return (
     <Provider store={store}>
       <VariableResolverProvider>
         <VariableText value={value} />
@@ -25,33 +25,41 @@ const render = (value: string, configure?: (s: ReturnType<typeof createOpenColle
   );
 };
 
+const withShowVars = (store: ReturnType<typeof createOpenCollectionStore>) => {
+  store.dispatch(setActiveEnv('Dev'));
+  store.dispatch(setShowVars(true));
+};
+
 describe('VariableText', () => {
-  it('highlights {{variable}} tokens while leaving surrounding text plain (show-vars off)', () => {
-    const html = render('{{baseUrl}}/api/v1/auth');
-    expect(html).toContain('<span class="var">{{baseUrl}}</span>');
-    expect(html).toContain('/api/v1/auth');
+  it('wraps each {{variable}} token in a highlighted span tagged with its name', () => {
+    const root = useRenderToDom(tree('{{baseUrl}}/api/v1/auth'));
+    const token = root.querySelector('.var');
+    expect(token?.getAttribute('data-var-name')).toBe('baseUrl');
+    expect(token?.text).toBe('{{baseUrl}}');
+    expect(root.querySelector('.var-text')?.text).toBe('{{baseUrl}}/api/v1/auth');
   });
 
-  it('renders plain text without a token span', () => {
-    const html = render('application/json');
-    expect(html).toContain('application/json');
-    expect(html).not.toContain('class="var"');
+  it('trims whitespace around the variable name', () => {
+    const root = useRenderToDom(tree('{{ spaced }}'));
+    expect(root.querySelector('.var')?.getAttribute('data-var-name')).toBe('spaced');
   });
 
-  it('resolves tokens against the active env when show-vars is on', () => {
-    const html = render('{{baseUrl}}/api/v1/auth', (s) => {
-      s.dispatch(setActiveEnv('Dev'));
-      s.dispatch(setShowVars(true));
-    });
-    expect(html).toContain('https://dev.test/api/v1/auth');
-    expect(html).not.toContain('class="var"');
+  it('leaves plain text untouched, with no token span', () => {
+    const root = useRenderToDom(tree('application/json'));
+    expect(root.querySelector('.var')).toBeNull();
+    expect(root.querySelector('.var-text')?.text).toBe('application/json');
   });
 
-  it('keeps unknown tokens highlighted even when show-vars is on', () => {
-    const html = render('{{unknown}}/x', (s) => {
-      s.dispatch(setActiveEnv('Dev'));
-      s.dispatch(setShowVars(true));
-    });
-    expect(html).toContain('<span class="var">{{unknown}}</span>');
+  it('replaces a token with its resolved value when show-variables is on', () => {
+    const root = useRenderToDom(tree('{{baseUrl}}/api/v1/auth', withShowVars));
+    expect(root.querySelector('.var')).toBeNull();
+    expect(root.querySelector('.var-text')?.text).toBe('https://dev.test/api/v1/auth');
+  });
+
+  it('still highlights an unknown variable when show-variables is on', () => {
+    const root = useRenderToDom(tree('{{unknown}}/x', withShowVars));
+    const token = root.querySelector('.var');
+    expect(token?.getAttribute('data-var-name')).toBe('unknown');
+    expect(token?.text).toBe('{{unknown}}');
   });
 });

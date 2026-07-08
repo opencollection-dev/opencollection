@@ -14,5 +14,7 @@ export {
   useVariableResolver,
   useResolvedVariables,
   VariableResolverProvider,
-  type VariableResolver
+  ItemVariableResolverProvider,
+  type VariableResolver,
+  type VariableLookup
 } from './useVariableResolver';
