@@ -4,6 +4,7 @@ import { Code } from '../../Code/Code';
 import { ContentTypeBadge } from '../../ContentTypeBadge/ContentTypeBadge';
 import { PropertyTable, type PropertyRow } from '../../PropertyTable/PropertyTable';
 import { VariableText } from '../../VariableText/VariableText';
+import { useResolvedVariables } from '../../../hooks';
 import { getBodyView, type BodyTableRow } from '../../../utils/request';
 import { StyledWrapper } from './StyledWrapper';
 
@@ -27,13 +28,16 @@ const BodyPartValue: React.FC<{ row: BodyTableRow }> = ({ row }) => (
 );
 
 export const RequestBody: React.FC<RequestBodyProps> = ({ body, showContentType = true, className, hideRowBorders = false }) => {
+  const { showVars, resolve } = useResolvedVariables();
   const view = getBodyView(body);
   if (view.render === 'none') return null;
 
   return (
     <StyledWrapper className={['request-body', className].filter(Boolean).join(' ')}>
       {showContentType && <ContentTypeBadge label={view.contentTypeLabel} />}
-      {view.render === 'code' && <Code code={view.code} language={view.language} showLineNumbers />}
+      {view.render === 'code' && (
+        <Code code={showVars ? resolve(view.code) : view.code} language={view.language} showLineNumbers />
+      )}
       {view.render === 'table' && (
         <PropertyTable
           hideRowBorders={hideRowBorders}

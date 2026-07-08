@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import type { HttpRequestBody, HttpRequestBodyVariant, HttpRequestHeader } from '@opencollection/types/requests/http';
 import type { Auth } from '@opencollection/types/common/auth';
 import { Code } from '../Code/Code';
+import { useResolvedVariables } from '../../hooks';
 import { CopyButton} from '../../ui/CopyButton/CopyButton';
 import { SectionLabel } from '../SectionLabel/SectionLabel';
 import { Modal } from '../../ui/Modal/Modal';
@@ -32,6 +33,7 @@ const LANGUAGES = [
 ] as const;
 
 export const CodeSnippetTabs: React.FC<CodeSnippetTabsProps> = ({ method, url, headers, body, auth, className, testId = 'request-code-snippet' }) => {
+  const { showVars, resolve } = useResolvedVariables();
   const [active, setActive] = useState<string>(LANGUAGES[0].id);
   const [modalActive, setModalActive] = useState<string>(LANGUAGES[0].id);
   const [expanded, setExpanded] = useState(false);
@@ -47,10 +49,13 @@ export const CodeSnippetTabs: React.FC<CodeSnippetTabsProps> = ({ method, url, h
   const snippets = useMemo(() => {
     const input: SnippetInput = { method, url, headers: snippetHeaders, body, auth };
     return LANGUAGES.reduce<Record<string, string>>((acc, lang) => {
-      acc[lang.id] = lang.generate(input);
+      const generated = lang.generate(input);
+      // Resolve `{{var}}` in the whole snippet when show-vars is on (covers the
+      // url, headers and body in one pass; secrets stay as placeholders).
+      acc[lang.id] = showVars ? resolve(generated) : generated;
       return acc;
     }, {});
-  }, [method, url, snippetHeaders, body, auth]);
+  }, [method, url, snippetHeaders, body, auth, showVars, resolve]);
 
   const openModal = () => {
     setModalActive(active);

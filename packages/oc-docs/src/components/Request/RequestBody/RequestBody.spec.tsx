@@ -1,6 +1,11 @@
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { Provider } from 'react-redux';
 import { describe, it, expect } from 'vitest';
+import { createOpenCollectionStore } from '../../../store/store';
+import { setDocsCollection } from '../../../store/slices/docs';
+import { setActiveEnv, setShowVars } from '../../../store/slices/env';
+import { VariableResolverProvider } from '../../../hooks';
 import { RequestBody } from './RequestBody';
 
 describe('RequestBody', () => {
@@ -60,6 +65,25 @@ describe('RequestBody', () => {
     expect(html).toContain('application/json');
     expect(html).toContain('/b.xml');
     expect(html).toContain('selected');
+  });
+
+  it('resolves {{variable}} in a raw/JSON body code block when show-vars is on', () => {
+    const collection: any = {
+      config: { environments: [{ name: 'Dev', variables: [{ name: 'baseUrl', value: 'https://dev.test' }] }] }
+    };
+    const store = createOpenCollectionStore();
+    store.dispatch(setDocsCollection(collection));
+    store.dispatch(setActiveEnv('Dev'));
+    store.dispatch(setShowVars(true));
+    const html = renderToStaticMarkup(
+      <Provider store={store}>
+        <VariableResolverProvider>
+          <RequestBody body={{ type: 'json', data: '{"url":"{{baseUrl}}/x"}' }} />
+        </VariableResolverProvider>
+      </Provider>
+    );
+    expect(html).toContain('https://dev.test/x');
+    expect(html).not.toContain('{{baseUrl}}');
   });
 
   it('renders nothing for an empty/none body', () => {
