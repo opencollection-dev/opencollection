@@ -141,11 +141,17 @@ export interface HttpRequestRuntime {
   actions?: Action[];
 }
 
+export interface HttpRequestApp {
+  enabled?: boolean;
+  code?: string;
+}
+
 export interface HttpRequest {
   info?: HttpRequestInfo;
   http?: HttpRequestDetails;
   runtime?: HttpRequestRuntime;
   settings?: HttpRequestSettings;
+  app?: HttpRequestApp;
   examples?: HttpRequestExample[];
   docs?: string;
 }

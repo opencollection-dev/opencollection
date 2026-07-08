@@ -1656,6 +1656,9 @@
         },
         {
           "$ref": "#/$defs/ScriptFile"
+        },
+        {
+          "$ref": "#/$defs/App"
         }
       ]
     },
@@ -1926,6 +1929,9 @@
         },
         "settings": {
           "$ref": "#/$defs/HttpRequestSettings"
+        },
+        "app": {
+          "$ref": "#/$defs/HttpRequestApp"
         },
         "examples": {
           "type": "array",
@@ -2375,6 +2381,63 @@
         "script": {
           "type": "string",
           "description": "The script"
+        }
+      },
+      "additionalProperties": false
+    },
+    "AppInfo": {
+      "type": "object",
+      "description": "App metadata",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the app"
+        },
+        "description": {
+          "$ref": "#/$defs/Description"
+        },
+        "type": {
+          "type": "string",
+          "const": "app"
+        },
+        "seq": {
+          "$ref": "#/$defs/Sequence"
+        },
+        "tags": {
+          "type": "array",
+          "description": "Array of tags",
+          "items": {
+            "$ref": "#/$defs/Tag"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "App": {
+      "type": "object",
+      "description": "A standalone app — an HTML/JS document rendered by clients as an interactive view over the collection",
+      "properties": {
+        "info": {
+          "$ref": "#/$defs/AppInfo"
+        },
+        "code": {
+          "type": "string",
+          "description": "The HTML/JS source of the app"
+        }
+      },
+      "additionalProperties": false
+    },
+    "HttpRequestApp": {
+      "type": "object",
+      "description": "An app attached to a request — an HTML/JS document rendered by clients in place of the request/response panes",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether the app is enabled for this request"
+        },
+        "code": {
+          "type": "string",
+          "description": "The HTML/JS source of the app"
         }
       },
       "additionalProperties": false
