@@ -2232,6 +2232,9 @@
             ]
           }
         },
+        "externalSecrets": {
+          "$ref": "#/$defs/ExternalSecrets"
+        },
         "clientCertificates": {
           "type": "array",
           "description": "Array of client certificates for mutual TLS authentication",
@@ -2309,6 +2312,114 @@
         }
       },
       "required": ["secret"],
+      "additionalProperties": false
+    },
+    "ExternalSecrets": {
+      "type": "object",
+      "description": "A block of external secrets resolved from a secret provider for an environment",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "hashicorp-vault-cloud",
+            "hashicorp-vault-server",
+            "aws-secrets-manager",
+            "azure-key-vault"
+          ],
+          "description": "The secret provider that resolves these external secrets"
+        },
+        "variables": {
+          "type": "array",
+          "description": "Array of external secret variables resolved from the provider",
+          "items": {
+            "$ref": "#/$defs/ExternalSecretVariable"
+          }
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+    "ExternalSecretVariable": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/HashicorpVaultExternalSecret"
+        },
+        {
+          "$ref": "#/$defs/AwsSecretsManagerExternalSecret"
+        },
+        {
+          "$ref": "#/$defs/AzureKeyVaultExternalSecret"
+        }
+      ],
+      "description": "An external secret variable, shaped per the secret provider that resolves it"
+    },
+    "HashicorpVaultExternalSecret": {
+      "type": "object",
+      "description": "An external secret resolved from HashiCorp Vault",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The variable name"
+        },
+        "description": {
+          "$ref": "#/$defs/Description"
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Whether the external secret is disabled"
+        },
+        "path": {
+          "type": "string",
+          "description": "The path of the secret within HashiCorp Vault"
+        }
+      },
+      "required": ["name", "path"],
+      "additionalProperties": false
+    },
+    "AwsSecretsManagerExternalSecret": {
+      "type": "object",
+      "description": "An external secret resolved from AWS Secrets Manager",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The variable name"
+        },
+        "description": {
+          "$ref": "#/$defs/Description"
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Whether the external secret is disabled"
+        },
+        "secretName": {
+          "type": "string",
+          "description": "The name of the secret within AWS Secrets Manager"
+        }
+      },
+      "required": ["name", "secretName"],
+      "additionalProperties": false
+    },
+    "AzureKeyVaultExternalSecret": {
+      "type": "object",
+      "description": "An external secret resolved from Azure Key Vault",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The variable name"
+        },
+        "description": {
+          "$ref": "#/$defs/Description"
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Whether the external secret is disabled"
+        },
+        "vaultName": {
+          "type": "string",
+          "description": "The name of the Azure Key Vault that holds the secret"
+        }
+      },
+      "required": ["name", "vaultName"],
       "additionalProperties": false
     },
     "VariableValue": {

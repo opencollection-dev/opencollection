@@ -12,6 +12,7 @@ import AuthType from './sections/AuthType'
 import RequestBody from './sections/RequestBody'
 import BodyType from './sections/BodyType'
 import Variables from './sections/Variables'
+import ExternalSecrets from './sections/ExternalSecrets'
 import Assertions from './sections/Assertions'
 import ScriptsLifecycle from './sections/ScriptsLifecycle'
 import PropertyTable from './PropertyTable'
@@ -85,6 +86,8 @@ function Content({ section, schema }) {
         return <BodyType bodyType={section} schema={schema} />
       case 'variables':
         return <Variables schema={schema} />
+      case 'external-secrets':
+        return <ExternalSecrets schema={schema} />
       case 'assertions':
         return <Assertions schema={schema} />
       case 'scripts-lifecycle':
