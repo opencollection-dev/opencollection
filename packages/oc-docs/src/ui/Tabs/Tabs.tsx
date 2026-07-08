@@ -5,10 +5,13 @@ export interface TabItem {
   id: string;
   label: string;
   count?: number;
+  contentIndicator?: string | number;
   content: ReactNode;
   rightElement?: ReactNode;
   disabled?: boolean;
 }
+
+export type Tab = TabItem;
 
 interface TabsProps {
   tabs: TabItem[];
@@ -85,6 +88,7 @@ export const Tabs: React.FC<TabsProps> = ({
         <div className="tabs" role="tablist" aria-label={ariaLabel}>
           {tabs.map((tab, index) => {
             const isActive = tab.id === current;
+            const indicator = tab.count ?? tab.contentIndicator;
             return (
               <button
                 key={tab.id}
@@ -104,7 +108,7 @@ export const Tabs: React.FC<TabsProps> = ({
                 data-testid={`${testId}-tab-${tab.id}`}
               >
                 {tab.label}
-                {tab.count !== undefined && <sup className="tab-count">{tab.count}</sup>}
+                {indicator !== undefined && <sup className="tab-count">{indicator}</sup>}
               </button>
             );
           })}

@@ -9,7 +9,7 @@ import AuthTab from '../Common/AuthTab';
 import ScriptsTab from '../Common/ScriptsTab';
 import { useAppDispatch } from '../../../../../store/hooks';
 import { updateFolderInCollection } from '@slices/playground';
-import { getItemName, getRequestScripts, scriptsArrayToObject, scriptsObjectToArray } from '../../../../../utils/schemaHelpers';
+import { getItemName, scriptsArrayToObject, scriptsObjectToArray } from '../../../../../utils/schemaHelpers';
 
 interface FolderSettingsProps {
   folder: Folder;
@@ -19,7 +19,6 @@ interface FolderSettingsProps {
 
 const FolderSettings: React.FC<FolderSettingsProps> = ({
   folder,
-  collection,
   onFolderChange
 }) => {
   const dispatch = useAppDispatch();
