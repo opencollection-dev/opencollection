@@ -50,9 +50,11 @@ describe('VariableText', () => {
     expect(root.querySelector('.var-text')?.text).toBe('application/json');
   });
 
-  it('replaces a token with its resolved value when show-variables is on', () => {
+  it('shows the resolved value but keeps it highlighted as a variable when show-variables is on', () => {
     const root = useRenderToDom(tree('{{baseUrl}}/api/v1/auth', withShowVars));
-    expect(root.querySelector('.var')).toBeNull();
+    const token = root.querySelector('.var');
+    expect(token?.getAttribute('data-var-name')).toBe('baseUrl');
+    expect(token?.text).toBe('https://dev.test');
     expect(root.querySelector('.var-text')?.text).toBe('https://dev.test/api/v1/auth');
   });
 
