@@ -11,3 +11,9 @@ export { useClickOutside } from './useClickOutside';
 export { useEscapeKey } from './useEscapeKey';
 export { useLockBodyScroll } from './useLockBodyScroll';
 export { useStorage, useLocalStorage, useSessionStorage, type StorageArea, type SetStoredValue } from './useStorage';
+export {
+  useVariableResolver,
+  useResolvedVariables,
+  VariableResolverProvider,
+  type VariableResolver
+} from './useVariableResolver';

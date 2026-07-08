@@ -17,7 +17,10 @@ export const EnvironmentLabel: React.FC<EnvironmentLabelProps> = ({
   testId
 }) => (
   <StyledWrapper className={['environment-label', className].filter(Boolean).join(' ')} data-testid={testId}>
-    <span className="environment-label-dot" style={color ? { background: color } : undefined} />
+    <span
+      className={['environment-label-dot', color ? '' : 'environment-label-dot--empty'].filter(Boolean).join(' ')}
+      style={color ? { background: color } : undefined}
+    />
     <span className={['environment-label-name', nameClassName].filter(Boolean).join(' ')}>{name}</span>
   </StyledWrapper>
 );
