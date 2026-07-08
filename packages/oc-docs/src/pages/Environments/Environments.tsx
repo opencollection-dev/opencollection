@@ -82,7 +82,7 @@ export const Environments: React.FC<EnvironmentsProps> = ({ collection }) => {
             value: valueCell(row.value),
             type: typeCell(row.dataType)
           },
-          description: row.description ? <Description text={row.description} /> : undefined
+          description: <Description text={row.description} />
         }))
       });
     }
@@ -103,7 +103,7 @@ export const Environments: React.FC<EnvironmentsProps> = ({ collection }) => {
             value: secretCell(),
             type: typeCell(row.dataType)
           },
-          description: row.description ? <Description text={row.description} /> : undefined
+          description: <Description text={row.description} />
         }))
       });
     }
