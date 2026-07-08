@@ -98,6 +98,11 @@ const collectionAndEnvSources = (collection: OpenCollection | null, activeEnvNam
 const folderVariables = (folder: Item): (Variable | SecretVariable)[] =>
   ((folder as { request?: { variables?: unknown[] } }).request?.variables ?? []) as (Variable | SecretVariable)[];
 
+const itemSource = (item: Item): VariableSource =>
+  isFolder(item)
+    ? { scope: 'folder', variables: folderVariables(item) }
+    : { scope: 'request', variables: getRequestVariables(item as never) as (Variable | SecretVariable)[] };
+
 export const useVariableResolver = (): VariableResolver => {
   const collection = useAppSelector(selectDocsCollection) as OpenCollection | null;
   const activeEnvName = useAppSelector(selectActiveEnvName);
@@ -155,13 +160,7 @@ export const ItemVariableResolverProvider: React.FC<{
     for (const folder of ancestry) {
       sources.push({ scope: 'folder', variables: folderVariables(folder) });
     }
-    if (item) {
-      if (isFolder(item)) {
-        sources.push({ scope: 'folder', variables: folderVariables(item) });
-      } else {
-        sources.push({ scope: 'request', variables: getRequestVariables(item as never) as (Variable | SecretVariable)[] });
-      }
-    }
+    if (item) sources.push(itemSource(item));
     return buildScopedVariableModel(sources);
   }, [collection, activeEnvName, ancestry, item]);
 
