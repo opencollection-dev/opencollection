@@ -13,9 +13,7 @@ import { useEscapeKey } from '../../hooks/useEscapeKey';
 import { StyledWrapper } from './StyledWrapper';
 
 interface PopoverProps {
-  /** Panel contents — mounted only while open, so building them is deferred. */
   content: ReactNode;
-  /** Single anchor element; hovering or tapping it opens the panel alongside. */
   children: ReactElement;
   openDelay?: number;
   closeDelay?: number;
@@ -49,14 +47,6 @@ const chain =
     next(event);
   };
 
-/**
- * Interactive hover/tap popover. Unlike `Tooltip` (which sets
- * `pointer-events: none`), its panel is interactive, so it can hold buttons.
- * Opens on hover intent, stays open while the pointer is over the anchor or the
- * panel, and closes shortly after the pointer leaves both. A click or tap pins it
- * open until an outside click or Escape. Sits below the anchor, flipping above
- * when there isn't room, and is clamped to the viewport.
- */
 export const Popover: React.FC<PopoverProps> = ({
   content,
   children,
