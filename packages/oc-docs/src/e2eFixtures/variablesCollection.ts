@@ -18,7 +18,13 @@ export const variablesFixtureCollection = {
   request: {
     headers: [
       { name: 'X-Api-Version', value: '{{apiVersion}}' },
-      { name: 'Authorization', value: 'Bearer {{bearer_token}}' }
+      { name: 'Authorization', value: 'Bearer {{bearer_token}}' },
+      { name: 'X-Base-Url', value: '{{host}}/api' },
+      { name: 'X-Endpoint', value: '{{endpoint}}' },
+      { name: 'X-Profile', value: '{{profile}}' },
+      { name: 'X-Process-Home', value: '{{process.env.HOME}}' },
+      { name: 'X-Trace-Id', value: '{{$randomInt}}' },
+      { name: 'X-Undefined', value: '{{notDefined}}' }
     ],
     variables: [
       { name: 'apiVersion', value: '2024-01' },

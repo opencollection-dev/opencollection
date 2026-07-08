@@ -74,8 +74,8 @@ describe('Request page', () => {
     // params split
     expect(html).toContain('tenant');
     expect(html).toContain('verbose');
-    // code snippet
-    expect(html).toContain('curl --request POST');
+    expect(html).toContain('curl');
+    expect(html).toContain('data-var-name="baseUrl"');
     // execution context: collection-level + request-level tests inherit; asserts render
     // and the Tests card offers a "View complete code" link (counts were removed).
     expect(html).toContain('returns a token');

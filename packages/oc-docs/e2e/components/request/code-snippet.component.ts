@@ -6,11 +6,17 @@ export class CodeSnippetComponent extends BaseComponent {
 
   readonly code = this.root.getByTestId('code-snippet-code');
 
+  readonly copyButton = this.root.getByTestId('code-snippet-code-copy');
+
   readonly expandButton = this.root.getByTestId('code-snippet-expand');
 
   readonly modal = this.page.getByTestId('code-snippet-modal');
 
   readonly modalCode = this.modal.getByTestId('code-snippet-code');
+
+  variableToken(name: string): Locator {
+    return this.code.getByTestId(`variable-token-${name}`).first();
+  }
 
   languageTab(language: string): Locator {
     return this.root.getByTestId(`code-snippet-tab-${language}`);

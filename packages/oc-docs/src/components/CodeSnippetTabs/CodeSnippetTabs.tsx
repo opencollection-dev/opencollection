@@ -3,6 +3,7 @@ import type { HttpRequestBody, HttpRequestBodyVariant, HttpRequestHeader } from 
 import type { Auth } from '@opencollection/types/common/auth';
 import { Code } from '../Code/Code';
 import { CopyButton} from '../../ui/CopyButton/CopyButton';
+import { useResolvedVariables } from '../../hooks';
 import { SectionLabel } from '../SectionLabel/SectionLabel';
 import { Modal } from '../../ui/Modal/Modal';
 import { ExpandIcon } from '../../assets/icons';
@@ -35,6 +36,7 @@ export const CodeSnippetTabs: React.FC<CodeSnippetTabsProps> = ({ method, url, h
   const [active, setActive] = useState<string>(LANGUAGES[0].id);
   const [modalActive, setModalActive] = useState<string>(LANGUAGES[0].id);
   const [expanded, setExpanded] = useState(false);
+  const { showVars, resolve } = useResolvedVariables();
 
   const snippetHeaders: SnippetHeader[] = useMemo(
     () =>
@@ -63,6 +65,8 @@ export const CodeSnippetTabs: React.FC<CodeSnippetTabsProps> = ({ method, url, h
     setActiveId: (id: string) => void
   ) => {
     const activeLang = LANGUAGES.find((lang) => lang.id === activeId) ?? LANGUAGES[0];
+    const snippet = snippets[activeId];
+    const copyText = showVars ? resolve(snippet) : snippet;
     return (
       <div className="snippet-box">
         <div className="snippet-head">
@@ -93,10 +97,10 @@ export const CodeSnippetTabs: React.FC<CodeSnippetTabsProps> = ({ method, url, h
               <ExpandIcon />
             </button>
           ) : (
-            <CopyButton text={snippets[activeId]} label="Copy code" className="snippet-copy" />
+            <CopyButton text={copyText} label="Copy code" className="snippet-copy" />
           )}
         </div>
-        <Code code={snippets[activeId]} language={activeLang.language} showLineNumbers showCopy={variant === 'inline'} testId="code-snippet-code" />
+        <Code code={snippet} language={activeLang.language} showLineNumbers showCopy={variant === 'inline'} variableAware copyText={copyText} testId="code-snippet-code" />
       </div>
     );
   };

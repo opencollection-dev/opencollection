@@ -172,3 +172,42 @@ test.describe('Variable hover card — Folder page', () => {
     await expect(variableCard.value).toHaveText('from-folder');
   });
 });
+
+test.describe('Variable hover card — Code snippet', () => {
+  test.beforeEach(async ({ page, envSwitcher }) => {
+    await page.goto(REQUEST);
+    await expect(page.getByTestId('request-page')).toBeVisible();
+    await envSwitcher.selectEnvironment('Dev');
+  });
+
+  test('shows the hover card for a variable inside the generated code', async ({ requestPage, variableCard }) => {
+    await requestPage.codeSnippet.variableToken('host').hover();
+    await expect(variableCard.card).toBeVisible();
+    await expect(variableCard.scopeBadge).toHaveText('Environment');
+    await expect(variableCard.value).toHaveText('https://api.dev.example.com');
+  });
+
+  test('replaces a variable with its resolved value when show variables is on', async ({ requestPage, envSwitcher }) => {
+    const host = requestPage.codeSnippet.variableToken('host');
+    await expect(host).toHaveText('{{host}}');
+    await envSwitcher.toggle();
+    await expect(host).toHaveText('https://api.dev.example.com');
+  });
+
+  test('never resolves a secret into the code, even when show variables is on', async ({ requestPage, envSwitcher }) => {
+    await envSwitcher.toggle();
+    await expect(requestPage.codeSnippet.variableToken('bearer_token')).toHaveText('{{bearer_token}}');
+  });
+
+  test('copy writes the revealed snippet to the clipboard when show variables is on', async ({ page, requestPage, envSwitcher }) => {
+    await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
+    await envSwitcher.toggle();
+    await requestPage.codeSnippet.copyButton.click();
+    const copied = await page.evaluate(() => navigator.clipboard.readText());
+    // Revealed values are copied (host, request-scoped userId, collection-scoped apiVersion) ...
+    expect(copied).toContain('https://api.dev.example.com/customers/req-42?v=2024-01');
+    // ... but the URL is no longer a template, and secrets stay as tokens.
+    expect(copied).not.toContain('{{host}}/customers');
+    expect(copied).toContain('{{bearer_token}}');
+  });
+});

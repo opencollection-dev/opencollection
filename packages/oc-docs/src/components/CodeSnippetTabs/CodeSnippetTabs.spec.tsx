@@ -4,7 +4,7 @@ import { describe, it, expect } from 'vitest';
 import { CodeSnippetTabs } from './CodeSnippetTabs';
 
 describe('CodeSnippetTabs', () => {
-  it('renders language tabs and the default cURL snippet', () => {
+  it('renders language tabs and the default cURL snippet, with variables as hover tokens', () => {
     const html = renderToStaticMarkup(
       <CodeSnippetTabs
         method="post"
@@ -16,7 +16,8 @@ describe('CodeSnippetTabs', () => {
     expect(html).toContain('cURL');
     expect(html).toContain('Javascript');
     expect(html).toContain('Python');
-    expect(html).toContain('curl --request POST');
-    expect(html).toContain('{{baseUrl}}/api/v1/auth/login');
+    expect(html).toContain('curl');
+    expect(html).toContain('data-var-name="baseUrl"');
+    expect(html).toContain('{{baseUrl}}');
   });
 });
