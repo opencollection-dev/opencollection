@@ -18,6 +18,10 @@ export class CodeSnippetComponent extends BaseComponent {
     return this.code.getByTestId(`variable-token-${name}`).first();
   }
 
+  modalVariableToken(name: string): Locator {
+    return this.modalCode.getByTestId(`variable-token-${name}`).first();
+  }
+
   languageTab(language: string): Locator {
     return this.root.getByTestId(`code-snippet-tab-${language}`);
   }

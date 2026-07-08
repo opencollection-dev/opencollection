@@ -223,4 +223,17 @@ test.describe('Variable hover card — Code snippet', () => {
     await expect(variableCard.card).toHaveCount(0);
     expect(errors).toEqual([]);
   });
+
+  test('hover card renders above the expanded code-snippet modal', async ({ requestPage, variableCard }) => {
+    await requestPage.codeSnippet.openExpandedView();
+    await requestPage.codeSnippet.modalVariableToken('host').hover();
+    await expect(variableCard.card).toBeVisible();
+
+    const onTop = await variableCard.card.evaluate((el) => {
+      const rect = el.getBoundingClientRect();
+      const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+      return el.contains(hit);
+    });
+    expect(onTop).toBe(true);
+  });
 });
