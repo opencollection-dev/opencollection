@@ -35,3 +35,37 @@ export interface SecretVariable {
   disabled?: boolean;
   type?: VariableValueType;
 }
+
+interface BaseExternalSecretVariable {
+  name: string;
+  description?: Description;
+  disabled?: boolean;
+}
+
+export interface HashicorpVaultExternalSecret extends BaseExternalSecretVariable {
+  path: string;
+}
+
+export interface AwsSecretsManagerExternalSecret extends BaseExternalSecretVariable {
+  secretName: string;
+}
+
+export interface AzureKeyVaultExternalSecret extends BaseExternalSecretVariable {
+  vaultName: string;
+}
+
+export type ExternalSecretVariable =
+  | HashicorpVaultExternalSecret
+  | AwsSecretsManagerExternalSecret
+  | AzureKeyVaultExternalSecret;
+
+export type SecretProviderType =
+  | 'hashicorp-vault-cloud'
+  | 'hashicorp-vault-server'
+  | 'aws-secrets-manager'
+  | 'azure-key-vault';
+
+export interface ExternalSecrets {
+  type: SecretProviderType;
+  variables?: ExternalSecretVariable[];
+}

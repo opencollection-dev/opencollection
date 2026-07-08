@@ -65,6 +65,7 @@ export interface FileBodyVariant {
   filePath: string;
   contentType: string;
   selected: boolean;
+  description?: Description;
 }
 
 /** @deprecated Use FileBodyVariant instead */
@@ -141,11 +142,17 @@ export interface HttpRequestRuntime {
   actions?: Action[];
 }
 
+export interface HttpRequestApp {
+  enabled?: boolean;
+  code?: string;
+}
+
 export interface HttpRequest {
   info?: HttpRequestInfo;
   http?: HttpRequestDetails;
   runtime?: HttpRequestRuntime;
   settings?: HttpRequestSettings;
+  app?: HttpRequestApp;
   examples?: HttpRequestExample[];
   docs?: string;
 }

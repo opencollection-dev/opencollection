@@ -87,6 +87,7 @@ const navItems = [
     ]
   },
   { id: 'variables', label: 'Variables' },
+  { id: 'external-secrets', label: 'External Secrets' },
   { id: 'assertions', label: 'Assertions' },
   { id: 'scripts-lifecycle', label: 'Scripts & Lifecycle' },
 ]

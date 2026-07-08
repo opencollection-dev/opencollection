@@ -10,3 +10,9 @@ export { useSearchHotkey } from './useSearchHotkey';
 export { useClickOutside } from './useClickOutside';
 export { useEscapeKey } from './useEscapeKey';
 export { useLockBodyScroll } from './useLockBodyScroll';
+export {
+  useVariableResolver,
+  useResolvedVariables,
+  VariableResolverProvider,
+  type VariableResolver
+} from './useVariableResolver';

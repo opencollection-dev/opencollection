@@ -31,4 +31,17 @@ export interface ScriptFile {
   script?: string;
 }
 
-export type Item = HttpRequest | GraphQLRequest | GrpcRequest | WebSocketRequest | Folder | ScriptFile;
+export interface AppInfo {
+  name?: string;
+  description?: Description;
+  type?: 'app';
+  seq?: number;
+  tags?: Tag[];
+}
+
+export interface App {
+  info?: AppInfo;
+  code?: string;
+}
+
+export type Item = HttpRequest | GraphQLRequest | GrpcRequest | WebSocketRequest | Folder | ScriptFile | App;

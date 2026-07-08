@@ -47,7 +47,8 @@ const paramsToText = (item: NavEntry['item']): string => {
 
 const descriptionOf = (item: NavEntry['item']): string => {
   const docs = getItemDocs(item) || '';
-  return [getItemDescription(item), docs].filter(Boolean).join(' ');
+  const infoDesc = getItemDescription(item);
+  return [infoDesc, docs].filter(Boolean).join(' ');
 };
 
 /** Build the searchable records (request nodes only) from the nav model. */
