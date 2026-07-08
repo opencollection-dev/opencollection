@@ -22,7 +22,8 @@ export const variablesFixtureCollection = {
     ],
     variables: [
       { name: 'apiVersion', value: '2024-01' },
-      { name: 'profile', value: { type: 'object', data: { city: 'NYC', zip: 10001 } } }
+      { name: 'profile', value: { type: 'object', data: { city: 'NYC', zip: 10001 } } },
+      { name: 'exampleOnly', value: 'example-value' }
     ]
   },
   items: [
@@ -51,7 +52,14 @@ export const variablesFixtureCollection = {
           ],
           runtime: {
             variables: [{ name: 'userId', value: 'req-42' }]
-          }
+          },
+          examples: [
+            {
+              name: '200 OK',
+              request: { method: 'GET', url: '{{host}}/customers?e={{exampleOnly}}' },
+              response: { status: 200 }
+            }
+          ]
         }
       ]
     }

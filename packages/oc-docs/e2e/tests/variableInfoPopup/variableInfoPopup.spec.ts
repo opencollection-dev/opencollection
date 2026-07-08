@@ -41,6 +41,13 @@ test.describe('Variable hover card', () => {
     await expect(variableCard.value).toHaveText('https://api.dev.example.com/v1');
   });
 
+  test('shows the card for a variable used in an example request URL', async ({ variableCard }) => {
+    await variableCard.hoverToken('exampleOnly');
+    await expect(variableCard.card).toBeVisible();
+    await expect(variableCard.scopeBadge).toHaveText('Collection');
+    await expect(variableCard.value).toHaveText('example-value');
+  });
+
   test('pretty-prints an object-typed value', async ({ variableCard }) => {
     await variableCard.hoverToken('profile');
     await expect(variableCard.card).toBeVisible();
