@@ -17,6 +17,7 @@ interface PopoverProps {
   children: ReactElement;
   openDelay?: number;
   closeDelay?: number;
+  disabled?: boolean;
   className?: string;
   testId?: string;
 }
@@ -52,6 +53,7 @@ export const Popover: React.FC<PopoverProps> = ({
   children,
   openDelay = 60,
   closeDelay = 300,
+  disabled = false,
   className,
   testId = 'popover'
 }) => {
@@ -150,31 +152,38 @@ export const Popover: React.FC<PopoverProps> = ({
 
   useEscapeKey(close, open);
 
+  useEffect(() => {
+    if (disabled) close();
+  }, [disabled, close]);
+
   if (!isValidElement(children)) return children;
 
   const anchor = children as ReactElement<AnchorHandlers>;
   const anchorHandlers = anchor.props;
-  const trigger = cloneElement(anchor, {
-    onMouseEnter: chain(anchorHandlers.onMouseEnter, (event) => {
-      anchorRef.current = event.currentTarget;
-      scheduleOpen();
-    }),
-    onMouseLeave: chain(anchorHandlers.onMouseLeave, scheduleClose),
-    onClick: chain(anchorHandlers.onClick, (event) => {
-      anchorRef.current = event.currentTarget;
-      pin();
-    }),
-    onTouchStart: chain(anchorHandlers.onTouchStart, (event) => {
-      anchorRef.current = event.currentTarget;
-      if (open) close();
-      else pin();
-    })
-  });
+
+  const trigger = disabled
+    ? anchor
+    : cloneElement(anchor, {
+        onMouseEnter: chain(anchorHandlers.onMouseEnter, (event) => {
+          anchorRef.current = event.currentTarget;
+          scheduleOpen();
+        }),
+        onMouseLeave: chain(anchorHandlers.onMouseLeave, scheduleClose),
+        onClick: chain(anchorHandlers.onClick, (event) => {
+          anchorRef.current = event.currentTarget;
+          pin();
+        }),
+        onTouchStart: chain(anchorHandlers.onTouchStart, (event) => {
+          anchorRef.current = event.currentTarget;
+          if (open) close();
+          else pin();
+        })
+      });
 
   return (
     <>
       {trigger}
-      {open && (
+      {open && !disabled && (
         <Portal>
           <StyledWrapper
             ref={panelRef}

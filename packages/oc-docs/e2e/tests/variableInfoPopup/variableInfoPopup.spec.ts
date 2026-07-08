@@ -210,4 +210,17 @@ test.describe('Variable hover card — Code snippet', () => {
     expect(copied).not.toContain('{{host}}/customers');
     expect(copied).toContain('{{bearer_token}}');
   });
+
+  test('toggling show variables while a card is open does not crash the page', async ({ page, requestPage, variableCard, envSwitcher }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (error) => errors.push(error.message));
+
+    await requestPage.codeSnippet.variableToken('host').hover();
+    await expect(variableCard.card).toBeVisible();
+
+    await envSwitcher.toggle();
+    await expect(requestPage.codeSnippet.variableToken('host')).toHaveText('https://api.dev.example.com');
+    await expect(variableCard.card).toHaveCount(0);
+    expect(errors).toEqual([]);
+  });
 });
