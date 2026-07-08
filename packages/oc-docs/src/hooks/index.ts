@@ -16,3 +16,6 @@ export {
   VariableResolverProvider,
   type VariableResolver
 } from './useVariableResolver';
+export { usePlaygroundUrlState, type PlaygroundUrlApi } from './usePlaygroundUrlState';
+export { useDocsNavigate } from './useDocsNavigate';
+export { useElementWidth } from './useElementWidth';

@@ -1,7 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import type { HttpRequest } from '@opencollection/types/requests/http';
-import type { Folder } from '@opencollection/types/collection/item';
 import Topbar from '../Topbar/Topbar';
 import EnvSwitcher from '../EnvSwitcher/EnvSwitcher';
 import ShowVarsToggle from '../ShowVarsToggle/ShowVarsToggle';
@@ -10,15 +8,14 @@ import SidebarDrawer from '../SidebarDrawer/SidebarDrawer';
 import IconButton from '../../ui/IconButton/IconButton';
 import { ChevronLeftIcon, ChevronRightIcon } from '../../assets/icons';
 import PageRouter from '../PageRouter/PageRouter';
-import PlaygroundDrawer from '../PlaygroundDrawer/PlaygroundDrawer';
+import Playground from '../Playground/Playground';
 import SearchBar from '../Search/SearchBar/SearchBar';
-import { useSearchHotkey } from '../../hooks';
+import { useSearchHotkey, usePlaygroundUrlState, useElementWidth } from '../../hooks';
 import { useAppSelector } from '../../store/hooks';
 import { selectDocsCollection } from '../../store/slices/docs';
-import { selectPlaygroundCollection } from '../../store/slices/playground';
 import { selectGitCollectionUrl } from '../../store/slices/app';
 import { useActiveResolution } from '../../routing/hooks';
-import { useTopbarLayout } from '../../hooks/useTopbarLayout';
+import { layoutModeForWidth } from '../../hooks/useTopbarLayout';
 import { buildFetchInBrunoUrl } from '../../utils/buildFetchInBrunoUrl';
 import { StyledWrapper } from './StyledWrapper';
 
@@ -29,18 +26,12 @@ interface AppShellProps {
 
 const AppShell: React.FC<AppShellProps> = ({ logo, testId = 'app-shell' }) => {
   const collection = useAppSelector(selectDocsCollection);
-  const playgroundCollection = useAppSelector(selectPlaygroundCollection);
   const gitCollectionUrl = useAppSelector(selectGitCollectionUrl);
   const resolution = useActiveResolution();
 
-  const [showDrawer, setShowDrawer] = useState<boolean>(false);
-  const [playgroundItem, setPlaygroundItem] = useState<HttpRequest | Folder | null>(null);
-
   // Single source of truth for search-open, shared by the Topbar (icon + row)
-  // and the SearchBar panel so they never disagree (no header growth, no
-  // two-state redundancy). ⌘K / Ctrl+K is mounted here so it works regardless
-  // of the Topbar's responsive layout (the SearchBar only mounts once open
-  // below desktop).
+  // and the SearchBar panel so they never disagree. ⌘K / Ctrl+K is mounted here
+  // so it works regardless of the Topbar's responsive layout.
   const [searchOpen, setSearchOpen] = useState(false);
   // Bumped on every hotkey press so the field refocuses even when the panel is
   // already open (open state alone wouldn't change, so it can't drive focus).
@@ -51,11 +42,19 @@ const AppShell: React.FC<AppShellProps> = ({ logo, testId = 'app-shell' }) => {
   }, []);
   useSearchHotkey(openSearch);
 
-  const mode = useTopbarLayout();
+  // Responsive mode follows the docs area width, not the window: when the inline
+  // playground takes part of the row, the docs column (`.appshell-body`) shrinks
+  // and the docs chrome (topbar + sidebar) should go tablet/mobile accordingly.
+  // In the other docks the shell is a column, so this equals the window width.
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const bodyWidth = useElementWidth(bodyRef);
+  const mode = layoutModeForWidth(bodyWidth || (typeof window !== 'undefined' ? window.innerWidth : 1024));
   const isDesktop = mode === 'desktop';
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   const { pathname } = useLocation();
+
+  const { open: playgroundOpen, dock: playgroundDock, openPlayground } = usePlaygroundUrlState();
 
   useEffect(() => {
     setDrawerOpen(false);
@@ -73,81 +72,78 @@ const AppShell: React.FC<AppShellProps> = ({ logo, testId = 'app-shell' }) => {
     else setDrawerOpen((open) => !open);
   }, [mode]);
 
-  const activeItem = resolution?.entry.item ?? null;
-  const activeType = resolution?.entry.type;
-  useEffect(() => {
-    if (activeItem && (activeType === 'request' || activeType === 'folder')) {
-      setPlaygroundItem(activeItem as HttpRequest | Folder);
-    }
-  }, [activeItem, activeType]);
-
-  const handleOpenPlayground = useCallback(() => setShowDrawer(true), []);
+  const handleOpenPlayground = useCallback(() => {
+    openPlayground(resolution?.entry.slug);
+  }, [openPlayground, resolution]);
 
   return (
-    <StyledWrapper className="appshell" data-testid={testId}>
-      <Topbar
-        collectionName={collection?.info?.name || 'API Collection'}
-        version={collection?.info?.version}
-        logo={logo}
-        searchSlot={<SearchBar open={searchOpen} onOpenChange={setSearchOpen} focusNonce={searchFocusNonce} />}
-        searchOpen={searchOpen}
-        onSearchOpenChange={setSearchOpen}
-        onToggleSidebar={toggleSidebar}
-        envSwitcherSlot={
-          <>
-            <ShowVarsToggle />
-            <EnvSwitcher />
-          </>
-        }
-        openInBrunoHref={buildFetchInBrunoUrl(gitCollectionUrl)}
-      />
+    <StyledWrapper
+      className="appshell"
+      data-testid={testId}
+      data-dock={playgroundOpen ? playgroundDock : 'none'}
+    >
+      <div className="appshell-body" ref={bodyRef}>
+        <Topbar
+          layoutMode={mode}
+          collectionName={collection?.info?.name || 'API Collection'}
+          version={collection?.info?.version}
+          logo={logo}
+          searchSlot={<SearchBar open={searchOpen} onOpenChange={setSearchOpen} focusNonce={searchFocusNonce} />}
+          searchOpen={searchOpen}
+          onSearchOpenChange={setSearchOpen}
+          onToggleSidebar={toggleSidebar}
+          envSwitcherSlot={
+            <>
+              <ShowVarsToggle />
+              <EnvSwitcher />
+            </>
+          }
+          openInBrunoHref={buildFetchInBrunoUrl(gitCollectionUrl)}
+        />
 
-      <div className="appshell-row">
-        {isDesktop && !sidebarCollapsed && (
-          <>
-            <aside className="appshell-sidebar" data-testid="app-sidebar">
-              <Sidebar />
-            </aside>
-            <IconButton
-              className="appshell-collapse"
-              label="Collapse sidebar"
-              title="Collapse sidebar"
-              data-testid="sidebar-collapse"
-              onClick={() => setSidebarCollapsed(true)}
-            >
-              <ChevronLeftIcon />
-            </IconButton>
-          </>
-        )}
-        {isDesktop && sidebarCollapsed && (
-          <IconButton
-            className="appshell-reopen"
-            label="Expand sidebar"
-            title="Expand sidebar"
-            data-testid="sidebar-expand"
-            onClick={() => setSidebarCollapsed(false)}
-          >
-            <ChevronRightIcon />
-          </IconButton>
-        )}
-        <main className="appshell-content">
-          <PageRouter onOpenPlayground={handleOpenPlayground} />
-        </main>
+        <div className="appshell-main">
+          <div className="appshell-row">
+            {isDesktop && !sidebarCollapsed && (
+              <>
+                <aside className="appshell-sidebar" data-testid="app-sidebar">
+                  <Sidebar />
+                </aside>
+                <IconButton
+                  className="appshell-collapse"
+                  label="Collapse sidebar"
+                  title="Collapse sidebar"
+                  data-testid="sidebar-collapse"
+                  onClick={() => setSidebarCollapsed(true)}
+                >
+                  <ChevronLeftIcon />
+                </IconButton>
+              </>
+            )}
+            {isDesktop && sidebarCollapsed && (
+              <IconButton
+                className="appshell-reopen"
+                label="Expand sidebar"
+                title="Expand sidebar"
+                data-testid="sidebar-expand"
+                onClick={() => setSidebarCollapsed(false)}
+              >
+                <ChevronRightIcon />
+              </IconButton>
+            )}
+            <main className="appshell-content">
+              <PageRouter onOpenPlayground={handleOpenPlayground} />
+            </main>
+          </div>
+        </div>
       </div>
+
+      {playgroundOpen && <Playground />}
 
       {!isDesktop && (
         <SidebarDrawer open={drawerOpen} onClose={closeDrawer}>
           <Sidebar onNavigate={closeDrawer} />
         </SidebarDrawer>
       )}
-
-      <PlaygroundDrawer
-        isOpen={showDrawer}
-        onClose={() => setShowDrawer(false)}
-        collection={playgroundCollection}
-        selectedItem={playgroundItem}
-        onSelectItem={setPlaygroundItem}
-      />
     </StyledWrapper>
   );
 };

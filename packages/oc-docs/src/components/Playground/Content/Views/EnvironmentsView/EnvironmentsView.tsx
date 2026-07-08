@@ -3,7 +3,7 @@ import type { OpenCollection } from '@opencollection/types';
 import type { Environment } from '@opencollection/types/config/environments';
 import type { Variable } from '@opencollection/types/common/variables';
 import KeyValueTable, { KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
-import { SidebarContainer, SidebarItems, SidebarItem } from '../../../Sidebar/StyledWrapper';
+import { SidebarContainer, SidebarItems, SidebarItem } from '../../../EnvListStyles/StyledWrapper';
 import { useAppDispatch } from '../../../../../store/hooks';
 import { updateCollectionEnvironments } from '@slices/playground';
 

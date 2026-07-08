@@ -10,7 +10,6 @@ export const SidebarContainer = styled.div`
     max-width: var(--sidebar-width-compact);
   }
 
-  /* Sidebar scrollbar styling */
   & ::-webkit-scrollbar {
     width: 6px;
   }
@@ -24,7 +23,6 @@ export const SidebarContainer = styled.div`
     border-radius: 10px;
   }
 
-  /* Sidebar Logo styling */
   & .logo {
     padding: 0 8px 12px 8px;
     border-bottom: 1px solid var(--oc-border-border1);
@@ -104,7 +102,6 @@ export const SidebarItem = styled.div`
     font-size: 10px;
   }
 
-  /* Fix for click events */
   & * {
     pointer-events: none;
   }

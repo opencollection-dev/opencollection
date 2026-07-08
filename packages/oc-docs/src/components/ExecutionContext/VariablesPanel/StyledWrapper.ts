@@ -35,7 +35,7 @@ export const StyledWrapper = styled.div`
     color: var(--text-tertiary);
   }
 
-  @media (max-width: 900px) {
+  @container docs (max-width: 900px) {
     grid-template-columns: 1fr;
   }
 `;

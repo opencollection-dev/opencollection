@@ -13,16 +13,21 @@ interface PlaygroundProps {
   item: HttpRequest;
   collection: OpenCollectionCollection;
   selectedEnvironment?: string;
+  orientation?: 'horizontal' | 'vertical';
 }
 
-const Playground: React.FC<PlaygroundProps> = ({ item, collection, selectedEnvironment = '' }) => {
+const Playground: React.FC<PlaygroundProps> = ({ item, collection, selectedEnvironment = '', orientation = 'horizontal' }) => {
   const dispatch = useAppDispatch();
   const [editableItem, setEditableItem] = useState<HttpRequest>(item);
   const itemUuid = (item as any).uuid;
   const response = useAppSelector(state => selectPlaygroundResponse(state, itemUuid));
   const [isLoading, setIsLoading] = useState(false);
+  // The request/response split is one draggable divider whose axis follows the
+  // orientation: horizontal layout resizes width, vertical layout resizes height.
   const [requestPaneWidth, setRequestPaneWidth] = useState(50);
-  const [isDragging, setIsDragging] = useState(false);
+  const [requestPaneHeight, setRequestPaneHeight] = useState(50);
+  const [isResizing, setIsResizing] = useState(false);
+  const rowRef = useRef<HTMLDivElement>(null);
   const runner = useMemo(() => requestRunner, []);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -85,38 +90,41 @@ const Playground: React.FC<PlaygroundProps> = ({ item, collection, selectedEnvir
     }
   }, [collection, editableItem, runner, selectedEnvironment, itemUuid]);
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    setIsDragging(true);
+  const startResize = useCallback((e: React.MouseEvent) => {
+    setIsResizing(true);
     e.preventDefault();
   }, []);
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!isDragging) return;
-    const container = document.querySelector('.request-runner-container');
-    if (!container) return;
-    
-    const rect = container.getBoundingClientRect();
-    const newWidth = ((e.clientX - rect.left) / rect.width) * 100;
-    
-    if (newWidth >= 20 && newWidth <= 80) {
-      setRequestPaneWidth(newWidth);
-    }
-  }, [isDragging]);
+  const handleResizeMove = useCallback((e: MouseEvent) => {
+    if (!isResizing) return;
+    const row = rowRef.current;
+    if (!row) return;
 
-  const handleMouseUp = useCallback(() => {
-    setIsDragging(false);
+    const rect = row.getBoundingClientRect();
+    // Vertical layout drags along Y (pane height), horizontal along X (width).
+    const percent =
+      orientation === 'vertical'
+        ? ((e.clientY - rect.top) / rect.height) * 100
+        : ((e.clientX - rect.left) / rect.width) * 100;
+
+    if (percent < 20 || percent > 80) return;
+    if (orientation === 'vertical') setRequestPaneHeight(percent);
+    else setRequestPaneWidth(percent);
+  }, [isResizing, orientation]);
+
+  const stopResize = useCallback(() => {
+    setIsResizing(false);
   }, []);
 
   useEffect(() => {
-    if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-      return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-      };
-    }
-  }, [isDragging, handleMouseMove, handleMouseUp]);
+    if (!isResizing) return;
+    document.addEventListener('mousemove', handleResizeMove);
+    document.addEventListener('mouseup', stopResize);
+    return () => {
+      document.removeEventListener('mousemove', handleResizeMove);
+      document.removeEventListener('mouseup', stopResize);
+    };
+  }, [isResizing, handleResizeMove, stopResize]);
 
   return (
     <div className="request-runner-container h-full flex flex-col px-4" style={{ backgroundColor: 'var(--bg-primary)' }}>
@@ -135,36 +143,51 @@ const Playground: React.FC<PlaygroundProps> = ({ item, collection, selectedEnvir
         onItemChange={handleItemChange}
       />
       
-      <div className="flex flex-1 overflow-hidden pt-2">
-        <div 
-          className="shrink-0 overflow-hidden"
-          style={{ 
-            width: `${requestPaneWidth}%`,
-            borderColor: 'var(--border-color)'
-          }}
+      <div
+        ref={rowRef}
+        className={`flex flex-1 overflow-hidden pt-2 ${orientation === 'vertical' ? 'flex-col' : 'flex-row'}`}
+      >
+        <div
+          className={orientation === 'vertical' ? 'shrink-0 overflow-hidden min-h-0' : 'shrink-0 overflow-hidden'}
+          style={
+            orientation === 'vertical'
+              ? { height: `${requestPaneHeight}%` }
+              : { width: `${requestPaneWidth}%`, borderColor: 'var(--border-color)' }
+          }
         >
           <RequestPane item={editableItem} onItemChange={handleItemChange} />
         </div>
-        
-        <div 
-          className="cursor-col-resize shrink-0 relative hover:bg-opacity-10"
-          style={{ 
-            width: '1px',
-            backgroundColor: 'var(--border-color)',
-            margin: '0 16px',
-            transition: 'background-color 0.2s'
-          }}
-          onMouseDown={handleMouseDown}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--oc-border-border2)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--border-color)';
-          }}
-        >
-        </div>
-        
-        <div className="flex-1 overflow-hidden">
+
+        {orientation === 'horizontal' && (
+          <div
+            className="cursor-col-resize shrink-0 relative hover:bg-opacity-10"
+            style={{
+              width: '1px',
+              backgroundColor: 'var(--border-color)',
+              margin: '0 16px',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseDown={startResize}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--oc-border-border2)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--border-color)'; }}
+          />
+        )}
+        {orientation === 'vertical' && (
+          <div
+            className="cursor-row-resize shrink-0 relative"
+            style={{
+              height: '1px',
+              backgroundColor: 'var(--border-color)',
+              margin: '12px 0',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseDown={startResize}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--oc-border-border2)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--border-color)'; }}
+          />
+        )}
+
+        <div className="flex-1 overflow-hidden min-h-0">
           <ResponsePane response={response} isLoading={isLoading} />
         </div>
       </div>

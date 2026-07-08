@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useNavModel } from '../../../routing/hooks';
-import { useClickOutside } from '../../../hooks';
+import { useClickOutside, useDocsNavigate } from '../../../hooks';
 import {
   buildSearchRecords,
   collectTopLevelFolders,
@@ -37,7 +36,7 @@ interface SearchBarProps {
  * search icon/row and this panel share one state (no redundant affordances).
  */
 export const SearchBar: React.FC<SearchBarProps> = ({ open, onOpenChange, focusNonce, testId = 'search' }) => {
-  const navigate = useNavigate();
+  const docsNavigate = useDocsNavigate();
   const model = useNavModel();
 
   const records = useMemo(() => buildSearchRecords(model.ordered), [model]);
@@ -124,11 +123,11 @@ export const SearchBar: React.FC<SearchBarProps> = ({ open, onOpenChange, focusN
 
   const handleSelect = useCallback(
     (rec: SearchRecord) => {
-      navigate(`/${rec.slug}`);
+      docsNavigate(rec.slug);
       resetAndClose();
       inputRef.current?.blur(); // navigating away, so drop focus from the palette
     },
-    [navigate, resetAndClose],
+    [docsNavigate, resetAndClose],
   );
 
   // Move the highlight and keep it in view. All option rows are already

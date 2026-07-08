@@ -45,4 +45,20 @@ describe('Topbar', () => {
     const html = renderToStaticMarkup(<Topbar collectionName="Docs" />);
     expect(html).not.toContain('data-testid="open-in-bruno"');
   });
+
+  it('renders the full Open-in-Bruno CTA (with label) on the desktop layout', () => {
+    const html = renderToStaticMarkup(
+      <Topbar collectionName="Docs" layoutMode="desktop" openInBrunoHref="https://fetch.usebruno.com?url=x" />
+    );
+    expect(html).toContain('data-testid="open-in-bruno"');
+    expect(html).toContain('<span>Open in Bruno</span>');
+  });
+
+  it('condenses Open-in-Bruno to the glyph (no label) below the desktop layout', () => {
+    const html = renderToStaticMarkup(
+      <Topbar collectionName="Docs" layoutMode="tablet" openInBrunoHref="https://fetch.usebruno.com?url=x" />
+    );
+    expect(html).toContain('data-testid="open-in-bruno"');   // still shown on a Bruno-capable device
+    expect(html).not.toContain('<span>Open in Bruno</span>'); // label hidden, glyph only
+  });
 });
