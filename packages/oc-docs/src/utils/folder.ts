@@ -1,20 +1,17 @@
 import type { OpenCollection } from '@opencollection/types';
 import type { Item, Folder } from '@opencollection/types/collection/item';
 import type { Auth } from '@opencollection/types/common/auth';
-import type { Variable } from '@opencollection/types/common/variables';
 import { getItemName, isFolder, isScriptFile, scriptsArrayToObject } from './schemaHelpers';
+import { getDescription, getRequestDefaultsVars, type PreRequestVarRow, type PostResponseVarRow } from './request';
 
 export interface FolderHeaderRow {
   name: string;
   value: string;
   disabled?: boolean;
+  description?: string;
 }
 
-export interface FolderVariableRow {
-  name: string;
-  value: string;
-  disabled?: boolean;
-}
+export type FolderVariableRow = PreRequestVarRow;
 
 export interface FolderAuthSource {
   level: 'collection' | 'folder';
@@ -29,21 +26,12 @@ export interface FolderConfig {
   postResponse?: string;
   tests?: string;
   variables: FolderVariableRow[];
+  postVariables: PostResponseVarRow[];
 }
 
 const isConcrete = (auth: Auth | undefined): boolean => !!auth && auth !== 'inherit';
 
 const folderAuthOf = (item: Item): Auth | undefined => (item as { request?: { auth?: Auth } }).request?.auth;
-
-const flattenValue = (value: Variable['value']): string => {
-  if (value == null) return '';
-  if (typeof value === 'string') return value;
-  if (Array.isArray(value)) {
-    const selected = value.find((variant) => variant.selected) ?? value[0];
-    return selected ? flattenValue(selected.value) : '';
-  }
-  return typeof value.data === 'string' ? value.data : '';
-};
 
 export const resolveFolderAuth = (
   collection: OpenCollection | null | undefined,
@@ -73,16 +61,19 @@ export const getFolderConfig = (
   ancestors: Item[],
   folder: Folder
 ): FolderConfig => {
-  const headers = (folder.request?.headers ?? [])
-    .filter((header) => header && header.name && header.disabled !== true)
-    .map((header) => ({ name: header.name, value: header.value, disabled: header.disabled }));
+  const headers: FolderHeaderRow[] = (folder.request?.headers ?? [])
+    .filter((header) => header && header.name)
+    .map((header) => ({
+      name: header.name,
+      value: header.value,
+      disabled: header.disabled,
+      description: getDescription(header)
+    }));
 
   const { auth, source } = resolveFolderAuth(collection, ancestors, folder);
   const scripts = scriptsArrayToObject(folder.request?.scripts);
 
-  const variables = (folder.request?.variables ?? [])
-    .filter((variable) => variable && variable.name)
-    .map((variable) => ({ name: variable.name, value: flattenValue(variable.value), disabled: variable.disabled }));
+  const { preVars, postVars } = getRequestDefaultsVars(folder);
 
   return {
     headers,
@@ -91,7 +82,8 @@ export const getFolderConfig = (
     preRequest: scripts.preRequest,
     postResponse: scripts.postResponse,
     tests: scripts.tests,
-    variables
+    variables: preVars,
+    postVariables: postVars
   };
 };
 
@@ -99,7 +91,8 @@ export const hasFolderConfig = (config: FolderConfig): boolean =>
   config.headers.length > 0 ||
   Boolean(config.auth) ||
   Boolean(config.preRequest || config.postResponse || config.tests) ||
-  config.variables.length > 0;
+  config.variables.length > 0 ||
+  config.postVariables.length > 0;
 
 export const countFolderRequests = (folder: Folder): number => {
   let count = 0;

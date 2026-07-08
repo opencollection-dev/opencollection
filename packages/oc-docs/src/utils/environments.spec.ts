@@ -12,10 +12,10 @@ describe('getEnvironmentVariables', () => {
     };
     const { variables, secretVariables } = getEnvironmentVariables(env);
     expect(variables).toEqual([
-      { name: 'baseUrl', value: 'https://api.test', dataType: 'String', secret: false, disabled: false }
+      { name: 'baseUrl', value: 'https://api.test', dataType: 'String', disabled: false }
     ]);
     expect(secretVariables).toEqual([
-      { name: 'authToken', value: '', dataType: 'String', secret: true, disabled: false }
+      { name: 'authToken', value: '', dataType: 'String', disabled: false }
     ]);
   });
 
@@ -60,7 +60,7 @@ describe('getEnvironmentVariables', () => {
       ]
     };
     const { variables, secretVariables } = getEnvironmentVariables(env);
-    expect(secretVariables[0]).toMatchObject({ dataType: '', secret: true });
+    expect(secretVariables[0]).toMatchObject({ name: 'token', value: '', dataType: '' });
     expect(variables[0].disabled).toBe(true);
   });
 

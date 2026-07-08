@@ -1,6 +1,6 @@
 import type { OpenCollection } from '@opencollection/types';
 import type { Item as OpenCollectionItem, Folder } from '@opencollection/types/collection/item';
-import { getItemName, getItemSeq, getItemType, isFolder, getRequestBadgeLabel } from '../utils/schemaHelpers';
+import { getItemName, getItemSeq, getItemType, isFolder, isScriptFile, getRequestBadgeLabel } from '../utils/schemaHelpers';
 import { slugifySegment, dedupeSiblingSlugs } from './slug';
 import type { BreadcrumbSegment, NavEntry, NavModel, PageType } from './types';
 
@@ -14,18 +14,63 @@ const hasEnvironments = (collection: OpenCollection): boolean => {
   return Array.isArray(envs) && envs.length > 0;
 };
 
-/** Sort siblings by seq (ascending), then by name. */
-export const sortSiblings = (items: OpenCollectionItem[]): OpenCollectionItem[] =>
-  [...items].filter(Boolean).sort((a, b) => {
-    const seqA = getItemSeq(a);
-    const seqB = getItemSeq(b);
-    if (seqA !== undefined && seqB !== undefined && seqA !== seqB) {
-      return seqA - seqB;
+const isSeqValid = (seq: number | undefined): boolean =>
+  typeof seq === 'number' && Number.isFinite(seq) && Number.isInteger(seq) && seq > 0;
+
+/**
+ * Ported 1:1 from the Bruno app (`bruno-app/src/utils/common`, named
+ * `sortByNameThenSequence` there) so docs order matches the app. Sequence wins:
+ * items with a valid seq are spliced into index `seq - 1` (same-seq grouped);
+ * items without a seq keep their alphabetical position. Renamed here for clarity
+ * since seq, not name, is the primary signal.
+ */
+const sortBySequenceElseName = (items: OpenCollectionItem[]): OpenCollectionItem[] => {
+  const alphabetical = [...items].sort((a, b) => (getItemName(a) || '').localeCompare(getItemName(b) || ''));
+
+  const withoutSeq: (OpenCollectionItem | OpenCollectionItem[])[] = alphabetical.filter(
+    (item) => !isSeqValid(getItemSeq(item))
+  );
+  const withSeq = alphabetical
+    .filter((item) => isSeqValid(getItemSeq(item)))
+    .sort((a, b) => (getItemSeq(a) as number) - (getItemSeq(b) as number));
+
+  withSeq.forEach((item) => {
+    const position = (getItemSeq(item) as number) - 1;
+    const existing = withoutSeq[position];
+    const existingSeq = Array.isArray(existing)
+      ? getItemSeq(existing[0])
+      : existing
+        ? getItemSeq(existing)
+        : undefined;
+
+    if (existingSeq === getItemSeq(item)) {
+      const group = Array.isArray(existing) ? [...existing, item] : [existing as OpenCollectionItem, item];
+      withoutSeq.splice(position, 1, group);
+    } else {
+      withoutSeq.splice(position, 0, item);
     }
-    if (seqA !== undefined && seqB === undefined) return -1;
-    if (seqA === undefined && seqB !== undefined) return 1;
-    return (getItemName(a) || '').localeCompare(getItemName(b) || '');
   });
+
+  return withoutSeq.flat();
+};
+
+/** Bruno app orders requests purely by seq. */
+const sortBySequence = (items: OpenCollectionItem[]): OpenCollectionItem[] =>
+  [...items].sort((a, b) => (getItemSeq(a) as number) - (getItemSeq(b) as number));
+
+/**
+ * Orders one level of sibling items for the sidebar/nav, matching the Bruno app.
+ * Folders come first, then requests, then files. Folders are ordered by seq and
+ * fall back to name; requests are ordered by seq; files keep their given order.
+ * Called for each level (children are ordered when their folder is walked).
+ */
+export const orderSiblings = (items: OpenCollectionItem[]): OpenCollectionItem[] => {
+  const present = items.filter(Boolean);
+  const folders = present.filter((item) => isFolder(item));
+  const files = present.filter((item) => isScriptFile(item));
+  const requests = present.filter((item) => !isFolder(item) && !isScriptFile(item));
+  return [...sortBySequenceElseName(folders), ...sortBySequence(requests), ...files];
+};
 
 const pageTypeOf = (item: OpenCollectionItem): PageType => {
   if (isFolder(item)) return 'folder';
@@ -42,12 +87,12 @@ const walk = (
 ): void => {
   if (!items || items.length === 0) return;
 
-  const sorted = sortSiblings(items);
+  const ordered = orderSiblings(items);
   const segments = dedupeSiblingSlugs(
-    sorted.map((item) => slugifySegment(getItemName(item) || ''))
+    ordered.map((item) => slugifySegment(getItemName(item) || ''))
   );
 
-  sorted.forEach((item, i) => {
+  ordered.forEach((item, i) => {
     const slug = parentSlug ? `${parentSlug}/${segments[i]}` : segments[i];
     const name = getItemName(item) || 'Untitled';
     const type = pageTypeOf(item);

@@ -107,8 +107,11 @@ const RequestContent: React.FC<RequestContentProps> = ({
   const scriptChain = useMemo(() => buildScriptChain(collection, ancestry, item), [collection, ancestry, item]);
   const scriptFlow = useMemo(() => getScriptFlow(collection), [collection]);
   const assertions = useMemo(() => collectAssertions(item), [item]);
-  const tests = useMemo(() => collectTests(collection, ancestry, item), [collection, ancestry, item]);
-  const testScripts = useMemo(() => collectRawTestScripts(collection, ancestry, item), [collection, ancestry, item]);
+  const tests = useMemo(() => collectTests(collection, ancestry, item, scriptFlow), [collection, ancestry, item, scriptFlow]);
+  const testScripts = useMemo(
+    () => collectRawTestScripts(collection, ancestry, item, scriptFlow),
+    [collection, ancestry, item, scriptFlow]
+  );
 
   const segments = useMemo<BreadcrumbSegment[]>(
     () => buildBreadcrumbSegments(collection, ancestry),

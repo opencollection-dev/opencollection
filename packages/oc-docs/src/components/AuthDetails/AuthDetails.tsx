@@ -5,10 +5,11 @@ import type {
   OAuth2ResourceOwner,
   OAuth2PKCE,
   OAuth2TokenConfig,
-  OAuth2Settings
+  OAuth2Settings,
+  OAuth2AdditionalParameter
 } from '@opencollection/types/common/auth';
 import { PropertyTable, type PropertyRow } from '../PropertyTable/PropertyTable';
-import { AUTH_TYPES } from '../../constants';
+import { ADDITIONAL_PARAM_GROUPS, AUTH_TYPES } from '../../constants';
 
 interface AuthDetailsProps {
   auth?: Auth;
@@ -31,6 +32,23 @@ interface OAuth2AuthView {
   pkce?: OAuth2PKCE;
   tokenConfig?: OAuth2TokenConfig;
   settings?: OAuth2Settings;
+  additionalParameters?: {
+    authorizationRequest?: OAuth2AdditionalParameter[];
+    accessTokenRequest?: OAuth2AdditionalParameter[];
+    refreshTokenRequest?: OAuth2AdditionalParameter[];
+  };
+}
+
+interface EdgeGridAuthView {
+  type: 'akamai-edgegrid';
+  accessToken?: string;
+  clientToken?: string;
+  clientSecret?: string;
+  nonce?: string;
+  timestamp?: string;
+  baseURL?: string;
+  headersToSign?: string;
+  maxBodySize?: number;
 }
 
 const modeLabel = (auth: Auth, labels: Record<string, string>): string =>
@@ -86,7 +104,50 @@ const pushBool = (rows: PropertyRow[], testId: string, label: string, value: unk
   if (typeof value === 'boolean') rows.push({ label, value: value ? 'Yes' : 'No', testId });
 };
 
+const pushNumber = (rows: PropertyRow[], testId: string, label: string, value: unknown): void => {
+  if (typeof value === 'number' && Number.isFinite(value)) rows.push({ label, value: String(value), testId });
+};
+
+const pushAdditionalParameters = (
+  rows: PropertyRow[],
+  additional: OAuth2AuthView['additionalParameters']
+): void => {
+  if (!additional) return;
+  for (const group of ADDITIONAL_PARAM_GROUPS) {
+    const params = additional[group.key];
+    if (!Array.isArray(params)) continue;
+    params
+      .filter((p): p is OAuth2AdditionalParameter => Boolean(p && p.name))
+      .forEach((p, index) => {
+        const placement = placementLabel(p.placement);
+        rows.push({
+          label: p.name as string,
+          value: p.value ?? '',
+          description: `${group.label}${placement ? ` · ${placement}` : ''}`,
+          testId: `additional-param-${group.key}-${index}`
+        });
+      });
+  }
+};
+
+const buildEdgeGridRows = (auth: EdgeGridAuthView): PropertyRow[] => {
+  const rows: PropertyRow[] = [];
+  pushRow(rows, 'access-token', 'Access Token', auth.accessToken, true);
+  pushRow(rows, 'client-token', 'Client Token', auth.clientToken, true);
+  pushRow(rows, 'client-secret', 'Client Secret', auth.clientSecret, true);
+  pushRow(rows, 'base-url', 'Base URL', auth.baseURL);
+  pushRow(rows, 'nonce', 'Nonce', auth.nonce);
+  pushRow(rows, 'timestamp', 'Timestamp', auth.timestamp);
+  pushRow(rows, 'headers-to-sign', 'Headers to Sign', auth.headersToSign);
+  pushNumber(rows, 'max-body-size', 'Max Body Size', auth.maxBodySize);
+  return rows;
+};
+
 const buildAuthRows = (auth: Exclude<Auth, 'inherit'>): PropertyRow[] => {
+  if ((auth as { type?: string }).type === AUTH_TYPES.EDGEGRID) {
+    return buildEdgeGridRows(auth as unknown as EdgeGridAuthView);
+  }
+
   const rows: PropertyRow[] = [];
 
   switch (auth.type) {
@@ -152,6 +213,7 @@ const buildAuthRows = (auth: Exclude<Auth, 'inherit'>): PropertyRow[] => {
       pushBool(rows, 'auto-refresh-token', 'Auto Refresh Token', o.settings?.autoRefreshToken);
       pushRow(rows, 'username', 'Username', o.resourceOwner?.username);
       pushRow(rows, 'password', 'Password', o.resourceOwner?.password, true);
+      pushAdditionalParameters(rows, o.additionalParameters);
       break;
     }
     default:

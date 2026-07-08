@@ -45,6 +45,14 @@ const chain =
     next(event);
   };
 
+interface AnchorProps {
+  onMouseEnter?: React.MouseEventHandler<HTMLElement>;
+  onMouseLeave?: React.MouseEventHandler<HTMLElement>;
+  onFocus?: React.FocusEventHandler<HTMLElement>;
+  onBlur?: React.FocusEventHandler<HTMLElement>;
+  onTouchStart?: React.TouchEventHandler<HTMLElement>;
+}
+
 export const Tooltip: React.FC<TooltipProps> = ({
   content,
   children,

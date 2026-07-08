@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { isTemplateVariable, templateVariableSplitRegex } from '../../utils/common';
 import { Tooltip } from '../../ui/Tooltip/Tooltip';
-import { useVariableResolver } from '../../contexts/VariablesContext';
 import { getVariableName } from '../../utils/variableInfo';
 import { VariableInfoPopup } from '../VariableInfoPopup/VariableInfoPopup';
+import { useResolvedVariables } from '../../hooks';
 import { StyledWrapper } from './StyledWrapper';
 
 interface VariableTextProps {
@@ -11,9 +11,19 @@ interface VariableTextProps {
   className?: string;
 }
 
+/**
+ * Renders a string that may contain `{{var}}` tokens. Show-variables off: tokens
+ * are shown verbatim and highlighted. On: tokens resolve against the active
+ * environment; anything still unresolved (unknown or secret variables) stays
+ * highlighted as a token, so a secret is never printed as plaintext.
+ */
 export const VariableText: React.FC<VariableTextProps> = ({ value, className }) => {
-  const resolve = useVariableResolver();
-  const parts = (value ?? '').split(templateVariableSplitRegex()).filter((part) => part !== '');
+  const { showVars, resolve } = useResolvedVariables();
+  const parts = useMemo(() => {
+    const source = value ?? '';
+    const display = showVars ? resolve(source) : source;
+    return display.split(templateVariableSplitRegex()).filter((part) => part !== '');
+  }, [value, showVars, resolve]);
 
   return (
     <StyledWrapper className={['var-text', className].filter(Boolean).join(' ')}>

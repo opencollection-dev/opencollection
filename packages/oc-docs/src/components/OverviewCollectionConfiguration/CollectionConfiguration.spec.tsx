@@ -26,10 +26,10 @@ describe('CollectionConfiguration', () => {
       />
     );
 
-    // Enabled headers shown, disabled ones filtered out
     expect(html).toContain('Accept');
     expect(html).toContain('application/json');
-    expect(html).not.toContain('X-Disabled');
+    expect(html).toContain('X-Disabled');
+    expect(html).toContain('property-row--disabled');
 
     // Auth mode resolved via the supplied labels; username shown, password masked
     expect(html).toContain('Basic Auth');
@@ -39,6 +39,22 @@ describe('CollectionConfiguration', () => {
     // Script and test sections render
     expect(html).toContain('Pre-Request');
     expect(html).toContain('Tests');
+  });
+
+  it('renders collection variables (pre-request + post-response) and header descriptions', () => {
+    const html = renderToStaticMarkup(
+      <CollectionConfiguration
+        headers={[{ name: 'Accept', value: 'application/json', description: 'content negotiation' } as HttpRequestHeader]}
+        preVars={[{ name: 'baseUrl', value: 'https://api.example.com' }]}
+        postVars={[{ name: 'token', expression: 'res.body.token' }]}
+      />
+    );
+    expect(html).toContain('Variables');
+    expect(html).toContain('baseUrl');
+    expect(html).toContain('https://api.example.com');
+    expect(html).toContain('token');
+    expect(html).toContain('res.body.token');
+    expect(html).toContain('content negotiation');
   });
 
   it('falls back to the raw auth type when no label is supplied', () => {

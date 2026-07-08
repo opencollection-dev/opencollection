@@ -8,6 +8,7 @@ import { MethodBadge } from '../../MethodBadge/MethodBadge';
 import { ChevronArrow } from '../../ChevronArrow/ChevronArrow';
 import { CopyButton } from '../../../ui/CopyButton/CopyButton';
 import { PropertyTable, type PropertyRow } from '../../PropertyTable/PropertyTable';
+import { TruncatedText } from '../../TruncatedText/TruncatedText';
 import { RequestParams } from '../../Request/RequestParams/RequestParams';
 import { RequestBody } from '../../Request/RequestBody/RequestBody';
 import { Code } from '../../Code/Code';
@@ -328,7 +329,7 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
 
               <div className="example-url-row">
                 <MethodBadge method={displayMethod} />
-                <span className="example-url-text">{displayUrl}</span>
+                <TruncatedText className="example-url-text" text={displayUrl} />
                 <CopyButton text={displayUrl} />
               </div>
 

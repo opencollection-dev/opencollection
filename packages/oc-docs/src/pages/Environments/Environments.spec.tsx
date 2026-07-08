@@ -39,7 +39,25 @@ describe('Environments', () => {
     expect(groupLabels(root)).toEqual(['Variables', 'Secret Variables']);
     expect(cellText(root, '.environment-name')).toContain('baseUrl');
     expect(cellText(root, '.environment-value')).toContain('https://api.dev');
-    expect(root.querySelector('.environment-secret')?.text).toContain('Secret');
+    expect(cellText(root, '.environment-name')).toContain('authToken');
+    expect(root.querySelector('[data-testid="environment-secret-value"]')).toBeTruthy();
+  });
+
+  it('always shows a secret as a masked, display-only value (no value in the yml, no reveal toggle)', () => {
+    const collection = {
+      info: { name: 'API', version: '1.0.0' },
+      config: {
+        environments: [{ name: 'Dev', variables: [{ name: 'apiKey', secret: true }] }]
+      }
+    } as unknown as OpenCollection;
+
+    const root = useRenderToDom(<Environments collection={collection} />);
+
+    const secret = root.querySelector('[data-testid="environment-secret-value"]');
+    expect(secret).toBeTruthy();
+    expect(secret?.text).toContain('*');
+    expect(secret?.querySelector('[data-testid="environment-secret-value-toggle"]')).toBeNull();
+    expect(root.querySelector('[data-testid="environment-secret-value"].secret-value--readonly')).toBeTruthy();
   });
 
   it('renders an external secret variables section with the manager label', () => {

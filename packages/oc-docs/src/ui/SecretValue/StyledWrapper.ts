@@ -6,10 +6,19 @@ export const StyledWrapper = styled.span`
   justify-content: space-between;
   gap: 0.5rem;
 
+  &.secret-value--start {
+    justify-content: flex-start;
+    gap: 0.7rem;
+  }
+
   .secret-value-text {
     font-family: var(--font-mono);
     color: var(--text-primary);
     word-break: break-all;
+  }
+
+  &.secret-value--readonly .secret-value-text {
+    color: var(--text-tertiary);
   }
 
   .secret-value-toggle {
@@ -24,5 +33,12 @@ export const StyledWrapper = styled.span`
   }
   .secret-value-toggle:hover {
     color: var(--text-secondary);
+  }
+
+  .secret-value-icon {
+    display: inline-flex;
+    align-items: center;
+    color: var(--text-tertiary);
+    flex-shrink: 0;
   }
 `;

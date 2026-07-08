@@ -8,6 +8,7 @@ import {
   getScriptFlow,
   getPreRequestVars,
   getPostResponseVars,
+  getCollectionVariables,
   getShortMethod
 } from './request';
 import { AUTH_MODE_LABELS } from '../constants';
@@ -227,6 +228,52 @@ describe('requestVars', () => {
     expect(getPostResponseVars(item)).toEqual([
       { name: 'authToken', expression: 'res.body.token', scope: 'environment', disabled: undefined }
     ]);
+  });
+});
+
+describe('getCollectionVariables', () => {
+  it('reads collection pre-request (request.variables) and post-response (request.actions) vars', () => {
+    const collection: any = {
+      request: {
+        variables: [
+          { name: 'baseUrl', value: 'https://api.example.com' },
+          { name: 'legacy', value: 'x', disabled: true }
+        ],
+        actions: [
+          {
+            type: 'set-variable',
+            phase: 'after-response',
+            selector: { expression: 'res.body.token' },
+            variable: { name: 'token', scope: 'collection' }
+          }
+        ]
+      }
+    };
+    const { preVars, postVars } = getCollectionVariables(collection);
+    expect(preVars).toEqual([
+      { name: 'baseUrl', value: 'https://api.example.com', disabled: undefined },
+      { name: 'legacy', value: 'x', disabled: true }
+    ]);
+    expect(postVars).toEqual([
+      { name: 'token', expression: 'res.body.token', scope: 'collection', disabled: undefined }
+    ]);
+  });
+
+  it('returns empty arrays and skips malformed / unnamed entries', () => {
+    expect(getCollectionVariables(null)).toEqual({ preVars: [], postVars: [] });
+    expect(getCollectionVariables({} as any)).toEqual({ preVars: [], postVars: [] });
+    const collection: any = {
+      request: {
+        variables: [{ value: 'noName' }, null],
+        actions: [
+          { type: 'set-variable', phase: 'before-request', variable: { name: 'skipMe' }, selector: { expression: 'x' } },
+          { type: 'set-variable', variable: {}, selector: {} }
+        ]
+      }
+    };
+    const { preVars, postVars } = getCollectionVariables(collection);
+    expect(preVars).toEqual([]);
+    expect(postVars).toEqual([]);
   });
 });
 

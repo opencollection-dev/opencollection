@@ -1,6 +1,7 @@
 import React from 'react';
 import { ScopeTag } from '../ScopeTag/ScopeTag';
 import { VariableText } from '../../VariableText/VariableText';
+import { TruncatedText } from '../../TruncatedText/TruncatedText';
 import type { AssertionRow } from '../../../utils/assertions';
 import { StyledWrapper } from './StyledWrapper';
 
@@ -20,14 +21,19 @@ export const AssertList: React.FC<AssertListProps> = ({ assertions }) => {
 
   return (
     <StyledWrapper>
-      {assertions.map((assert, index) => (
-        <div key={`${assert.expression}-${index}`} className={`assert-row${assert.disabled ? ' is-disabled' : ''}`}>
-          <ScopeTag scope={assert.level} />
-          <code className="assert-expr">
-            <VariableText value={assertionText(assert)} />
-          </code>
-        </div>
-      ))}
+      {assertions.map((assert, index) => {
+        const text = assertionText(assert);
+        return (
+          <div key={`${assert.expression}-${index}`} className={`assert-row${assert.disabled ? ' is-disabled' : ''}`}>
+            <ScopeTag scope={assert.level} />
+            <code className="assert-expr">
+              <TruncatedText text={text}>
+                <VariableText value={text} />
+              </TruncatedText>
+            </code>
+          </div>
+        );
+      })}
     </StyledWrapper>
   );
 };

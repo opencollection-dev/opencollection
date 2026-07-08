@@ -1,7 +1,7 @@
 // Barrel for app-wide constants. Import everything from here (`../constants`),
 // not from the individual modules, so call sites have a single source.
 
-export { AUTH_MODE_LABELS, AUTH_TYPES, type AuthType } from './auth';
+export { ADDITIONAL_PARAM_GROUPS, AUTH_MODE_LABELS, AUTH_TYPES, type AuthType } from './auth';
 
 export {
   BODY_TYPES,

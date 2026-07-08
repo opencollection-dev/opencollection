@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { Code } from '../../Code/Code';
 import { ChevronArrow } from '../../ChevronArrow/ChevronArrow';
 import { Collapse } from '../../../ui/Collapse/Collapse';
+import { TruncatedText } from '../../TruncatedText/TruncatedText';
 import type { ScriptChainStep } from '../../../utils/request';
 import { StyledWrapper } from './StyledWrapper';
 
 interface ScriptStepProps {
   step: ScriptChainStep;
-  /** 1-based position of this step within the displayed chain. */
   position: number;
   onNavigate?: (uuid: string) => void;
 }
@@ -35,7 +35,7 @@ export const ScriptStep: React.FC<ScriptStepProps> = ({ step, position, onNaviga
         <span className="step-num">{position}</span>
         <ChevronArrow open={open} className="script-chevron" />
         <span className="script-step-main">
-          <span className="script-step-label">{step.label}</span>
+          <TruncatedText className="script-step-label" text={step.label} touch={false} />
           {step.sourceName &&
             (step.sourceUuid && onNavigate ? (
               <button

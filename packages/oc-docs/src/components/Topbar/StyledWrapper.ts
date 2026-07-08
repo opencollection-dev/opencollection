@@ -24,6 +24,10 @@ export const StyledWrapper = styled.header`
     padding: 0 12px;
   }
 
+  &[data-mode='mobile'] .topbar-secondary {
+    gap: 8px;
+  }
+
   .topbar-menu {
     margin-left: -4px;
   }

@@ -56,9 +56,9 @@ describe('hasCollectionConfiguration', () => {
     expect(hasCollectionConfiguration([], undefined, {})).toBe(false);
   });
 
-  it('ignores disabled or nameless headers', () => {
+  it('ignores nameless headers but counts disabled (still named) ones', () => {
     expect(hasCollectionConfiguration([{ name: '', value: 'x' }])).toBe(false);
-    expect(hasCollectionConfiguration([{ name: 'Accept', value: 'json', disabled: true }])).toBe(false);
+    expect(hasCollectionConfiguration([{ name: 'Accept', value: 'json', disabled: true }])).toBe(true);
   });
 
   it('is true when an enabled, named header is present', () => {

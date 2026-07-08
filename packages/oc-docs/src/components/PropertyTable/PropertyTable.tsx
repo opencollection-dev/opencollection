@@ -1,6 +1,7 @@
 import React from 'react';
 import { SecretValue } from '../../ui/SecretValue/SecretValue';
 import { VariableText } from '../VariableText/VariableText';
+import { TruncatedText } from '../TruncatedText/TruncatedText';
 import { StyledWrapper } from './StyledWrapper';
 
 export interface PropertyRow {
@@ -24,7 +25,11 @@ interface PropertyTableProps {
 const ValueCell: React.FC<{ row: PropertyRow; testId?: string }> = ({ row, testId }) => {
   if (row.node !== undefined) return <>{row.node}</>;
   if (row.secret) return <SecretValue value={row.value ?? ''} testId={testId ? `${testId}-secret` : undefined} />;
-  return <VariableText value={row.value ?? ''} />;
+  return (
+    <TruncatedText text={row.value ?? ''}>
+      <VariableText value={row.value ?? ''} />
+    </TruncatedText>
+  );
 };
 
 export const PropertyTable: React.FC<PropertyTableProps> = ({ rows, emptyMessage, className, testId = 'property-table', hideRowBorders = false }) => (
@@ -43,7 +48,7 @@ export const PropertyTable: React.FC<PropertyTableProps> = ({ rows, emptyMessage
             className={['property-row', row.disabled ? 'property-row--disabled' : ''].filter(Boolean).join(' ')}
             key={`${row.label}-${index}`}
           >
-            <dt className="property-key">{row.label}</dt>
+            <dt className="property-key"><TruncatedText text={row.label} /></dt>
             <dd className="property-value-cell" data-testid={testId && row.testId ? `${testId}-${row.testId}` : undefined}>
               <ValueCell row={row} testId={testId} />
               {row.description ? <p className="property-description">{row.description}</p> : null}

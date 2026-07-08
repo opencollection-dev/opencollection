@@ -9,6 +9,21 @@ export const StyledWrapper = styled.div`
     text-transform: uppercase;
   }
 
+  &.vars-stacked {
+    grid-template-columns: 1fr;
+
+    .vars-field-label {
+      font-family: var(--font-sans);
+      font-weight: 500;
+      font-size: 0.625rem;
+      line-height: 1;
+      letter-spacing: 0.0525rem;
+      color: var(--text-tertiary);
+      margin: 0 0 0.375rem 0;
+      text-transform: none;
+    }
+  }
+
   .vars-table .property-empty-message {
     display: flex;
     align-items: center;

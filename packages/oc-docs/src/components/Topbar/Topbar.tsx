@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { StyledWrapper } from './StyledWrapper';
 import Brand from './Brand/Brand';
-import MobileOverflow from './MobileOverflow/MobileOverflow';
 import OpenInBrunoButton from '../OpenInBrunoButton/OpenInBrunoButton';
 import IconButton from '../../ui/IconButton/IconButton';
 import { SearchIcon, HamburgerIcon } from '../../assets/icons';
@@ -119,11 +118,9 @@ const Topbar: React.FC<TopbarProps> = ({
           </IconButton>
         )}
 
-        {/* Secondary controls: inline on tablet/desktop, overflow popover on mobile. */}
-        {hasSecondary && !isMobile && (
-          <div className="topbar-secondary">{envSwitcherSlot}</div>
-        )}
-        {hasSecondary && isMobile && <MobileOverflow>{envSwitcherSlot}</MobileOverflow>}
+        {/* Secondary controls (env switcher + show-vars): inline at every
+            breakpoint; the controls condense their own labels when narrow. */}
+        {hasSecondary && <div className="topbar-secondary">{envSwitcherSlot}</div>}
 
         {/* Open-in-Bruno: desktop layout AND a device that can run Bruno desktop
             (hidden on large touch tablets like iPad Pro despite their width). */}

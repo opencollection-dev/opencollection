@@ -60,19 +60,16 @@ export const getItemName = (item: OpenCollectionItem | null | undefined): string
 };
 
 /**
- * Get the sequence number of an item
+ * Get the sequence number of an item, from the info block or the root level.
  */
 export const getItemSeq = (item: OpenCollectionItem | null | undefined): number | undefined => {
   if (!item) return undefined;
-  
-  if ('info' in item && (item as any).info?.seq !== undefined) {
-    return (item as any).info.seq;
+  if ('info' in item && (item as { info?: { seq?: number } }).info?.seq !== undefined) {
+    return (item as { info: { seq?: number } }).info.seq;
   }
-  
   if ('seq' in item) {
-    return (item as any).seq;
+    return (item as { seq?: number }).seq;
   }
-  
   return undefined;
 };
 

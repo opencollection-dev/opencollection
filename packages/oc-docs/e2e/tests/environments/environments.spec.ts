@@ -31,14 +31,25 @@ test.describe('Environments page', () => {
     });
   });
 
-  test('shows secret variables masked under a Secret Variables group', async ({ environmentsPage }) => {
+  test('shows a secret variable as a masked, display-only value (never empty, no reveal toggle)', async ({
+    environmentsPage
+  }) => {
     const { table } = environmentsPage;
-    const row = table.secretVariableRow('bearer_auth_token');
-
     await expect(environmentsPage.secretVariablesGroup).toBeVisible();
-    await expect(row).toBeVisible();
-    await expect(row).toContainText('Secret');
-    await expect(row).not.toContainText('your_secret_token');
+
+    await expect(table.secretValueOf('bearer_auth_token')).toBeVisible();
+    await expect(table.secretMaskOf('bearer_auth_token')).toContainText('*');
+    await expect(table.secretValueOf('bearer_auth_token')).not.toContainText('(empty)');
+    // Display only: no reveal toggle.
+    await expect(table.secretRevealToggleOf('bearer_auth_token')).toHaveCount(0);
+  });
+
+  test('greys the masked secret stars to match the icon', async ({ environmentsPage }) => {
+    const { table } = environmentsPage;
+
+    const starsColor = await table.secretMaskOf('bearer_auth_token').evaluate((el) => getComputedStyle(el).color);
+    const iconColor = await table.secretIconOf('bearer_auth_token').evaluate((el) => getComputedStyle(el).color);
+    expect(starsColor).toBe(iconColor);
   });
 
   test('switches the table when another environment tab is selected', async ({ environmentsPage }) => {

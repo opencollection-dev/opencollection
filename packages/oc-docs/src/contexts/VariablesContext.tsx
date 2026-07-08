@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo } from 'react';
+import React, { createContext, useMemo } from 'react';
 import type { OpenCollection } from '@opencollection/types';
 import type { Item } from '@opencollection/types/collection/item';
 import { useAppSelector } from '../store/hooks';
@@ -8,9 +8,6 @@ import { resolveVariableInfo, type VariableInfo } from '../utils/variableInfo';
 export type VariableResolver = (name: string) => VariableInfo | null;
 
 const VariablesContext = createContext<VariableResolver>(() => null);
-
-export const useVariableResolver = (): VariableResolver => useContext(VariablesContext);
-
 interface VariablesProviderProps {
   collection?: OpenCollection | null;
   ancestry?: Item[];

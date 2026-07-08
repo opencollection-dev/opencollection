@@ -17,7 +17,9 @@ export const FolderConfiguration: React.FC<FolderConfigurationProps> = ({ config
   const hasHeaders = config.headers.length > 0;
   const hasAuth = Boolean(config.auth);
   const hasScripts = Boolean(config.preRequest || config.postResponse);
-  const hasVariables = config.variables.length > 0;
+  const hasPreVars = config.variables.length > 0;
+  const hasPostVars = config.postVariables.length > 0;
+  const hasVariables = hasPreVars || hasPostVars;
   const hasTests = Boolean(config.tests);
   const inheritedBadge = config.authSource ? `Inherited from ${config.authSource.level}` : undefined;
 
@@ -29,7 +31,12 @@ export const FolderConfiguration: React.FC<FolderConfigurationProps> = ({ config
             <SectionLabel className="config-group-label">Headers</SectionLabel>
           </div>
           <PropertyTable
-            rows={config.headers.map((header) => ({ label: header.name, value: header.value, disabled: header.disabled }))}
+            rows={config.headers.map((header) => ({
+              label: header.name,
+              value: header.value,
+              disabled: header.disabled,
+              description: header.description
+            }))}
           />
         </div>
       )}
@@ -72,16 +79,30 @@ export const FolderConfiguration: React.FC<FolderConfigurationProps> = ({ config
             <SectionLabel className="config-group-label">Vars</SectionLabel>
           </div>
           <div className="config-columns">
-            <div className="config-column">
-              <p className="config-phase-label">Pre-Request</p>
-              <PropertyTable
-                rows={config.variables.map((variable) => ({
-                  label: variable.name,
-                  value: variable.value,
-                  disabled: variable.disabled
-                }))}
-              />
-            </div>
+            {hasPreVars && (
+              <div className="config-column">
+                <p className="config-phase-label">Pre-Request</p>
+                <PropertyTable
+                  rows={config.variables.map((variable) => ({
+                    label: variable.name,
+                    value: variable.value,
+                    disabled: variable.disabled
+                  }))}
+                />
+              </div>
+            )}
+            {hasPostVars && (
+              <div className="config-column">
+                <p className="config-phase-label">Post-Response</p>
+                <PropertyTable
+                  rows={config.postVariables.map((variable) => ({
+                    label: variable.name,
+                    value: variable.expression,
+                    disabled: variable.disabled
+                  }))}
+                />
+              </div>
+            )}
           </div>
         </div>
       )}

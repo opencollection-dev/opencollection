@@ -7,6 +7,7 @@ import { StyledWrapper } from './StyledWrapper';
 interface VariablesPanelProps {
   preVars: PreRequestVarRow[];
   postVars: PostResponseVarRow[];
+  variant?: 'grid' | 'stacked';
 }
 
 const preRows = (vars: PreRequestVarRow[]): PropertyRow[] =>
@@ -22,13 +23,17 @@ const Field: React.FC<{ label: string; rows: PropertyRow[] }> = ({ label, rows }
   </div>
 );
 
-export const VariablesPanel: React.FC<VariablesPanelProps> = ({ preVars, postVars }) => {
+export const VariablesPanel: React.FC<VariablesPanelProps> = ({ preVars, postVars, variant = 'grid' }) => {
   if (preVars.length === 0 && postVars.length === 0) return null;
 
+  const stacked = variant === 'stacked';
+  const showPre = !stacked || preVars.length > 0;
+  const showPost = !stacked || postVars.length > 0;
+
   return (
-    <StyledWrapper className="vars-grid">
-      <Field label="Pre-Request" rows={preRows(preVars)} />
-      <Field label="Post Response" rows={postRows(postVars)} />
+    <StyledWrapper className={stacked ? 'vars-grid vars-stacked' : 'vars-grid'}>
+      {showPre && <Field label="Pre-Request" rows={preRows(preVars)} />}
+      {showPost && <Field label="Post-Response" rows={postRows(postVars)} />}
     </StyledWrapper>
   );
 };
