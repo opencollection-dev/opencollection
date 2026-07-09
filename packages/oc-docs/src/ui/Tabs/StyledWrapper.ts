@@ -44,6 +44,7 @@ export const StyledWrapper = styled.div`
       &.active {
         color: var(--oc-tabs-active-color);
         border-bottom-color: var(--primary-color);
+        font-weight: 600;
       }
 
       .content-indicator {
@@ -51,6 +52,32 @@ export const StyledWrapper = styled.div`
         font-size: 0.7em;
         color: var(--text-tertiary);
         font-weight: normal;
+      }
+    }
+  }
+
+  /* Button variant: filled pill triggers instead of the underline style. */
+  &.tabs-variant-button .tabs {
+    gap: 0.5rem;
+
+    .tab {
+      padding: 0.5rem 1rem;
+      margin-right: 0;
+      border: none;
+      border-bottom: none;
+      border-radius: 0.5rem;
+      background: transparent;
+      color: var(--oc-tabs-color);
+
+      &:hover:not(.active):not(.disabled) {
+        background: var(--oc-background-surface1);
+        color: var(--text-primary);
+      }
+
+      &.active {
+        background: var(--oc-background-surface2);
+        color: var(--text-primary);
+        border-bottom-color: transparent;
       }
     }
   }

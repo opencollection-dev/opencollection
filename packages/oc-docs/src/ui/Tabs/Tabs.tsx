@@ -16,15 +16,18 @@ interface TabsProps {
   onTabChange?: (tabId: string) => void;
   className?: string;
   rightElement?: ReactNode;
+  /** Visual style of the tab triggers: underline (default) or filled buttons. */
+  variant?: 'underline' | 'button';
 }
 
-const Tabs: React.FC<TabsProps> = ({ 
-  tabs, 
-  defaultActiveTab, 
+const Tabs: React.FC<TabsProps> = ({
+  tabs,
+  defaultActiveTab,
   activeTab: controlledActiveTab,
   onTabChange,
   className = '',
-  rightElement
+  rightElement,
+  variant = 'underline'
 }) => {
   const [internalActiveTab, setInternalActiveTab] = useState(
     defaultActiveTab || (tabs.length > 0 ? tabs[0].id : '')
@@ -48,7 +51,7 @@ const Tabs: React.FC<TabsProps> = ({
   const activeTabData = tabs.find(tab => tab.id === activeTab);
 
   return (
-    <StyledWrapper className={className}>
+    <StyledWrapper className={`${className} tabs-variant-${variant}`.trim()}>
       <div className="tabs-header">
         <div className="tabs">
           {tabs.map((tab) => (
