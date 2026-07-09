@@ -2,7 +2,7 @@ import React from 'react';
 import { KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
 import { SecretValue } from '../../../../../ui/SecretValue/SecretValue';
 import { TrashIcon } from '../../../../../assets/icons';
-import { EnvCardList, EnvCard } from '../../../EnvListStyles/StyledWrapper';
+import { EnvCardList, EnvCard } from './StyledWrapper';
 
 interface EnvVarCardsProps {
   rows: KeyValueRow[];

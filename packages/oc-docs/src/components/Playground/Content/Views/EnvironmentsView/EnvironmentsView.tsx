@@ -5,7 +5,7 @@ import type { Variable } from '@opencollection/types/common/variables';
 import KeyValueTable, { KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
 import Tabs from '../../../../../ui/Tabs/Tabs';
 import { EmptyState } from '../../../../../ui/EmptyState/EmptyState';
-import { EnvPills, EnvPill, EnvTabsArea } from '../../../EnvListStyles/StyledWrapper';
+import { EnvPills, EnvPill, EnvTabsArea } from './StyledWrapper';
 import { EnvironmentLabel } from '../../../../EnvironmentLabel/EnvironmentLabel';
 import EnvVarCards from './EnvVarCards';
 import { GlobeIcon } from '../../../../../assets/icons';
