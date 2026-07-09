@@ -1,5 +1,35 @@
 import styled from '@emotion/styled';
 
+export const EnvView = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--oc-background-base);
+
+  .env-header {
+    padding: 16px 24px 0;
+    flex-shrink: 0;
+  }
+
+  .env-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--oc-text);
+  }
+`;
+
+export const EnvMessage = styled.div`
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--oc-colors-text-muted);
+  background-color: var(--oc-background-base);
+`;
+
 export const EnvPills = styled.div`
   display: flex;
   flex-wrap: wrap;

@@ -5,7 +5,7 @@ import type { Variable } from '@opencollection/types/common/variables';
 import KeyValueTable, { KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
 import Tabs from '../../../../../ui/Tabs/Tabs';
 import { EmptyState } from '../../../../../ui/EmptyState/EmptyState';
-import { EnvPills, EnvPill, EnvTabsArea } from './StyledWrapper';
+import { EnvView, EnvMessage, EnvPills, EnvPill, EnvTabsArea } from './StyledWrapper';
 import { EnvironmentLabel } from '../../../../EnvironmentLabel/EnvironmentLabel';
 import EnvVarCards from './EnvVarCards';
 import { GlobeIcon } from '../../../../../assets/icons';
@@ -126,18 +126,9 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection, compact
 
   if (environments.length === 0) {
     return (
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100%',
-        color: 'var(--oc-colors-text-muted)',
-        backgroundColor: 'var(--oc-background-base)',
-        flexDirection: 'column',
-        gap: '16px'
-      }}>
+      <EnvMessage>
         <p>No environments found in this collection</p>
-      </div>
+      </EnvMessage>
     );
   }
 
@@ -192,11 +183,9 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection, compact
   }));
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', overflow: 'hidden', backgroundColor: 'var(--oc-background-base)' }}>
-      <div style={{ padding: '16px 24px 0', flexShrink: 0 }}>
-        <h2 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--oc-text)' }}>
-          Environments
-        </h2>
+    <EnvView>
+      <div className="env-header">
+        <h2 className="env-title">Environments</h2>
       </div>
 
       <EnvPills>
@@ -215,18 +204,12 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection, compact
         {selectedEnvironment ? (
           <Tabs defaultActiveTab="variables" tabs={tabs} />
         ) : (
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '100%',
-            color: 'var(--oc-colors-text-muted)'
-          }}>
+          <EnvMessage>
             <p>Select an environment to view its variables</p>
-          </div>
+          </EnvMessage>
         )}
       </EnvTabsArea>
-    </div>
+    </EnvView>
   );
 };
 
