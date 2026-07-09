@@ -40,6 +40,17 @@ describe('buildSearchRecords', () => {
     expect(recs[0].description).toContain('List hotels');
   });
 
+  it('indexes an object-form info.description ({ content }) as searchable text', () => {
+    const entry = requestEntry({ uuid: 'u1' });
+    (entry.item as { info: { description: unknown } }).info.description = {
+      content: 'Cancels a reservation',
+      type: 'text/markdown',
+    };
+    const recs = buildSearchRecords([entry]);
+    expect(recs[0].description).toContain('Cancels a reservation');
+    expect(recs[0].description).not.toContain('[object Object]');
+  });
+
   it('excludes folders and built-in pages from records', () => {
     const folder: NavEntry = {
       slug: 'hotels', type: 'folder', name: 'Hotels', item: { uuid: 'f1' } as never,

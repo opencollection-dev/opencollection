@@ -10,6 +10,7 @@ import { TooltipComponent } from '../components/tooltip.component';
 import { ThemeToggleComponent } from '../components/layout/theme-toggle.component';
 import { PageHeaderComponent } from '../components/layout/page-header.component';
 import { SearchComponent } from '../components/search/search.component';
+import { EnvSwitcherComponent } from '../components/layout/env-switcher.component';
 
 type Fixtures = {
   overviewPage: OverviewPage;
@@ -21,6 +22,7 @@ type Fixtures = {
   sidebar: SidebarComponent;
   tooltip: TooltipComponent;
   pageHeader: PageHeaderComponent;
+  envSwitcher: EnvSwitcherComponent;
   themeToggle: ThemeToggleComponent;
   search: SearchComponent;
 };
@@ -52,6 +54,9 @@ export const test = base.extend<Fixtures>({
   },
   pageHeader: async ({ page }, use) => {
     await use(new PageHeaderComponent(page));
+  },
+  envSwitcher: async ({ page }, use) => {
+    await use(new EnvSwitcherComponent(page));
   },
   themeToggle: async ({ page }, use) => {
     await use(new ThemeToggleComponent(page));

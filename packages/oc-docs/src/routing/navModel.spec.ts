@@ -3,12 +3,12 @@ import type { OpenCollection } from '@opencollection/types';
 import { buildNavModel, OVERVIEW_SLUG, ENVIRONMENTS_SLUG } from './navModel';
 
 // --- factories (new-schema info-block shape) -------------------------------
-const req = (name: string, seq: number, method = 'GET') => ({
+const req = (name: string, seq?: number, method = 'GET') => ({
   info: { name, type: 'http', seq },
   http: { method, url: `https://x/${name}` },
 });
 
-const folder = (name: string, seq: number, items: unknown[] = []) => ({
+const folder = (name: string, seq?: number, items: unknown[] = []) => ({
   info: { name, type: 'folder', seq },
   items,
 });
@@ -56,10 +56,34 @@ describe('buildNavModel — ordered sequence', () => {
     expect(slugs(c)).toEqual([OVERVIEW_SLUG, 'ping']);
   });
 
-  it('orders siblings by seq then name (honours reordering)', () => {
-    const c = collection([req('Zebra', 1), req('Apple', 2)]);
-    // seq wins over alphabetical
-    expect(slugs(c)).toEqual([OVERVIEW_SLUG, ENVIRONMENTS_SLUG, 'zebra', 'apple']);
+  it('sorts requests by seq (mirrors the Bruno app)', () => {
+    const c = collection([req('Zebra', 2), req('Apple', 1)]);
+    expect(slugs(c)).toEqual([OVERVIEW_SLUG, ENVIRONMENTS_SLUG, 'apple', 'zebra']);
+  });
+
+  it('groups folders before requests regardless of seq', () => {
+    // Request seq (1) is lower than the folder seq (2), but folders still come
+    // first — matching the app grouping [folders, requests, files].
+    const c = collection([req('Ping', 1), folder('Tools', 2, [req('Run', 1)])]);
+    expect(slugs(c)).toEqual([OVERVIEW_SLUG, ENVIRONMENTS_SLUG, 'tools', 'tools/run', 'ping']);
+  });
+
+  it('orders folders without a valid seq alphabetically', () => {
+    const c = collection([folder('Zoo', 0, []), folder('Ant', 0, [])]);
+    expect(slugs(c)).toEqual([OVERVIEW_SLUG, ENVIRONMENTS_SLUG, 'ant', 'zoo']);
+  });
+
+  it('splices a seq folder into the alphabetical base at position seq-1 (Bruno app parity)', () => {
+    // Alphabetical base = [Apple, Mango]; Zed has seq 1 so it lands at index 0.
+    const c = collection([folder('Zed', 1, []), folder('Apple'), folder('Mango')]);
+    expect(slugs(c)).toEqual([OVERVIEW_SLUG, ENVIRONMENTS_SLUG, 'zed', 'apple', 'mango']);
+  });
+
+  it('orders requests by seq and keeps a request without a seq', () => {
+    const c = collection([req('Zed', 2), req('Yak', 1), req('Loner')]);
+    const s = slugs(c);
+    expect(s).toContain('loner');
+    expect(s.indexOf('yak')).toBeLessThan(s.indexOf('zed'));
   });
 });
 

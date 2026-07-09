@@ -8,7 +8,7 @@ function Environments({ schema }) {
   const theme = useTheme();
   const { typography, spacing } = theme;
   const environment = schema.$defs.Environment;
-  
+
   const example = {
     name: "Production",
     description: "Production environment configuration",
@@ -22,14 +22,14 @@ function Environments({ schema }) {
     <section>
       <h2 className={typography.heading.h2}>Environments</h2>
       <p className={`${typography.body.default} ${spacing.element}`}>Environments allow you to define different sets of variables for different contexts (development, staging, production, etc.).</p>
-      
+
       <h3 className={`${typography.heading.h3} ${spacing.paragraph}`}>Environment Properties</h3>
-      <PropertyTable 
+      <PropertyTable
         properties={environment.properties}
         order={Object.keys(environment.properties)}
         required={environment.required}
       />
-      
+
       <h3 className={`${typography.heading.h3} ${spacing.paragraph}`}>Example</h3>
       <CodeBlock code={convertToYaml(example)} language="yaml" />
     </section>

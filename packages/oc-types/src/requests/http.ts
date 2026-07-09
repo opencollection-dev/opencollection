@@ -65,6 +65,7 @@ export interface FileBodyVariant {
   filePath: string;
   contentType: string;
   selected: boolean;
+  description?: Description;
 }
 
 /** @deprecated Use FileBodyVariant instead */
@@ -87,6 +88,7 @@ export interface HttpRequestSettings {
   encodeUrl?: boolean | 'inherit';
   timeout?: number | 'inherit';
   followRedirects?: boolean | 'inherit';
+  forwardAuthorizationHeader?: boolean | 'inherit';
   maxRedirects?: number | 'inherit';
 }
 
@@ -141,11 +143,17 @@ export interface HttpRequestRuntime {
   actions?: Action[];
 }
 
+export interface HttpRequestApp {
+  enabled?: boolean;
+  code?: string;
+}
+
 export interface HttpRequest {
   info?: HttpRequestInfo;
   http?: HttpRequestDetails;
   runtime?: HttpRequestRuntime;
   settings?: HttpRequestSettings;
+  app?: HttpRequestApp;
   examples?: HttpRequestExample[];
   docs?: string;
 }

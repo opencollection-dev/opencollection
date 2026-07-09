@@ -6,7 +6,7 @@ export class EnvironmentsSection extends BaseComponent {
   readonly items = this.page.getByTestId('overview-environment-item');
 
   item(name: string): Locator {
-    return this.items.filter({ hasText: name });
+    return this.items.filter({ has: this.page.getByText(name, { exact: true }) });
   }
 
   variableCount(name: string): Locator {
