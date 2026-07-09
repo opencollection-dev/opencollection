@@ -122,13 +122,19 @@ export const StyledWrapper = styled.div`
     color: var(--text-muted);
   }
 
-  .table-row:not(:last-child):not(.table-row--has-description) {
+  .table-row-description:has(> .table-description-cell:empty) {
+    display: none;
+  }
+  .table-row:not(:last-child):not(:has(+ .table-row-description > .table-description-cell:not(:empty))) {
     border-bottom: 1px solid var(--oc-table-border);
   }
-  .table-row-description:not(:last-child) {
+  .table-row:has(+ .table-row-description:last-child > .table-description-cell:empty) {
+    border-bottom: none;
+  }
+  .table-row-description:not(:last-child):has(> .table-description-cell:not(:empty)) {
     border-bottom: 1px solid var(--oc-table-border);
   }
-  .table-row--has-description .table-cell {
+  .table-row:has(+ .table-row-description > .table-description-cell:not(:empty)) .table-cell {
     padding-bottom: 0;
   }
   .table-description-cell {

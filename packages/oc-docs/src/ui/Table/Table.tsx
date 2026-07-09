@@ -68,23 +68,19 @@ const Rows: React.FC<{ rows: TableRow[]; columns: TableColumn[] }> = ({ rows, co
   rows.map((row) => (
     <React.Fragment key={row.id}>
       <tr
-        className={['table-row', row.disabled ? 'table-row--disabled' : '', row.description ? 'table-row--has-description' : '']
-          .filter(Boolean)
-          .join(' ')}
+        className={['table-row', row.disabled ? 'table-row--disabled' : ''].filter(Boolean).join(' ')}
         data-testid={row.testId}
       >
         <Cells row={row} columns={columns} />
       </tr>
-      {row.description && (
-        <tr
-          className={['table-row-description', row.disabled ? 'table-row--disabled' : ''].filter(Boolean).join(' ')}
-          data-testid={row.testId ? `${row.testId}-description` : undefined}
-        >
-          <td colSpan={columns.length} className="table-description-cell">
-            {row.description}
-          </td>
-        </tr>
-      )}
+      <tr
+        className={['table-row-description', row.disabled ? 'table-row--disabled' : ''].filter(Boolean).join(' ')}
+        data-testid={row.testId ? `${row.testId}-description` : undefined}
+      >
+        <td colSpan={columns.length} className="table-description-cell">
+          {row.description}
+        </td>
+      </tr>
     </React.Fragment>
   ));
 
