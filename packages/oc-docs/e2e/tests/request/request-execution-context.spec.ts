@@ -31,6 +31,7 @@ test.describe('Request page — Execution Context', () => {
     test('selecting a tab reveals only that panel and marks it selected', async ({ requestPage }) => {
       const { executionContext } = requestPage;
       await executionContext.openTab('asserts');
+
       await expect(executionContext.tab('asserts')).toHaveAttribute('aria-selected', 'true');
       await expect(executionContext.tab('variables')).toHaveAttribute('aria-selected', 'false');
       await expect(executionContext.assertsPanel).toBeVisible();
@@ -40,10 +41,14 @@ test.describe('Request page — Execution Context', () => {
     test('is keyboard navigable across tabs with the arrow keys', async ({ requestPage, page }) => {
       const { executionContext } = requestPage;
       await executionContext.tab('variables').focus();
+
       await page.keyboard.press('ArrowRight');
+
       await expect(executionContext.tab('scripts')).toHaveAttribute('aria-selected', 'true');
       await expect(executionContext.scriptsPanel).toBeVisible();
+
       await page.keyboard.press('ArrowLeft');
+
       await expect(executionContext.tab('variables')).toHaveAttribute('aria-selected', 'true');
     });
   });
@@ -52,6 +57,7 @@ test.describe('Request page — Execution Context', () => {
     test('Variables lists the pre-request and post-response variables', async ({ requestPage }) => {
       const { executionContext } = requestPage;
       await executionContext.openTab('variables');
+
       await expect(executionContext.variablesPanel.getByText('Pre-Request')).toBeVisible();
       await expect(executionContext.variable('expectedStatus')).toBeVisible();
       await expect(executionContext.variable('customersPath')).toBeVisible();
@@ -62,6 +68,7 @@ test.describe('Request page — Execution Context', () => {
     test('Scripts lists the collection → folder → request chain around the HTTP call', async ({ requestPage }) => {
       const { executionContext } = requestPage;
       await executionContext.openTab('scripts');
+
       await expect(executionContext.scriptStep('Collection Pre-Request')).toBeVisible();
       await expect(executionContext.scriptStep('Request Pre-Request')).toBeVisible();
       await expect(executionContext.scriptStep('Collection Post-Response')).toBeVisible();
@@ -72,6 +79,7 @@ test.describe('Request page — Execution Context', () => {
       const { executionContext } = requestPage;
       await executionContext.openTab('scripts');
       await executionContext.scriptSource('customers').first().click();
+
       await expect(page.getByTestId('folder-page')).toBeVisible();
       await expect(page.getByTestId('folder-title')).toHaveText('customers');
     });
@@ -80,12 +88,14 @@ test.describe('Request page — Execution Context', () => {
       const { executionContext } = requestPage;
       await executionContext.openTab('scripts');
       await executionContext.scriptSource('Bruno Testbench').first().click();
+
       await expect(page.getByTestId('overview')).toBeVisible();
     });
 
     test('Asserts lists every assertion', async ({ requestPage }) => {
       const { executionContext } = requestPage;
       await executionContext.openTab('asserts');
+
       await expect(executionContext.assertion('res.status equals 200')).toBeVisible();
       await expect(executionContext.assertion('res.body is an array')).toBeVisible();
       await expect(executionContext.assertion('res.body.length greater than 0')).toBeVisible();
@@ -94,6 +104,7 @@ test.describe('Request page — Execution Context', () => {
     test('Tests lists every test case', async ({ requestPage }) => {
       const { executionContext } = requestPage;
       await executionContext.openTab('tests');
+
       await expect(executionContext.testCase('status is 200 OK')).toBeVisible();
       await expect(executionContext.testCase('response body is a non-empty array')).toBeVisible();
       await expect(executionContext.testCase('every customer has an id and email')).toBeVisible();
@@ -105,18 +116,26 @@ test.describe('Request page — Execution Context', () => {
     test('the execution flow shows only while Scripts is active', async ({ requestPage }) => {
       const { executionContext } = requestPage;
       await expect(executionContext.executionFlow).toBeHidden();
+
       await executionContext.openTab('scripts');
+
       await expect(executionContext.executionFlow).toHaveText('Sandwich execution flow');
+
       await executionContext.openTab('variables');
+
       await expect(executionContext.executionFlow).toBeHidden();
     });
 
     test('"View complete code" shows only while Tests is active and opens the code dialog', async ({ requestPage, page }) => {
       const { executionContext } = requestPage;
       await expect(executionContext.viewCompleteCodeButton).toBeHidden();
+
       await executionContext.openTab('tests');
+
       await expect(executionContext.viewCompleteCodeButton).toBeVisible();
+
       await executionContext.viewCompleteCodeButton.click();
+
       await expect(page.getByRole('dialog', { name: 'All tests' })).toBeVisible();
     });
   });
@@ -124,9 +143,13 @@ test.describe('Request page — Execution Context', () => {
   test('persists the collapsed state across a reload', async ({ requestPage, page }) => {
     const toggle = () => requestPage.section('Execution Context').getByRole('button', { name: /Execution Context/i });
     await expect(toggle()).toHaveAttribute('aria-expanded', 'true');
+
     await toggle().click();
+
     await expect(toggle()).toHaveAttribute('aria-expanded', 'false');
+
     await page.reload();
+
     await expect(toggle()).toHaveAttribute('aria-expanded', 'false');
   });
 });

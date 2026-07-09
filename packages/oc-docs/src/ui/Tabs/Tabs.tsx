@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useState, type ReactNode } from 'react';
 import { StyledWrapper } from './StyledWrapper';
 
-export interface TabItem {
+export interface Tab {
   id: string;
   label: string;
   count?: number;
@@ -11,10 +11,8 @@ export interface TabItem {
   disabled?: boolean;
 }
 
-export type Tab = TabItem;
-
 interface TabsProps {
-  tabs: TabItem[];
+  tabs: Tab[];
   activeTab?: string;
   defaultActiveTab?: string;
   onTabChange?: (id: string) => void;

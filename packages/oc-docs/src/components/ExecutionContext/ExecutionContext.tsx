@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tabs, type TabItem } from '../../ui/Tabs/Tabs';
+import { Tabs, type Tab } from '../../ui/Tabs/Tabs';
 import { ScriptChain } from './ScriptChain/ScriptChain';
 import { VariablesPanel } from './VariablesPanel/VariablesPanel';
 import { AssertList } from './AssertList/AssertList';
@@ -96,7 +96,7 @@ export const ExecutionContext: React.FC<ExecutionContextProps> = ({
     );
   }
 
-  const tabs: TabItem[] = [];
+  const tabs: Tab[] = [];
   if (hasVars) {
     tabs.push({
       id: 'variables',

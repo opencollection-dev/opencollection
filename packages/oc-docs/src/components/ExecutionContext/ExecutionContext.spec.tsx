@@ -2,6 +2,7 @@ import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { ExecutionContext } from './ExecutionContext';
 import { useRenderToDom } from '../../hooks/useRenderToDom';
+import { query } from '../../test-utils/dom';
 import type { ScriptChainStep } from '../../utils/request';
 import type { AssertionRow } from '../../utils/assertions';
 import type { TestRow, RawTestScript } from '../../utils/fileUtils';
@@ -39,27 +40,26 @@ const full = (props: Partial<React.ComponentProps<typeof ExecutionContext>> = {}
   />
 );
 
-type Root = ReturnType<typeof useRenderToDom>;
-const tab = (root: Root, id: string) => root.querySelector(`[data-testid="execution-context-tabs-tab-${id}"]`);
-const panel = (root: Root, id: string) => root.querySelector(`[data-testid="execution-context-${id}"]`);
-const flow = (root: Root) => root.querySelector('[data-testid="execution-context-flow"]');
+const tabSelector = (id: string) => `[data-testid="execution-context-tabs-tab-${id}"]`;
+const panelSelector = (id: string) => `[data-testid="execution-context-${id}"]`;
+const flowSelector = '[data-testid="execution-context-flow"]';
 
 describe('ExecutionContext', () => {
   describe('tabs variant (default)', () => {
     it('renders a tab per non-empty section, each with its item count', () => {
       const root = useRenderToDom(full());
-      expect(tab(root, 'variables')?.querySelector('.tab-count')?.text).toBe('2');
-      expect(tab(root, 'scripts')?.querySelector('.tab-count')?.text).toBe('3');
-      expect(tab(root, 'asserts')?.querySelector('.tab-count')?.text).toBe('2');
-      expect(tab(root, 'tests')?.querySelector('.tab-count')?.text).toBe('2');
+      expect(query(query(root, tabSelector('variables')), '.tab-count').text).toBe('2');
+      expect(query(query(root, tabSelector('scripts')), '.tab-count').text).toBe('3');
+      expect(query(query(root, tabSelector('asserts')), '.tab-count').text).toBe('2');
+      expect(query(query(root, tabSelector('tests')), '.tab-count').text).toBe('2');
     });
 
     it('mounts only the active tab panel (Variables first)', () => {
       const root = useRenderToDom(full());
-      expect(panel(root, 'variables')?.text).toContain('sessionId');
-      expect(panel(root, 'scripts')).toBeNull();
-      expect(panel(root, 'asserts')).toBeNull();
-      expect(panel(root, 'tests')).toBeNull();
+      expect(query(root, panelSelector('variables')).text).toContain('sessionId');
+      expect(root.querySelector(panelSelector('scripts'))).toBeNull();
+      expect(root.querySelector(panelSelector('asserts'))).toBeNull();
+      expect(root.querySelector(panelSelector('tests'))).toBeNull();
     });
 
     it('hides tabs that have no items', () => {
@@ -72,22 +72,24 @@ describe('ExecutionContext', () => {
           tests={[]}
         />
       );
-      expect(tab(root, 'variables')).not.toBeNull();
-      expect(tab(root, 'scripts')).not.toBeNull();
-      expect(tab(root, 'asserts')).toBeNull();
-      expect(tab(root, 'tests')).toBeNull();
+      expect(root.querySelector(tabSelector('variables'))).not.toBeNull();
+      expect(root.querySelector(tabSelector('scripts'))).not.toBeNull();
+      expect(root.querySelector(tabSelector('asserts'))).toBeNull();
+      expect(root.querySelector(tabSelector('tests'))).toBeNull();
     });
 
     it('shows the execution-flow indicator only while the Scripts tab is active', () => {
-      expect(flow(useRenderToDom(full()))).toBeNull();
+      expect(useRenderToDom(full()).querySelector(flowSelector)).toBeNull();
+
       const scriptsOnly = useRenderToDom(
         <ExecutionContext scriptChain={scriptChain} preVars={[]} postVars={[]} assertions={[]} tests={[]} />
       );
-      expect(flow(scriptsOnly)?.text).toBe('Sandwich execution flow');
+      expect(query(scriptsOnly, flowSelector).text).toBe('Sandwich execution flow');
+
       const sequential = useRenderToDom(
         <ExecutionContext scriptChain={scriptChain} preVars={[]} postVars={[]} assertions={[]} tests={[]} flow="sequential" />
       );
-      expect(flow(sequential)?.text).toBe('Sequential execution flow');
+      expect(query(sequential, flowSelector).text).toBe('Sequential execution flow');
     });
 
     it('shows "View complete code" in the header only while the Tests tab is active', () => {
@@ -101,20 +103,20 @@ describe('ExecutionContext', () => {
     it('exposes an accessible tablist with the first tab selected', () => {
       const root = useRenderToDom(full());
       expect(root.querySelector('[role="tablist"]')).not.toBeNull();
-      expect(tab(root, 'variables')?.getAttribute('role')).toBe('tab');
-      expect(tab(root, 'variables')?.getAttribute('aria-selected')).toBe('true');
+      expect(query(root, tabSelector('variables')).getAttribute('role')).toBe('tab');
+      expect(query(root, tabSelector('variables')).getAttribute('aria-selected')).toBe('true');
     });
   });
 
   describe('docs variant', () => {
     it('stacks every section at once (scripts, variables, asserts, tests)', () => {
       const root = useRenderToDom(full({ variant: 'docs' }));
-      expect(panel(root, 'scripts')?.text).toContain('Collection Pre-Request');
-      expect(panel(root, 'scripts')?.text).toContain('HTTP');
-      expect(panel(root, 'variables')?.text).toContain('sessionId');
-      expect(panel(root, 'asserts')?.text).toContain('is defined');
-      expect(panel(root, 'tests')?.text).toContain('returns a token');
-      expect(flow(root)?.text).toBe('Sandwich execution flow');
+      expect(query(root, panelSelector('scripts')).text).toContain('Collection Pre-Request');
+      expect(query(root, panelSelector('scripts')).text).toContain('HTTP');
+      expect(query(root, panelSelector('variables')).text).toContain('sessionId');
+      expect(query(root, panelSelector('asserts')).text).toContain('is defined');
+      expect(query(root, panelSelector('tests')).text).toContain('returns a token');
+      expect(query(root, flowSelector).text).toBe('Sandwich execution flow');
       expect(root.querySelector('[data-testid="execution-context-view-complete-code"]')).not.toBeNull();
     });
   });
