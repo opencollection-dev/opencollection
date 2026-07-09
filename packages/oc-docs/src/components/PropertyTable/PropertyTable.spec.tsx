@@ -1,6 +1,7 @@
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect } from 'vitest';
+import { useRenderToDom } from '../../hooks/useRenderToDom';
 import { PropertyTable } from './PropertyTable';
 
 describe('PropertyTable', () => {
@@ -30,5 +31,15 @@ describe('PropertyTable', () => {
       <PropertyTable rows={[{ label: 'Custom', node: <em>hi</em> }]} />
     );
     expect(html).toContain('<em>hi</em>');
+  });
+
+  it('shows a type label next to the value when a type is given', () => {
+    const root = useRenderToDom(<PropertyTable rows={[{ label: 'X-Trace-Id', value: '{{randomUUID}}', type: 'uuid' }]} />);
+    expect(root.querySelector('.property-type')?.text).toBe('uuid');
+  });
+
+  it('omits the type label when no type is given', () => {
+    const root = useRenderToDom(<PropertyTable rows={[{ label: 'Accept', value: 'application/json' }]} />);
+    expect(root.querySelector('.property-type')).toBeNull();
   });
 });

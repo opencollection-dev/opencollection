@@ -9,7 +9,9 @@ import {
   getPreRequestVars,
   getPostResponseVars,
   getCollectionVariables,
-  getShortMethod
+  getShortMethod,
+  getValueType,
+  getVariableType
 } from './request';
 import { AUTH_MODE_LABELS } from '../constants';
 
@@ -206,14 +208,44 @@ describe('buildScriptChain', () => {
   });
 });
 
+describe('getValueType', () => {
+  it('returns a free-form data-type from a header/param', () => {
+    expect(getValueType({ name: 'X-Trace-Id', value: '{{uuid}}', type: 'uuid' })).toBe('uuid');
+  });
+
+  it('ignores a param query/path location (not a data-type)', () => {
+    expect(getValueType({ name: 'id', value: '1', type: 'path' })).toBeUndefined();
+    expect(getValueType({ name: 'q', value: 'x', type: 'query' })).toBeUndefined();
+  });
+
+  it('returns undefined when there is no type', () => {
+    expect(getValueType({ name: 'Accept', value: 'application/json' })).toBeUndefined();
+    expect(getValueType(null)).toBeUndefined();
+  });
+});
+
+describe('getVariableType', () => {
+  it('reads a typed value, a secret type, and the selected variant', () => {
+    expect(getVariableType({ name: 'a', value: { type: 'number', data: '1' } } as any)).toBe('number');
+    expect(getVariableType({ name: 'b', secret: true, type: 'string' } as any)).toBe('string');
+    expect(
+      getVariableType({ name: 'c', value: [{ title: 't', selected: true, value: { type: 'object', data: '{}' } }] } as any)
+    ).toBe('object');
+  });
+
+  it('returns undefined for a plain string value', () => {
+    expect(getVariableType({ name: 'd', value: 'plain' } as any)).toBeUndefined();
+  });
+});
+
 describe('requestVars', () => {
-  it('reads pre-request variables and flattens typed values', () => {
+  it('reads pre-request variables, flattening typed values and surfacing their data-type', () => {
     const item: any = {
       runtime: { variables: [{ name: 'x', value: '1' }, { name: 'y', value: { type: 'string', data: 'z' } }] }
     };
     expect(getPreRequestVars(item)).toEqual([
-      { name: 'x', value: '1', disabled: undefined },
-      { name: 'y', value: 'z', disabled: undefined }
+      { name: 'x', value: '1', type: undefined, disabled: undefined },
+      { name: 'y', value: 'z', type: 'string', disabled: undefined }
     ]);
   });
 

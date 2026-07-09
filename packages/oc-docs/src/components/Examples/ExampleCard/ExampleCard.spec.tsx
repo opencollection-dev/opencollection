@@ -1,6 +1,7 @@
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect } from 'vitest';
+import { useRenderToDom } from '../../../hooks/useRenderToDom';
 import { ExampleCard } from './ExampleCard';
 import type { HttpRequestExample } from '@opencollection/types/requests/http';
 
@@ -212,6 +213,22 @@ describe('ExampleCard', () => {
       />
     );
     expect(html).toContain('>DELETE<');
+  });
+
+  it('shows the data-type next to an example request header', () => {
+    const root = useRenderToDom(
+      <ExampleCard
+        example={{
+          name: 'Typed header',
+          request: { headers: [{ name: 'X-Trace-Id', value: '{{traceId}}', type: 'uuid' } as any] },
+          response: { status: 200 }
+        }}
+        method="get"
+        url="/x"
+        defaultExpanded
+      />
+    );
+    expect(root.querySelector('.property-type')?.text).toBe('uuid');
   });
 
   it('splits Params into Path and Query and labels the tab "path & query"', () => {

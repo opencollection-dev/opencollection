@@ -58,9 +58,26 @@ export const StyledWrapper = styled.div`
     line-height: 1.2;
     letter-spacing: normal;
     color: var(--text-primary);
+  }
+  .property-value-line {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+  .property-value-main {
+    min-width: 0;
+    flex: 0 1 auto;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+  .property-type {
+    flex-shrink: 0;
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    line-height: 1.2;
+    color: var(--text-muted);
   }
   .property-value-cell .secret-value-text {
     font-family: inherit;

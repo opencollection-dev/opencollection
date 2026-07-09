@@ -28,7 +28,8 @@ import {
   buildScriptChain,
   getScriptFlow,
   getBodyView,
-  getDescription
+  getDescription,
+  getValueType
 } from '../../utils/request';
 import { collectAssertions } from '../../utils/assertions';
 import { collectTests, collectRawTestScripts } from '../../utils/fileUtils';
@@ -169,6 +170,7 @@ const RequestContent: React.FC<RequestContentProps> = ({
                       rows={headers.map((h) => ({
                         label: h.name,
                         value: h.value,
+                        type: getValueType(h),
                         disabled: h.disabled,
                         description: getDescription(h)
                       }))}

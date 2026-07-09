@@ -14,7 +14,7 @@ import { RequestBody } from '../../Request/RequestBody/RequestBody';
 import { Code } from '../../Code/Code';
 import { PlayIcon } from '../../../assets/icons';
 import { resolvePathAndQueryParams } from '../../../utils/pathParams';
-import { getBodyView, getDescription } from '../../../utils/request';
+import { getBodyView, getDescription, getValueType } from '../../../utils/request';
 import { computeBodySize, formatBytes, responseBodyLanguage, responseBodyContentType, statusCodePhrase } from '../../../utils/exampleResponse';
 import { statusToneColor } from '../../../utils/common';
 import { StyledWrapper } from './StyledWrapper';
@@ -40,6 +40,7 @@ const headerRows = (headers: (HttpRequestHeader | HttpResponseHeader)[]): Proper
   headers.map((h) => ({
     label: h.name,
     value: h.value,
+    type: getValueType(h),
     disabled: 'disabled' in h ? h.disabled : undefined,
     description: getDescription(h)
   }));

@@ -35,6 +35,7 @@ request:
   headers:
     - name: "collection-header"
       value: "collection-header-value"
+      type: "uuid"
   variables:
     - name: "collection_pre_var"
       value: "collection_pre_var_value"
@@ -281,6 +282,10 @@ items:
                   headers:
                     - name: Accept
                       value: application/json
+                      type: string
+                    - name: X-Request-Id
+                      value: '{{requestId}}'
+                      type: uuid
                   auth:
                     type: bearer
                     token: '{{bearer_token}}'
@@ -290,8 +295,10 @@ items:
                   headers:
                     - name: Content-Type
                       value: application/json
+                      type: string
                     - name: x-total-count
                       value: '42'
+                      type: integer
                   body:
                     type: json
                     data: |

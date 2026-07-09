@@ -73,6 +73,26 @@ export const getDescription = (item: unknown): string | undefined => {
   return descriptionText((item as { description?: unknown }).description);
 };
 
+const NON_DATA_TYPES = new Set(['query', 'path']);
+
+export const getValueType = (entity: unknown): string | undefined => {
+  if (!entity || typeof entity !== 'object') return undefined;
+  const type = (entity as { type?: unknown }).type;
+  return typeof type === 'string' && type && !NON_DATA_TYPES.has(type) ? type : undefined;
+};
+
+export const getVariableType = (variable: Variable): string | undefined => {
+  const declared = (variable as { type?: unknown }).type;
+  if (typeof declared === 'string' && declared) return declared;
+  const { value } = variable;
+  const chosen = Array.isArray(value) ? (value.find((variant) => variant.selected) ?? value[0])?.value : value;
+  if (chosen && typeof chosen === 'object' && !Array.isArray(chosen)) {
+    const type = (chosen as { type?: unknown }).type;
+    if (typeof type === 'string' && type) return type;
+  }
+  return undefined;
+};
+
 export interface BodyTableRow {
   name: string;
   value: string;
@@ -363,6 +383,7 @@ export const buildScriptChain = (
 export interface PreRequestVarRow {
   name: string;
   value: string;
+  type?: string;
   disabled?: boolean;
 }
 
@@ -388,6 +409,7 @@ const flattenValue = (value: Variable['value']): string => {
 const toPreRequestVarRow = (variable: Variable): PreRequestVarRow => ({
   name: variable.name,
   value: flattenValue(variable.value),
+  type: getVariableType(variable),
   disabled: variable.disabled
 });
 

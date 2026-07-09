@@ -11,7 +11,7 @@ interface VariablesPanelProps {
 }
 
 const preRows = (vars: PreRequestVarRow[]): PropertyRow[] =>
-  vars.map((v) => ({ label: v.name, value: v.value, disabled: v.disabled }));
+  vars.map((v) => ({ label: v.name, value: v.value, type: v.type, disabled: v.disabled }));
 
 const postRows = (vars: PostResponseVarRow[]): PropertyRow[] =>
   vars.map((v) => ({ label: v.name, value: v.expression, disabled: v.disabled }));

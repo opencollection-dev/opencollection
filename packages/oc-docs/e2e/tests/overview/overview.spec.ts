@@ -50,9 +50,10 @@ test.describe('Collection Overview', () => {
       const { configuration } = overviewPage;
       await expect(overviewPage.sectionLabel('Collection Configuration')).toBeVisible();
 
-      await test.step('the Headers group lists the collection-level header and its value', async () => {
+      await test.step('the Headers group lists the collection-level header, its value and its type', async () => {
         await expect(configuration.subHeading('Headers')).toBeVisible();
         await expect(configuration.root.getByText('collection-header-value')).toBeVisible();
+        await expect(configuration.root.locator('.property-type', { hasText: 'uuid' })).toBeVisible();
       });
 
       await test.step('the Auth group shows the resolved auth mode (Bearer Token)', async () => {

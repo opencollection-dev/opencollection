@@ -7,6 +7,7 @@ import { StyledWrapper } from './StyledWrapper';
 export interface PropertyRow {
   label: string;
   value?: string;
+  type?: string;
   secret?: boolean;
   node?: React.ReactNode;
   disabled?: boolean;
@@ -50,7 +51,10 @@ export const PropertyTable: React.FC<PropertyTableProps> = ({ rows, emptyMessage
           >
             <dt className="property-key"><TruncatedText text={row.label} /></dt>
             <dd className="property-value-cell" data-testid={testId && row.testId ? `${testId}-${row.testId}` : undefined}>
-              <ValueCell row={row} testId={testId} />
+              <div className="property-value-line">
+                <div className="property-value-main"><ValueCell row={row} testId={testId} /></div>
+                {row.type ? <span className="property-type">{row.type}</span> : null}
+              </div>
               {row.description ? <p className="property-description">{row.description}</p> : null}
             </dd>
           </div>
