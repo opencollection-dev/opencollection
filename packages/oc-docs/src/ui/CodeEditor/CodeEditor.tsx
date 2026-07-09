@@ -24,13 +24,16 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   };
 
   return (
-    <div style={{ 
-      height, 
-      width: '100%',
-      border: '1px solid var(--border-color)',
-      borderRadius: '4px',
-      overflow: 'hidden'
-    }}>
+    <div
+      style={{
+        height,
+        width: '100%',
+        border: '1px solid var(--border-color)',
+        borderRadius: '4px',
+        overflow: 'hidden'
+      }}
+      className="py-2"
+    >
       <Editor
         height={height}
         language={language}
@@ -53,10 +56,11 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           lineDecorationsWidth: 10,
           lineNumbersMinChars: 3,
           automaticLayout: true,
+          placeholder: '...'
         }}
       />
     </div>
   );
 };
 
-export default CodeEditor; 
+export default CodeEditor;
