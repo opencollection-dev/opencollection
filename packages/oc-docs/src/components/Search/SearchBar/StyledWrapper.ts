@@ -16,7 +16,7 @@ export const StyledWrapper = styled.div`
     display: flex;
     flex-direction: column;
     background: var(--oc-background-mantle);
-    border: 1px solid var(--oc-border-border1);
+    border: 1px solid var(--border-color);
     border-radius: 6px;
     overflow: hidden;
   }
@@ -47,7 +47,7 @@ export const StyledWrapper = styled.div`
     height: 40px;
     padding: 0 12px;
     gap: 9px;
-    border-bottom: 1px solid var(--oc-border-border1);
+    border-bottom: 1px solid var(--border-color);
   }
 
   .search-field-icon {
@@ -112,7 +112,7 @@ export const StyledWrapper = styled.div`
     padding: 0 12px;
     box-sizing: border-box;
     flex-shrink: 0;
-    border-bottom: 1px solid var(--oc-border-border1);
+    border-bottom: 1px solid var(--border-color);
   }
   [data-testid='search-folder-filter'],
   .search-clear {

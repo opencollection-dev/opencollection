@@ -54,7 +54,7 @@ export const StyledWrapper = styled.div`
     padding: 8px;
     list-style: none;
     background: var(--oc-background-base);
-    border: 1px solid var(--oc-border-border1);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
   }
 

@@ -24,7 +24,7 @@ export const StyledWrapper = styled.nav`
     min-height: 65px;
     padding: 14px 18px;
     border-radius: 8px;
-    border: 1px solid var(--oc-border-border1, var(--border-color));
+    border: 1px solid var(--border-color);
     text-decoration: none;
     transition: border-color 0.12s ease, background-color 0.12s ease;
   }

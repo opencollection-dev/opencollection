@@ -27,7 +27,7 @@ export const SidebarContainer = styled.div`
   /* Sidebar Logo styling */
   & .logo {
     padding: 0 8px 12px 8px;
-    border-bottom: 1px solid var(--oc-border-border1);
+    border-bottom: 1px solid var(--border-color);
     margin-bottom: 6px;
   }
 

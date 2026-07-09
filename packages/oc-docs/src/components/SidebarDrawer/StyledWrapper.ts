@@ -25,7 +25,7 @@ export const StyledWrapper = styled.div`
     max-width: 86vw;
     z-index: calc(var(--z-overlay, 50) + 1);
     background-color: var(--oc-background-base);
-    border-right: 1px solid var(--oc-border-border1);
+    border-right: 1px solid var(--border-color);
     box-shadow: var(--shadow-md);
     transform: translateX(-100%);
     visibility: hidden;

@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 export const StyledWrapper = styled.div`
   width: 100%;
-  border: 1px solid var(--oc-border-border1); /* #e5e5e5 */
+  border: 1px solid var(--oc-table-border);
   border-radius: 0.5rem;
   overflow-x: auto;
   scrollbar-width: thin;
@@ -117,7 +117,7 @@ export const StyledWrapper = styled.div`
 
   .table-group-meta {
     margin-left: auto;
-    border: 1px solid var(--oc-border-border1);
+    border: 1px solid var(--oc-table-border);
     background: var(--oc-background-base);
     color: var(--text-muted);
   }

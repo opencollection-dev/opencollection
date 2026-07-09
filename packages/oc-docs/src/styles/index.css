@@ -38,7 +38,7 @@
   --text-muted: var(--oc-colors-text-muted);
 
   /* Border colors */
-  --border-color: var(--oc-border-border1);
+  --border-color: var(--oc-border-border0);
   /* Stronger border (#cccccc) for hover/dividers needing more contrast (design: --border-2). */
   --border-strong: var(--oc-border-border2);
 
@@ -344,12 +344,12 @@ html, body {
 .code-snippets-wrapper .compact-code-view,
 .code-example-card .compact-code-view {
   background-color: var(--code-bg);
-  border: 1px solid var(--oc-border-border1);
+  border: 1px solid var(--border-color);
 }
 
 .code-snippets-wrapper .code-header,
 .code-example-card .code-header {
-  border-bottom: 1px solid var(--oc-border-border1);
+  border-bottom: 1px solid var(--border-color);
   background-color: var(--oc-background-surface0);
 }
 
@@ -807,7 +807,7 @@ tr.themed-row:nth-child(even) {
   max-width: 100% !important;
   overflow-x: auto !important;
   margin: 1em 0 !important;
-  border: 1px solid var(--oc-border-border1) !important;
+  border: 1px solid var(--border-color) !important;
   border-radius: 0.5rem !important;
 }
 
@@ -828,6 +828,11 @@ tr.themed-row:nth-child(even) {
 .markdown-documentation tr:last-child td,
 .markdown-documentation tr:last-child th {
   border-bottom: none !important;
+}
+
+.markdown-documentation th:not(:last-child),
+.markdown-documentation td:not(:last-child) {
+  border-right: 1px solid var(--oc-table-border) !important;
 }
 
 .markdown-documentation th {
