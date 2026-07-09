@@ -5,6 +5,7 @@ import type { Variable } from '@opencollection/types/common/variables';
 import KeyValueTable, { KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
 import { SidebarContainer, SidebarItems, SidebarItem } from '../../../EnvListStyles/StyledWrapper';
 import { useAppDispatch } from '../../../../../store/hooks';
+import { isSecretVariable } from '../../../../../utils/environments';
 import { updateCollectionEnvironments } from '@slices/playground';
 
 interface EnvironmentsViewProps {
@@ -44,12 +45,13 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection }) => {
         }
       }
     }
-    
+
     return {
       id: `var-${index}`,
       name: variable.name || '',
       value: value,
-      enabled: !variable.disabled
+      enabled: !variable.disabled,
+      secret: isSecretVariable(variable)
     };
   }, []);
 
@@ -57,8 +59,9 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection }) => {
     return {
       name: row.name,
       value: row.value,
-      disabled: !row.enabled
-    };
+      disabled: !row.enabled,
+      ...(row.secret ? { secret: true } : {})
+    } as Variable;
   }, []);
 
   const variablesAsRows = useMemo(() => {
@@ -70,7 +73,7 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection }) => {
     if (!selectedEnvironment || !collection || selectedEnvironmentIndex === null) return;
 
     const updatedVariables: Variable[] = rows.map(rowToVariable);
-    
+
     const updatedEnvironments = environments.map((env, index) => {
       if (index === selectedEnvironmentIndex) {
         return {
@@ -90,7 +93,7 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection }) => {
         environments: updatedEnvironments
       }
     };
-    
+
     if ((collection as any).environments) {
       (updatedCollection as any).environments = updatedEnvironments;
     }
@@ -128,110 +131,87 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection }) => {
   }
 
   return (
-    <div style={{ display: 'flex', height: '100%', overflow: 'hidden', width: '100%' }}>
-      <div
-        style={{
-          width: 'var(--sidebar-width)',
-          minWidth: 'var(--sidebar-width)',
-          borderRight: '1px solid var(--border-color)',
-          backgroundColor: 'var(--bg-secondary)',
-          flexShrink: 0,
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column'
-        }}
-      >
-        <SidebarContainer className="h-full flex flex-col" style={{ width: 'var(--sidebar-width)' }}>
-          <div className="p-4" style={{ borderBottom: '1px solid var(--border-color)' }}>
-            <h2 className="font-semibold" style={{ color: 'var(--text-primary)', fontSize: '16px' }}>
-              Environments
-            </h2>
-          </div>
-
-          <SidebarItems>
-            {environments.map((env: Environment, index: number) => (
-              <SidebarItem
-                key={index}
-                className={`
-                  flex items-center select-none text-sm cursor-pointer
-                  ${selectedEnvironmentIndex === index ? 'active' : ''}
-                  transition-all duration-200
-                `}
-                style={{ paddingLeft: '12px' }}
-                onClick={() => setSelectedEnvironmentIndex(index)}
-              >
-                {env.color && (
-                  <div
-                    style={{
-                      width: '12px',
-                      height: '12px',
-                      borderRadius: '50%',
-                      backgroundColor: env.color,
-                      marginRight: '8px',
-                      flexShrink: 0
-                    }}
-                  />
-                )}
-                <div className="truncate flex-1">
-                  {env.name || `Environment ${index + 1}`}
-                </div>
-              </SidebarItem>
-            ))}
-          </SidebarItems>
-        </SidebarContainer>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', overflow: 'hidden', backgroundColor: 'var(--oc-background-base)' }}>
+      <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--oc-border-border1)', flexShrink: 0 }}>
+        <h2 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--oc-text)' }}>
+          Environment variables
+        </h2>
       </div>
 
-      <div style={{
-        flex: 1,
-        overflow: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
-        backgroundColor: 'var(--oc-background-base)',
-        minHeight: 0,
-        padding: '24px'
-      }}>
-        {selectedEnvironment ? (
-          <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-            <div style={{ marginBottom: '16px' }}>
-              <h2 style={{ fontSize: '20px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>
-                {selectedEnvironment.name || `Environment ${(selectedEnvironmentIndex || 0) + 1}`}
-              </h2>
-              {selectedEnvironment.description && (
-                <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
-                  {typeof selectedEnvironment.description === 'string' 
-                    ? selectedEnvironment.description 
-                    : selectedEnvironment.description.content}
-                </p>
-              )}
+      <div style={{ display: 'flex', flex: 1, minHeight: 0, overflow: 'hidden' }}>
+        <div style={{ width: '200px', minWidth: '200px', borderRight: '1px solid var(--oc-border-border1)', flexShrink: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+          <SidebarContainer className="h-full flex flex-col">
+            <SidebarItems>
+              {environments.map((env: Environment, index: number) => (
+                <SidebarItem
+                  key={index}
+                  className={`flex items-center select-none text-sm cursor-pointer ${selectedEnvironmentIndex === index ? 'active' : ''}`}
+                  onClick={() => setSelectedEnvironmentIndex(index)}
+                >
+                  {env.color && (
+                    <div
+                      style={{
+                        width: '12px',
+                        height: '12px',
+                        borderRadius: '50%',
+                        backgroundColor: env.color,
+                        marginRight: '8px',
+                        flexShrink: 0
+                      }}
+                    />
+                  )}
+                  <div className="truncate flex-1">
+                    {env.name || `Environment ${index + 1}`}
+                  </div>
+                </SidebarItem>
+              ))}
+            </SidebarItems>
+          </SidebarContainer>
+        </div>
+
+        <div style={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column', minHeight: 0, padding: '24px' }}>
+          {selectedEnvironment ? (
+            <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+              <div style={{ marginBottom: '16px' }}>
+                <h2 style={{ fontSize: '20px', fontWeight: 600, color: 'var(--oc-text)', marginBottom: '8px' }}>
+                  {selectedEnvironment.name || `Environment ${(selectedEnvironmentIndex || 0) + 1}`}
+                </h2>
+                {selectedEnvironment.description && (
+                  <p style={{ fontSize: '14px', color: 'var(--oc-colors-text-subtext1)' }}>
+                    {typeof selectedEnvironment.description === 'string'
+                      ? selectedEnvironment.description
+                      : selectedEnvironment.description.content}
+                  </p>
+                )}
+              </div>
+
+              <div style={{ flex: 1, minHeight: 0 }}>
+                <KeyValueTable
+                  data={variablesAsRows}
+                  onChange={handleVariablesChange}
+                  keyPlaceholder="Variable Name"
+                  valuePlaceholder="Variable Value"
+                  showEnabled={true}
+                  disableNewRow={true}
+                  disableDelete={true}
+                />
+              </div>
             </div>
-            
-            <div style={{ flex: 1, minHeight: 0 }}>
-              <KeyValueTable
-                data={variablesAsRows}
-                onChange={handleVariablesChange}
-                keyPlaceholder="Variable Name"
-                valuePlaceholder="Variable Value"
-                showEnabled={true}
-                disableNewRow={true}
-                disableDelete={true}
-              />
+          ) : (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '100%',
+              color: 'var(--oc-colors-text-muted)'
+            }}>
+              <p>Select an environment to view its variables</p>
             </div>
-          </div>
-        ) : (
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '100%',
-            color: 'var(--oc-colors-text-muted)'
-          }}>
-            <p>Select an environment to view its variables</p>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
 };
 
 export default EnvironmentsView;
-

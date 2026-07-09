@@ -21,7 +21,7 @@ const humanizeManager = (type: string | undefined): string => {
   );
 };
 
-const isSecretVariable = (variable: Variable | SecretVariable): variable is SecretVariable =>
+export const isSecretVariable = (variable: Variable | SecretVariable): variable is SecretVariable =>
   (variable as SecretVariable).secret === true;
 
 const resolveValue = (value: VariableValueOrVariants | undefined): { value: string; type: VariableValueType } => {

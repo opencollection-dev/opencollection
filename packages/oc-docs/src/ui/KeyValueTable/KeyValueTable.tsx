@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import SecretValue from '../SecretValue/SecretValue';
 import './KeyValueTable.css';
 
 export interface KeyValueRow {
@@ -255,20 +256,24 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                     )}
                   </td>
                   <td className="col-value">
-                    <input
-                      ref={(el) => {
-                        inputRefs.current[`${index}-value`] = el;
-                      }}
-                      type="text"
-                      className="text-input"
-                      value={row.value}
-                      placeholder={isLastEmptyRow ? valuePlaceholder : ''}
-                      onChange={(e) => handleFieldChange(index, 'value', e.target.value)}
-                      autoComplete="off"
-                      autoCorrect="off"
-                      autoCapitalize="off"
-                      spellCheck={false}
-                    />
+                    {row.secret ? (
+                      <SecretValue value={row.value} onChange={(v) => handleFieldChange(index, 'value', v)} />
+                    ) : (
+                      <input
+                        ref={(el) => {
+                          inputRefs.current[`${index}-value`] = el;
+                        }}
+                        type="text"
+                        className="text-input"
+                        value={row.value}
+                        placeholder={isLastEmptyRow ? valuePlaceholder : ''}
+                        onChange={(e) => handleFieldChange(index, 'value', e.target.value)}
+                        autoComplete="off"
+                        autoCorrect="off"
+                        autoCapitalize="off"
+                        spellCheck={false}
+                      />
+                    )}
                   </td>
                   {additionalColumns.map(col => (
                     <td key={col.key} className={`col-${col.key}`}>

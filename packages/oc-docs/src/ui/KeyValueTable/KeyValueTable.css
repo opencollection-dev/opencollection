@@ -129,6 +129,11 @@
   text-overflow: ellipsis;
 }
 
+.key-value-table .col-value .secret-value {
+  border: 1px solid transparent;
+  padding: 5px 8px;
+}
+
 .key-value-table .text-input::placeholder {
   color: var(--oc-colors-text-subtext0);
   opacity: 0.6;

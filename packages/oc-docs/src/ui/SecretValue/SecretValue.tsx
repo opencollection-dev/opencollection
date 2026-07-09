@@ -7,6 +7,7 @@ interface SecretValueProps {
   value?: string;
   align?: 'between' | 'start';
   readOnly?: boolean;
+  onChange?: (value: string) => void;
   testId?: string;
 }
 
@@ -26,8 +27,9 @@ const EyeIcon: React.FC<{ off?: boolean }> = ({ off }) => (
   </svg>
 );
 
-export const SecretValue: React.FC<SecretValueProps> = ({ value = '', align = 'between', readOnly = false, testId = 'secret-value' }) => {
+export const SecretValue: React.FC<SecretValueProps> = ({ value = '', align = 'between', readOnly = false, onChange, testId = 'secret-value' }) => {
   const [revealed, setRevealed] = useState(false);
+  const editable = !!onChange && !readOnly;
   const showValue = revealed && !readOnly;
 
   return (
@@ -37,9 +39,24 @@ export const SecretValue: React.FC<SecretValueProps> = ({ value = '', align = 'b
         .join(' ')}
       data-testid={testId}
     >
-      <span className="secret-value-text" aria-hidden={!showValue} data-testid={testId ? `${testId}-text` : undefined}>
-        {showValue ? value : SECRET_MASK}
-      </span>
+      {editable ? (
+        <input
+          className="secret-value-input"
+          type={revealed ? 'text' : 'password'}
+          value={value}
+          readOnly={!revealed}
+          onChange={(e) => onChange?.(e.target.value)}
+          data-testid={testId ? `${testId}-input` : undefined}
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck={false}
+        />
+      ) : (
+        <span className="secret-value-text" aria-hidden={!showValue} data-testid={testId ? `${testId}-text` : undefined}>
+          {showValue ? value : SECRET_MASK}
+        </span>
+      )}
       {readOnly ? (
         <span
           className="secret-value-icon"

@@ -4,7 +4,8 @@ export const SidebarContainer = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  
+  gap: 4px;
+
   &.compact {
     min-width: var(--sidebar-width-compact);
     max-width: var(--sidebar-width-compact);
@@ -105,7 +106,7 @@ export const SidebarItem = styled.div`
   & * {
     pointer-events: none;
   }
-  
+
   & svg {
     pointer-events: all;
   }
@@ -115,4 +116,3 @@ export const SidebarItem = styled.div`
     height: 14px;
   }
 `;
-
