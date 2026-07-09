@@ -97,35 +97,15 @@ const ResponsePane: React.FC<ResponsePaneProps> = ({ response, isLoading }) => {
   ];
 
   const statusInfo = (
-    <div className="flex items-center gap-3 flex-wrap text-xs">
-      <div className="flex items-center gap-2">
-        <span style={{ color: 'var(--text-secondary)' }}>Status:</span>
-        <span 
-          className="font-mono font-medium"
-          style={{
-            color: getStatusColor(response.status),
-          }}
-        >
-          {response.status} {response.statusText}
-        </span>
-      </div>
-      
-      {response.duration && (
-        <div className="flex items-center gap-1">
-          <span style={{ color: 'var(--text-secondary)' }}>Time:</span>
-          <span className="font-mono" style={{ color: 'var(--text-primary)' }}>
-            {response.duration}ms
-          </span>
-        </div>
+    <div className="flex items-center gap-3 flex-wrap text-xs font-mono">
+      <span className="font-semibold" style={{ color: getStatusColor(response.status) }}>
+        {response.status} {response.statusText}
+      </span>
+      {response.duration != null && (
+        <span style={{ color: 'var(--text-secondary)' }}>{response.duration} ms</span>
       )}
-      
-      {response.size && (
-        <div className="flex items-center gap-1">
-          <span style={{ color: 'var(--text-secondary)' }}>Size:</span>
-          <span className="font-mono" style={{ color: 'var(--text-primary)' }}>
-            {(response.size / 1024).toFixed(2)} KB
-          </span>
-        </div>
+      {response.size != null && (
+        <span style={{ color: 'var(--text-secondary)' }}>{(response.size / 1024).toFixed(2)} KB</span>
       )}
     </div>
   );

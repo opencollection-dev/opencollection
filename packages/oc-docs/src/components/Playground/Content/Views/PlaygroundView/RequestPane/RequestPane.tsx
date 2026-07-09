@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { Assertion } from '@opencollection/types/common/assertions';
 import Tabs from '../../../../../../ui/Tabs/Tabs';
+import { StyledWrapper } from './StyledWrapper';
 import { KeyValueRow } from '../../../../../../ui/KeyValueTable/KeyValueTable';
 import HeadersTab from '../../Common/HeadersTab';
 import ParamsTab from '../../Common/ParamsTab';
@@ -112,6 +113,42 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
   const assertions = getRequestAssertions(item);
   const scriptsObj = scriptsArrayToObject(getRequestScripts(item));
 
+  const bodyType = !body
+    ? 'none'
+    : 'type' in body
+      ? body.type
+      : Array.isArray(body)
+        ? 'form-urlencoded'
+        : 'none';
+
+  const handleBodyTypeChange = (type: string) => {
+    if (type === 'none') {
+      onItemChange({ ...item, http: { ...item.http, body: undefined } });
+    } else if (type === 'form-urlencoded') {
+      onItemChange({ ...item, http: { ...item.http, body: [] as any } });
+    } else {
+      onItemChange({ ...item, http: { ...item.http, body: { type: type as any, data: '' } } });
+    }
+  };
+
+  const renderBodyTypeSelect = () => (
+    <div className="body-type-select">
+      <span className="glyph">{'{ }'}</span>
+      <select value={bodyType} onChange={(e) => handleBodyTypeChange(e.target.value)}>
+        <option value="none">None</option>
+        <option value="json">JSON</option>
+        <option value="text">Text</option>
+        <option value="xml">XML</option>
+        <option value="form-urlencoded">Form URL Encoded</option>
+        <option value="sparql">SPARQL</option>
+      </select>
+      <svg className="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none"
+        stroke="var(--oc-colors-text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="6 9 12 15 18 9" />
+      </svg>
+    </div>
+  );
+
   const renderParams = () => (
     <ParamsTab
       params={params}
@@ -205,11 +242,12 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
       contentIndicator: headers?.length || undefined, 
       content: <div className="py-3">{renderHeaders()}</div> 
     },
-    { 
-      id: 'body', 
+    {
+      id: 'body',
       label: 'Body',
       contentIndicator: hasBody ? '•' : undefined,
-      content: <div className="py-3">{renderBody()}</div> 
+      rightElement: renderBodyTypeSelect(),
+      content: <div className="py-3">{renderBody()}</div>
     },
     { 
       id: 'auth', 
@@ -238,13 +276,13 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
   ];
 
   return (
-    <div className="h-full" style={{ backgroundColor: 'var(--bg-primary)' }}>
-      <Tabs 
+    <StyledWrapper>
+      <Tabs
         tabs={tabs}
         activeTab={activeTab}
         onTabChange={setActiveTab}
       />
-    </div>
+    </StyledWrapper>
   );
 };
 

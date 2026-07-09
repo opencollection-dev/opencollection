@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { OpenCollection as OpenCollectionCollection } from '@opencollection/types';
 import { requestRunner } from '../../../../../runner';
-import RequestHeader from './RequestPane/RequestHeader/RequestHeader';
 import QueryBar from './QueryBar/QueryBar';
 import RequestPane from './RequestPane/RequestPane';
 import ResponsePane from './ResponsePane/ResponsePane';
@@ -127,16 +126,8 @@ const Playground: React.FC<PlaygroundProps> = ({ item, collection, selectedEnvir
   }, [isResizing, handleResizeMove, stopResize]);
 
   return (
-    <div className="request-runner-container h-full flex flex-col px-4" style={{ backgroundColor: 'var(--bg-primary)' }}>
-      <RequestHeader 
-        item={editableItem} 
-        collection={collection}
-        selectedEnvironment={selectedEnvironment}
-        onEnvironmentChange={() => {}} // Environment is now managed by parent
-        readOnlyEnvironment={true}
-      />
-      
-      <QueryBar 
+    <div className="request-runner-container h-full flex flex-col px-4 pt-4" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <QueryBar
         item={editableItem}
         onSendRequest={handleSendRequest}
         isLoading={isLoading}
