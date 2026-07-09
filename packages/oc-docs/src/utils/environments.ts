@@ -24,7 +24,7 @@ const humanizeManager = (type: string | undefined): string => {
 export const isSecretVariable = (variable: Variable | SecretVariable): variable is SecretVariable =>
   (variable as SecretVariable).secret === true;
 
-const resolveValue = (value: VariableValueOrVariants | undefined): { value: string; type: VariableValueType } => {
+export const resolveValue = (value: VariableValueOrVariants | undefined): { value: string; type: VariableValueType } => {
   if (value == null) return { value: '', type: 'string' };
   if (typeof value === 'string') return { value, type: 'string' };
   if (Array.isArray(value)) {

@@ -10,7 +10,7 @@ import { EnvPills, EnvPill, EnvTabsArea } from '../../../EnvListStyles/StyledWra
 import { EnvironmentLabel } from '../../../../EnvironmentLabel/EnvironmentLabel';
 import { GlobeIcon } from '../../../../../assets/icons';
 import { useAppDispatch } from '../../../../../store/hooks';
-import { isSecretVariable, getEnvironmentVariables } from '../../../../../utils/environments';
+import { isSecretVariable, getEnvironmentVariables, resolveValue } from '../../../../../utils/environments';
 import { updateCollectionEnvironments } from '@slices/playground';
 
 const ENV_TABS = [
@@ -19,33 +19,13 @@ const ENV_TABS = [
   { id: 'external', label: 'External' }
 ] as const;
 
-const variableToRow = (variable: Variable, index: number): KeyValueRow => {
-  let value = '';
-  if (variable.value) {
-    if (typeof variable.value === 'string') {
-      value = variable.value;
-    } else if (typeof variable.value === 'object' && 'type' in variable.value) {
-      value = variable.value.data || '';
-    } else if (Array.isArray(variable.value)) {
-      const selected = variable.value.find((v) => v.selected) || variable.value[0];
-      if (selected) {
-        if (typeof selected.value === 'string') {
-          value = selected.value;
-        } else if (typeof selected.value === 'object' && 'type' in selected.value) {
-          value = selected.value.data || '';
-        }
-      }
-    }
-  }
-
-  return {
-    id: `var-${index}`,
-    name: variable.name || '',
-    value,
-    enabled: !variable.disabled,
-    secret: isSecretVariable(variable)
-  };
-};
+const variableToRow = (variable: Variable, index: number): KeyValueRow => ({
+  id: `var-${index}`,
+  name: variable.name || '',
+  value: resolveValue(variable.value).value,
+  enabled: !variable.disabled,
+  secret: isSecretVariable(variable)
+});
 
 const rowToVariable = (row: KeyValueRow): Variable =>
   ({
