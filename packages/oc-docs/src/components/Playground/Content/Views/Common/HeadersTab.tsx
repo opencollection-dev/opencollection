@@ -33,7 +33,7 @@ const HeadersDisplay: React.FC<Omit<HeadersTabProps, 'title' | 'description'>> =
           showEnabled={true}
         />
       ) : (
-        <BulkEdit data={headersData} onChange={onHeadersChange} onToggle={toggleBulkEditView} idPrefix="header" />
+        <BulkEdit data={headersData} onChange={onHeadersChange} idPrefix="header" />
       )}
       <div className="flex justify-end mt-2">
         <button

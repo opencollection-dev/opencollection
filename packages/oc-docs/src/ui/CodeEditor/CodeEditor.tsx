@@ -8,6 +8,8 @@ interface CodeEditorProps {
   language?: string;
   readOnly?: boolean;
   height?: string;
+  /** Hint shown when the editor is empty. */
+  placeholder?: string;
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
@@ -15,7 +17,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   onChange,
   language = 'json',
   readOnly = false,
-  height = '300px'
+  height = '300px',
+  placeholder
 }) => {
   const mode = useAppSelector((s) => s.theme.mode);
 
@@ -56,7 +59,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           lineDecorationsWidth: 10,
           lineNumbersMinChars: 3,
           automaticLayout: true,
-          placeholder: '...'
+          placeholder
         }}
       />
     </div>
