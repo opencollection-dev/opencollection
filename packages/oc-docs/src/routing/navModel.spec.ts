@@ -46,7 +46,7 @@ describe('buildNavModel — ordered sequence', () => {
       'authentication/login',
       'authentication/register',
       'hotels',
-      'hotels/browse-search',
+      'hotels/browse-%26-search',
       'ping',
     ]);
   });
@@ -91,7 +91,7 @@ describe('buildNavModel — slugs & metadata', () => {
   it('builds full path-based slugs from the folder hierarchy', () => {
     const model = buildNavModel(sample());
     expect(model.bySlug.has('authentication/login')).toBe(true);
-    expect(model.bySlug.has('hotels/browse-search')).toBe(true);
+    expect(model.bySlug.has('hotels/browse-%26-search')).toBe(true);
   });
 
   it('exposes ancestors (folder chain above the node)', () => {

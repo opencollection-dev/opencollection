@@ -95,5 +95,23 @@ export const foldersFixtureCollection = {
       seq: 6,
       script: "bru.setVar('requestedAt', Date.now());\nconsole.log('Hotel API docs loaded');",
     },
+    {
+      name: 'Customers/%$',
+      type: 'folder',
+      seq: 7,
+      items: [
+        { name: 'List customers', type: 'http', seq: 1, method: 'GET', url: '{{host}}/customers' },
+        { name: 'Create customer', type: 'http', seq: 2, method: 'POST', url: '{{host}}/customers' },
+        { name: 'Retrieve customer', type: 'http', seq: 3, method: 'GET', url: '{{host}}/customers/:id' },
+      ],
+    },
+    {
+      name: 'Café & Résumés',
+      type: 'folder',
+      seq: 8,
+      items: [
+        { name: 'List entrées', type: 'http', seq: 1, method: 'GET', url: '{{host}}/entrees' },
+      ],
+    },
   ],
 } as unknown as OpenCollection;
