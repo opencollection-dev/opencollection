@@ -4,7 +4,7 @@ import Brand from './Brand/Brand';
 import OpenInBrunoButton from '../OpenInBrunoButton/OpenInBrunoButton';
 import IconButton from '../../ui/IconButton/IconButton';
 import { SearchIcon, HamburgerIcon } from '../../assets/icons';
-import { useTopbarLayout, showsHamburger } from '../../hooks/useTopbarLayout';
+import { useTopbarLayout, showsHamburger, type TopbarLayoutMode } from '../../hooks/useTopbarLayout';
 import { useCanRunBrunoApp } from '../../hooks/useCanRunBrunoApp';
 
 export interface TopbarProps {
@@ -28,6 +28,12 @@ export interface TopbarProps {
   openInBrunoHref?: string;
   /** Invoked by the mobile hamburger. */
   onToggleSidebar?: () => void;
+  /**
+   * Responsive mode override. When provided (by AppShell, derived from the docs
+   * area width so the inline playground can shrink the docs chrome), it wins
+   * over the window-width hook. Omitted in isolated/legacy use.
+   */
+  layoutMode?: TopbarLayoutMode;
   testId?: string;
 }
 
@@ -39,13 +45,17 @@ export interface TopbarProps {
  * env-switcher) that render whatever node is passed and degrade gracefully
  * when empty. Responsive layout:
  * - desktop (>=1024): full bar — brand · centered search · env switcher · Open-in-Bruno.
- * - tablet (768-1023): hamburger · brand · search icon · env switcher inline (no CTA).
- * - mobile (<768): hamburger · brand · search icon · overflow popover (env) (no CTA).
+ * - tablet (768-1023): hamburger · brand · search icon · env switcher inline · Bruno glyph CTA.
+ * - mobile (<768): hamburger · brand · search icon · env switcher · Bruno glyph CTA.
  * Below desktop the search collapses to an icon that expands a full-width row.
  *
- * Open-in-Bruno needs the desktop *layout* (>=1024) AND a device that can run
- * the Bruno desktop app (capability check) — so a large touch tablet like the
- * iPad Pro (1024–1366px) gets the desktop layout but no CTA.
+ * Open-in-Bruno needs a device that can run the Bruno desktop app (capability
+ * check, so a large touch tablet like the iPad Pro gets no CTA). It renders as
+ * the full CTA on the desktop layout and condenses to the Bruno glyph below it
+ * (e.g. when the inline playground has shrunk the docs area on a desktop).
+ *
+ * The responsive mode follows `layoutMode` when provided (AppShell passes the
+ * docs-area-derived mode), else the window-width hook.
  */
 const Topbar: React.FC<TopbarProps> = ({
   collectionName,
@@ -58,9 +68,11 @@ const Topbar: React.FC<TopbarProps> = ({
   onOpenInBruno,
   openInBrunoHref,
   onToggleSidebar,
+  layoutMode,
   testId = 'topbar',
 }) => {
-  const mode = useTopbarLayout();
+  const autoMode = useTopbarLayout();
+  const mode = layoutMode ?? autoMode;
   const canRunBrunoApp = useCanRunBrunoApp();
   const [internalSearchOpen, setInternalSearchOpen] = useState(false);
   const isControlled = controlledSearchOpen !== undefined;
@@ -122,10 +134,12 @@ const Topbar: React.FC<TopbarProps> = ({
             breakpoint; the controls condense their own labels when narrow. */}
         {hasSecondary && <div className="topbar-secondary">{envSwitcherSlot}</div>}
 
-        {/* Open-in-Bruno: desktop layout AND a device that can run Bruno desktop
-            (hidden on large touch tablets like iPad Pro despite their width). */}
-        {isDesktop && canRunBrunoApp && hasCta && (
-          <OpenInBrunoButton href={openInBrunoHref} onClick={onOpenInBruno} />
+        {/* Open-in-Bruno: shown on any device that can run the Bruno desktop app
+            (capability check, hidden on large touch tablets like iPad Pro). It
+            condenses to the Bruno glyph below the desktop layout, e.g. when the
+            inline playground has shrunk the docs area on a desktop. */}
+        {canRunBrunoApp && hasCta && (
+          <OpenInBrunoButton href={openInBrunoHref} onClick={onOpenInBruno} iconOnly={!isDesktop} />
         )}
       </div>
 

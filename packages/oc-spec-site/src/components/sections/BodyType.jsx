@@ -34,7 +34,7 @@ function BodyType({ bodyType, schema }) {
       'file-body': {
         type: "file",
         data: [
-          { filePath: "/path/to/upload.jpg", contentType: "image/jpeg", selected: true }
+          { filePath: "/path/to/upload.jpg", contentType: "image/jpeg", selected: true, description: "Profile picture upload" }
         ]
       }
     };

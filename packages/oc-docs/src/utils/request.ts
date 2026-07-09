@@ -86,6 +86,7 @@ export interface FileBodyRow {
   filePath: string;
   contentType?: string;
   selected?: boolean;
+  description?: string;
 }
 
 export type BodyView =
@@ -258,7 +259,7 @@ export const getBodyView = (
     case 'file': {
       const variants: FileBodyVariant[] = body.data || [];
       const files: FileBodyRow[] = variants
-        .map((v) => ({ filePath: v.filePath, contentType: v.contentType, selected: v.selected }))
+        .map((v) => ({ filePath: v.filePath, contentType: v.contentType, selected: v.selected, description: getDescription(v) }))
         .filter((f) => f.filePath || f.contentType);
       if (files.length === 0) return { render: 'none' };
       return { render: 'file', contentTypeLabel: bodyContentTypeLabel('file'), files };

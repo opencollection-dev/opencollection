@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { ScriptFile, Folder as FolderItem } from '@opencollection/types/collection/item';
 import { useActiveResolution, useNavModel } from '../../routing/hooks';
@@ -16,6 +16,7 @@ import Script from '../../pages/Script/Script';
 import Folder from '../../pages/Folder/Folder';
 import Environments from '../../pages/Environments/Environments';
 import type { PageProps } from '../../routing/types';
+import { useDocsNavigate } from '../../hooks';
 
 interface PageRouterProps {
   onOpenPlayground?: () => void;
@@ -26,7 +27,7 @@ const PageRouter: React.FC<PageRouterProps> = ({ onOpenPlayground, testId = 'pag
   const resolution = useActiveResolution();
   const model = useNavModel();
   const collection = useAppSelector(selectDocsCollection);
-  const navigate = useNavigate();
+  const docsNavigate = useDocsNavigate();
 
   // Map each item's runtime uuid -> its stable slug so breadcrumb clicks
   // navigate by URL (the same mapping the sidebar uses).
@@ -49,7 +50,7 @@ const PageRouter: React.FC<PageRouterProps> = ({ onOpenPlayground, testId = 'pag
     const slug = uuidToSlug.get(uuid);
     // A known item navigates to its slug; the leading collection crumb (and any
     // unknown uuid) falls back to the overview.
-    navigate(slug !== undefined ? `/${slug}` : '/');
+    docsNavigate(slug ?? '');
   };
 
   // Resolve the active node's item and its folder ancestry (used for breadcrumbs

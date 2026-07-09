@@ -1,6 +1,7 @@
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import { RunRequestResponse } from './index';
-import { getHttpMethod, getRequestUrl, getHttpHeaders, getHttpBody, getRequestAuth } from '../utils/schemaHelpers';
+import { getHttpMethod, getRequestUrl, getHttpHeaders, getHttpBody, getRequestAuth, getHttpParams } from '../utils/schemaHelpers';
+import { buildRequestUrl } from '../utils/pathParams';
 import { classifyRequestError, DEFAULT_TIMEOUT_MS } from './classifyRequestError';
 import stripJsonComments from 'strip-json-comments';
 
@@ -8,10 +9,10 @@ export class RequestExecutor {
   async executeRequest(request: HttpRequest, options: { timeout?: number } = {}): Promise<RunRequestResponse> {
     const startTime = Date.now();
     const timeoutMs = options.timeout ?? DEFAULT_TIMEOUT_MS;
+    const requestUrl = buildRequestUrl(getRequestUrl(request), getHttpParams(request));
 
     try {
       const fetchOptions = await this.buildFetchOptions(request, timeoutMs);
-      const requestUrl = getRequestUrl(request);
       const response = await fetch(requestUrl, fetchOptions);
       const endTime = Date.now();
 
@@ -31,7 +32,7 @@ export class RequestExecutor {
       const endTime = Date.now();
       const classified = classifyRequestError(error, {
         timeoutMs,
-        requestUrl: getRequestUrl(request),
+        requestUrl,
         pageUrl: typeof window !== 'undefined' ? window.location.href : undefined
       });
 
@@ -76,7 +77,7 @@ export class RequestExecutor {
 
     // Auto-set Content-Type for JSON bodies if not already set
     if (body && 'type' in body && body.type === 'json') {
-      const hasContentType = requestHeaders?.some(h => 
+      const hasContentType = requestHeaders?.some(h =>
         !h.disabled && h.name.toLowerCase() === 'content-type'
       );
       if (!hasContentType) {
@@ -117,7 +118,7 @@ export class RequestExecutor {
   private async buildBody(request: HttpRequest): Promise<BodyInit | null> {
     const body = getHttpBody(request);
     const headers = getHttpHeaders(request);
-    
+
     if (!body) return null;
 
     if ('type' in body) {
@@ -199,4 +200,4 @@ export class RequestExecutor {
     });
     return result;
   }
-} 
+}

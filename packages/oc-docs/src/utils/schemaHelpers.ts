@@ -511,7 +511,7 @@ export const getRequestSettings = (item: RequestItem | null | undefined): any =>
 
   // Backwards compatibility: pick settings fields from root
   const settings: any = {};
-  const settingsFields = ['timeout', 'followRedirects', 'maxRedirects', 'encodeUrl'];
+  const settingsFields = ['timeout', 'followRedirects', 'forwardAuthorizationHeader', 'maxRedirects', 'encodeUrl'];
 
   for (const field of settingsFields) {
     if (field in item && (item as any)[field] !== undefined) {

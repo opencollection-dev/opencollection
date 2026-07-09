@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import type { SeqNeighbor } from '../../routing/types';
 import { getMethodColorVar } from '../../theme/methodColors';
 import { getShortMethod } from '../../utils/request';
@@ -14,9 +14,9 @@ const MethodTag: React.FC<{ method?: string }> = ({ method }) =>
     </span>
   ) : null;
 
-const Card: React.FC<{ dir: 'prev' | 'next'; neighbor: SeqNeighbor }> = ({ dir, neighbor }) => (
+const Card: React.FC<{ dir: 'prev' | 'next'; neighbor: SeqNeighbor; search: string }> = ({ dir, neighbor, search }) => (
   <Link
-    to={toPath(neighbor.slug)}
+    to={{ pathname: toPath(neighbor.slug), search }}
     className={`prevnext-card prevnext-card--${dir}`}
     data-testid={`${dir}-link`}
   >
@@ -46,12 +46,13 @@ export interface PrevNextProps {
 }
 
 const PrevNext: React.FC<PrevNextProps> = ({ prev, next }) => {
+  const { search } = useLocation();
   if (!prev && !next) return null;
   return (
     <StyledWrapper className="prevnext" aria-label="Pagination" data-testid="prevnext">
-      <div className="prevnext-half">{prev && <Card dir="prev" neighbor={prev} />}</div>
+      <div className="prevnext-half">{prev && <Card dir="prev" neighbor={prev} search={search} />}</div>
       <div className="prevnext-half prevnext-half--next">
-        {next && <Card dir="next" neighbor={next} />}
+        {next && <Card dir="next" neighbor={next} search={search} />}
       </div>
     </StyledWrapper>
   );
