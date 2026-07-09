@@ -24,11 +24,11 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   };
 
   return (
-    <div style={{ 
-      height, 
+    <div style={{
+      height,
       width: '100%',
       border: '1px solid var(--border-color)',
-      borderRadius: '4px',
+      borderRadius: 'var(--oc-radius)',
       overflow: 'hidden'
     }}>
       <Editor
@@ -37,6 +37,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
         value={value}
         onChange={handleChange}
         theme={mode === 'dark' ? 'vs-dark' : 'vs'}
+        beforeMount={(monaco) => monaco.languages.json?.jsonDefaults?.setDiagnosticsOptions({ validate: false })}
         options={{
           readOnly,
           minimap: { enabled: false },
@@ -44,6 +45,11 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           fontSize: 14,
           lineNumbers: 'on',
           roundedSelection: false,
+          renderLineHighlight: 'none',
+          guides: { indentation: false },
+          overviewRulerLanes: 0,
+          overviewRulerBorder: false,
+          hideCursorInOverviewRuler: true,
           scrollbar: {
             vertical: 'auto',
             horizontal: 'auto'
@@ -59,4 +65,4 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   );
 };
 
-export default CodeEditor; 
+export default CodeEditor;

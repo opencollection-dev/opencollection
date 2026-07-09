@@ -1,6 +1,7 @@
 import React from 'react';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import CodeEditor from '../../../../../ui/CodeEditor/CodeEditor';
+import { CopyButton } from '../../../../../ui/CopyButton/CopyButton';
 import KeyValueTable, { type KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
 
 interface BodyTabProps {
@@ -39,30 +40,33 @@ export const BodyTab: React.FC<BodyTabProps> = ({
           No body content. Select a body type to add content.
         </div>
       ) : 'data' in body && typeof body.data === 'string' ? (
-        <CodeEditor
-          value={body.data}
-          onChange={(value) => {
-            if ('data' in body && typeof body.data === 'string') {
-              onItemChange({
-                ...item,
-                http: {
-                  ...item.http,
-                  body: { ...body, data: value } as typeof body
-                }
-              });
+        <div className="relative">
+          <CopyButton text={body.data} label="Copy body" testId="body-copy" className="absolute top-2 right-2 z-10" />
+          <CodeEditor
+            value={body.data}
+            onChange={(value) => {
+              if ('data' in body && typeof body.data === 'string') {
+                onItemChange({
+                  ...item,
+                  http: {
+                    ...item.http,
+                    body: { ...body, data: value } as typeof body
+                  }
+                });
+              }
+            }}
+            language={
+              body.type === 'json'
+                ? 'json'
+                : body.type === 'xml'
+                  ? 'xml'
+                  : body.type === 'sparql'
+                    ? 'sparql'
+                    : 'text'
             }
-          }}
-          language={
-            body.type === 'json'
-              ? 'jsonc'
-              : body.type === 'xml'
-                ? 'xml'
-                : body.type === 'sparql'
-                  ? 'sparql'
-                  : 'text'
-          }
-          height="300px"
-        />
+            height="300px"
+          />
+        </div>
       ) : Array.isArray(body) || (body?.type === 'form-urlencoded' && Array.isArray(body?.data)) ? (
         (() => {
           const formDataArray = Array.isArray(body) ? body : (body?.data || []);
