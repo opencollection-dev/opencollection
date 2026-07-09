@@ -2,12 +2,7 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { CopyButton } from '../../../ui/CopyButton/CopyButton';
 import { StyledWrapper } from './StyledWrapper';
 
-import Prism from 'prismjs';
-import 'prismjs/components/prism-javascript';
-import 'prismjs/components/prism-bash';
-import 'prismjs/components/prism-python';
-import 'prismjs/components/prism-json';
-import 'prismjs/components/prism-xml-doc';
+import Prism from '../../../utils/prism';
 
 export interface CodeViewerProps {
   code?: string;

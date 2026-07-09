@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import MarkdownIt from 'markdown-it';
-import Prism from 'prismjs';
+import Prism from '../utils/prism';
 
 let cachedRenderer: MarkdownIt | null = null;
 

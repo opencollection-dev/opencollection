@@ -1,15 +1,8 @@
 import React from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import './styles/index.css';
-// Import Prism and language components to ensure they're bundled
-import Prism from 'prismjs';
-import 'prismjs/components/prism-javascript';
-import 'prismjs/components/prism-bash';
-import 'prismjs/components/prism-python';
-import 'prismjs/components/prism-json';
-import 'prismjs/components/prism-xml-doc';
-import 'prismjs/components/prism-http';
-import 'prismjs/components/prism-graphql';
+// Import Prism (with our token customizations) to ensure it's bundled
+import Prism from './utils/prism';
 import OpenCollection from './components/OpenCollection/OpenCollection';
 import type { OpenCollection as IOpenCollection } from '@opencollection/types';
 import { parseCollectionContent } from './utils/yamlUtils';

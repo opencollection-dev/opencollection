@@ -444,7 +444,8 @@ body {
 .token.keyword { color: var(--oc-codemirror-tokens-keyword); }
 
 .token.function,
-.token.class-name { color: var(--oc-codemirror-tokens-definition); }
+.token.class-name,
+.token.var-name { color: var(--oc-codemirror-tokens-definition); }
 
 .token.regex,
 .token.important { color: var(--oc-codemirror-tokens-variable); }
