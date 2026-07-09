@@ -11,7 +11,7 @@ interface VariablesTabProps {
 export const VariablesTab: React.FC<VariablesTabProps> = ({
   variables,
   onVariablesChange,
-  title = "Variables",
+  title = 'Variables',
   description
 }) => {
   const variablesData: KeyValueRow[] = (variables || []).map((variable, index) => ({
@@ -24,10 +24,12 @@ export const VariablesTab: React.FC<VariablesTabProps> = ({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
-          {title}
-        </span>
-        {description && (
+        {Boolean(title) && (
+          <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+            {title}
+          </span>
+        )}
+        {Boolean(description) && (
           <span className="text-xs leading-tight" style={{ color: 'var(--text-secondary)' }}>
             {description}
           </span>
@@ -36,8 +38,8 @@ export const VariablesTab: React.FC<VariablesTabProps> = ({
       <KeyValueTable
         data={variablesData}
         onChange={onVariablesChange}
-        keyPlaceholder="Variable name"
-        valuePlaceholder="Variable value"
+        keyPlaceholder="Name"
+        valuePlaceholder="Value"
         showEnabled={true}
       />
     </div>
