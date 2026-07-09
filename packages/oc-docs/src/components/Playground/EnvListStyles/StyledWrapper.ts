@@ -87,6 +87,22 @@ export const EnvCard = styled.div`
     font-size: var(--oc-font-size-sm);
     color: var(--oc-colors-text-subtext1);
   }
+
+  .delete {
+    margin-top: 2px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: var(--oc-colors-text-subtext1);
+    transition: color 0.12s ease;
+  }
+
+  .delete:hover {
+    color: var(--oc-colors-text-danger);
+  }
 `;
 
 export const EnvPill = styled.button`

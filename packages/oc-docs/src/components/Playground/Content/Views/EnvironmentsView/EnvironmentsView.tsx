@@ -129,7 +129,7 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection, compact
         valuePlaceholder="Variable Value"
         showEnabled={true}
         disableNewRow={true}
-        disableDelete={true}
+        disableDelete={false}
       />
     );
 

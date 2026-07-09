@@ -1,6 +1,7 @@
 import React from 'react';
 import { KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
 import { SecretValue } from '../../../../../ui/SecretValue/SecretValue';
+import { TrashIcon } from '../../../../../assets/icons';
 import { EnvCardList, EnvCard } from '../../../EnvListStyles/StyledWrapper';
 
 interface EnvVarCardsProps {
@@ -11,6 +12,8 @@ interface EnvVarCardsProps {
 const EnvVarCards: React.FC<EnvVarCardsProps> = ({ rows, onChange }) => {
   const update = (index: number, patch: Partial<KeyValueRow>) =>
     onChange(rows.map((row, i) => (i === index ? { ...row, ...patch } : row)));
+
+  const remove = (index: number) => onChange(rows.filter((_, i) => i !== index));
 
   return (
     <EnvCardList>
@@ -41,6 +44,15 @@ const EnvVarCards: React.FC<EnvVarCardsProps> = ({ rows, onChange }) => {
               {row.dataType ? <span className="datatype">{row.dataType}</span> : null}
             </div>
           </div>
+          <button
+            type="button"
+            className="delete"
+            aria-label="Delete variable"
+            title="Delete"
+            onClick={() => remove(index)}
+          >
+            <TrashIcon />
+          </button>
         </EnvCard>
       ))}
     </EnvCardList>

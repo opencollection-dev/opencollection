@@ -1,5 +1,7 @@
 import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
 import { usePlaygroundUrlState } from '../../hooks';
+import { useAppDispatch } from '../../store/hooks';
+import { resetPlaygroundEnvironments } from '@slices/playground';
 import InlineDock from './docks/InlineDock/InlineDock';
 import BottomSheetDock from './docks/BottomSheetDock/BottomSheetDock';
 import ModalDock from './docks/ModalDock/ModalDock';
@@ -9,7 +11,13 @@ import PlaygroundBoundary from './PlaygroundBody/PlaygroundBoundary';
 const PlaygroundBody = lazy(() => import('./PlaygroundBody/PlaygroundBody'));
 
 const Playground: React.FC = () => {
+  const dispatch = useAppDispatch();
   const { open, dock, requestSlug, setDock, closePlayground } = usePlaygroundUrlState();
+
+  // discard environment edits when the playground reopens
+  useEffect(() => {
+    if (open) dispatch(resetPlaygroundEnvironments());
+  }, [open, dispatch]);
   // In the inline dock the sidebar is an overlay over the request/response, so it
   // starts closed (content full width) and opens on demand; bottom/modal show it
   // side by side, so it starts open. Reset to the dock's default when the dock changes.
