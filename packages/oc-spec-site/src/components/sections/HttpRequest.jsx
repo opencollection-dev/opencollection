@@ -84,6 +84,7 @@ settings:
   encodeUrl: true
   timeout: 30000
   followRedirects: true
+  forwardAuthorizationHeader: true
   maxRedirects: 5`;
 
   return (
@@ -160,7 +161,7 @@ settings:
         <h3 className={typography.heading.h3}>Properties</h3>
         <PropertyTable 
           properties={httpRequestSettings.properties}
-          order={['encodeUrl', 'timeout', 'followRedirects', 'maxRedirects']}
+          order={['encodeUrl', 'timeout', 'followRedirects', 'forwardAuthorizationHeader', 'maxRedirects']}
           required={httpRequestSettings.required}
         />
         

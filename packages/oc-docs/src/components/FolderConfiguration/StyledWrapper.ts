@@ -21,7 +21,7 @@ export const StyledWrapper = styled.div`
     gap: 1.5rem;
   }
 
-  @media (max-width: 900px) {
+  @container docs (max-width: 900px) {
     .config-columns {
       grid-template-columns: minmax(0, 1fr);
     }

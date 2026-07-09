@@ -16,3 +16,8 @@ export * from './SendIcon';
 export * from './EyeOffIcon';
 export * from './FileIcon';
 export * from './RefreshIcon';
+export * from './DockInlineIcon';
+export * from './DockBottomIcon';
+export * from './DockModalIcon';
+export * from './SidebarToggleIcon';
+export * from './SettingsIcon';
