@@ -27,4 +27,18 @@ describe('PropertyTable', () => {
     const root = useRenderToDom(<PropertyTable rows={[{ label: 'Custom', node: <em>hi</em> }]} />);
     expect(root.querySelector('.property-value-cell em')?.text).toBe('hi');
   });
+
+  it('renders a description as a truncatable line under the value (reuses Description)', () => {
+    const root = useRenderToDom(
+      <PropertyTable rows={[{ label: 'baseURL', value: 'https://api', description: '  API base URL  ' }]} />
+    );
+    const description = root.querySelector('.description.oc-truncate');
+    expect(description).not.toBeNull();
+    expect(description?.text).toBe('API base URL');
+  });
+
+  it('omits the description line when a row has none', () => {
+    const root = useRenderToDom(<PropertyTable rows={[{ label: 'baseURL', value: 'https://api' }]} />);
+    expect(root.querySelector('.description')).toBeNull();
+  });
 });

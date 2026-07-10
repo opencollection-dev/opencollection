@@ -10,6 +10,7 @@ import { CopyButton } from '../../../ui/CopyButton/CopyButton';
 import { PropertyTable, type PropertyRow } from '../../PropertyTable/PropertyTable';
 import { TruncatedText } from '../../TruncatedText/TruncatedText';
 import { VariableText } from '../../VariableText/VariableText';
+import { Description } from '../../Description/Description';
 import { RequestParams } from '../../Request/RequestParams/RequestParams';
 import { RequestBody } from '../../Request/RequestBody/RequestBody';
 import { Code } from '../../Code/Code';
@@ -200,8 +201,7 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
   const statusText = response.statusText || statusCodePhrase(status);
   const responseBody = response.body;
   const name = example.name ?? 'Example';
-  const description =
-    typeof example.description === 'string' ? example.description : example.description?.content || undefined;
+  const description = getDescription(example);
 
   const size = useMemo(() => computeBodySize(responseBody?.data), [responseBody]);
   const toneColor = statusToneColor(status);
@@ -326,7 +326,7 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
         <div className="example-detail-clip">
           {mounted && (
             <div className="example-detail-body" id={detailId}>
-              {description && <p className="example-description">{description}</p>}
+              <Description text={description} className="example-description" />
 
               <div className="example-url-row">
                 <MethodBadge method={displayMethod} />

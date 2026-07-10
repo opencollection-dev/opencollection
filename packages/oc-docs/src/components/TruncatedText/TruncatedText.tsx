@@ -2,7 +2,7 @@ import React, { type ReactNode } from 'react';
 import { Tooltip } from '../../ui/Tooltip/Tooltip';
 import { StyledWrapper } from './StyledWrapper';
 
-interface TruncatedTextProps {
+export interface TruncatedTextProps {
   text: string;
   children?: ReactNode;
   touch?: boolean;
