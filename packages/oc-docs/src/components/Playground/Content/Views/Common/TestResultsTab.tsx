@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import styled from '@emotion/styled';
 import type { TestResultsResponse, AssertionResultsResponse } from '../../../../../runner';
 
 interface TestResultsTabProps {
@@ -6,209 +7,143 @@ interface TestResultsTabProps {
   assertionResults?: AssertionResultsResponse;
 }
 
+const Wrapper = styled.div`
+  .test-summary {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .test-card {
+    border: 1px solid var(--border-color);
+    border-radius: var(--oc-radius);
+    overflow: hidden;
+  }
+
+  .test-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.5rem 0.875rem;
+  }
+
+  .test-row + .test-row {
+    border-top: 1px solid var(--border-color);
+  }
+
+  .test-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    flex-shrink: 0;
+    margin-top: 0.4rem;
+  }
+
+  .test-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .test-desc {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+  }
+
+  .test-detail {
+    margin-top: 0.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    word-break: break-word;
+  }
+
+  .test-status {
+    flex-shrink: 0;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+`;
+
+const statusColor = (status: string): string => {
+  if (status === 'pass') return 'var(--oc-colors-text-green)';
+  if (status === 'fail') return 'var(--oc-colors-text-danger)';
+  return 'var(--oc-colors-text-muted)';
+};
+
+interface TestRow {
+  status: string;
+  description: string;
+  detail?: string;
+}
+
 const TestResultsTab: React.FC<TestResultsTabProps> = ({ testResults, assertionResults }) => {
-  const [testsExpanded, setTestsExpanded] = useState(true);
-  const [assertionsExpanded, setAssertionsExpanded] = useState(true);
-  
   const hasTests = testResults && testResults.results.length > 0;
   const hasAssertions = assertionResults && assertionResults.results.length > 0;
 
   if (!hasTests && !hasAssertions) {
     return (
-      <div className="h-full flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
-        <div className="text-center py-12">
-          <div className="w-16 h-16 mx-auto mb-4 opacity-50">
-            <svg fill="currentColor" viewBox="0 0 24 24" style={{ color: 'var(--text-secondary)' }}>
-              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-            </svg>
-          </div>
-          <p style={{ color: 'var(--text-secondary)' }}>No tests or assertions were run</p>
-        </div>
+      <div className="py-8 text-center text-xs" style={{ color: 'var(--text-secondary)' }}>
+        No tests or assertions were run
       </div>
     );
   }
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'pass':
-        return (
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M20 6L9 17l-5-5" />
-          </svg>
-        );
-      case 'fail':
-        return (
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M18 6L6 18M6 6l12 12" />
-          </svg>
-        );
-      case 'skip':
-        return (
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M12 2v20M17 7l5 5-5 5M7 7l-5 5 5 5" />
-          </svg>
-        );
-      default:
-        return null;
-    }
-  };
+  const rows: TestRow[] = [];
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pass':
-        return 'var(--oc-colors-text-green)';
-      case 'fail':
-        return 'var(--oc-colors-text-danger)';
-      case 'skip':
-        return 'var(--oc-colors-text-muted)';
-      default:
-        return 'var(--text-secondary)';
-    }
-  };
+  if (hasTests) {
+    testResults.results.forEach((result) => {
+      const detail =
+        result.error ??
+        (result.expected !== undefined && result.actual !== undefined
+          ? `Expected ${JSON.stringify(result.expected)}, got ${JSON.stringify(result.actual)}`
+          : undefined);
+      rows.push({ status: result.status, description: result.description, detail });
+    });
+  }
 
-  const renderSectionHeader = (
-    title: string,
-    summary: { total: number; passed: number; failed: number; skipped: number },
-    isExpanded: boolean,
-    onToggle: () => void
-  ) => (
-    <button
-      onClick={onToggle}
-      className="w-full flex items-center gap-2 px-3 py-2.5 text-sm font-medium transition-colors"
-      style={{
-        backgroundColor: 'var(--bg-secondary)',
-        color: 'var(--text-primary)',
-        border: '1px solid var(--border-color)',
-        borderRadius: '4px',
-        cursor: 'pointer'
-      }}
-    >
-      <svg
-        width="12"
-        height="12"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        style={{
-          transform: isExpanded ? 'rotate(0deg)' : 'rotate(-90deg)',
-          transition: 'transform 0.2s'
-        }}
-      >
-        <path d="M6 9l6 6 6-6" />
-      </svg>
-      <span>
-        {title} ({summary.total}), Passed: {summary.passed}, Failed: {summary.failed}
-      </span>
-    </button>
-  );
+  if (hasAssertions) {
+    assertionResults.results.forEach((result) => {
+      const description = [
+        result.lhsExpr,
+        result.operator,
+        result.rhsOperand !== undefined ? JSON.stringify(result.rhsOperand) : undefined
+      ]
+        .filter(Boolean)
+        .join(' ');
+      rows.push({ status: result.status, description, detail: result.error });
+    });
+  }
+
+  const passed = (testResults?.summary.passed ?? 0) + (assertionResults?.summary.passed ?? 0);
+  const failed = (testResults?.summary.failed ?? 0) + (assertionResults?.summary.failed ?? 0);
+  const skipped = (testResults?.summary.skipped ?? 0) + (assertionResults?.summary.skipped ?? 0);
 
   return (
-    <div className="h-full overflow-auto">
-      <div className="py-3 space-y-3">
-        {/* Tests Section */}
-        {hasTests && (
-          <div>
-            {renderSectionHeader('Tests', testResults.summary, testsExpanded, () => setTestsExpanded(!testsExpanded))}
-            {testsExpanded && (
-              <div className="mt-2 space-y-2">
-                {testResults.results.map((result, index) => (
-                  <div
-                    key={index}
-                    className="flex items-start gap-3 px-3 py-2"
-                    style={{
-                      backgroundColor: 'var(--bg-primary)',
-                    }}
-                  >
-                    <div style={{ color: getStatusColor(result.status), flexShrink: 0, marginTop: '2px' }}>
-                      {getStatusIcon(result.status)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm" style={{ color: 'var(--text-primary)' }}>
-                        {result.description}
-                      </div>
-                      {result.error && (
-                        <div className="text-xs mt-1 font-mono" style={{ 
-                          color: 'var(--oc-colors-text-danger)',
-                        }}>
-                          {result.error}
-                        </div>
-                      )}
-                      {result.expected !== undefined && result.actual !== undefined && (
-                        <div className="text-xs mt-2 space-y-1">
-                          <div>
-                            <span style={{ color: 'var(--text-secondary)' }}>Expected: </span>
-                            <span className="font-mono" style={{ color: 'var(--text-primary)' }}>
-                              {JSON.stringify(result.expected)}
-                            </span>
-                          </div>
-                          <div>
-                            <span style={{ color: 'var(--text-secondary)' }}>Actual: </span>
-                            <span className="font-mono" style={{ color: 'var(--text-primary)' }}>
-                              {JSON.stringify(result.actual)}
-                            </span>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Assertions Section */}
-        {hasAssertions && (
-          <div>
-            {renderSectionHeader('Assertions', assertionResults.summary, assertionsExpanded, () => setAssertionsExpanded(!assertionsExpanded))}
-            {assertionsExpanded && (
-              <div className="mt-2 space-y-2">
-                {assertionResults.results.map((result, index) => (
-                  <div
-                    key={index}
-                    className="flex items-start gap-3 px-3 py-2"
-                    style={{
-                      backgroundColor: 'var(--bg-primary)',
-                    }}
-                  >
-                    <div style={{ color: getStatusColor(result.status), flexShrink: 0, marginTop: '2px' }}>
-                      {getStatusIcon(result.status)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-sm" style={{ color: 'var(--text-primary)' }}>
-                          {result.lhsExpr}
-                        </span>
-                        {result.operator && (
-                          <>
-                            <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                              {result.operator}
-                            </span>
-                            {result.rhsOperand !== undefined && (
-                              <span className="font-mono text-sm" style={{ color: 'var(--text-primary)' }}>
-                                {JSON.stringify(result.rhsOperand)}
-                              </span>
-                            )}
-                          </>
-                        )}
-                      </div>
-                      {result.error && (
-                        <div className="text-xs mt-1 font-mono" style={{ color: 'var(--oc-colors-text-danger)' }}>
-                          {result.error}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+    <Wrapper className="py-4 space-y-3">
+      <div className="test-summary">
+        <span style={{ color: 'var(--oc-colors-text-green)' }}>{passed} passed</span>
+        <span style={{ color: 'var(--oc-colors-text-danger)' }}>{failed} failed</span>
+        {skipped > 0 && <span style={{ color: 'var(--oc-colors-text-muted)' }}>{skipped} skipped</span>}
       </div>
-    </div>
+
+      <div className="test-card">
+        {rows.map((row, index) => (
+          <div key={index} className="test-row">
+            <span className="test-dot" style={{ backgroundColor: statusColor(row.status) }} />
+            <div className="test-body">
+              <div className="test-desc">{row.description}</div>
+              {row.detail && <div className="test-detail">{row.detail}</div>}
+            </div>
+            <span className="test-status" style={{ color: statusColor(row.status) }}>
+              {row.status.toUpperCase()}
+            </span>
+          </div>
+        ))}
+      </div>
+    </Wrapper>
   );
 };
 
 export default TestResultsTab;
-
