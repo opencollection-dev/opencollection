@@ -33,6 +33,17 @@ describe('VariablesPanel', () => {
     expect(html).toContain('None.');
   });
 
+  it('shows a variable description below its value', () => {
+    const html = renderToStaticMarkup(
+      <VariablesPanel
+        preVars={[{ name: 'sessionId', value: '{{$randomUUID}}', description: 'Unique session identifier' }]}
+        postVars={[{ name: 'authToken', expression: 'res.body.token', description: 'JWT access token' }]}
+      />
+    );
+    expect(html).toContain('Unique session identifier');
+    expect(html).toContain('JWT access token');
+  });
+
   it('marks a disabled variable so it can be visually dimmed', () => {
     const html = renderToStaticMarkup(
       <VariablesPanel preVars={[{ name: 'legacy', value: 'v1', disabled: true }]} postVars={[]} />

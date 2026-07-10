@@ -3,10 +3,10 @@ import type { Folder } from '@opencollection/types/collection/item';
 import type { OpenCollection } from '@opencollection/types';
 import Tabs from '../../../../../ui/Tabs/Tabs';
 import { type KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
-import HeadersTab from '../Common/HeadersTab';
-import VariablesTab from '../Common/VariablesTab';
+import HeadersTab from '../Common/HeadersTab/HeadersTab';
+import VariablesTab from '../Common/VariablesTab/VariablesTab';
 import AuthTab from '../Common/AuthTab';
-import ScriptsTab from '../Common/ScriptsTab';
+import ScriptsTab from '../Common/ScriptsTab/ScriptsTab';
 import { useAppDispatch } from '../../../../../store/hooks';
 import { updateFolderInCollection } from '@slices/playground';
 import {
@@ -15,8 +15,8 @@ import {
   scriptsArrayToObject,
   scriptsObjectToArray
 } from '../../../../../utils/schemaHelpers';
-import TestsTab from '../Common/TestsTab';
-import OverviewTab from '../Common/OverviewTab';
+import TestsTab from '../Common/TestsTab/TestsTab';
+import OverviewTab from '../Common/OverviewTab/OverviewTab';
 
 interface FolderSettingsProps {
   folder: Folder;

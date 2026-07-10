@@ -5,10 +5,17 @@ export const StyledWrapper = styled.div`
     margin-top: 0.5rem;
   }
   .request-body-part {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 0.375rem;
     min-width: 0;
+    max-width: 100%;
+  }
+  .request-body-part .var-text {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .request-body-file-tag {
     flex: none;
