@@ -234,6 +234,25 @@ describe('requestVars', () => {
       { name: 'authToken', expression: 'res.body.token', scope: 'environment', disabled: undefined }
     ]);
   });
+
+  it('carries pre-request and post-response variable descriptions through to the rows', () => {
+    const item: any = {
+      runtime: {
+        variables: [{ name: 'sessionId', value: '{{$randomUUID}}', description: 'Unique session identifier' }],
+        actions: [
+          {
+            type: 'set-variable',
+            phase: 'after-response',
+            selector: { expression: 'res.body.token' },
+            variable: { name: 'authToken', scope: 'environment' },
+            description: { content: 'JWT access token from the login response', type: 'text' }
+          }
+        ]
+      }
+    };
+    expect(getPreRequestVars(item)[0].description).toBe('Unique session identifier');
+    expect(getPostResponseVars(item)[0].description).toBe('JWT access token from the login response');
+  });
 });
 
 describe('getCollectionVariables', () => {

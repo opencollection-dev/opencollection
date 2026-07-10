@@ -1,4 +1,5 @@
 import React from 'react';
+import { Tabs, type Tab } from '../../ui/Tabs/Tabs';
 import { ScriptChain } from './ScriptChain/ScriptChain';
 import { VariablesPanel } from './VariablesPanel/VariablesPanel';
 import { AssertList } from './AssertList/AssertList';
@@ -19,6 +20,7 @@ interface ExecutionContextProps {
   flow?: ScriptFlow;
   method?: string;
   url?: string;
+  variant?: 'tabs' | 'docs';
   className?: string;
   testId?: string;
   onNavigate?: (uuid: string) => void;
@@ -52,6 +54,7 @@ export const ExecutionContext: React.FC<ExecutionContextProps> = ({
   flow = 'sandwich',
   method,
   url,
+  variant = 'tabs',
   className,
   testId = 'execution-context',
   onNavigate
@@ -63,28 +66,75 @@ export const ExecutionContext: React.FC<ExecutionContextProps> = ({
 
   if (!hasScripts && !hasVars && !hasAsserts && !hasTests) return null;
 
+  const flowIndicator = hasScripts ? (
+    <span className="exec-flow" data-testid="execution-context-flow">{FLOW_LABEL[flow]} execution flow</span>
+  ) : undefined;
+
+  const scripts = <ScriptChain steps={scriptChain} flow={flow} method={method} url={url} onNavigate={onNavigate} />;
+  const variables = <VariablesPanel preVars={preVars} postVars={postVars} />;
+  const asserts = <AssertList assertions={assertions} />;
+  const testCases = <TestList tests={tests} />;
+
+  if (variant === 'docs') {
+    return (
+      <StyledWrapper className={['execution-context', className].filter(Boolean).join(' ')} data-testid={testId}>
+        {hasScripts && <Card title="Scripts" testId="execution-context-scripts" meta={flowIndicator}>{scripts}</Card>}
+        {hasVars && (
+          <Card title="Variables" testId="execution-context-variables" boxClassName="exec-card-box--bare">{variables}</Card>
+        )}
+        {hasAsserts && <Card title="Asserts" testId="execution-context-asserts">{asserts}</Card>}
+        {hasTests && (
+          <Card
+            title="Tests"
+            testId="execution-context-tests"
+            meta={<ViewAllTests scripts={testScripts} testId="execution-context-view-complete-code" />}
+          >
+            {testCases}
+          </Card>
+        )}
+      </StyledWrapper>
+    );
+  }
+
+  const tabs: Tab[] = [];
+  if (hasVars) {
+    tabs.push({
+      id: 'variables',
+      label: 'Variables',
+      count: preVars.length + postVars.length,
+      content: <div data-testid="execution-context-variables">{variables}</div>
+    });
+  }
+  if (hasScripts) {
+    tabs.push({
+      id: 'scripts',
+      label: 'Scripts',
+      count: scriptChain.length,
+      rightElement: flowIndicator,
+      content: <div className="exec-card-box" data-testid="execution-context-scripts">{scripts}</div>
+    });
+  }
+  if (hasAsserts) {
+    tabs.push({
+      id: 'asserts',
+      label: 'Asserts',
+      count: assertions.length,
+      content: <div className="exec-card-box" data-testid="execution-context-asserts">{asserts}</div>
+    });
+  }
+  if (hasTests) {
+    tabs.push({
+      id: 'tests',
+      label: 'Tests',
+      count: tests.length,
+      rightElement: <ViewAllTests scripts={testScripts} testId="execution-context-view-complete-code" />,
+      content: <div className="exec-card-box" data-testid="execution-context-tests">{testCases}</div>
+    });
+  }
+
   return (
     <StyledWrapper className={['execution-context', className].filter(Boolean).join(' ')} data-testid={testId}>
-      {hasScripts && (
-        <Card title="Scripts" testId="execution-context-scripts" meta={<span className="exec-flow">{FLOW_LABEL[flow]} execution flow</span>}>
-          <ScriptChain steps={scriptChain} flow={flow} method={method} url={url} onNavigate={onNavigate} />
-        </Card>
-      )}
-      {hasVars && (
-        <Card title="Variables" testId="execution-context-variables" boxClassName="exec-card-box--bare">
-          <VariablesPanel preVars={preVars} postVars={postVars} />
-        </Card>
-      )}
-      {hasAsserts && (
-        <Card title="Asserts" testId="execution-context-asserts">
-          <AssertList assertions={assertions} />
-        </Card>
-      )}
-      {hasTests && (
-        <Card title="Tests" testId="execution-context-tests" meta={<ViewAllTests scripts={testScripts} />}>
-          <TestList tests={tests} />
-        </Card>
-      )}
+      <Tabs tabs={tabs} ariaLabel="Execution context" testId="execution-context-tabs" />
     </StyledWrapper>
   );
 };

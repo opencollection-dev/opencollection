@@ -6,7 +6,7 @@
 
 .key-value-table-container {
   overflow-y: auto;
-  border-radius: 8px;
+  border-radius: 0.25rem;
   border: 1px solid var(--oc-table-border);
 }
 
@@ -22,6 +22,7 @@
   position: sticky;
   top: 0;
   z-index: 1;
+  border-bottom: 1px solid var(--oc-table-border);
 }
 
 .key-value-table thead th {
@@ -42,7 +43,7 @@
 }
 
 .key-value-table thead .col-enabled {
-  width: 80px;
+  width: 1.5rem;
   text-align: center;
 }
 
@@ -63,7 +64,7 @@
 }
 
 .key-value-table tbody tr:hover {
-  background-color: var(--oc-table-striped);
+  background-color: transparent;
 }
 
 .key-value-table tbody tr:last-child td {
@@ -72,6 +73,7 @@
 
 .key-value-table tbody td {
   padding: 4px 0;
+  vertical-align: middle;
   border-bottom: 1px solid var(--oc-table-border);
   border-right: 1px solid var(--oc-table-border);
 }
@@ -83,6 +85,7 @@
 .key-value-table .col-enabled {
   text-align: center;
   vertical-align: middle;
+  border-right: none;
 }
 
 .key-value-table .col-actions {
@@ -91,9 +94,12 @@
 }
 
 .key-value-table .checkbox-input {
+  display: block;
+  margin: 0 auto;
   width: 14px;
   height: 14px;
   cursor: pointer;
+  vertical-align: middle;
   accent-color: var(--oc-colors-accent);
 }
 
@@ -104,14 +110,16 @@
   background-color: transparent;
   color: var(--oc-table-input-color);
   padding: 5px 8px;
-  font-size: 12px;
-  border-radius: 4px;
+  font-size: 0.875rem;
+  border-radius: 0.25rem;
   transition: all 0.15s ease;
   font-family: inherit;
+  vertical-align: middle;
 }
 
 .key-value-table .text-input:focus {
   outline: none;
+  border-color: var(--border-color);
 }
 
 /* Read-only key cell: matches the .text-input box model for column alignment,
@@ -148,7 +156,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 0.25rem;
   transition: color 0.15s ease, background-color 0.15s ease;
 }
 

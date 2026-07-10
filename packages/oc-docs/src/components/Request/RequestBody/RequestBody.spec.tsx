@@ -1,27 +1,28 @@
 import React from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect } from 'vitest';
 import { RequestBody } from './RequestBody';
+import { useRenderToDom } from '../../../hooks/useRenderToDom';
 
 describe('RequestBody', () => {
   it('renders a JSON body as a labelled code block', () => {
-    const html = renderToStaticMarkup(<RequestBody body={{ type: 'json', data: '{"email":"a@b.com"}' }} />);
-    expect(html).toContain('application/json');
-    expect(html).toContain('language-json');
-    expect(html).toContain('a@b.com');
+    const root = useRenderToDom(<RequestBody body={{ type: 'json', data: '{"email":"a@b.com"}' }} />);
+    expect(root.querySelector('.content-type-badge')?.text.trim()).toBe('application/json');
+    const code = root.querySelector('[data-testid="code"]');
+    expect(code).not.toBeNull();
+    expect(code?.text).toContain('a@b.com');
   });
 
   it('renders a form-urlencoded body as a table', () => {
-    const html = renderToStaticMarkup(
+    const root = useRenderToDom(
       <RequestBody body={{ type: 'form-urlencoded', data: [{ name: 'name', value: 'Alice' }] }} />
     );
-    expect(html).toContain('application/x-www-form-urlencoded');
-    expect(html).toContain('name');
-    expect(html).toContain('Alice');
+    expect(root.querySelector('.content-type-badge')?.text.trim()).toBe('application/x-www-form-urlencoded');
+    expect(root.querySelector('.property-key')?.text.trim()).toBe('name');
+    expect(root.querySelector('.property-value-cell')?.text.trim()).toBe('Alice');
   });
 
   it('tags multipart file parts and surfaces part descriptions', () => {
-    const html = renderToStaticMarkup(
+    const root = useRenderToDom(
       <RequestBody
         body={{
           type: 'multipart-form',
@@ -29,23 +30,22 @@ describe('RequestBody', () => {
         }}
       />
     );
-    expect(html).toContain('request-body-file-tag');
-    expect(html).toContain('/tmp/a.png');
-    expect(html).toContain('profile picture');
+    expect(root.querySelector('.request-body-file-tag')?.text.trim()).toBe('File');
+    expect(root.querySelector('.request-body-part')?.text).toContain('/tmp/a.png');
+    expect(root.querySelector('.description')?.text.trim()).toBe('profile picture');
   });
 
   it('surfaces a per-part content type', () => {
-    const html = renderToStaticMarkup(
+    const root = useRenderToDom(
       <RequestBody
         body={{ type: 'multipart-form', data: [{ name: 'meta', type: 'text', value: '{}', contentType: 'application/json' }] }}
       />
     );
-    expect(html).toContain('request-body-content-type');
-    expect(html).toContain('application/json');
+    expect(root.querySelector('.request-body-content-type')?.text.trim()).toBe('application/json');
   });
 
   it('renders every file-body variant with its content type and marks the selected one', () => {
-    const html = renderToStaticMarkup(
+    const root = useRenderToDom(
       <RequestBody
         body={{
           type: 'file',
@@ -56,15 +56,36 @@ describe('RequestBody', () => {
         }}
       />
     );
-    expect(html).toContain('/a.json');
-    expect(html).toContain('application/json');
-    expect(html).toContain('/b.xml');
-    expect(html).toContain('selected');
+    const labels = root.querySelectorAll('.property-key').map((key) => key.text.trim());
+    expect(labels).toEqual(['File 1', 'File 2 · selected']);
+    const parts = root.querySelectorAll('.request-body-part').map((part) => part.text);
+    expect(parts[0]).toContain('/a.json');
+    expect(parts[0]).toContain('application/json');
+    expect(parts[1]).toContain('/b.xml');
+    expect(parts[1]).toContain('application/xml');
+  });
+
+  it('surfaces a file-body variant description alongside its content type', () => {
+    const root = useRenderToDom(
+      <RequestBody
+        body={
+          {
+            type: 'file',
+            data: [
+              { filePath: '/payload.json', contentType: 'application/json', selected: true, description: 'Primary upload payload' }
+            ]
+          } as any
+        }
+      />
+    );
+    expect(root.querySelector('.request-body-part')?.text).toContain('/payload.json');
+    expect(root.querySelector('.request-body-content-type')?.text.trim()).toBe('application/json');
+    expect(root.querySelector('.description')?.text.trim()).toBe('Primary upload payload');
   });
 
   it('renders nothing for an empty/none body', () => {
-    expect(renderToStaticMarkup(<RequestBody body={undefined} />)).toBe('');
-    expect(renderToStaticMarkup(<RequestBody body={{ type: 'form-urlencoded', data: [] }} />)).toBe('');
-    expect(renderToStaticMarkup(<RequestBody body={{ type: 'file', data: [] }} />)).toBe('');
+    expect(useRenderToDom(<RequestBody body={undefined} />).querySelector('.request-body')).toBeNull();
+    expect(useRenderToDom(<RequestBody body={{ type: 'form-urlencoded', data: [] }} />).querySelector('.request-body')).toBeNull();
+    expect(useRenderToDom(<RequestBody body={{ type: 'file', data: [] }} />).querySelector('.request-body')).toBeNull();
   });
 });

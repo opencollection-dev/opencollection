@@ -3,54 +3,102 @@ import styled from '@emotion/styled';
 export const StyledWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100%;
+  min-width: 0;
 
   .tabs-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    flex-shrink: 0;
+    justify-content: space-between;
+    gap: 0.75rem 1rem;
   }
 
   .tabs {
     display: flex;
-    flex-shrink: 0;
-    
-    .tab {
-      border: none;
-      border-bottom: solid 2px transparent;
-      margin-right: 1.25rem;
-      color: var(--oc-tabs-color);
-      cursor: pointer;
-      font-size: 14px;
-      transition: all 0.2s ease;
-      position: relative;
-      background: none;
-      padding-bottom: 6px;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    min-width: 0;
+  }
 
-      &:focus,
-      &:active,
-      &:focus-within,
-      &:focus-visible,
-      &:target {
-        outline: none !important;
-        box-shadow: none !important;
+  .tab {
+    position: relative;
+    border: none;
+    border-bottom: 0.125rem solid transparent;
+    padding: 0 0 0.25rem;
+    background: none;
+    color: var(--oc-colors-text-subtext1);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 400;
+    line-height: 1.125rem;
+    letter-spacing: 0;
+    cursor: pointer;
+    transition: color 0.15s ease;
+  }
+  .tab::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.125rem;
+    height: 0.125rem;
+    background: var(--primary-color);
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.16s var(--oc-tab-ease);
+  }
+  .tab:hover:not(.is-active):not(:disabled) {
+    color: var(--text-primary);
+  }
+  .tab.is-active {
+    color: var(--oc-tabs-active-color);
+  }
+  .tab.is-active::after {
+    transform: scaleX(1);
+  }
+  .tab:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .tab:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+  .tab-count {
+    margin-left: 0.1875rem;
+    font-size: 0.625rem;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0;
+    color: var(--text-secondary);
+  }
+
+  &.tabs-variant-button .tabs {
+    gap: 0.5rem;
+
+    .tab {
+      padding: 0.5rem 1rem;
+      margin-right: 0;
+      border: none;
+      border-bottom: none;
+      border-radius: 0.5rem;
+      background: transparent;
+      color: var(--oc-tabs-color);
+
+      /* No sliding underline in the button variant. */
+      &::after {
+        display: none;
       }
 
-      &:hover:not(.active) {
+      &:hover:not(.is-active):not(.disabled) {
+        background: var(--oc-background-surface1);
         color: var(--text-primary);
       }
 
-      &.active {
-        color: var(--oc-tabs-active-color);
-        border-bottom-color: var(--primary-color);
-      }
-
-      .content-indicator {
-        margin-left: 2px;
-        font-size: 0.7em;
-        color: var(--text-tertiary);
-        font-weight: normal;
+      &.is-active {
+        background: var(--oc-background-surface2);
+        color: var(--text-primary);
+        border-bottom-color: transparent;
       }
     }
   }
@@ -59,11 +107,42 @@ export const StyledWrapper = styled.div`
     display: flex;
     align-items: center;
     gap: 1rem;
+    flex-shrink: 0;
   }
 
-  .tab-content {
-    flex: 1;
-    overflow: auto;
-    min-height: 0;
+  @keyframes oc-tab-panel-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.5rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .tab-panel {
+    margin-top: 1rem;
+    min-width: 0;
+    animation: oc-tab-panel-in 0.2s var(--oc-tab-ease) 0.04s backwards;
+  }
+  .tab-panel:focus {
+    outline: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tab-panel {
+      animation: none;
+    }
+    .tab::after {
+      transition: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .tabs-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
   }
 `;

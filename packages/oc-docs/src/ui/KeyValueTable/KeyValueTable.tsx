@@ -34,7 +34,7 @@ const generateId = () => `row_${Date.now()}_${Math.random().toString(36).substr(
 const KeyValueTable: React.FC<KeyValueTableProps> = ({
   data,
   onChange,
-  keyPlaceholder = 'Key',
+  keyPlaceholder = 'Name',
   valuePlaceholder = 'Value',
   showEnabled = true,
   additionalColumns = [],
@@ -202,12 +202,12 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
   }, [disableNewRow, notifyChange]);
 
   return (
-    <div className={`key-value-table-wrapper ${className}`}>
+    <div className={`key-value-table-wrapper ${className}`} data-testid="key-value-table">
       <div className="key-value-table-container">
         <table className="key-value-table">
           <thead>
             <tr>
-              {showEnabled && <th className="col-enabled">Enabled</th>}
+              {showEnabled && <th className="col-enabled"></th>}
               <th className="col-key">{keyPlaceholder}</th>
               <th className="col-value">{valuePlaceholder}</th>
               {additionalColumns.map(col => (
@@ -238,7 +238,9 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                   )}
                   <td className="col-key">
                     {readOnlyKey ? (
-                      <span className="text-readonly" title={row.name}>{row.name}</span>
+                      <span className="text-readonly" title={row.name}>
+                        {row.name}
+                      </span>
                     ) : (
                       <input
                         ref={(el) => {
@@ -276,7 +278,7 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                       />
                     )}
                   </td>
-                  {additionalColumns.map(col => (
+                  {additionalColumns.map((col) => (
                     <td key={col.key} className={`col-${col.key}`}>
                       {!isLastEmptyRow && col.render(row, index)}
                     </td>

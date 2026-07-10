@@ -45,7 +45,7 @@ export const StyledWrapper = styled.div`
     bottom: 0;
     z-index: 5;
     background-color: var(--oc-background-base);
-    box-shadow: 2px 0 8px color-mix(in srgb, black 12%, transparent);
+    box-shadow: 2px 0 8px color-mix(in srgb, var(--oc-text) 12%, transparent);
   }
 
   &[data-overlay-sidebar='true'] .view {
