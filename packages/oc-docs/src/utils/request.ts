@@ -4,12 +4,11 @@ import type {
   HttpRequest,
   HttpRequestBody,
   HttpRequestBodyVariant,
-  FileBodyVariant,
-  HttpRequestParam
+  FileBodyVariant
 } from '@opencollection/types/requests/http';
 import type { Auth } from '@opencollection/types/common/auth';
 import type { Scripts } from '@opencollection/types/common/scripts';
-import type { Variable } from '@opencollection/types/common/variables';
+import type { Variable, SecretVariable, VariableValueType } from '@opencollection/types/common/variables';
 import type { Action } from '@opencollection/types/common/actions';
 import {
   getRequestAuth,
@@ -71,22 +70,14 @@ export const getDescription = (item: unknown): string | undefined => {
   return undefined;
 };
 
-const PARAM_LOCATIONS: ReadonlySet<string> = new Set<HttpRequestParam['type']>(['query', 'path']);
+export const getValueType = (entity: { name: string; value: string; type?: string }): string | undefined =>
+  entity?.type || undefined;
 
-export const getValueType = (entity: { name: string; value: string; type?: string }): string | undefined => {
-  const type = entity?.type;
-  return type && !PARAM_LOCATIONS.has(type) ? type : undefined;
-};
-
-export const getVariableType = (variable: Variable): string | undefined => {
-  const declared = (variable as { type?: unknown }).type;
-  if (typeof declared === 'string' && declared) return declared;
-  const { value } = variable;
+export const getVariableType = (variable: Variable | SecretVariable): VariableValueType | undefined => {
+  if ('type' in variable && variable.type) return variable.type;
+  const value = 'value' in variable ? variable.value : undefined;
   const chosen = Array.isArray(value) ? (value.find((variant) => variant.selected) ?? value[0])?.value : value;
-  if (chosen && typeof chosen === 'object' && !Array.isArray(chosen)) {
-    const type = (chosen as { type?: unknown }).type;
-    if (typeof type === 'string' && type) return type;
-  }
+  if (chosen && typeof chosen === 'object') return chosen.type;
   return undefined;
 };
 
