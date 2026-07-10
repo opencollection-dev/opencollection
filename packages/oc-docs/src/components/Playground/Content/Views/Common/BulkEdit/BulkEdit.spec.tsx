@@ -1,6 +1,7 @@
 import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { useRenderToDom } from '../../../../../../hooks/useRenderToDom';
+import { query } from '../../../../../../test-utils/dom';
 
 vi.mock('../../../../../../ui/CodeEditor/CodeEditor', () => ({
   default: ({ value }: { value: string }) => <pre data-testid="code-editor">{value}</pre>
@@ -19,10 +20,9 @@ describe('BulkEdit', () => {
         onChange={() => {}}
       />
     );
-    const editor = root.querySelector('[data-testid="code-editor"]');
-    expect(editor).toBeTruthy();
-    expect(editor?.text).toContain('Content-Type:application/json');
-    expect(editor?.text).toContain('Accept:text/plain');
+    const editor = query(root, '[data-testid="code-editor"]');
+    expect(editor.text).toContain('Content-Type:application/json');
+    expect(editor.text).toContain('Accept:text/plain');
   });
 
   it('prefixes disabled rows with //', () => {
@@ -35,9 +35,8 @@ describe('BulkEdit', () => {
         onChange={() => {}}
       />
     );
-    const editor = root.querySelector('[data-testid="code-editor"]');
-    expect(editor).toBeTruthy();
-    expect(editor?.text).toContain('X-Enabled:yes');
-    expect(editor?.text).toContain('//X-Disabled:no');
+    const editor = query(root, '[data-testid="code-editor"]');
+    expect(editor.text).toContain('X-Enabled:yes');
+    expect(editor.text).toContain('//X-Disabled:no');
   });
 });

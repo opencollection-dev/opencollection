@@ -1,6 +1,7 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { useRenderToDom } from '../../../../../../hooks/useRenderToDom';
+import { query } from '../../../../../../test-utils/dom';
 import { VariablesTab } from './VariablesTab';
 
 const noop = () => {};
@@ -16,7 +17,7 @@ describe('VariablesTab', () => {
         onVariablesChange={noop}
       />
     );
-    expect(root.querySelector('.title')?.text.trim()).toBe('Variables');
+    expect(query(root, '.title').text.trim()).toBe('Variables');
     const values = inputValues(root);
     expect(values).toContain('baseUrl');
     expect(values).toContain('https://api.example.com');
@@ -31,8 +32,8 @@ describe('VariablesTab', () => {
         description="These override collection values"
       />
     );
-    expect(root.querySelector('.title')?.text.trim()).toBe('Runtime Variables');
-    expect(root.querySelector('.description')?.text.trim()).toBe('These override collection values');
+    expect(query(root, '.title').text.trim()).toBe('Runtime Variables');
+    expect(query(root, '.description').text.trim()).toBe('These override collection values');
   });
 
   it('stringifies a typed (non-string) value instead of leaving it blank', () => {

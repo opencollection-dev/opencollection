@@ -1,6 +1,7 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { useRenderToDom } from '../../../../../../hooks/useRenderToDom';
+import { query } from '../../../../../../test-utils/dom';
 import { HeadersTab } from './HeadersTab';
 
 const noop = () => {};
@@ -27,13 +28,13 @@ describe('HeadersTab', () => {
     const root = useRenderToDom(
       <HeadersTab headers={[]} onHeadersChange={noop} description="Request headers sent with the call" />
     );
-    expect(root.querySelector('.title')?.text.trim()).toBe('Headers');
-    expect(root.querySelector('.description')?.text.trim()).toBe('Request headers sent with the call');
+    expect(query(root, '.title').text.trim()).toBe('Headers');
+    expect(query(root, '.description').text.trim()).toBe('Request headers sent with the call');
     expect(root.querySelector('[data-testid="bulk-edit-toggle"]')).toBeTruthy();
   });
 
   it('exposes the Bulk edit toggle button', () => {
     const root = useRenderToDom(<HeadersTab headers={[]} onHeadersChange={noop} />);
-    expect(root.querySelector('[data-testid="bulk-edit-toggle"]')?.text.trim()).toBe('Bulk edit');
+    expect(query(root, '[data-testid="bulk-edit-toggle"]').text.trim()).toBe('Bulk edit');
   });
 });
