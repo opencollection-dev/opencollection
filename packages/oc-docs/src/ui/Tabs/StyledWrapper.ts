@@ -85,6 +85,11 @@ export const StyledWrapper = styled.div`
       background: transparent;
       color: var(--oc-tabs-color);
 
+      /* No sliding underline in the button variant. */
+      &::after {
+        display: none;
+      }
+
       &:hover:not(.is-active):not(.disabled) {
         background: var(--oc-background-surface1);
         color: var(--text-primary);
