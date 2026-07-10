@@ -88,6 +88,7 @@ export const AuthTab: React.FC<AuthTabProps> = ({
       <div className="space-y-3">
         <div className="flex items-center">
           <select
+            data-testid="auth-mode-select"
             value={authType}
             onChange={(e) => handleAuthTypeChange(e.target.value)}
             className="px-2 py-1 text-sm border rounded"
@@ -130,6 +131,7 @@ export const AuthTab: React.FC<AuthTabProps> = ({
                     Username:
                   </label>
                   <input
+                    data-testid="auth-username"
                     type="text"
                     value={auth.username || ''}
                     onChange={(e) => {
@@ -149,6 +151,7 @@ export const AuthTab: React.FC<AuthTabProps> = ({
                     Password:
                   </label>
                   <input
+                    data-testid="auth-password"
                     type="password"
                     value={auth.password || ''}
                     onChange={(e) => {
