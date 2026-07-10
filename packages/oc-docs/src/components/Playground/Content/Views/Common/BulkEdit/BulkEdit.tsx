@@ -36,7 +36,7 @@ const BulkEdit: React.FC<BulkEditProps> = ({ data, onChange, idPrefix = 'bulk' }
 
   return (
     <StyledWrapper className="space-y-3">
-      <CodeEditor value={text} onChange={handleChange} language="plaintext" height="200px" />
+      <CodeEditor value={text} onChange={handleChange} language="plaintext" height="200px" placeholder="name: value" />
     </StyledWrapper>
   );
 };

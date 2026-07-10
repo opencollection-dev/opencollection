@@ -20,7 +20,7 @@ interface ScriptsTabProps {
 export const ScriptsTab: React.FC<ScriptsTabProps> = ({
   scripts,
   onScriptChange,
-  title,
+  title = 'Scripts',
   description,
   showTests = true
 }) => {

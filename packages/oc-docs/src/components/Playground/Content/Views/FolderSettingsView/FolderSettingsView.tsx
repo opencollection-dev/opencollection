@@ -24,10 +24,7 @@ interface FolderSettingsProps {
   onFolderChange: (updatedFolder: Folder) => void;
 }
 
-const FolderSettings: React.FC<FolderSettingsProps> = ({
-  folder,
-  onFolderChange
-}) => {
+const FolderSettings: React.FC<FolderSettingsProps> = ({ folder, onFolderChange }) => {
   const dispatch = useAppDispatch();
   const [activeTab, setActiveTab] = useState('overview');
 
@@ -138,7 +135,8 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({
   const renderVariables = () => (
     <VariablesTab
       variables={folder.request?.variables || []}
-      onVariablesChange={handleVariablesChange}      description="Pre Request"
+      onVariablesChange={handleVariablesChange}      
+      description="Pre Request"
     />
   );
 
@@ -147,7 +145,8 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({
       auth={folder.request?.auth}
       onAuthChange={handleAuthChange}
       onItemChange={handleFolderAuthChange}
-      item={folder}      description="Configures authentication for this folder. This applies to all requests using the Inherit option in the Auth tab."
+      item={folder}      
+      description="Configures authentication for this folder. This applies to all requests using the Inherit option in the Auth tab."
       showInherit={true}
       showFullAuth={true}
       nestUnderRequest={true}

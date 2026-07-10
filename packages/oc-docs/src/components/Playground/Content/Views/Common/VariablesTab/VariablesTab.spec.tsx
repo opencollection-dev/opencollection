@@ -1,6 +1,7 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { useRenderToDom } from '../../../../../../hooks/useRenderToDom';
+import { query } from '../../../../../../test-utils/dom';
 import { VariablesTab } from './VariablesTab';
 
 const noop = () => {};
@@ -9,15 +10,14 @@ const inputValues = (root: ReturnType<typeof useRenderToDom>) =>
   root.querySelectorAll('input.text-input').map((input) => input.getAttribute('value'));
 
 describe('VariablesTab', () => {
-  it('renders a provided title and a variable name/value', () => {
+  it('renders the default title and a variable name/value', () => {
     const root = useRenderToDom(
       <VariablesTab
         variables={[{ name: 'baseUrl', value: 'https://api.example.com' }]}
         onVariablesChange={noop}
-        title="Variables"
       />
     );
-    expect(root.querySelector('.title')?.text.trim()).toBe('Variables');
+    expect(query(root, '.title').text.trim()).toBe('Variables');
     const values = inputValues(root);
     expect(values).toContain('baseUrl');
     expect(values).toContain('https://api.example.com');
@@ -32,8 +32,8 @@ describe('VariablesTab', () => {
         description="These override collection values"
       />
     );
-    expect(root.querySelector('.title')?.text.trim()).toBe('Runtime Variables');
-    expect(root.querySelector('.description')?.text.trim()).toBe('These override collection values');
+    expect(query(root, '.title').text.trim()).toBe('Runtime Variables');
+    expect(query(root, '.description').text.trim()).toBe('These override collection values');
   });
 
   it('stringifies a typed (non-string) value instead of leaving it blank', () => {
