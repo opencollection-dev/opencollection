@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
+import { SECRET_MASK } from '../../constants';
 import { StyledWrapper } from './StyledWrapper';
-
-export const SECRET_MASK = '*'.repeat(14);
 
 interface SecretValueProps {
   value?: string;

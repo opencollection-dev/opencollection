@@ -2,13 +2,20 @@ import React, { useState } from 'react';
 import { useResolvedVariables } from '../../hooks';
 import { CopyButton } from '../../ui/CopyButton/CopyButton';
 import { EyeIcon, EyeOffIcon } from '../../assets/icons';
-import { SCOPE_LABELS, INVALID_NAME_WARNING } from '../../constants';
+import { SCOPE_LABELS, INVALID_NAME_WARNING, SECRET_MASK } from '../../constants';
+import type { VariableScope } from '../../utils/variableResolution';
 import { StyledWrapper } from './StyledWrapper';
 
 interface VariableInfoCardProps {
   name: string;
   testId?: string;
 }
+
+const getReadOnlyNote = (scope: VariableScope, activeEnvName: string | null): string | null => {
+  if (scope === 'process.env' || scope === 'oauth2' || scope === '$secrets') return 'read-only';
+  if (scope === 'undefined') return activeEnvName ? 'Variable is not defined' : 'No active environment';
+  return null;
+};
 
 export const VariableInfoCard: React.FC<VariableInfoCardProps> = ({ name, testId = 'variable-info-card' }) => {
   const { lookup, activeEnvName } = useResolvedVariables();
@@ -48,16 +55,9 @@ export const VariableInfoCard: React.FC<VariableInfoCardProps> = ({ name, testId
     );
   }
 
-  const readOnlyNote =
-    info.scope === 'process.env' || info.scope === 'oauth2' || info.scope === '$secrets'
-      ? 'read-only'
-      : info.scope === 'undefined'
-        ? activeEnvName
-          ? 'Variable is not defined'
-          : 'No active environment'
-        : null;
+  const readOnlyNote = getReadOnlyNote(info.scope, activeEnvName);
 
-  const displayText = info.secret && !revealed ? '*'.repeat(info.value.length) : info.value;
+  const displayText = info.secret && !revealed ? SECRET_MASK : info.value;
 
   return (
     <StyledWrapper className="variable-info-card" data-testid={testId}>

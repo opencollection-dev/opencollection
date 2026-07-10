@@ -1,4 +1,4 @@
-import { variableNameRegex } from '../../constants/regex';
+import { VARIABLE_NAME_REGEX } from '../../constants/regex';
 
 const _interpolate = (str: string, _vars: any) => str;
 
@@ -97,7 +97,7 @@ class Bru {
       throw new Error('Creating a env variable without specifying a name is not allowed.');
     }
 
-    if (variableNameRegex.test(key) === false) {
+    if (VARIABLE_NAME_REGEX.test(key) === false) {
       throw new Error(
         `Variable name: "${key}" contains invalid characters! Names must only contain alpha-numeric characters, "-", "_", "."`
       );
@@ -136,7 +136,7 @@ class Bru {
       throw new Error('Creating a variable without specifying a name is not allowed.');
     }
 
-    if (variableNameRegex.test(key) === false) {
+    if (VARIABLE_NAME_REGEX.test(key) === false) {
       throw new Error(
         `Variable name: "${key}" contains invalid characters!` +
           ' Names must only contain alpha-numeric characters, "-", "_", "."'
@@ -147,7 +147,7 @@ class Bru {
   }
 
   getVar(key: string) {
-    if (variableNameRegex.test(key) === false) {
+    if (VARIABLE_NAME_REGEX.test(key) === false) {
       throw new Error(
         `Variable name: "${key}" contains invalid characters!` +
           ' Names must only contain alpha-numeric characters, "-", "_", "."'

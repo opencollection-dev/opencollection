@@ -6,7 +6,7 @@ import type {
   VariableValueType
 } from '@opencollection/types/common/variables';
 import { isTemplateVariable, templateVariableGlobalRegex } from './common';
-import { variableNameRegex } from '../constants/regex';
+import { VARIABLE_NAME_REGEX } from '../constants/regex';
 
 /**
  * Pure, DOM-free variable resolution for read-only display. Kept separate from
@@ -195,7 +195,7 @@ export const referencesSecret = (raw: string, secretNames: Set<string>): boolean
   return false;
 };
 
-export const isValidVariableName = (name: string): boolean => name.length > 0 && variableNameRegex.test(name);
+export const isValidVariableName = (name: string): boolean => name.length > 0 && VARIABLE_NAME_REGEX.test(name);
 
 export const formatEntryValue = (entry: VariableEntry, values: VariableMap): string => {
   if (entry.dataType === 'object') {

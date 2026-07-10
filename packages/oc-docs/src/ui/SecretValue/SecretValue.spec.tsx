@@ -1,7 +1,8 @@
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect } from 'vitest';
-import { SecretValue, SECRET_MASK } from './SecretValue';
+import { SecretValue } from './SecretValue';
+import { SECRET_MASK } from '../../constants';
 
 describe('SecretValue', () => {
   it('masks the value by default and never renders the real value', () => {

@@ -203,10 +203,10 @@ test.describe('Variable hover card — Code snippet', () => {
     await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
     await envSwitcher.toggle();
     await requestPage.codeSnippet.copyButton.click();
+    await expect
+      .poll(() => page.evaluate(() => navigator.clipboard.readText()))
+      .toContain('https://api.dev.example.com/customers/req-42?v=2024-01');
     const copied = await page.evaluate(() => navigator.clipboard.readText());
-    // Revealed values are copied (host, request-scoped userId, collection-scoped apiVersion) ...
-    expect(copied).toContain('https://api.dev.example.com/customers/req-42?v=2024-01');
-    // ... but the URL is no longer a template, and secrets stay as tokens.
     expect(copied).not.toContain('{{host}}/customers');
     expect(copied).toContain('{{bearer_token}}');
   });

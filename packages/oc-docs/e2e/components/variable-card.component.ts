@@ -12,7 +12,7 @@ export class VariableCardComponent extends BaseComponent {
   readonly warning = this.card.getByTestId('variable-info-card-warning');
 
   token(name: string): Locator {
-    return this.page.locator(`[data-var-name="${name}"]`).first();
+    return this.page.getByTestId(`variable-token-${name}`).first();
   }
 
   async hoverToken(name: string): Promise<void> {

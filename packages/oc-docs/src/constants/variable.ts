@@ -14,3 +14,5 @@ export const SCOPE_LABELS: Record<VariableScope, string> = {
 
 export const INVALID_NAME_WARNING =
   'Invalid variable name! Variables must only contain alpha-numeric characters, "-", "_", "."';
+
+export const SECRET_MASK = '*'.repeat(14);
