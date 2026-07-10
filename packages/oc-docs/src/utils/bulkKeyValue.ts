@@ -1,8 +1,6 @@
-export interface BulkKeyValueItem {
-  name: string;
-  value: string;
-  enabled: boolean;
-}
+import { KeyValueRow } from "src/ui/KeyValueTable/KeyValueTable";
+
+export type BulkKeyValueItem = Pick<KeyValueRow, 'name' | 'value' | 'enabled'>
 
 /**
  * Parse bulk-editor text into key/value items. Each line is `name: value`;
@@ -30,6 +28,6 @@ export function parseBulkKeyValue(value: string): BulkKeyValueItem[] {
  * Serialize key/value items back into bulk-editor text. Disabled rows are
  * prefixed with `//`.
  */
-export function serializeBulkKeyValue(items: Array<{ name: string; value: string; enabled: boolean }>): string {
+export function serializeBulkKeyValue(items: BulkKeyValueItem[]): string {
   return items.map((item) => `${item.enabled ? '' : '//'}${item.name}:${item.value}`).join('\n');
 }
