@@ -6,6 +6,7 @@ import KeyValueTable, { KeyValueRow } from '../../../../../ui/KeyValueTable/KeyV
 import { SidebarContainer, SidebarItems, SidebarItem } from '../../../EnvListStyles/StyledWrapper';
 import { useAppDispatch } from '../../../../../store/hooks';
 import { updateCollectionEnvironments } from '@slices/playground';
+import { getDescription } from '../../../../../utils/request';
 
 interface EnvironmentsViewProps {
   collection: OpenCollection | null;
@@ -25,6 +26,7 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection }) => {
     if (selectedEnvironmentIndex === null || !environments[selectedEnvironmentIndex]) return null;
     return { ...environments[selectedEnvironmentIndex] };
   }, [environments, selectedEnvironmentIndex]);
+  const selectedDescription = getDescription(selectedEnvironment);
 
   const variableToRow = useCallback((variable: Variable, index: number): KeyValueRow => {
     let value = '';
@@ -196,12 +198,8 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection }) => {
               <h2 style={{ fontSize: '20px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>
                 {selectedEnvironment.name || `Environment ${(selectedEnvironmentIndex || 0) + 1}`}
               </h2>
-              {selectedEnvironment.description && (
-                <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
-                  {typeof selectedEnvironment.description === 'string' 
-                    ? selectedEnvironment.description 
-                    : selectedEnvironment.description.content}
-                </p>
+              {selectedDescription && (
+                <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>{selectedDescription}</p>
               )}
             </div>
             

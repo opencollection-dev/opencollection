@@ -18,13 +18,22 @@ export const RequestVars: React.FC<RequestVarsProps> = ({ preRequest = [], postR
       {preRequest.length > 0 && (
         <div className="request-vars-group">
           <SubHeading>Pre-Request</SubHeading>
-          <PropertyTable rows={preRequest.map((v) => ({ label: v.name, value: v.value, disabled: v.disabled }))} />
+          <PropertyTable
+            rows={preRequest.map((v) => ({ label: v.name, value: v.value, description: v.description, disabled: v.disabled }))}
+          />
         </div>
       )}
       {postResponse.length > 0 && (
         <div className="request-vars-group">
           <SubHeading>Post-Response</SubHeading>
-          <PropertyTable rows={postResponse.map((v) => ({ label: v.name, value: v.expression, disabled: v.disabled }))} />
+          <PropertyTable
+            rows={postResponse.map((v) => ({
+              label: v.name,
+              value: v.expression,
+              description: v.description,
+              disabled: v.disabled
+            }))}
+          />
         </div>
       )}
     </StyledWrapper>
