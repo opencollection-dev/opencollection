@@ -7,7 +7,6 @@ import { StyledWrapper } from './StyledWrapper';
 export interface BulkEditProps {
   data: KeyValueRow[];
   onChange: (rows: KeyValueRow[]) => void;
-  onToggle: () => void;
   idPrefix?: string;
 }
 
