@@ -1,6 +1,6 @@
-import { KeyValueRow } from "src/ui/KeyValueTable/KeyValueTable";
+import { KeyValueRow } from 'src/ui/KeyValueTable/KeyValueTable';
 
-export type BulkKeyValueItem = Pick<KeyValueRow, 'name' | 'value' | 'enabled'>
+export type BulkKeyValueItem = Pick<KeyValueRow, 'name' | 'value' | 'enabled'>;
 
 /**
  * Parse bulk-editor text into key/value items. Each line is `name: value`;
