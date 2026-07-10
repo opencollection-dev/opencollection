@@ -31,12 +31,6 @@ const renderLogo = (logo: React.ReactNode, collectionName: string): React.ReactN
   return logo;
 };
 
-/** Display version with a leading "v" (idempotent: "1.0.0" → "v1.0.0", "v2" → "v2"). */
-const formatVersion = (version: string): string => {
-  const trimmed = version.trim();
-  return /^v/i.test(trimmed) ? trimmed : `v${trimmed}`;
-};
-
 const Brand: React.FC<BrandProps> = ({
   collectionName,
   version,
@@ -60,7 +54,7 @@ const Brand: React.FC<BrandProps> = ({
           </span>
           {version && (
             <span className="topbar-brand-version" data-testid={`${testId}-version`}>
-              {formatVersion(version)}
+              {version}
             </span>
           )}
         </span>

@@ -101,14 +101,7 @@ export const StyledWrapper = styled.div`
     min-height: 0;
   }
   .example-description {
-    margin: 0;
-    padding: 0.5rem;
-    font-family: var(--font-sans);
-    font-weight: 400;
-    font-size: 0.75rem;
-    line-height: 1;
-    letter-spacing: 0;
-    color: var(--oc-overlay-overlay1);
+    margin: 0 0.5rem 0.5rem 0.5rem;
   }
 
   .example-url-row {
@@ -146,7 +139,7 @@ export const StyledWrapper = styled.div`
     border-right: 1px solid var(--border-color);
   }
 
-  @media (max-width: 900px) {
+  @container docs (max-width: 900px) {
     .example-grid {
       grid-template-columns: 1fr;
     }
@@ -263,8 +256,6 @@ export const StyledWrapper = styled.div`
   .pane-body::-webkit-scrollbar-track {
     background: transparent;
   }
-  /* Content sits flush inside the pane — the pane frames it, so the inner code
-     panel and property table drop their own borders. */
   .pane-body .code-content-wrapper {
     border: none;
     border-radius: 0;
@@ -282,7 +273,7 @@ export const StyledWrapper = styled.div`
     color: var(--text-tertiary);
   }
 
-  @media (max-width: 600px) {
+  @container docs (max-width: 600px) {
     .pane-ctype {
       display: none;
     }

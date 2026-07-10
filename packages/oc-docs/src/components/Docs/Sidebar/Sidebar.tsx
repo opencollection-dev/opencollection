@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import SidebarNavLink from './SidebarNavLink/SidebarNavLink';
 import SidebarTree from './SidebarTree/SidebarTree';
 import SidebarFooter from './SidebarFooter/SidebarFooter';
@@ -11,6 +11,7 @@ import { getItemUuid } from '../../../utils/itemUtils';
 import { useNavModel } from '../../../routing/hooks';
 import { normalizeSlug } from '../../../routing/resolve';
 import { OVERVIEW_SLUG, ENVIRONMENTS_SLUG } from '../../../routing/navModel';
+import { useDocsNavigate } from '../../../hooks';
 
 interface SidebarProps {
   onNavigate?: () => void;
@@ -21,12 +22,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
   const dispatch = useAppDispatch();
   const collection = useAppSelector(selectDocsCollection);
   const model = useNavModel();
-  const navigate = useNavigate();
+  const docsNavigate = useDocsNavigate();
   const { pathname } = useLocation();
   const activeSlug = normalizeSlug(pathname);
 
   const goTo = (slug: string) => {
-    navigate(`/${slug}`);
+    docsNavigate(slug);
     onNavigate?.();
   };
 

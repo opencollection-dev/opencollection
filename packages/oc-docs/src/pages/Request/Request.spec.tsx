@@ -5,6 +5,7 @@ import type { OpenCollection } from '@opencollection/types';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { Item } from '@opencollection/types/collection/item';
 import { Request } from './Request';
+import { useRenderToDom } from '../../hooks/useRenderToDom';
 
 const collection: OpenCollection = {
   info: { name: 'Auth API', version: '1.0.0' },
@@ -50,38 +51,29 @@ const item: HttpRequest = {
 
 describe('Request page', () => {
   it('renders the breadcrumb, heading, url bar, description and all populated sections', () => {
-    const html = renderToStaticMarkup(<Request item={item} ancestry={ancestry} collection={collection} onTryClick={() => {}} />);
+    const root = useRenderToDom(<Request item={item} ancestry={ancestry} collection={collection} onTryClick={() => {}} />);
 
-    // breadcrumb + heading
-    expect(html).toContain('Authentication');
-    expect(html).toContain('Login');
-    expect(html).toContain('Breadcrumb');
-    // url bar
-    expect(html).toContain('auth/login');
-    expect(html).toContain('Try</button>');
-    // description
-    expect(html).toContain('Authenticate a user');
-    // section labels
-    expect(html).toContain('Auth');
-    expect(html).toContain('Params');
-    expect(html).toContain('Body');
-    expect(html).toContain('Headers');
-    // Variables now live in the Execution-context "Variables" card (not a left-column section).
-    expect(html).toContain('Variables');
-    expect(html).toContain('Code Snippet');
-    expect(html).toContain('Examples');
-    expect(html).toContain('Execution Context');
-    // params split
-    expect(html).toContain('tenant');
-    expect(html).toContain('verbose');
-    // code snippet
-    expect(html).toContain('curl --request POST');
-    // execution context: collection-level + request-level tests inherit; asserts render
-    // and the Tests card offers a "View complete code" link (counts were removed).
-    expect(html).toContain('returns a token');
-    expect(html).toContain('collection-level check');
-    expect(html).toContain('res.status');
-    expect(html).toContain('View complete code');
+    expect(root.querySelector('[data-testid="request-breadcrumb"]')?.text).toContain('Authentication');
+    expect(root.querySelector('[data-testid="request-title"]')?.text).toContain('Login');
+    expect(root.querySelector('[data-testid="request-url"]')?.text).toContain('auth/login');
+    expect(root.querySelectorAll('button').some((b) => b.text.trim() === 'Try')).toBe(true);
+    expect(root.querySelector('[data-testid="request-description"]')?.text).toContain('Authenticate a user');
+
+    for (const slug of ['params', 'body', 'headers', 'auth', 'code-snippet', 'examples', 'execution-context']) {
+      expect(root.querySelector(`[data-testid="request-section-${slug}"]`)).not.toBeNull();
+    }
+
+    const params = root.querySelector('[data-testid="request-section-params"]');
+    expect(params?.text).toContain('tenant');
+    expect(params?.text).toContain('verbose');
+    expect(root.querySelector('[data-testid="request-section-code-snippet"]')?.text).toContain('curl --request POST');
+
+    const exec = root.querySelector('[data-testid="execution-context"]');
+    expect(exec?.text).toContain('attempt');
+    expect(exec?.text).toContain('authToken');
+    expect(root.querySelector('[data-testid="execution-context-tabs-tab-scripts"]')).not.toBeNull();
+    expect(root.querySelector('[data-testid="execution-context-tabs-tab-asserts"]')).not.toBeNull();
+    expect(root.querySelector('[data-testid="execution-context-tabs-tab-tests"]')).not.toBeNull();
   });
 
   it('shows empty states (not bare sections) when nothing is configured, and always shows the code snippet', () => {

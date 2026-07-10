@@ -10,9 +10,13 @@ export { useSearchHotkey } from './useSearchHotkey';
 export { useClickOutside } from './useClickOutside';
 export { useEscapeKey } from './useEscapeKey';
 export { useLockBodyScroll } from './useLockBodyScroll';
+export { useStorage, useLocalStorage, useSessionStorage, type StorageArea, type SetStoredValue } from './useStorage';
 export {
   useVariableResolver,
   useResolvedVariables,
   VariableResolverProvider,
   type VariableResolver
 } from './useVariableResolver';
+export { usePlaygroundUrlState, type PlaygroundUrlApi } from './usePlaygroundUrlState';
+export { useDocsNavigate } from './useDocsNavigate';
+export { useElementWidth } from './useElementWidth';

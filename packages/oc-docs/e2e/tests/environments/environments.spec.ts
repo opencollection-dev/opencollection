@@ -70,6 +70,13 @@ test.describe('Environments page', () => {
     await expect(table.columnHeader('type')).toHaveText('Data Type');
   });
 
+  test('collapses the description row for variables that have no description', async ({ environmentsPage }) => {
+    const { table } = environmentsPage;
+
+    await expect(table.variableDescriptions).toBeHidden();
+    await expect(table.secretVariableDescriptions).toBeHidden();
+  });
+
   test('hides the External Secret Variables section when the environment has none', async ({ environmentsPage }) => {
     await expect(environmentsPage.tab('Local')).toHaveAttribute('aria-selected', 'true');
     await expect(environmentsPage.externalSecretsGroup).toBeHidden();

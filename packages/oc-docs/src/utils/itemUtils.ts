@@ -39,6 +39,25 @@ export const getItemUuid = (item: OpenCollectionItem | null | undefined): string
   (item as { uuid?: string } | null | undefined)?.uuid;
 
 /**
+ * Depth-first search for the item carrying `uuid` (matched via the hydrated
+ * runtime uuid). Returns null when not found or the uuid is null.
+ */
+export const findItemByUuid = (
+  items: OpenCollectionItem[] | undefined,
+  uuid: string | null | undefined
+): OpenCollectionItem | null => {
+  if (!items || !uuid) return null;
+  for (const item of items) {
+    if (getItemUuid(item) === uuid) return item;
+    if (isFolder(item)) {
+      const found = findItemByUuid((item as { items?: OpenCollectionItem[] }).items, uuid);
+      if (found) return found;
+    }
+  }
+  return null;
+};
+
+/**
  * Generate a section ID for use in HTML elements
  * @param item The OpenCollection item
  * @param parentPath Optional parent path for nested items

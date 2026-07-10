@@ -52,6 +52,10 @@ export const StyledWrapper = styled.div`
     margin-top: 0.625rem;
   }
 
+  .environment-description {
+    margin-bottom: 0.625rem;
+  }
+
   .environment-name {
     font-family: 'Fira Code', var(--font-mono);
     font-weight: 500;

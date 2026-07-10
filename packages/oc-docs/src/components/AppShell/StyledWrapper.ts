@@ -6,6 +6,28 @@ export const StyledWrapper = styled.div`
   height: 100vh;
   box-sizing: border-box;
 
+  &[data-dock='inline'] {
+    flex-direction: row;
+  }
+
+  .appshell-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    container-type: inline-size;
+    container-name: docs;
+  }
+
+  .appshell-main {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+
   .appshell-row {
     display: flex;
     flex: 1;
@@ -28,6 +50,25 @@ export const StyledWrapper = styled.div`
     height: 100%;
     overflow-y: auto;
     overscroll-behavior-y: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--oc-scrollbar-color) transparent;
+  }
+
+  .appshell-content::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .appshell-content::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .appshell-content::-webkit-scrollbar-thumb {
+    background-color: var(--oc-scrollbar-color);
+    border-radius: 20px;
+  }
+
+  .appshell-content::-webkit-scrollbar-thumb:hover {
+    background-color: color-mix(in srgb, var(--oc-text) 20%, transparent);
   }
 
   .appshell-collapse,

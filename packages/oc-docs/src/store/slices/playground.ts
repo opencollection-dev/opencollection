@@ -13,29 +13,17 @@ export interface PlaygroundState {
   hydratedCollection: OpenCollectionCollection | null;
   responses: Record<string, any>; // Store responses by item UUID
   // UI State
-  height: number;
-  isCollapsed: boolean;
-  isDragging: boolean;
-  lastExpandedHeight: number;
   viewMode: ViewMode;
   selectedItemId: string | null;
-  selectedEnvironment: string;
 }
-
-const getDefaultHeight = () => (typeof window !== 'undefined' ? window.innerHeight * 0.9 : 600);
 
 const initialState: PlaygroundState = {
   collection: null,
   hydratedCollection: null,
   responses: {},
   // UI State
-  height: 0,
-  isCollapsed: false,
-  isDragging: false,
-  lastExpandedHeight: getDefaultHeight(),
   viewMode: 'playground',
   selectedItemId: null,
-  selectedEnvironment: ''
 };
 
 const findAndUpdateItemInCollection = (
@@ -154,26 +142,11 @@ const playgroundSlice = createSlice({
       delete state.responses[uuid];
     },
     // UI State Actions
-    setDrawerHeight: (state: PlaygroundState, action: PayloadAction<number>) => {
-      state.height = action.payload;
-    },
-    setDrawerCollapsed: (state: PlaygroundState, action: PayloadAction<boolean>) => {
-      state.isCollapsed = action.payload;
-    },
-    setDrawerDragging: (state: PlaygroundState, action: PayloadAction<boolean>) => {
-      state.isDragging = action.payload;
-    },
-    setLastExpandedHeight: (state: PlaygroundState, action: PayloadAction<number>) => {
-      state.lastExpandedHeight = action.payload;
-    },
     setViewMode: (state: PlaygroundState, action: PayloadAction<ViewMode>) => {
       state.viewMode = action.payload;
     },
     setSelectedItemId: (state: PlaygroundState, action: PayloadAction<string | null>) => {
       state.selectedItemId = action.payload;
-    },
-    setSelectedEnvironment: (state: PlaygroundState, action: PayloadAction<string>) => {
-      state.selectedEnvironment = action.payload;
     },
     // Collection Mutation Actions
     toggleFolderCollapse: (state: PlaygroundState, action: PayloadAction<string>) => {
@@ -217,13 +190,8 @@ export const {
   updatePlaygroundItem,
   setPlaygroundResponse,
   clearPlaygroundResponse,
-  setDrawerHeight,
-  setDrawerCollapsed,
-  setDrawerDragging,
-  setLastExpandedHeight,
   setViewMode,
   setSelectedItemId,
-  setSelectedEnvironment,
   toggleFolderCollapse,
   updateCollectionSettings,
   updateCollectionEnvironments,
@@ -235,12 +203,7 @@ export const selectPlaygroundCollection = (state: RootState) => state.playground
 export const selectHydratedCollection = (state: RootState) => state.playground.hydratedCollection;
 export const selectPlaygroundResponse = (state: RootState, uuid: string) => state.playground.responses[uuid];
 export const selectPlaygroundResponses = (state: RootState) => state.playground.responses;
-export const selectDrawerHeight = (state: RootState) => state.playground.height;
-export const selectDrawerCollapsed = (state: RootState) => state.playground.isCollapsed;
-export const selectDrawerDragging = (state: RootState) => state.playground.isDragging;
-export const selectLastExpandedHeight = (state: RootState) => state.playground.lastExpandedHeight;
 export const selectViewMode = (state: RootState) => state.playground.viewMode;
 export const selectSelectedItemId = (state: RootState) => state.playground.selectedItemId;
-export const selectSelectedEnvironment = (state: RootState) => state.playground.selectedEnvironment;
 
 export default playgroundSlice.reducer;

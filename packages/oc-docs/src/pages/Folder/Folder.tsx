@@ -3,7 +3,7 @@ import type { OpenCollection } from '@opencollection/types';
 import type { Item, Folder as FolderItem } from '@opencollection/types/collection/item';
 import { useMarkdownRenderer } from '../../hooks';
 import { AUTH_MODE_LABELS } from '../../constants';
-import { getItemName, getItemDocs } from '../../utils/schemaHelpers';
+import { getItemName, getItemDocs, getItemDescription } from '../../utils/schemaHelpers';
 import { buildBreadcrumbSegments } from '../../utils/common';
 import { getFolderConfig, hasFolderConfig, countFolderRequests } from '../../utils/folder';
 import { PageWrapper } from '../../components/PageWrapper/PageWrapper';
@@ -34,7 +34,7 @@ export const Folder: React.FC<FolderProps> = ({ item, ancestry = [], collection,
   const showConfig = useMemo(() => hasFolderConfig(config), [config]);
 
   const docsHtml = useMemo(() => {
-    const content = getItemDocs(item) || '';
+    const content = getItemDocs(item) || getItemDescription(item);
     return content ? md.render(content) : '';
   }, [item, md]);
 

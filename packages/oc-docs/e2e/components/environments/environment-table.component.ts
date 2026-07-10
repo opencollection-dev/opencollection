@@ -6,6 +6,8 @@ export class EnvironmentTableComponent extends BaseComponent {
   readonly variableRows = this.page.getByTestId('environment-variable-row');
   readonly secretVariableRows = this.page.getByTestId('environment-secret-variable-row');
   readonly externalSecretRows = this.page.getByTestId('environment-external-secret-row');
+  readonly variableDescriptions = this.page.getByTestId('environment-variable-row-description');
+  readonly secretVariableDescriptions = this.page.getByTestId('environment-secret-variable-row-description');
 
   columnHeader(key: string): Locator {
     return this.root.getByTestId(`table-header-${key}`);
