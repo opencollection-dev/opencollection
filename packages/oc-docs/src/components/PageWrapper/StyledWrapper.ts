@@ -5,7 +5,7 @@ export const StyledWrapper = styled.div`
   margin-inline: auto;
   padding: 0.9375rem 3rem;
 
-  @media (max-width: 768px) {
+  @container docs (max-width: 768px) {
     padding: 0.9375rem 1.25rem;
   }
 `;

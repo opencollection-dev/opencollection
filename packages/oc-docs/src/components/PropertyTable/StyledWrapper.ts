@@ -24,9 +24,13 @@ export const StyledWrapper = styled.div`
     display: grid;
     grid-template-columns: 8.75rem minmax(0, 1fr);
     align-items: center;
-    gap: 1.5rem;
+    column-gap: 1.5rem;
+    row-gap: 0;
     padding: 0.5rem 0.875rem;
     min-height: 2rem;
+  }
+  .property-row .description {
+    grid-column: 1 / -1;
   }
   .property-row + .property-row {
     border-top: 1px solid var(--border-color);
@@ -81,17 +85,5 @@ export const StyledWrapper = styled.div`
   }
   .property-value-cell .secret-value-text {
     font-family: inherit;
-  }
-
-  .property-description {
-    margin: 0.25rem 0 0;
-    font-family: var(--font-sans);
-    font-weight: 400;
-    font-size: 0.6875rem;
-    line-height: 1.35;
-    letter-spacing: normal;
-    color: var(--text-secondary);
-    white-space: normal;
-    word-break: break-word;
   }
 `;

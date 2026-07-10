@@ -6,7 +6,11 @@ let cachedRenderer: MarkdownIt | null = null;
 
 const createRenderer = (): MarkdownIt => {
   const markdownIt = new MarkdownIt({
-    html: true,
+    // Off: docs come from (untrusted) collection content and are injected via
+    // dangerouslySetInnerHTML. Disabling raw HTML blocks script/event-handler
+    // injection at the source; markdown-it still blocks javascript:/data: links
+    // via its default link validation, so no separate sanitiser is needed.
+    html: false,
     linkify: true,
     // Off: smart-typography rewrites punctuation in technical docs — e.g. (c)->©,
     // --->en-dash, ...->ellipsis, straight->curly quotes — which corrupts API copy.

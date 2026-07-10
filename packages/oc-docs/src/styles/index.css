@@ -20,6 +20,7 @@
 
   /* Tabs (no matching theme token for inactive tab text) */
   --oc-tabs-color: var(--oc-colors-text-muted);
+  --oc-tab-ease: cubic-bezier(0.22, 1, 0.36, 1);
 
   /* Surfaces / backgrounds */
   --background-color: var(--oc-bg);

@@ -88,6 +88,7 @@ export const FolderConfiguration: React.FC<FolderConfigurationProps> = ({ config
                     label: variable.name,
                     value: variable.value,
                     type: variable.type,
+                    description: variable.description,
                     disabled: variable.disabled
                   }))}
                 />
@@ -100,6 +101,7 @@ export const FolderConfiguration: React.FC<FolderConfigurationProps> = ({ config
                   rows={config.postVariables.map((variable) => ({
                     label: variable.name,
                     value: variable.expression,
+                    description: variable.description,
                     disabled: variable.disabled
                   }))}
                 />

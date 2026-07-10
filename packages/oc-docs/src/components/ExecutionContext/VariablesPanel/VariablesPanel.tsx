@@ -11,10 +11,10 @@ interface VariablesPanelProps {
 }
 
 const preRows = (vars: PreRequestVarRow[]): PropertyRow[] =>
-  vars.map((v) => ({ label: v.name, value: v.value, type: v.type, disabled: v.disabled }));
+  vars.map((v) => ({ label: v.name, value: v.value, type: v.type, description: v.description, disabled: v.disabled }));
 
 const postRows = (vars: PostResponseVarRow[]): PropertyRow[] =>
-  vars.map((v) => ({ label: v.name, value: v.expression, disabled: v.disabled }));
+  vars.map((v) => ({ label: v.name, value: v.expression, description: v.description, disabled: v.disabled }));
 
 const Field: React.FC<{ label: string; rows: PropertyRow[] }> = ({ label, rows }) => (
   <div className="vars-field">

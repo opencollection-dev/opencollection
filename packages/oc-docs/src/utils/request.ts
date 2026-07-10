@@ -59,18 +59,15 @@ export const resolveInheritedAuth = (
   return { auth: 'inherit' };
 };
 
-export const descriptionText = (desc: unknown): string | undefined => {
+export const getDescription = (item: unknown): string | undefined => {
+  if (!item || typeof item !== 'object') return undefined;
+  const desc = (item as { description?: unknown }).description;
   if (typeof desc === 'string') return desc.trim() ? desc : undefined;
   if (desc && typeof desc === 'object' && 'content' in desc) {
     const content = (desc as { content?: unknown }).content;
     return typeof content === 'string' && content.trim() ? content : undefined;
   }
   return undefined;
-};
-
-export const getDescription = (item: unknown): string | undefined => {
-  if (!item || typeof item !== 'object') return undefined;
-  return descriptionText((item as { description?: unknown }).description);
 };
 
 const NON_DATA_TYPES = new Set(['query', 'path']);
@@ -384,6 +381,7 @@ export interface PreRequestVarRow {
   name: string;
   value: string;
   type?: string;
+  description?: string;
   disabled?: boolean;
 }
 
@@ -391,6 +389,7 @@ export interface PostResponseVarRow {
   name: string;
   expression: string;
   scope?: string;
+  description?: string;
   disabled?: boolean;
 }
 
@@ -410,6 +409,7 @@ const toPreRequestVarRow = (variable: Variable): PreRequestVarRow => ({
   name: variable.name,
   value: flattenValue(variable.value),
   type: getVariableType(variable),
+  description: getDescription(variable),
   disabled: variable.disabled
 });
 
@@ -420,6 +420,7 @@ const toPostResponseVarRow = (action: Action): PostResponseVarRow => ({
   name: action.variable.name,
   expression: action.selector.expression,
   scope: action.variable.scope,
+  description: getDescription(action),
   disabled: action.disabled
 });
 

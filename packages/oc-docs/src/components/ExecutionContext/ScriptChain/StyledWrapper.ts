@@ -40,7 +40,7 @@ export const StyledWrapper = styled.div`
     white-space: nowrap;
   }
 
-  @media (max-width: 600px) {
+  @container docs (max-width: 600px) {
     .script-line {
       gap: 0.5rem;
       padding: 0.625rem 0.75rem;

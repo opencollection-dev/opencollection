@@ -18,7 +18,8 @@ describe('Topbar', () => {
   it('renders the brand name and version', () => {
     const html = renderToStaticMarkup(<Topbar collectionName="Hotel Booking API" version="1.0.0" />);
     expect(html).toContain('Hotel Booking API');
-    expect(html).toContain('v1.0.0');
+    expect(html).toContain('>1.0.0<');
+    expect(html).not.toContain('v1.0.0');
   });
 
   it('renders the provided search slot node', () => {
@@ -44,5 +45,21 @@ describe('Topbar', () => {
   it('hides the Open-in-Bruno CTA when no href (e.g. collection has no git url)', () => {
     const html = renderToStaticMarkup(<Topbar collectionName="Docs" />);
     expect(html).not.toContain('data-testid="open-in-bruno"');
+  });
+
+  it('renders the full Open-in-Bruno CTA (with label) on the desktop layout', () => {
+    const html = renderToStaticMarkup(
+      <Topbar collectionName="Docs" layoutMode="desktop" openInBrunoHref="https://fetch.usebruno.com?url=x" />
+    );
+    expect(html).toContain('data-testid="open-in-bruno"');
+    expect(html).toContain('<span>Open in Bruno</span>');
+  });
+
+  it('condenses Open-in-Bruno to the glyph (no label) below the desktop layout', () => {
+    const html = renderToStaticMarkup(
+      <Topbar collectionName="Docs" layoutMode="tablet" openInBrunoHref="https://fetch.usebruno.com?url=x" />
+    );
+    expect(html).toContain('data-testid="open-in-bruno"');   // still shown on a Bruno-capable device
+    expect(html).not.toContain('<span>Open in Bruno</span>'); // label hidden, glyph only
   });
 });

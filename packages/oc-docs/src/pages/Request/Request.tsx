@@ -214,6 +214,7 @@ const RequestContent: React.FC<RequestContentProps> = ({
           testId="request-section-execution-context"
           className="request-fullwidth"
           collapsible={hasExecutionContext}
+          storageKey="request-execution-context"
         >
           {hasExecutionContext ? (
             <ExecutionContext
