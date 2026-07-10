@@ -46,8 +46,8 @@ test.describe('collection settings', () => {
 
   test('scripts shows pre-request and post-response editors', async ({ collectionSettings }) => {
     await collectionSettings.openTab('scripts');
-    await expect(collectionSettings.tab('pre-request')).toBeVisible();
-    await expect(collectionSettings.tab('post-response')).toBeVisible();
+    await expect(collectionSettings.scriptTab('pre-request')).toBeVisible();
+    await expect(collectionSettings.scriptTab('post-response')).toBeVisible();
   });
 
   test('persists an edited auth value across tab switches', async ({ collectionSettings }) => {

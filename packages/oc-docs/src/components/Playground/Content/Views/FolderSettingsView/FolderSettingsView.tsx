@@ -24,7 +24,10 @@ interface FolderSettingsProps {
   onFolderChange: (updatedFolder: Folder) => void;
 }
 
-const FolderSettings: React.FC<FolderSettingsProps> = ({ folder, onFolderChange }) => {
+const FolderSettings: React.FC<FolderSettingsProps> = ({
+  folder,
+  onFolderChange
+}) => {
   const dispatch = useAppDispatch();
   const [activeTab, setActiveTab] = useState('overview');
 

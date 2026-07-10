@@ -82,6 +82,7 @@ export const ScriptsTab: React.FC<ScriptsTabProps> = ({
           activeTab={activeScriptTab}
           onTabChange={(selectedTabId) => setActiveScriptTab(selectedTabId as ScriptSubTab)}
           variant="button"
+          testId="scripts-tabs"
         />
 
         {showTests && (

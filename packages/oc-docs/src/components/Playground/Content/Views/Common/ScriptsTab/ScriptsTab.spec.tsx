@@ -13,8 +13,8 @@ const noop = () => {};
 describe('ScriptsTab', () => {
   it('renders the pre/post sub-tab labels', () => {
     const root = useRenderToDom(<ScriptsTab scripts={{}} onScriptChange={noop} />);
-    expect(root.querySelector('[data-testid="tab-pre-request"]')?.text.trim()).toBe('Pre request');
-    expect(root.querySelector('[data-testid="tab-post-response"]')?.text.trim()).toBe('Post response');
+    expect(root.querySelector('[data-testid="scripts-tabs-tab-pre-request"]')?.text.trim()).toBe('Pre request');
+    expect(root.querySelector('[data-testid="scripts-tabs-tab-post-response"]')?.text.trim()).toBe('Post response');
   });
 
   it('renders the default title and the Tests section', () => {

@@ -191,6 +191,7 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
           }))}
           activeTab={activeTab}
           onTabChange={setActiveTab}
+          testId="collection-settings-tabs"
         />
       </div>
     </div>

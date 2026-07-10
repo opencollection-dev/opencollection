@@ -12,7 +12,11 @@ export class CollectionSettingsComponent extends BaseComponent {
   readonly grantType = this.view.getByTestId('oauth2-grant-type');
 
   tab(id: string): Locator {
-    return this.view.getByTestId(`tab-${id}`);
+    return this.view.getByTestId(`collection-settings-tabs-tab-${id}`);
+  }
+
+  scriptTab(id: string): Locator {
+    return this.view.getByTestId(`scripts-tabs-tab-${id}`);
   }
 
   authField(name: string): Locator {

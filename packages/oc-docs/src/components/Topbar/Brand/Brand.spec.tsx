@@ -4,15 +4,16 @@ import { describe, it, expect } from 'vitest';
 import Brand from './Brand';
 
 describe('Brand', () => {
-  it('shows the collection name and a v-prefixed version', () => {
+  it('shows the collection name and the version verbatim', () => {
     const html = renderToStaticMarkup(<Brand collectionName="Hotel Booking API" version="1.0.0" />);
     expect(html).toContain('Hotel Booking API');
-    expect(html).toContain('v1.0.0');
+    expect(html).toContain('>1.0.0<');
+    expect(html).not.toContain('v1.0.0');
   });
 
-  it('does not double the v prefix', () => {
+  it('shows a user-authored "v" prefix exactly as given', () => {
     const html = renderToStaticMarkup(<Brand collectionName="X" version="v2.3" />);
-    expect(html).toContain('v2.3');
+    expect(html).toContain('>v2.3<');
     expect(html).not.toContain('vv2.3');
   });
 
@@ -35,6 +36,6 @@ describe('Brand', () => {
     expect(html).toContain('data-testid="brand-initials"');
     expect(html).toContain('Docs');
     expect(html).not.toContain('Hotel Booking API');
-    expect(html).not.toContain('v1.0.0');
+    expect(html).not.toContain('1.0.0');
   });
 });

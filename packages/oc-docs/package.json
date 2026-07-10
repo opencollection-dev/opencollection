@@ -41,7 +41,7 @@
     "dev:all": "concurrently \"npm run dev\" \"npm run server\"",
     "build:lib-bundle": "vite build --config vite.config.libraries-bundle.ts",
     "prebuild": "npm run gen:theme && npm run build:lib-bundle",
-    "build": "npm run clean && tsc --emitDeclarationOnly && vite build",
+    "build": "npm run clean && tsc -p tsconfig.build.json --emitDeclarationOnly && vite build",
     "build:standalone": "npm run clean:standalone && vite build --config vite.config.standalone.ts",
     "build:all": "npm run build && npm run build:standalone",
     "prepublishOnly": "npm run build:all",
