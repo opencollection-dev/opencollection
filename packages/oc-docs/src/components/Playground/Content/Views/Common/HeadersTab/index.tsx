@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import KeyValueTable, { type KeyValueRow } from '../../../../../../ui/KeyValueTable/KeyValueTable';
-import BulkEdit from '../BulkEdit/BulkEdit';
+import BulkEdit from '../BulkEdit';
 import { StyledWrapper } from './StyledWrapper';
 
 interface HeadersTabProps {
@@ -37,7 +37,11 @@ const HeadersDisplay: React.FC<Omit<HeadersTabProps, 'title' | 'description'>> =
         <BulkEdit data={headersData} onChange={onHeadersChange} onToggle={toggleBulkEditView} idPrefix="header" />
       )}
       <div className="flex justify-end mt-2">
-        <button className="bulk-edit-toggle text-link select-none" data-testid="bulk-edit-toggle" onClick={toggleBulkEditView}>
+        <button
+          className="bulk-edit-toggle text-link select-none"
+          data-testid="bulk-edit-toggle"
+          onClick={toggleBulkEditView}
+        >
           {showKeyValueTable ? 'Bulk edit' : 'Key/Value edit'}
         </button>
       </div>

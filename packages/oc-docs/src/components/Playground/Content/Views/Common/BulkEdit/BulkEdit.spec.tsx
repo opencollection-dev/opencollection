@@ -6,7 +6,7 @@ vi.mock('../../../../../../ui/CodeEditor/CodeEditor', () => ({
   default: ({ value }: { value: string }) => <pre data-testid="code-editor">{value}</pre>
 }));
 
-import BulkEdit from './BulkEdit';
+import BulkEdit from '.';
 
 describe('BulkEdit', () => {
   it('serializes enabled rows as name:value lines', () => {

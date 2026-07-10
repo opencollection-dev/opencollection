@@ -18,7 +18,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   language = 'json',
   readOnly = false,
   height = '300px',
-  placeholder
+  placeholder = '...'
 }) => {
   const mode = useAppSelector((s) => s.theme.mode);
 

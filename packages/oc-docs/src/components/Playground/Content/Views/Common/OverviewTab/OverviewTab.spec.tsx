@@ -1,7 +1,7 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { useRenderToDom } from '../../../../../../hooks/useRenderToDom';
-import OverviewTab from './OverviewTab';
+import OverviewTab from '.';
 
 describe('OverviewTab', () => {
   it('renders markdown docs as HTML inside the markdown-documentation container', () => {

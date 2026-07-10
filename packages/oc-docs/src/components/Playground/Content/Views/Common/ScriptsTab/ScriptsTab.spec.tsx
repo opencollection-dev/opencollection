@@ -6,7 +6,7 @@ vi.mock('../../../../../../ui/CodeEditor/CodeEditor', () => ({
   default: ({ value }: { value: string }) => <pre data-testid="code-editor">{value}</pre>
 }));
 
-import { ScriptsTab } from './ScriptsTab';
+import { ScriptsTab } from '.';
 
 const noop = () => {};
 
