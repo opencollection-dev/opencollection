@@ -75,7 +75,7 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
         value={url}
         onChange={(e) => handleUrlChange(e.target.value)}
         placeholder="Enter request URL"
-        className="flex-1 px-3 text-xs font-normal"
+        className="flex-1 min-w-0 px-3 text-xs font-normal"
         style={{
           fontFamily: 'var(--font-mono)',
           fontSize: '12px',
