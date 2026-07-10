@@ -73,7 +73,8 @@ export const getDescription = (item: unknown): string | undefined => {
 export const getValueType = (entity: { name: string; value: string; type?: string }): string | undefined =>
   entity?.type || undefined;
 
-export const getVariableType = (variable: Variable | SecretVariable): VariableValueType | undefined => {
+export const getVariableType = (variable?: Variable | SecretVariable): VariableValueType | undefined => {
+  if (!variable) return undefined;
   if ('type' in variable && variable.type) return variable.type;
   const value = 'value' in variable ? variable.value : undefined;
   const chosen = Array.isArray(value) ? (value.find((variant) => variant.selected) ?? value[0])?.value : value;
