@@ -1,55 +1,67 @@
 import React from 'react';
+import styled from '@emotion/styled';
 
 interface ResponseHeadersTabProps {
   headers?: Record<string, any>;
 }
 
+const Wrapper = styled.div`
+  .headers-card {
+    border: 1px solid var(--border-color);
+    border-radius: var(--oc-radius);
+    overflow: hidden;
+  }
+
+  .header-row {
+    display: flex;
+    gap: 1rem;
+    padding: 0.625rem 0.875rem;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+  }
+
+  .header-row + .header-row {
+    border-top: 1px solid var(--border-color);
+  }
+
+  .header-key {
+    width: 35%;
+    flex-shrink: 0;
+    color: var(--text-primary);
+    word-break: break-word;
+  }
+
+  .header-value {
+    flex: 1;
+    min-width: 0;
+    color: var(--text-secondary);
+    word-break: break-all;
+  }
+`;
+
 const ResponseHeadersTab: React.FC<ResponseHeadersTabProps> = ({ headers }) => {
-  return (
-    <div className="h-full overflow-auto">
-      <div className="py-3">
-        {headers ? (
-          <div className="space-y-0">
-            {Object.entries(headers).map(([key, value], index) => (
-              <div 
-                key={key} 
-                className="flex items-center gap-4 py-1.5 border-b"
-                style={{ 
-                  borderColor: 'var(--border-color)',
-                  borderBottomWidth: index === Object.entries(headers).length - 1 ? '0' : '1px'
-                }}
-              >
-                <span 
-                  className="font-mono text-xs font-medium" 
-                  style={{ 
-                    color: 'var(--text-primary)', 
-                    minWidth: '180px',
-                    letterSpacing: '0.01em'
-                  }}
-                >
-                  {key}
-                </span>
-                <span 
-                  className="font-mono text-xs flex-1 break-all" 
-                  style={{ 
-                    color: 'var(--text-secondary)',
-                    letterSpacing: '0.01em'
-                  }}
-                >
-                  {String(value)}
-                </span>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12" style={{ color: 'var(--text-secondary)' }}>
-            <span className="text-xs">No response headers</span>
-          </div>
-        )}
+  const entries = headers ? Object.entries(headers) : [];
+
+  if (entries.length === 0) {
+    return (
+      <div className="py-8 text-center text-xs" style={{ color: 'var(--text-secondary)' }}>
+        No response headers
       </div>
-    </div>
+    );
+  }
+
+  return (
+    <Wrapper className="py-4">
+      <div className="headers-card">
+        {entries.map(([key, value]) => (
+          <div key={key} className="header-row">
+            <span className="header-key">{key}</span>
+            <span className="header-value">{String(value)}</span>
+          </div>
+        ))}
+      </div>
+    </Wrapper>
   );
 };
 
 export default ResponseHeadersTab;
-
