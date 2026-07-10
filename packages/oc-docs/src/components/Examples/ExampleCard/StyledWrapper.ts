@@ -117,7 +117,7 @@ export const StyledWrapper = styled.div`
     font-family: var(--font-sans);
     font-weight: 400;
     font-size: 0.75rem;
-    line-height: 1;
+    line-height: 1.3;
     letter-spacing: 0;
     color: var(--oc-overlay-overlay1);
     white-space: nowrap;

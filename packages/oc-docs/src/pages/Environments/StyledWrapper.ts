@@ -60,7 +60,7 @@ export const StyledWrapper = styled.div`
     font-family: 'Fira Code', var(--font-mono);
     font-weight: 500;
     font-size: 0.75rem;
-    line-height: 1;
+    line-height: 1.3;
     letter-spacing: 0;
     color: var(--oc-primary-strong);
     overflow: hidden;
@@ -72,7 +72,7 @@ export const StyledWrapper = styled.div`
     font-family: 'Fira Code', var(--font-mono);
     font-weight: 400;
     font-size: 0.75rem;
-    line-height: 1;
+    line-height: 1.3;
     letter-spacing: 0;
     color: var(--text-primary); /* #343434 */
     overflow: hidden;
@@ -103,7 +103,7 @@ export const StyledWrapper = styled.div`
     font-family: var(--font-sans);
     font-weight: 400;
     font-size: 0.75rem;
-    line-height: 1;
+    line-height: 1.3;
     letter-spacing: 0;
     color: var(--text-secondary); /* #666666 */
   }
