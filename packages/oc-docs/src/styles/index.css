@@ -1019,6 +1019,13 @@ tr.themed-row:nth-child(even) {
   outline-offset: 2px;
 }
 
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  outline-offset: 0;
+}
+
 .hide-scrollbar::-webkit-scrollbar { width: 0; height: 0; display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 

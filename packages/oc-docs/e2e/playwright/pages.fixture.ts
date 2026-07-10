@@ -8,6 +8,7 @@ import { UnsupportedRequestPage } from '../pages/unsupported-request.page';
 import { SidebarComponent } from '../components/sidebar.component';
 import { TooltipComponent } from '../components/tooltip.component';
 import { PlaygroundComponent } from '../components/playground.component';
+import { CollectionSettingsComponent } from '../components/collectionSettings/collectionSettings.component';
 import { ThemeToggleComponent } from '../components/layout/theme-toggle.component';
 import { PageHeaderComponent } from '../components/layout/page-header.component';
 import { SearchComponent } from '../components/search/search.component';
@@ -23,6 +24,7 @@ type Fixtures = {
   sidebar: SidebarComponent;
   tooltip: TooltipComponent;
   playground: PlaygroundComponent;
+  collectionSettings: CollectionSettingsComponent;
   pageHeader: PageHeaderComponent;
   envSwitcher: EnvSwitcherComponent;
   themeToggle: ThemeToggleComponent;
@@ -62,6 +64,9 @@ export const test = base.extend<Fixtures>({
   },
   playground: async ({ page }, use) => {
     await use(new PlaygroundComponent(page));
+  },
+  collectionSettings: async ({ page }, use) => {
+    await use(new CollectionSettingsComponent(page));
   },
   themeToggle: async ({ page }, use) => {
     await use(new ThemeToggleComponent(page));

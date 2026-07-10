@@ -24,13 +24,15 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   };
 
   return (
-    <div style={{ 
-      height, 
-      width: '100%',
-      border: '1px solid var(--border-color)',
-      borderRadius: '4px',
-      overflow: 'hidden'
-    }}>
+    <div
+      style={{
+        height,
+        width: '100%',
+        border: '1px solid var(--border-color)',
+        borderRadius: '4px',
+        overflow: 'hidden'
+      }}
+    >
       <Editor
         height={height}
         language={language}
@@ -53,10 +55,15 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           lineDecorationsWidth: 10,
           lineNumbersMinChars: 3,
           automaticLayout: true,
+          placeholder: '...',
+          renderLineHighlight: 'none',
+          guides: { indentation: false, highlightActiveIndentation: false, bracketPairs: false },
+          overviewRulerBorder: false,
+          hideCursorInOverviewRuler: true
         }}
       />
     </div>
   );
 };
 
-export default CodeEditor; 
+export default CodeEditor;

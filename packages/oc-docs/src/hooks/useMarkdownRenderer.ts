@@ -6,7 +6,9 @@ let cachedRenderer: MarkdownIt | null = null;
 
 const createRenderer = (): MarkdownIt => {
   const markdownIt = new MarkdownIt({
-    html: true,
+    // Raw HTML is disabled: docs are untrusted authored content rendered via
+    // dangerouslySetInnerHTML, so passing HTML through would be a stored-XSS vector.
+    html: false,
     linkify: true,
     // Off: smart-typography rewrites punctuation in technical docs — e.g. (c)->©,
     // --->en-dash, ...->ellipsis, straight->curly quotes — which corrupts API copy.
