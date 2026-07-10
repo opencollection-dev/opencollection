@@ -2,25 +2,37 @@ import { describe, it, expect } from 'vitest';
 import { slugifySegment, dedupeSiblingSlugs } from './slug';
 
 describe('slugifySegment', () => {
-  it('kebab-cases a plain name', () => {
+  it('kebab-cases a plain name (spaces become single dashes)', () => {
     expect(slugifySegment('Create Booking')).toBe('create-booking');
-  });
-
-  it('lowercases and collapses non-alphanumerics to single dashes', () => {
-    expect(slugifySegment('Browse & Search')).toBe('browse-search');
-  });
-
-  it('trims leading and trailing dashes', () => {
-    expect(slugifySegment('  /Login/  ')).toBe('login');
+    expect(slugifySegment('List  customers')).toBe('list-customers');
   });
 
   it('keeps existing hyphens and underscores', () => {
     expect(slugifySegment('refresh_token-v2')).toBe('refresh_token-v2');
   });
 
-  it('falls back for empty / unnamed input', () => {
+  it('trims leading and trailing whitespace/dashes', () => {
+    expect(slugifySegment('  Login  ')).toBe('login');
+    expect(slugifySegment('-Login-')).toBe('login');
+  });
+
+  it('percent-encodes special characters (kept unique, not collapsed)', () => {
+    expect(slugifySegment('Customers/%$')).toBe('customers%2F%25%24');
+    expect(slugifySegment('Q&A')).toBe('q%26a');
+    expect(slugifySegment('Browse & Search')).toBe('browse-%26-search');
+  });
+
+  it('distinguishes names that differ only by their special characters', () => {
+    expect(slugifySegment('customers/$')).not.toBe(slugifySegment('customers/&'));
+  });
+
+  it('percent-encodes non-ASCII (accents / unicode) with UTF-8 bytes', () => {
+    expect(slugifySegment('résumé')).toBe('r%C3%A9sum%C3%A9');
+  });
+
+  it('falls back to "unnamed" only when there is nothing to encode', () => {
     expect(slugifySegment('')).toBe('unnamed');
-    expect(slugifySegment('***')).toBe('unnamed');
+    expect(slugifySegment('   ')).toBe('unnamed');
   });
 });
 
