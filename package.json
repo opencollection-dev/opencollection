@@ -10,5 +10,24 @@
     "packages/oc-spec-site",
     "packages/oc-types"
   ],
-  "homepage": "https://www.opencollection.com"
+  "homepage": "https://www.opencollection.com",
+  "scripts": {
+    "prepare": "husky",
+    "run:docs": "npm run dev -w @opencollection/docs",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test:run --workspaces --if-present"
+  },
+  "lint-staged": {
+    "packages/oc-docs/**/*.{ts,tsx}": [
+      "prettier --write",
+      "eslint --config packages/oc-docs/eslint.config.js --max-warnings 0 --report-unused-disable-directives"
+    ],
+    "packages/oc-docs/**/*.{json,css,scss,md,yml,yaml}": "prettier --write"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.8",
+    "prettier": "^3.9.5"
+  }
 }

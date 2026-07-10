@@ -46,6 +46,7 @@
     "build:all": "npm run build && npm run build:standalone",
     "prepublishOnly": "npm run build:all",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
     "preview": "vite preview",
     "test": "vitest",
     "test:run": "vitest run",

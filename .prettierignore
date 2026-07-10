@@ -1,0 +1,24 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+dist-standalone
+build
+out
+coverage
+
+# Test artifacts
+playwright-report
+test-results
+
+# Generated files — do not hand-format (e.g. theme.generated.css)
+**/*.generated.*
+
+# Lockfiles
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# OS
+.DS_Store

@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+# Pre-push verification (whole project). Push only proceeds if all pass.
+set -e
+
+echo "▶ typecheck (tsc --noEmit)"
+npm run --silent typecheck
+
+echo "▶ tests"
+npm run --silent test
+
+echo "✔ pre-push checks passed"
