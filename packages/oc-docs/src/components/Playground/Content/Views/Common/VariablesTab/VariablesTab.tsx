@@ -13,7 +13,7 @@ interface VariablesTabProps {
 export const VariablesTab: React.FC<VariablesTabProps> = ({
   variables,
   onVariablesChange,
-  title = 'Variables',
+  title,
   description
 }) => {
   const variablesData: KeyValueRow[] = (variables || []).map((variable, index) => ({

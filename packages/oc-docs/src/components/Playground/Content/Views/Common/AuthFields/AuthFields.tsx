@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { StyledWrapper } from './StyledWrapper';
 
 export const AuthField: React.FC<{
@@ -8,33 +8,23 @@ export const AuthField: React.FC<{
   placeholder?: string;
   testId?: string;
   onChange: (value: string) => void;
-}> = ({ label, value, type = 'text', placeholder, testId, onChange }) => {
-  const [draft, setDraft] = useState(value);
-  useEffect(() => {
-    setDraft(value);
-  }, [value]);
-
-  return (
-    <StyledWrapper className="auth-field">
-      <label className="auth-field-label">{label}</label>
-      <input
-        className="auth-control"
-        data-testid={testId}
-        type={type}
-        value={draft}
-        placeholder={placeholder}
-        onChange={(e) => {
-          setDraft(e.target.value);
-          onChange(e.target.value);
-        }}
-        autoComplete="off"
-        autoCorrect="off"
-        autoCapitalize="off"
-        spellCheck={false}
-      />
-    </StyledWrapper>
-  );
-};
+}> = ({ label, value, type = 'text', placeholder, testId, onChange }) => (
+  <StyledWrapper className="auth-field">
+    <label className="auth-field-label">{label}</label>
+    <input
+      className="auth-control"
+      data-testid={testId}
+      type={type}
+      value={value}
+      placeholder={placeholder}
+      onChange={(e) => onChange(e.target.value)}
+      autoComplete="off"
+      autoCorrect="off"
+      autoCapitalize="off"
+      spellCheck={false}
+    />
+  </StyledWrapper>
+);
 
 export const AuthSelect: React.FC<{
   label: string;

@@ -23,7 +23,7 @@ export const AuthTab: React.FC<AuthTabProps> = ({
   onAuthChange,
   onItemChange,
   item,
-  title = 'Authentication',
+  title,
   description,
   showInherit = false,
   showFullAuth = false,

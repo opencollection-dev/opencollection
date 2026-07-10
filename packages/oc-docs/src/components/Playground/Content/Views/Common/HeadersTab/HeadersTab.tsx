@@ -34,7 +34,7 @@ const HeadersDisplay: React.FC<Omit<HeadersTabProps, 'title' | 'description'>> =
           showEnabled={true}
         />
       ) : (
-        <BulkEdit data={headersData} onChange={onHeadersChange} onToggle={toggleBulkEditView} idPrefix="header" />
+        <BulkEdit data={headersData} onChange={onHeadersChange} idPrefix="header" />
       )}
       <div className="flex justify-end mt-2">
         <button className="bulk-edit-toggle text-link select-none" data-testid="bulk-edit-toggle" onClick={toggleBulkEditView}>
@@ -45,7 +45,7 @@ const HeadersDisplay: React.FC<Omit<HeadersTabProps, 'title' | 'description'>> =
   );
 };
 
-export const HeadersTab: React.FC<HeadersTabProps> = ({ headers, onHeadersChange, title = 'Headers', description }) => {
+export const HeadersTab: React.FC<HeadersTabProps> = ({ headers, onHeadersChange, title, description }) => {
   return (
     <StyledWrapper className="space-y-3">
       <div className="flex items-center justify-between mb-4">

@@ -17,8 +17,8 @@ describe('ScriptsTab', () => {
     expect(root.querySelector('[data-testid="scripts-tabs-tab-post-response"]')?.text.trim()).toBe('Post response');
   });
 
-  it('renders the default title and the Tests section', () => {
-    const root = useRenderToDom(<ScriptsTab scripts={{}} onScriptChange={noop} />);
+  it('renders a provided title and the Tests section', () => {
+    const root = useRenderToDom(<ScriptsTab scripts={{}} onScriptChange={noop} title="Scripts" />);
     expect(root.querySelector('.title')?.text.trim()).toBe('Scripts');
     expect(root.querySelector('.label')?.text.trim()).toBe('Tests');
   });

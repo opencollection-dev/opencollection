@@ -17,7 +17,6 @@ describe('BulkEdit', () => {
           { id: 'r2', name: 'Accept', value: 'text/plain', enabled: true }
         ]}
         onChange={() => {}}
-        onToggle={() => {}}
       />
     );
     const editor = root.querySelector('[data-testid="code-editor"]');
@@ -34,7 +33,6 @@ describe('BulkEdit', () => {
           { id: 'r2', name: 'X-Disabled', value: 'no', enabled: false }
         ]}
         onChange={() => {}}
-        onToggle={() => {}}
       />
     );
     const editor = root.querySelector('[data-testid="code-editor"]');

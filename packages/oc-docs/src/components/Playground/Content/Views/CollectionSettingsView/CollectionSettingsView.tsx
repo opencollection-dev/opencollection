@@ -108,7 +108,6 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
         <HeadersTab
           headers={headers}
           onHeadersChange={handleHeadersChange}
-          title=""
           description="Request headers sent with every request in this collection."
         />
       )
@@ -121,7 +120,6 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
         <VariablesTab
           variables={variables}
           onVariablesChange={handleVariablesChange}
-          title=""
           description="Variables available to every request in this collection."
         />
       )
@@ -135,7 +133,6 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
           onAuthChange={handleAuthChange}
           onItemChange={handleCollectionChange}
           item={collection}
-          title=""
           description="Default authentication for this collection. Applies to any request using the Inherit option in its Auth tab."
           showInherit={false}
           showFullAuth={true}
@@ -151,7 +148,6 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
         <ScriptsTab
           scripts={scripts}
           onScriptChange={handleScriptChange}
-          title=""
           description="Pre and post-request scripts that run before and after every request in this collection is sent."
           showTests={false}
         />

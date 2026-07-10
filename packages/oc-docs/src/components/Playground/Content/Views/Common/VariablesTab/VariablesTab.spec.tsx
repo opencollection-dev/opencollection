@@ -9,11 +9,12 @@ const inputValues = (root: ReturnType<typeof useRenderToDom>) =>
   root.querySelectorAll('input.text-input').map((input) => input.getAttribute('value'));
 
 describe('VariablesTab', () => {
-  it('renders the default title and a variable name/value', () => {
+  it('renders a provided title and a variable name/value', () => {
     const root = useRenderToDom(
       <VariablesTab
         variables={[{ name: 'baseUrl', value: 'https://api.example.com' }]}
         onVariablesChange={noop}
+        title="Variables"
       />
     );
     expect(root.querySelector('.title')?.text.trim()).toBe('Variables');
