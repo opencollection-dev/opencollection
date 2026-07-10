@@ -52,7 +52,13 @@ export const RequestBody: React.FC<RequestBodyProps> = ({ body, showContentType 
           rows={view.files.map<PropertyRow>((file, index) => ({
             label: view.files.length > 1 ? `File ${index + 1}${file.selected ? ' · selected' : ''}` : 'File',
             value: file.filePath,
-            description: file.contentType
+            description: file.description,
+            node: file.contentType ? (
+              <span className="request-body-part">
+                <VariableText value={file.filePath} />
+                <span className="request-body-content-type">{file.contentType}</span>
+              </span>
+            ) : undefined
           }))}
         />
       )}

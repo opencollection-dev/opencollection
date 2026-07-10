@@ -101,14 +101,7 @@ export const StyledWrapper = styled.div`
     min-height: 0;
   }
   .example-description {
-    margin: 0;
-    padding: 0.5rem;
-    font-family: var(--font-sans);
-    font-weight: 400;
-    font-size: 0.75rem;
-    line-height: 1;
-    letter-spacing: 0;
-    color: var(--oc-overlay-overlay1);
+    margin: 0 0.5rem 0.5rem 0.5rem;
   }
 
   .example-url-row {

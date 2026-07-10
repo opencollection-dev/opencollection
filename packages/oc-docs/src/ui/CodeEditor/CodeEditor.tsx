@@ -8,6 +8,8 @@ interface CodeEditorProps {
   language?: string;
   readOnly?: boolean;
   height?: string;
+  /** Hint shown when the editor is empty. */
+  placeholder?: string;
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
@@ -15,7 +17,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   onChange,
   language = 'json',
   readOnly = false,
-  height = '300px'
+  height = '300px',
+  placeholder = '...'
 }) => {
   const mode = useAppSelector((s) => s.theme.mode);
 
@@ -24,13 +27,15 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   };
 
   return (
-    <div style={{
-      height,
-      width: '100%',
-      border: '1px solid var(--border-color)',
-      borderRadius: 'var(--oc-radius)',
-      overflow: 'hidden'
-    }}>
+    <div
+      style={{
+        height,
+        width: '100%',
+        border: '1px solid var(--border-color)',
+        borderRadius: 'var(--oc-radius)',
+        overflow: 'hidden'
+      }}
+    >
       <Editor
         height={height}
         language={language}
@@ -46,7 +51,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           lineNumbers: 'on',
           roundedSelection: false,
           renderLineHighlight: 'none',
-          guides: { indentation: false },
+          guides: { indentation: false, highlightActiveIndentation: false, bracketPairs: false },
           overviewRulerLanes: 0,
           overviewRulerBorder: false,
           hideCursorInOverviewRuler: true,
@@ -59,6 +64,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           lineDecorationsWidth: 10,
           lineNumbersMinChars: 3,
           automaticLayout: true,
+          placeholder
         }}
       />
     </div>

@@ -17,6 +17,7 @@ interface TabsProps {
   defaultActiveTab?: string;
   onTabChange?: (id: string) => void;
   rightElement?: ReactNode;
+  variant?: 'underline' | 'button';
   className?: string;
   testId?: string;
   ariaLabel?: string;
@@ -28,6 +29,7 @@ export const Tabs: React.FC<TabsProps> = ({
   defaultActiveTab,
   onTabChange,
   rightElement,
+  variant = 'underline',
   className,
   testId = 'tabs',
   ariaLabel
@@ -81,7 +83,7 @@ export const Tabs: React.FC<TabsProps> = ({
   const panelId = (id: string) => `${testId}-panel-${id}`;
 
   return (
-    <StyledWrapper className={['oc-tabs', className].filter(Boolean).join(' ')} data-testid={testId}>
+    <StyledWrapper className={['oc-tabs', className, `tabs-variant-${variant}`].filter(Boolean).join(' ')} data-testid={testId}>
       <div className="tabs-header">
         <div className="tabs" role="tablist" aria-label={ariaLabel}>
           {tabs.map((tab, index) => {
@@ -100,7 +102,7 @@ export const Tabs: React.FC<TabsProps> = ({
                 aria-controls={panelId(tab.id)}
                 tabIndex={isActive ? 0 : -1}
                 disabled={tab.disabled}
-                className={['tab', isActive ? 'is-active' : ''].filter(Boolean).join(' ')}
+                className={['tab', isActive ? 'is-active' : '', tab.disabled ? 'disabled' : ''].filter(Boolean).join(' ')}
                 onClick={() => activate(tab.id)}
                 onKeyDown={(event) => onKeyDown(event, index)}
                 data-testid={`${testId}-tab-${tab.id}`}

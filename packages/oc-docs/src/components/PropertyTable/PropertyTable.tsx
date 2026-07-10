@@ -2,6 +2,7 @@ import React from 'react';
 import { SecretValue } from '../../ui/SecretValue/SecretValue';
 import { VariableText } from '../VariableText/VariableText';
 import { TruncatedText } from '../TruncatedText/TruncatedText';
+import { Description } from '../Description/Description';
 import { StyledWrapper } from './StyledWrapper';
 
 export interface PropertyRow {
@@ -51,8 +52,8 @@ export const PropertyTable: React.FC<PropertyTableProps> = ({ rows, emptyMessage
             <dt className="property-key"><TruncatedText text={row.label} /></dt>
             <dd className="property-value-cell" data-testid={testId && row.testId ? `${testId}-${row.testId}` : undefined}>
               <ValueCell row={row} testId={testId} />
-              {row.description ? <p className="property-description">{row.description}</p> : null}
             </dd>
+            <Description text={row.description} />
           </div>
         ))}
       </dl>
