@@ -5,11 +5,28 @@ import { buildRequestUrl } from '../utils/pathParams';
 import { classifyRequestError, DEFAULT_TIMEOUT_MS } from './classifyRequestError';
 import stripJsonComments from 'strip-json-comments';
 
+export const applyApiKeyToUrl = (url: string, auth: Record<string, unknown> | undefined): string => {
+  if (auth?.type !== 'apikey' || auth.placement !== 'query' || !auth.key) {
+    return url;
+  }
+
+  try {
+    const urlObj = new URL(url);
+    urlObj.searchParams.set(String(auth.key), String(auth.value ?? ''));
+    return urlObj.toString();
+  } catch {
+    return url;
+  }
+};
+
 export class RequestExecutor {
   async executeRequest(request: HttpRequest, options: { timeout?: number } = {}): Promise<RunRequestResponse> {
     const startTime = Date.now();
     const timeoutMs = options.timeout ?? DEFAULT_TIMEOUT_MS;
-    const requestUrl = buildRequestUrl(getRequestUrl(request), getHttpParams(request));
+    const requestUrl = applyApiKeyToUrl(
+      buildRequestUrl(getRequestUrl(request), getHttpParams(request)),
+      getRequestAuth(request)
+    );
 
     try {
       const fetchOptions = await this.buildFetchOptions(request, timeoutMs);
