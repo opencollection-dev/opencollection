@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import KeyValueTable, { type KeyValueRow } from '../../../../../../ui/KeyValueTable/KeyValueTable';
-import BulkEdit from '../BulkEdit';
+import BulkEdit from '../BulkEdit/BulkEdit';
 import { StyledWrapper } from './StyledWrapper';
 
 interface HeadersTabProps {
