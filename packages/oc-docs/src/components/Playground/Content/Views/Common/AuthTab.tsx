@@ -75,21 +75,18 @@ export const AuthTab: React.FC<AuthTabProps> = ({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+        {Boolean(title) && <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
           {title}
-        </span>
+        </span>}
         {description && (
-          <span className="text-xs leading-tight" style={{ color: 'var(--text-secondary)' }}>
+          <span className="text-xs leading-tight mb-4" style={{ color: 'var(--text-secondary)' }}>
             {description}
           </span>
         )}
       </div>
       
       <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
-            Type
-          </span>
+        <div className="flex items-center">
           <select
             value={authType}
             onChange={(e) => handleAuthTypeChange(e.target.value)}
@@ -111,12 +108,12 @@ export const AuthTab: React.FC<AuthTabProps> = ({
         </div>
 
         {!auth ? (
-          <div className="text-center py-6 border-2 border-dashed rounded" style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}>
-            No authentication configured. Select an auth type to configure.
+          <div className='py-2' style={{ color: 'var(--text-muted)' }}>
+            <i>No authentication configured.</i>
           </div>
         ) : auth === 'inherit' ? (
-          <div className="text-center py-6 border-2 border-dashed rounded" style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}>
-            Authentication inherited from parent
+          <div className='py-2' style={{ color: 'var(--text-muted)' }}>
+            <i>Inherits auth from parent collection.</i>
           </div>
         ) : showFullAuth && typeof auth === 'object' && auth !== null ? (
           <div className="space-y-3">
