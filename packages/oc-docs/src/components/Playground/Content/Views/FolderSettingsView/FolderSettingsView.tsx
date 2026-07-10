@@ -3,13 +3,20 @@ import type { Folder } from '@opencollection/types/collection/item';
 import type { OpenCollection } from '@opencollection/types';
 import Tabs from '../../../../../ui/Tabs/Tabs';
 import { type KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
-import HeadersTab from '../Common/HeadersTab';
-import VariablesTab from '../Common/VariablesTab';
+import HeadersTab from '../Common/HeadersTab/HeadersTab';
+import VariablesTab from '../Common/VariablesTab/VariablesTab';
 import AuthTab from '../Common/AuthTab';
-import ScriptsTab from '../Common/ScriptsTab';
+import ScriptsTab from '../Common/ScriptsTab/ScriptsTab';
 import { useAppDispatch } from '../../../../../store/hooks';
 import { updateFolderInCollection } from '@slices/playground';
-import { getItemName, scriptsArrayToObject, scriptsObjectToArray } from '../../../../../utils/schemaHelpers';
+import {
+  getItemDocs,
+  getItemName,
+  scriptsArrayToObject,
+  scriptsObjectToArray
+} from '../../../../../utils/schemaHelpers';
+import TestsTab from '../Common/TestsTab/TestsTab';
+import OverviewTab from '../Common/OverviewTab/OverviewTab';
 
 interface FolderSettingsProps {
   folder: Folder;
@@ -22,15 +29,15 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({
   onFolderChange
 }) => {
   const dispatch = useAppDispatch();
-  const [activeTab, setActiveTab] = useState('headers');
+  const [activeTab, setActiveTab] = useState('overview');
 
   const handleHeadersChange = (headers: KeyValueRow[]) => {
-    const updatedHeaders = headers.map(h => ({
+    const updatedHeaders = headers.map((h) => ({
       name: h.name,
       value: h.value,
       disabled: !h.enabled
     }));
-    
+
     const updatedFolder = {
       ...folder,
       request: {
@@ -38,7 +45,7 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({
         headers: updatedHeaders
       }
     };
-    
+
     const uuid = (folder as any).uuid;
     if (uuid) {
       dispatch(updateFolderInCollection({ uuid, folder: updatedFolder }));
@@ -47,12 +54,12 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({
   };
 
   const handleVariablesChange = (variables: KeyValueRow[]) => {
-    const updatedVariables = variables.map(v => ({
+    const updatedVariables = variables.map((v) => ({
       name: v.name,
       value: v.value,
       disabled: !v.enabled
     }));
-    
+
     const updatedFolder = {
       ...folder,
       request: {
@@ -60,7 +67,7 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({
         variables: updatedVariables
       }
     };
-    
+
     const uuid = (folder as any).uuid;
     if (uuid) {
       dispatch(updateFolderInCollection({ uuid, folder: updatedFolder }));
@@ -71,7 +78,7 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({
   const handleScriptChange = (scriptType: 'preRequest' | 'postResponse' | 'tests', value: string) => {
     const currentScriptsObj = scriptsArrayToObject(folder.request?.scripts);
     const updatedScriptsObj = { ...currentScriptsObj, [scriptType]: value };
-    
+
     const updatedFolder = {
       ...folder,
       request: {
@@ -79,7 +86,7 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({
         scripts: scriptsObjectToArray(updatedScriptsObj)
       }
     } as Folder;
-    
+
     const uuid = (folder as any).uuid;
     if (uuid) {
       dispatch(updateFolderInCollection({ uuid, folder: updatedFolder }));
@@ -89,13 +96,13 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({
 
   const handleAuthChange = (authType: string) => {
     let auth: any = 'inherit';
-    
+
     if (authType !== 'none' && authType !== 'inherit') {
       auth = { type: authType };
     } else if (authType === 'none') {
       auth = undefined;
     }
-    
+
     const updatedFolder = {
       ...folder,
       request: {
@@ -103,7 +110,7 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({
         auth
       }
     };
-    
+
     const uuid = (folder as any).uuid;
     if (uuid) {
       dispatch(updateFolderInCollection({ uuid, folder: updatedFolder }));
@@ -119,12 +126,14 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({
     onFolderChange(updatedFolder);
   };
 
+  const renderOverview = () => <OverviewTab docs={getItemDocs(folder)} />;
+
   const renderHeaders = () => (
     <HeadersTab
       headers={folder.request?.headers || []}
       onHeadersChange={handleHeadersChange}
-      title="Folder Headers"
-      description="These headers will be inherited by all requests in this folder"
+      description="Request headers that will be sent with every request inside this folder."
+      title=""
     />
   );
 
@@ -132,8 +141,8 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({
     <VariablesTab
       variables={folder.request?.variables || []}
       onVariablesChange={handleVariablesChange}
-      title="Folder Variables"
-      description="These variables will be available to all requests in this folder"
+      title=""
+      description="Pre Request"
     />
   );
 
@@ -143,62 +152,79 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({
       onAuthChange={handleAuthChange}
       onItemChange={handleFolderAuthChange}
       item={folder}
-      title="Folder Authentication"
-      description="Authentication method for all requests in this folder"
+      title=""
+      description="Configures authentication for this folder. This applies to all requests using the Inherit option in the Auth tab."
       showInherit={true}
       showFullAuth={true}
     />
   );
 
+  const scripts = scriptsArrayToObject(folder.request?.scripts);
+
   const renderScripts = () => (
     <ScriptsTab
-      scripts={scriptsArrayToObject(folder.request?.scripts)}
+      scripts={scripts}
       onScriptChange={handleScriptChange}
-      title="Folder Scripts"
-      description="These scripts will run for all requests in this folder"
-      showTests={true}
+      description="Pre and post-request scripts that will run before and after any request inside this folder is sent."
+      showTests={false}
+      title=""
+    />
+  );
+
+  const renderTests = () => (
+    <TestsTab
+      scripts={scripts}
+      onScriptChange={handleScriptChange}
+      description="These tests will run any time a request in this folder is sent."
     />
   );
 
   const tabs = [
-    { 
-      id: 'headers', 
-      label: 'Headers', 
-      contentIndicator: folder.request?.headers?.length || undefined,
-      content: renderHeaders() 
+    {
+      id: 'overview',
+      label: 'Overview',
+      content: renderOverview()
     },
-    { 
-      id: 'auth', 
-      label: 'Auth', 
-      content: renderAuth() 
+    {
+      id: 'headers',
+      label: 'Headers',
+      contentIndicator: folder.request?.headers?.filter((header) => !header.disabled)?.length || undefined,
+      content: renderHeaders()
     },
-    { 
-      id: 'variables', 
-      label: 'Variables', 
-      contentIndicator: folder.request?.variables?.length || undefined,
-      content: renderVariables() 
+    {
+      id: 'scripts',
+      label: 'Scripts',
+      content: renderScripts()
     },
-    { 
-      id: 'scripts', 
-      label: 'Scripts', 
-      content: renderScripts() 
+    {
+      id: 'tests',
+      label: 'Tests',
+      content: renderTests()
+    },
+    {
+      id: 'variables',
+      label: 'Vars',
+      contentIndicator: folder.request?.variables?.filter((variable) => !variable.disabled)?.length || undefined,
+      content: renderVariables()
+    },
+    {
+      id: 'auth',
+      label: 'Auth',
+      content: renderAuth()
     }
   ];
 
   return (
-    <div className="h-full flex flex-col px-4">
-      <div className="border-b my-2 py-2" style={{ borderColor: 'var(--border-color)' }}>
-        <h2 className="text-lg font-semibold leading-tight mb-2" style={{ color: 'var(--text-primary)' }}>
+    <div className="h-full flex flex-col px-5 mt-5">
+      <div style={{ borderColor: 'var(--border-color)' }}>
+        <h2 className="text-lg font-semibold leading-tight" style={{ color: 'var(--text-primary)' }}>
           {getItemName(folder) || 'Folder Settings'}
         </h2>
-        <p className="text-sm mt-1 leading-tight" style={{ color: 'var(--text-secondary)' }}>
-          Configure default settings for all requests in this folder
-        </p>
       </div>
-      
-      <div className="flex-1 overflow-hidden">
+
+      <div className="flex-1 overflow-hidden mt-4">
         <Tabs
-          tabs={tabs.map(tab => ({
+          tabs={tabs.map((tab) => ({
             ...tab,
             content: <div className="py-3">{tab.content}</div>
           }))}

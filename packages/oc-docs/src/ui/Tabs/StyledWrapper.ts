@@ -73,6 +73,31 @@ export const StyledWrapper = styled.div`
     color: var(--text-secondary);
   }
 
+  &.tabs-variant-button .tabs {
+    gap: 0.5rem;
+
+    .tab {
+      padding: 0.5rem 1rem;
+      margin-right: 0;
+      border: none;
+      border-bottom: none;
+      border-radius: 0.5rem;
+      background: transparent;
+      color: var(--oc-tabs-color);
+
+      &:hover:not(.is-active):not(.disabled) {
+        background: var(--oc-background-surface1);
+        color: var(--text-primary);
+      }
+
+      &.is-active {
+        background: var(--oc-background-surface2);
+        color: var(--text-primary);
+        border-bottom-color: transparent;
+      }
+    }
+  }
+
   .tabs-right {
     display: flex;
     align-items: center;
