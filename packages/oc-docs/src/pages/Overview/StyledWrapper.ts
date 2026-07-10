@@ -36,7 +36,7 @@ export const StyledWrapper = styled.div`
     flex-direction: column;
   }
 
-  @media (max-width: 1200px) {
+  @container docs (max-width: 1200px) {
     .overview-body {
       grid-template-columns: minmax(0, 1fr);
       gap: 2rem;

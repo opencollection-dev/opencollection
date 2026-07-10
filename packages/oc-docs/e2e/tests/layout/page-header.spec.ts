@@ -17,7 +17,7 @@ test.describe('Page header', () => {
 
     await expect(pageHeader.root).toBeVisible();
     await expect(pageHeader.brandName).toContainText('Bruno Testbench');
-    await expect(pageHeader.brandVersion).toHaveText('v1.0.0');
+    await expect(pageHeader.brandVersion).toHaveText('1.0.0');
 
     // Sticky: header stays at the top after the page scrolls.
     await page.mouse.wheel(0, 600);
@@ -53,14 +53,17 @@ test.describe('Page header', () => {
     expect(ctaBox!.x).toBeGreaterThan(brandBox!.x + brandBox!.width + 100);
   });
 
-  test('mobile condenses: hamburger shows, CTA hidden, brand compact', async ({ page, pageHeader }) => {
+  test('mobile condenses: hamburger shows, Open-in-Bruno becomes a glyph, brand compact', async ({ page, pageHeader }) => {
     await page.setViewportSize(MOBILE);
     await page.goto('/');
 
     // Below desktop the sidebar trigger appears.
     await expect(pageHeader.menuButton).toBeVisible();
-    // Open-in-Bruno is desktop-only (no Bruno desktop app on mobile).
-    await expect(pageHeader.openInBruno).toHaveCount(0);
+    // Open-in-Bruno condenses to the Bruno glyph below the desktop layout (the
+    // capability gate still hides it on real touch devices; this browser is
+    // pointer-capable, so the glyph shows). No full "Open in Bruno" label.
+    await expect(pageHeader.openInBruno).toBeVisible();
+    await expect(pageHeader.openInBruno).toHaveClass(/is-icon/);
 
     // Compact brand: avatar + "Docs" only — no full name, no version.
     await expect(pageHeader.brandName).toHaveText('Docs');

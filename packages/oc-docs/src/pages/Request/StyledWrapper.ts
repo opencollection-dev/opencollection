@@ -35,7 +35,7 @@ export const StyledWrapper = styled.div`
     border-top: 1px solid var(--border-color);
   }
 
-  @media (max-width: 1024px) {
+  @container docs (max-width: 1024px) {
     .request-columns {
       grid-template-columns: 1fr;
       gap: 1.75rem;

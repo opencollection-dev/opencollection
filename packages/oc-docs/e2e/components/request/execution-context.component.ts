@@ -1,31 +1,44 @@
 import type { Locator } from '@playwright/test';
 import { BaseComponent } from '../base.component';
 
+export type ExecutionContextTab = 'variables' | 'scripts' | 'asserts' | 'tests';
+
 export class ExecutionContextComponent extends BaseComponent {
   readonly root = this.page.getByTestId('execution-context');
 
-  readonly scripts = this.root.getByTestId('execution-context-scripts');
-  readonly variables = this.root.getByTestId('execution-context-variables');
-  readonly asserts = this.root.getByTestId('execution-context-asserts');
-  readonly tests = this.root.getByTestId('execution-context-tests');
+  readonly executionFlow = this.root.getByTestId('execution-context-flow');
+  readonly viewCompleteCodeButton = this.root.getByTestId('execution-context-view-complete-code');
 
-  script(label: string): Locator {
-    return this.scripts.getByText(label);
+  readonly variablesPanel = this.root.getByTestId('execution-context-variables');
+  readonly scriptsPanel = this.root.getByTestId('execution-context-scripts');
+  readonly assertsPanel = this.root.getByTestId('execution-context-asserts');
+  readonly testsPanel = this.root.getByTestId('execution-context-tests');
+
+  tab(name: ExecutionContextTab): Locator {
+    return this.root.getByTestId(`execution-context-tabs-tab-${name}`);
+  }
+
+  async openTab(name: ExecutionContextTab): Promise<void> {
+    await this.tab(name).click();
+  }
+
+  scriptStep(label: string): Locator {
+    return this.scriptsPanel.getByText(label);
   }
 
   scriptSource(name: string): Locator {
-    return this.scripts.locator('button.script-step-source').filter({ hasText: name });
+    return this.scriptsPanel.locator('button.script-step-source').filter({ hasText: name });
   }
 
   variable(name: string): Locator {
-    return this.variables.getByText(name, { exact: true });
+    return this.variablesPanel.getByText(name, { exact: true });
   }
 
   assertion(text: string): Locator {
-    return this.asserts.getByText(text);
+    return this.assertsPanel.getByText(text);
   }
 
   testCase(name: string): Locator {
-    return this.tests.getByText(name);
+    return this.testsPanel.getByText(name);
   }
 }

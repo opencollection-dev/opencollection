@@ -1,7 +1,8 @@
-import React, { useId, useState } from 'react';
+import React, { useId } from 'react';
 import { SectionLabel } from '../SectionLabel/SectionLabel';
 import { ChevronArrow } from '../ChevronArrow/ChevronArrow';
 import { Collapse } from '../../ui/Collapse/Collapse';
+import { useSessionStorage } from '../../hooks';
 import { StyledWrapper } from './StyledWrapper';
 
 type HeadingLevel = 'h2' | 'h3' | 'h4';
@@ -14,6 +15,7 @@ interface SectionProps {
   className?: string;
   collapsible?: boolean;
   defaultOpen?: boolean;
+  storageKey?: string;
   as?: HeadingLevel;
 }
 
@@ -25,9 +27,10 @@ export const Section: React.FC<SectionProps> = ({
   className,
   collapsible = false,
   defaultOpen = true,
+  storageKey,
   as = 'h2'
 }) => {
-  const [open, setOpen] = useState(defaultOpen);
+  const [open, setOpen] = useSessionStorage(storageKey ? `section-${storageKey}` : '', defaultOpen);
   const panelId = useId();
   const labelId = useId();
 

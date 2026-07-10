@@ -7,6 +7,7 @@ import { FolderPage } from '../pages/folder.page';
 import { UnsupportedRequestPage } from '../pages/unsupported-request.page';
 import { SidebarComponent } from '../components/sidebar.component';
 import { TooltipComponent } from '../components/tooltip.component';
+import { PlaygroundComponent } from '../components/playground.component';
 import { ThemeToggleComponent } from '../components/layout/theme-toggle.component';
 import { PageHeaderComponent } from '../components/layout/page-header.component';
 import { SearchComponent } from '../components/search/search.component';
@@ -22,6 +23,7 @@ type Fixtures = {
   unsupportedRequestPage: UnsupportedRequestPage;
   sidebar: SidebarComponent;
   tooltip: TooltipComponent;
+  playground: PlaygroundComponent;
   pageHeader: PageHeaderComponent;
   envSwitcher: EnvSwitcherComponent;
   themeToggle: ThemeToggleComponent;
@@ -59,6 +61,9 @@ export const test = base.extend<Fixtures>({
   },
   envSwitcher: async ({ page }, use) => {
     await use(new EnvSwitcherComponent(page));
+  },
+  playground: async ({ page }, use) => {
+    await use(new PlaygroundComponent(page));
   },
   themeToggle: async ({ page }, use) => {
     await use(new ThemeToggleComponent(page));

@@ -10,7 +10,7 @@
  */
 
 import type { NavEntry } from '../../routing/types';
-import { getItemDocs, getRequestUrl, getHttpParams } from '../../utils/schemaHelpers';
+import { getItemDocs, getItemDescription, getRequestUrl, getHttpParams } from '../../utils/schemaHelpers';
 import { getItemUuid } from '../../utils/itemUtils';
 import { fuzzyScore } from '../../utils/fuzzyMatch';
 
@@ -47,7 +47,7 @@ const paramsToText = (item: NavEntry['item']): string => {
 
 const descriptionOf = (item: NavEntry['item']): string => {
   const docs = getItemDocs(item) || '';
-  const infoDesc = (item as { info?: { description?: string } } | null)?.info?.description || '';
+  const infoDesc = getItemDescription(item);
   return [infoDesc, docs].filter(Boolean).join(' ');
 };
 

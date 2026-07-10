@@ -90,14 +90,14 @@ export const StyledWrapper = styled.nav`
     font-family: 'Fira Code', var(--font-mono);
   }
 
-  @media (max-width: 1024px) {
+  @container docs (max-width: 1024px) {
     .prevnext-card {
       min-height: 56px;
       padding: 10px 14px;
     }
   }
 
-  @media (max-width: 768px) {
+  @container docs (max-width: 768px) {
     gap: 8px;
     padding-top: 20px;
 
