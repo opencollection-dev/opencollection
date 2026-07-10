@@ -20,8 +20,6 @@ interface TabsProps {
   className?: string;
   testId?: string;
   ariaLabel?: string;
-  /** Visual style of the tab triggers: underline (default) or filled buttons. */
-  variant?: 'underline' | 'button';
 }
 
 export const Tabs: React.FC<TabsProps> = ({
@@ -32,8 +30,7 @@ export const Tabs: React.FC<TabsProps> = ({
   rightElement,
   className,
   testId = 'tabs',
-  ariaLabel,
-  variant = 'underline'
+  ariaLabel
 }) => {
   const [internalActive, setInternalActive] = useState(defaultActiveTab ?? tabs[0]?.id ?? '');
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
@@ -84,10 +81,7 @@ export const Tabs: React.FC<TabsProps> = ({
   const panelId = (id: string) => `${testId}-panel-${id}`;
 
   return (
-    <StyledWrapper
-      className={['oc-tabs', `tabs-variant-${variant}`, className].filter(Boolean).join(' ')}
-      data-testid={testId}
-    >
+    <StyledWrapper className={['oc-tabs', className].filter(Boolean).join(' ')} data-testid={testId}>
       <div className="tabs-header">
         <div className="tabs" role="tablist" aria-label={ariaLabel}>
           {tabs.map((tab, index) => {

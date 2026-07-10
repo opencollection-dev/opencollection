@@ -69,16 +69,4 @@ describe('Tabs', () => {
     expect(tab.getAttribute('aria-controls')).toBe(panel.getAttribute('id'));
     expect(panel.getAttribute('aria-labelledby')).toBe(tab.getAttribute('id'));
   });
-
-  it('uses the underline variant by default', () => {
-    const root = useRenderToDom(<Tabs tabs={tabs} testId="t" />);
-    expect(query(root, '[data-testid="t"]').classList.contains('tabs-variant-underline')).toBe(true);
-    expect(query(root, '[data-testid="t"]').classList.contains('tabs-variant-button')).toBe(false);
-  });
-
-  it('applies the button variant class when variant="button"', () => {
-    const root = useRenderToDom(<Tabs tabs={tabs} variant="button" testId="t" />);
-    expect(query(root, '[data-testid="t"]').classList.contains('tabs-variant-button')).toBe(true);
-    expect(query(root, '[data-testid="t"]').classList.contains('tabs-variant-underline')).toBe(false);
-  });
 });

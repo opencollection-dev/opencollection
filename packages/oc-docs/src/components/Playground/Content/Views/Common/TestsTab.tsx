@@ -7,24 +7,18 @@ interface TestsTabProps {
   };
   onScriptChange: (scriptType: 'tests', value: string) => void;
   title?: string;
-  description?: string;
 }
 
-export const TestsTab: React.FC<TestsTabProps> = ({ scripts, onScriptChange, title, description }) => {
+export const TestsTab: React.FC<TestsTabProps> = ({
+  scripts,
+  onScriptChange,
+  title = "Tests"
+}) => {
   return (
     <div className="space-y-3">
-      {Boolean(title) && (
-        <h4 className="text-sm font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
-          {title}
-        </h4>
-      )}
-      {description && (
-        <div className="mb-4">
-          <span className="text-xs leading-tight" style={{ color: 'var(--text-secondary)' }}>
-            {description}
-          </span>
-        </div>
-      )}
+      <h4 className="text-sm font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
+        {title}
+      </h4>
       <CodeEditor
         value={scripts.tests || ''}
         onChange={(value) => onScriptChange('tests', value)}

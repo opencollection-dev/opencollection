@@ -6,7 +6,7 @@
 
 .key-value-table-container {
   overflow-y: auto;
-  border-radius: 0.25rem;
+  border-radius: 8px;
   border: 1px solid var(--oc-table-border);
 }
 
@@ -22,7 +22,6 @@
   position: sticky;
   top: 0;
   z-index: 1;
-  border-bottom: 1px solid var(--oc-table-border);
 }
 
 .key-value-table thead th {
@@ -43,7 +42,7 @@
 }
 
 .key-value-table thead .col-enabled {
-  width: 1.5rem;
+  width: 80px;
   text-align: center;
 }
 
@@ -64,7 +63,7 @@
 }
 
 .key-value-table tbody tr:hover {
-  background-color: transparent;
+  background-color: var(--oc-table-striped);
 }
 
 .key-value-table tbody tr:last-child td {
@@ -84,7 +83,6 @@
 .key-value-table .col-enabled {
   text-align: center;
   vertical-align: middle;
-  border-right: none;
 }
 
 .key-value-table .col-actions {
@@ -106,11 +104,10 @@
   background-color: transparent;
   color: var(--oc-table-input-color);
   padding: 5px 8px;
-  font-size: 0.875rem;
-  border-radius: 0.25rem;
+  font-size: 12px;
+  border-radius: 4px;
   transition: all 0.15s ease;
   font-family: inherit;
-  vertical-align: middle;
 }
 
 .key-value-table .text-input:focus {
@@ -146,7 +143,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  border-radius: 0.25rem;
+  border-radius: 4px;
   transition: color 0.15s ease, background-color 0.15s ease;
 }
 

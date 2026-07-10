@@ -8,8 +8,6 @@ interface CodeEditorProps {
   language?: string;
   readOnly?: boolean;
   height?: string;
-  /** Hint shown when the editor is empty. */
-  placeholder?: string;
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
@@ -17,8 +15,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   onChange,
   language = 'json',
   readOnly = false,
-  height = '300px',
-  placeholder = '...'
+  height = '300px'
 }) => {
   const mode = useAppSelector((s) => s.theme.mode);
 
@@ -27,16 +24,13 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   };
 
   return (
-    <div
-      style={{
-        height,
-        width: '100%',
-        border: '1px solid var(--border-color)',
-        borderRadius: '4px',
-        overflow: 'hidden'
-      }}
-      className="py-2"
-    >
+    <div style={{ 
+      height, 
+      width: '100%',
+      border: '1px solid var(--border-color)',
+      borderRadius: '4px',
+      overflow: 'hidden'
+    }}>
       <Editor
         height={height}
         language={language}
@@ -59,11 +53,10 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           lineDecorationsWidth: 10,
           lineNumbersMinChars: 3,
           automaticLayout: true,
-          placeholder
         }}
       />
     </div>
   );
 };
 
-export default CodeEditor;
+export default CodeEditor; 

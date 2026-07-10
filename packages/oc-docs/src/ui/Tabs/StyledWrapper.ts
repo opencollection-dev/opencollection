@@ -73,28 +73,6 @@ export const StyledWrapper = styled.div`
     color: var(--text-secondary);
   }
 
-  /* Button variant: filled pill triggers instead of the underline style. */
-  &.tabs-variant-button .tabs {
-    gap: 0.5rem;
-  }
-  &.tabs-variant-button .tab {
-    padding: 0.5rem 1rem;
-    border-bottom: none;
-    border-radius: 0.5rem;
-    background: transparent;
-  }
-  &.tabs-variant-button .tab::after {
-    display: none;
-  }
-  &.tabs-variant-button .tab:hover:not(.is-active):not(:disabled) {
-    background: var(--oc-background-surface1);
-    color: var(--text-primary);
-  }
-  &.tabs-variant-button .tab.is-active {
-    background: var(--oc-background-surface2);
-    color: var(--text-primary);
-  }
-
   .tabs-right {
     display: flex;
     align-items: center;
