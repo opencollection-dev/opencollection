@@ -2,7 +2,6 @@ import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { useRenderToDom } from '../../hooks/useRenderToDom';
 import { PropertyTable } from './PropertyTable';
-import { useRenderToDom } from '../../hooks/useRenderToDom';
 
 describe('PropertyTable', () => {
   it('renders label/value rows', () => {

@@ -56,7 +56,6 @@ export const PropertyTable: React.FC<PropertyTableProps> = ({ rows, emptyMessage
                 <div className="property-value-main"><ValueCell row={row} testId={testId} /></div>
                 {row.type ? <span className="property-type">{row.type}</span> : null}
               </div>
-              {row.description ? <p className="property-description">{row.description}</p> : null}
             </dd>
             <Description text={row.description} />
           </div>

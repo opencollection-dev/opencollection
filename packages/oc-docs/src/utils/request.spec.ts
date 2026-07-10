@@ -220,7 +220,6 @@ describe('getValueType', () => {
 
   it('returns undefined when there is no type', () => {
     expect(getValueType({ name: 'Accept', value: 'application/json' })).toBeUndefined();
-    expect(getValueType(null)).toBeUndefined();
   });
 });
 

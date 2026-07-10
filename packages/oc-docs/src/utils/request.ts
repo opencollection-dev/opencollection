@@ -4,7 +4,8 @@ import type {
   HttpRequest,
   HttpRequestBody,
   HttpRequestBodyVariant,
-  FileBodyVariant
+  FileBodyVariant,
+  HttpRequestParam
 } from '@opencollection/types/requests/http';
 import type { Auth } from '@opencollection/types/common/auth';
 import type { Scripts } from '@opencollection/types/common/scripts';
@@ -70,12 +71,11 @@ export const getDescription = (item: unknown): string | undefined => {
   return undefined;
 };
 
-const NON_DATA_TYPES = new Set(['query', 'path']);
+const PARAM_LOCATIONS: ReadonlySet<string> = new Set<HttpRequestParam['type']>(['query', 'path']);
 
-export const getValueType = (entity: unknown): string | undefined => {
-  if (!entity || typeof entity !== 'object') return undefined;
-  const type = (entity as { type?: unknown }).type;
-  return typeof type === 'string' && type && !NON_DATA_TYPES.has(type) ? type : undefined;
+export const getValueType = (entity: { name: string; value: string; type?: string }): string | undefined => {
+  const type = entity?.type;
+  return type && !PARAM_LOCATIONS.has(type) ? type : undefined;
 };
 
 export const getVariableType = (variable: Variable): string | undefined => {
