@@ -13,6 +13,7 @@ export * from './BookIcon';
 export * from './ExpandIcon';
 export * from './PlayIcon';
 export * from './SendIcon';
+export * from './EyeIcon';
 export * from './EyeOffIcon';
 export * from './FileIcon';
 export * from './RefreshIcon';

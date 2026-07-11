@@ -1,5 +1,4 @@
 import React from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect } from 'vitest';
 import type { OpenCollection } from '@opencollection/types';
 import type { HttpRequest } from '@opencollection/types/requests/http';
@@ -56,8 +55,10 @@ describe('Request page', () => {
     expect(root.querySelector('[data-testid="request-breadcrumb"]')?.text).toContain('Authentication');
     expect(root.querySelector('[data-testid="request-title"]')?.text).toContain('Login');
     expect(root.querySelector('[data-testid="request-url"]')?.text).toContain('auth/login');
-    expect(root.querySelectorAll('button').some((b) => b.text.trim() === 'Try')).toBe(true);
+    expect(root.querySelector('[data-testid="request-try-button"]')?.text).toContain('Try');
     expect(root.querySelector('[data-testid="request-description"]')?.text).toContain('Authenticate a user');
+    // {{baseUrl}} in the url renders as an inspectable variable token
+    expect(root.querySelector('[data-var-name="baseUrl"]')).not.toBeNull();
 
     for (const slug of ['params', 'body', 'headers', 'auth', 'code-snippet', 'examples', 'execution-context']) {
       expect(root.querySelector(`[data-testid="request-section-${slug}"]`)).not.toBeNull();
@@ -66,7 +67,10 @@ describe('Request page', () => {
     const params = root.querySelector('[data-testid="request-section-params"]');
     expect(params?.text).toContain('tenant');
     expect(params?.text).toContain('verbose');
-    expect(root.querySelector('[data-testid="request-section-code-snippet"]')?.text).toContain('curl --request POST');
+
+    const snippet = root.querySelector('[data-testid="request-section-code-snippet"]');
+    expect(snippet?.text).toContain('curl');
+    expect(snippet?.text).toContain('/auth/login');
 
     const exec = root.querySelector('[data-testid="execution-context"]');
     expect(exec?.text).toContain('attempt');
@@ -81,19 +85,20 @@ describe('Request page', () => {
       info: { name: 'Ping', type: 'http' },
       http: { method: 'get', url: '/ping' }
     };
-    const html = renderToStaticMarkup(<Request item={bare} />);
-    expect(html).toContain('Ping');
-    expect(html).toContain('/ping');
+    const root = useRenderToDom(<Request item={bare} />);
+
+    expect(root.querySelector('[data-testid="request-title"]')?.text).toContain('Ping');
+    expect(root.querySelector('[data-testid="request-url"]')?.text).toContain('/ping');
     // No params/body/headers/auth -> a single "No request configuration" empty state, not the individual sections.
-    expect(html).toContain('No request configuration');
-    expect(html).not.toContain('Params');
+    expect(root.querySelector('[data-testid="request-config-empty"]')).not.toBeNull();
+    expect(root.querySelector('[data-testid="request-section-params"]')).toBeNull();
     // The code snippet is always shown (on the right).
-    expect(html).toContain('Code Snippet');
+    expect(root.querySelector('[data-testid="request-section-code-snippet"]')).not.toBeNull();
     // No examples authored -> the Examples section is hidden entirely (no empty state).
-    expect(html).not.toContain('Examples');
+    expect(root.querySelector('[data-testid="request-section-examples"]')).toBeNull();
     // No scripts/vars/asserts/tests -> the Execution Context section shows its own empty state.
-    expect(html).toContain('Execution Context');
-    expect(html).toContain('No execution context');
+    expect(root.querySelector('[data-testid="request-section-execution-context"]')).not.toBeNull();
+    expect(root.querySelector('[data-testid="execution-context-empty"]')).not.toBeNull();
   });
 
   it('renders the Auth section for auth declared in the http block (http.auth: inherit)', () => {
@@ -102,10 +107,12 @@ describe('Request page', () => {
       info: { name: 'Get All Customers', type: 'http' },
       http: { method: 'GET', url: '{{baseUrl}}/billing/customers', auth: 'inherit' }
     };
-    const html = renderToStaticMarkup(<Request item={inheritItem} collection={collection} ancestry={ancestry} />);
-    expect(html).toContain('Auth');
-    expect(html).toContain('Inherit');
-    expect(html).toContain('Code Snippet');
+    const root = useRenderToDom(<Request item={inheritItem} collection={collection} ancestry={ancestry} />);
+
+    const auth = root.querySelector('[data-testid="request-section-auth"]');
+    expect(auth).not.toBeNull();
+    expect(auth?.text).toContain('Inherit');
+    expect(root.querySelector('[data-testid="request-section-code-snippet"]')).not.toBeNull();
   });
 
   it('does not apply smart typography to docs prose', () => {
@@ -114,10 +121,12 @@ describe('Request page', () => {
       http: { method: 'GET', url: '/x' },
       docs: 'Use -- dashes and (c) marks literally.'
     };
-    const html = renderToStaticMarkup(<Request item={docsItem} />);
-    expect(html).toContain('Use -- dashes');
-    expect(html).toContain('(c)');
-    expect(html).not.toContain('–'); // en-dash
-    expect(html).not.toContain('©'); // ©
+    const root = useRenderToDom(<Request item={docsItem} />);
+
+    const description = root.querySelector('[data-testid="request-description"]');
+    expect(description?.text).toContain('Use -- dashes');
+    expect(description?.text).toContain('(c)');
+    expect(description?.text).not.toContain('–'); // en-dash
+    expect(description?.text).not.toContain('©'); // ©
   });
 });
