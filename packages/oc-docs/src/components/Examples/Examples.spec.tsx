@@ -22,3 +22,17 @@ describe('Examples', () => {
     expect(renderToStaticMarkup(<Examples method="get" url="/x" />)).toBe('');
   });
 });
+
+describe('Examples highlight', () => {
+  it('marks the highlighted card active', () => {
+    const html = renderToStaticMarkup(
+      <Examples examples={examples} method="POST" url="/x" highlightedIndex={1} />
+    );
+    expect(html).toContain('data-active="true"');
+  });
+
+  it('marks no card active without a highlight', () => {
+    const html = renderToStaticMarkup(<Examples examples={examples} method="POST" url="/x" />);
+    expect(html).not.toContain('data-active="true"');
+  });
+});

@@ -21,6 +21,14 @@ export class PlaygroundComponent extends BaseComponent {
   readonly bottomPanel = this.page.getByTestId('playground-dock-bottom-panel');
   readonly modalPanel = this.page.getByTestId('playground-dock-modal-panel');
 
+  exampleToggle(requestName: string): Locator {
+    return this.treeItems.filter({ hasText: requestName }).getByTestId('sidebar-example-toggle');
+  }
+
+  exampleRow(exampleName: string): Locator {
+    return this.sidebarPanel.getByTestId('sidebar-example').filter({ hasText: exampleName });
+  }
+
   dockButton(mode: DockMode): Locator {
     return this.page.getByTestId(`playground-dock-${mode}`);
   }

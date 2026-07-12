@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { OpenCollection as OpenCollectionCollection } from '@opencollection/types';
+import type { HttpRequest } from '@opencollection/types/requests/http';
 import EnvSwitcher from '../../EnvSwitcher/EnvSwitcher';
 import SidebarTree from '../../Docs/Sidebar/SidebarTree/SidebarTree';
 import IconButton from '../../../ui/IconButton/IconButton';
@@ -17,6 +18,8 @@ interface PlaygroundSidebarProps {
   onOpenCollection: () => void;
   collectionActive: boolean;
   testId?: string;
+  activeExample?: { requestUuid: string; index: number } | null;
+  onExampleClick?: (requestUuid: string, index: number, request: HttpRequest) => void;
 }
 
 const PlaygroundSidebar: React.FC<PlaygroundSidebarProps> = ({
@@ -30,6 +33,8 @@ const PlaygroundSidebar: React.FC<PlaygroundSidebarProps> = ({
   onOpenCollection,
   collectionActive,
   testId = 'playground-sidebar',
+  activeExample,
+  onExampleClick,
 }) => {
   const [collectionCollapsed, setCollectionCollapsed] = useState(false);
   const name = collection?.info?.name || 'Collection';
@@ -57,6 +62,8 @@ const PlaygroundSidebar: React.FC<PlaygroundSidebarProps> = ({
             uuidToSlug={uuidToSlug}
             onNavigate={onNavigate}
             onToggleFolder={onToggleFolder}
+            activeExample={activeExample}
+            onExampleClick={onExampleClick}
             collectionRoot={{
               name,
               collapsed: collectionCollapsed,

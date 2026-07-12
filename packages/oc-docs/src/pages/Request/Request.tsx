@@ -7,6 +7,9 @@ import type { GraphQLRequest } from '@opencollection/types/requests/graphql';
 import type { GrpcRequest } from '@opencollection/types/requests/grpc';
 import type { WebSocketRequest } from '@opencollection/types/requests/websocket';
 import { useMarkdownRenderer } from '../../hooks';
+import { useAppSelector } from '../../store/hooks';
+import { selectExampleHighlight } from '../../store/slices/docsExamples';
+import { getItemUuid } from '../../utils/itemUtils';
 import { AUTH_MODE_LABELS } from '../../constants';
 import {
   getItemName,
@@ -83,6 +86,13 @@ const RequestContent: React.FC<RequestContentProps> = ({
   const params = getHttpParams(item) as HttpRequestParam[];
   const body = getHttpBody(item);
   const examples = getRequestExamples(item);
+
+  const highlight = useAppSelector(selectExampleHighlight);
+  const currentUuid = getItemUuid(item);
+  const highlightedExampleIndex =
+    highlight && currentUuid !== undefined && highlight.requestUuid === currentUuid
+      ? highlight.index
+      : undefined;
 
   const { path: pathParams, query: queryParams } = useMemo(
     () => resolvePathAndQueryParams(params, url),
@@ -203,7 +213,13 @@ const RequestContent: React.FC<RequestContentProps> = ({
 
         {hasExamples && (
           <Section label="Examples" testId="request-section-examples" className="request-fullwidth">
-            <Examples examples={examples} method={method} url={url} onTry={onTryClick} />
+            <Examples
+              examples={examples}
+              method={method}
+              url={url}
+              onTry={onTryClick}
+              highlightedIndex={highlightedExampleIndex}
+            />
           </Section>
         )}
 

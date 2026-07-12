@@ -27,6 +27,7 @@ interface ExampleCardProps {
   url: string;
   onTry?: () => void;
   defaultExpanded?: boolean;
+  active?: boolean;
   testId?: string;
 }
 
@@ -176,11 +177,12 @@ const Pane: React.FC<{
   );
 };
 
-export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, onTry, defaultExpanded, testId = 'example-card' }) => {
+export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, onTry, defaultExpanded, active = false, testId = 'example-card' }) => {
   const [expanded, setExpanded] = useState(Boolean(defaultExpanded));
   const [mounted, setMounted] = useState(Boolean(defaultExpanded));
   const detailId = useId();
   const detailRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = detailRef.current;
@@ -188,6 +190,13 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
     if (expanded) el.removeAttribute('inert');
     else el.setAttribute('inert', '');
   }, [expanded, mounted]);
+
+  useEffect(() => {
+    if (!active) return;
+    setMounted(true);
+    setExpanded(true);
+    rootRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [active]);
 
   const toggle = () => {
     if (!expanded) setMounted(true);
@@ -291,7 +300,12 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
   };
 
   return (
-    <StyledWrapper className="example-card" data-testid={testId}>
+    <StyledWrapper
+      ref={rootRef}
+      className={`example-card${active ? ' is-active' : ''}`}
+      data-testid={testId}
+      data-active={active ? 'true' : undefined}
+    >
       <div className="example-summary">
         <button
           type="button"

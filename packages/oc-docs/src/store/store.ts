@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import appReducer from '@slices/app';
 import docsReducer from '@slices/docs';
+import docsExamplesReducer from '@slices/docsExamples';
 import envReducer, { persistEnv } from '@slices/env';
 import playgroundReducer from '@slices/playground';
 import themeReducer, { persistThemeMode } from '@slices/theme';
@@ -10,6 +11,7 @@ export const createOpenCollectionStore = () => {
     reducer: {
       app: appReducer,
       docs: docsReducer,
+      docsExamples: docsExamplesReducer,
       env: envReducer,
       playground: playgroundReducer,
       theme: themeReducer,

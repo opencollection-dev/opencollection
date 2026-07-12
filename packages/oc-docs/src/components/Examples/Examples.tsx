@@ -8,11 +8,12 @@ interface ExamplesProps {
   method: string;
   url: string;
   onTry?: () => void;
+  highlightedIndex?: number;
   className?: string;
   testId?: string;
 }
 
-export const Examples: React.FC<ExamplesProps> = ({ examples, method, url, onTry, className, testId = 'request-examples' }) => {
+export const Examples: React.FC<ExamplesProps> = ({ examples, method, url, onTry, highlightedIndex, className, testId = 'request-examples' }) => {
   if (!examples || examples.length === 0) return null;
 
   return (
@@ -24,7 +25,8 @@ export const Examples: React.FC<ExamplesProps> = ({ examples, method, url, onTry
           method={method}
           url={url}
           onTry={onTry}
-          defaultExpanded={index === 0}
+          defaultExpanded={highlightedIndex === index || (highlightedIndex === undefined && index === 0)}
+          active={highlightedIndex === index}
         />
       ))}
     </StyledWrapper>

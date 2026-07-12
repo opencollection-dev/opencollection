@@ -7,6 +7,7 @@ import { CubeIcon, GlobeIcon } from '../../../assets/icons';
 import { StyledWrapper } from './StyledWrapper';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { toggleItem, expandFolders, selectDocsCollection } from '../../../store/slices/docs';
+import { setExampleHighlight, selectExampleHighlight, clearExampleHighlight } from '../../../store/slices/docsExamples';
 import { getItemUuid } from '../../../utils/itemUtils';
 import { useNavModel } from '../../../routing/hooks';
 import { normalizeSlug } from '../../../routing/resolve';
@@ -25,10 +26,18 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
   const docsNavigate = useDocsNavigate();
   const { pathname } = useLocation();
   const activeSlug = normalizeSlug(pathname);
+  const activeExample = useAppSelector(selectExampleHighlight);
 
   const goTo = (slug: string) => {
     docsNavigate(slug);
     onNavigate?.();
+  };
+
+  const goToExample = (requestUuid: string, index: number) => {
+    const slug = uuidToSlug.get(requestUuid);
+    if (slug === undefined) return;
+    dispatch(setExampleHighlight({ requestUuid, index }));
+    goTo(slug);
   };
 
   const uuidToSlug = useMemo<Map<string, string>>(() => {
@@ -39,6 +48,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
     }
     return map;
   }, [model]);
+
+  const navPlain = (slug: string) => {
+    dispatch(clearExampleHighlight());
+    goTo(slug);
+  };
 
   const autoRevealedSlug = useRef<string | null>(null);
   useEffect(() => {
@@ -74,7 +88,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
           icon={<CubeIcon />}
           active={activeSlug === OVERVIEW_SLUG}
           testId="sidebar-overview"
-          onClick={() => goTo(OVERVIEW_SLUG)}
+          onClick={() => navPlain(OVERVIEW_SLUG)}
         />
         {hasEnvironments && (
           <SidebarNavLink
@@ -82,7 +96,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
             icon={<GlobeIcon />}
             active={activeSlug === ENVIRONMENTS_SLUG}
             testId="sidebar-environments"
-            onClick={() => goTo(ENVIRONMENTS_SLUG)}
+            onClick={() => navPlain(ENVIRONMENTS_SLUG)}
           />
         )}
       </div>
@@ -93,10 +107,14 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
         {collection?.items?.length ? (
           <SidebarTree
             items={collection.items}
-            activeSlug={activeSlug}
+            // While an example is highlighted, only the example row is active,
+            // not its parent request row (even though we navigated to that page).
+            activeSlug={activeExample ? '' : activeSlug}
             uuidToSlug={uuidToSlug}
-            onNavigate={goTo}
+            onNavigate={navPlain}
             onToggleFolder={(uuid) => dispatch(toggleItem(uuid))}
+            activeExample={activeExample}
+            onExampleClick={(requestUuid, index) => goToExample(requestUuid, index)}
           />
         ) : null}
       </div>

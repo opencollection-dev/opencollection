@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { Item as OpenCollectionItem, Folder } from '@opencollection/types/collection/item';
+import type { HttpRequest, HttpRequestExample } from '@opencollection/types/requests/http';
 import SidebarNavLink from '../SidebarNavLink/SidebarNavLink';
-import { ChevronRightIcon } from '../../../../assets/icons';
+import { ChevronRightIcon, ExampleIcon } from '../../../../assets/icons';
 import { StyledWrapper } from './StyledWrapper';
 import { getItemName, isFolder, isScriptFile, getRequestBadgeLabel } from '../../../../utils/schemaHelpers';
 import { getItemUuid } from '../../../../utils/itemUtils';
@@ -25,6 +26,8 @@ interface SidebarTreeProps {
   onNavigate: (slug: string) => void;
   onToggleFolder: (uuid: string) => void;
   collectionRoot?: CollectionRoot;
+  activeExample?: { requestUuid: string; index: number } | null;
+  onExampleClick?: (requestUuid: string, index: number, request: HttpRequest) => void;
 }
 
 const SidebarTree: React.FC<SidebarTreeProps> = ({
@@ -35,7 +38,21 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
   onNavigate,
   onToggleFolder,
   collectionRoot,
+  activeExample = null,
+  onExampleClick,
 }) => {
+  const [expandedRequests, setExpandedRequests] = useState<Set<string>>(new Set());
+  const toggleRequest = (uuid: string) =>
+    setExpandedRequests((prev) => {
+      const next = new Set(prev);
+      if (next.has(uuid)) {
+        next.delete(uuid);
+      } else {
+        next.add(uuid);
+      }
+      return next;
+    });
+
   const renderItems = (itemList: OpenCollectionItem[], itemLevel: number): React.ReactNode => (
     <>
       {orderSiblings(itemList).map((item: OpenCollectionItem) => {
@@ -88,6 +105,66 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
         const script = isScriptFile(item);
         const displayName = script && !/\.[jt]s$/i.test(name) ? `${name}.js` : name;
         const method = getRequestBadgeLabel(item);
+
+        const examples: HttpRequestExample[] =
+          !script && uuid !== undefined ? ((item as HttpRequest).examples ?? []) : [];
+
+        if (examples.length > 0 && uuid !== undefined) {
+          // Auto-expand when this request owns the active example, so navigating
+          // to an example reveals it (and so static render can show it).
+          const expanded = expandedRequests.has(uuid) || activeExample?.requestUuid === uuid;
+          const chevron = (
+            <button
+              type="button"
+              className={`navlink-chevron${expanded ? ' expanded' : ''}`}
+              aria-label={expanded ? 'Collapse examples' : 'Expand examples'}
+              aria-expanded={expanded}
+              data-testid="sidebar-example-toggle"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleRequest(uuid);
+              }}
+            >
+              <ChevronRightIcon />
+            </button>
+          );
+
+          return (
+            <div key={key}>
+              <SidebarNavLink
+                label={displayName}
+                level={itemLevel}
+                active={active}
+                method={method}
+                muted
+                chevron={chevron}
+                testId="sidebar-item"
+                slug={slug}
+                onClick={() => slug !== undefined && onNavigate(slug)}
+              />
+              {expanded && (
+                <StyledWrapper style={{ '--guide-left': `${itemLevel * 14 + 14}px` } as React.CSSProperties}>
+                  {examples.map((example, i) => {
+                    const isActive =
+                      activeExample?.requestUuid === uuid && activeExample.index === i;
+                    return (
+                      <SidebarNavLink
+                        key={`${uuid}-example-${i}`}
+                        label={example.name || `Example ${i + 1}`}
+                        level={itemLevel + 1}
+                        active={isActive}
+                        icon={<ExampleIcon />}
+                        muted
+                        testId="sidebar-example"
+                        onClick={() => onExampleClick?.(uuid, i, item as HttpRequest)}
+                      />
+                    );
+                  })}
+                </StyledWrapper>
+              )}
+            </div>
+          );
+        }
 
         return (
           <SidebarNavLink

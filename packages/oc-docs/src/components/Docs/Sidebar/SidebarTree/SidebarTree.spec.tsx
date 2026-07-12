@@ -144,3 +144,51 @@ describe('SidebarTree collectionRoot', () => {
     expect(html).not.toContain('get users');
   });
 });
+
+const requestWithExamples = {
+  uuid: 'req-1',
+  type: 'http',
+  name: 'Login',
+  method: 'POST',
+  examples: [
+    { name: 'Successful login', response: { status: 200 } },
+    { name: 'Invalid credentials', response: { status: 401 } },
+  ],
+} as unknown as OpenCollectionItem;
+
+const baseProps = {
+  activeSlug: '',
+  uuidToSlug: new Map<string, string>([['req-1', 'login']]),
+  onNavigate: () => {},
+  onToggleFolder: () => {},
+};
+
+const renderTree = (props: Partial<React.ComponentProps<typeof SidebarTree>> = {}) =>
+  renderToStaticMarkup(<SidebarTree items={[requestWithExamples]} {...baseProps} {...props} />);
+
+describe('SidebarTree examples', () => {
+  it('shows an example toggle for a request with examples but keeps rows collapsed by default', () => {
+    const html = renderTree();
+    expect(html).toContain('sidebar-example-toggle');
+    expect(html).not.toContain('Successful login');
+  });
+
+  it('auto-expands and marks the active example row when activeExample matches', () => {
+    const html = renderTree({ activeExample: { requestUuid: 'req-1', index: 1 } });
+    expect(html).toContain('Successful login');
+    expect(html).toContain('Invalid credentials');
+    expect(html).toContain('active');
+  });
+
+  it('renders a request without examples as a plain leaf (no toggle)', () => {
+    const plain = { uuid: 'r2', type: 'http', name: 'Ping', method: 'GET' } as unknown as OpenCollectionItem;
+    const html = renderToStaticMarkup(
+      <SidebarTree
+        {...baseProps}
+        items={[plain]}
+        uuidToSlug={new Map([['r2', 'ping']])}
+      />
+    );
+    expect(html).not.toContain('sidebar-example-toggle');
+  });
+});
