@@ -1,34 +1,27 @@
 import React, { useMemo } from 'react';
-import type { HttpRequest, HttpRequestExample, HttpRequestHeader, HttpResponseHeader } from '@opencollection/types/requests/http';
+import type { HttpRequest, HttpRequestExample } from '@opencollection/types/requests/http';
 import { MethodBadge } from '../../../../MethodBadge/MethodBadge';
 import { CopyButton } from '../../../../../ui/CopyButton/CopyButton';
-import { PropertyTable, type PropertyRow } from '../../../../PropertyTable/PropertyTable';
+import { PropertyTable } from '../../../../PropertyTable/PropertyTable';
 import { RequestParams } from '../../../../Request/RequestParams/RequestParams';
 import { RequestBody } from '../../../../Request/RequestBody/RequestBody';
 import { Code } from '../../../../Code/Code';
 import { SplitDivider } from '../../../../SplitDivider/SplitDivider';
 import { resolvePathAndQueryParams } from '../../../../../utils/pathParams';
-import { getBodyView, getDescription } from '../../../../../utils/request';
+import { getBodyView, getDescription, headerRows } from '../../../../../utils/request';
 import { getHttpMethod, getRequestUrl } from '../../../../../utils/schemaHelpers';
 import { responseBodyLanguage, statusCodePhrase } from '../../../../../utils/exampleResponse';
 import { statusToneColor } from '../../../../../utils/common';
-import { useSplitPane } from '../../../../../hooks/useSplitPane';
+import { useSplitPane, type SplitOrientation } from '../../../../../hooks/useSplitPane';
 import { StyledWrapper } from './StyledWrapper';
 
 interface ExampleViewProps {
   request: HttpRequest;
   example: HttpRequestExample;
+  orientation?: SplitOrientation;
 }
 
-const headerRows = (headers: (HttpRequestHeader | HttpResponseHeader)[]): PropertyRow[] =>
-  headers.map((h) => ({
-    label: h.name,
-    value: h.value,
-    disabled: 'disabled' in h ? h.disabled : undefined,
-    description: getDescription(h)
-  }));
-
-export const ExampleView: React.FC<ExampleViewProps> = ({ request, example }) => {
+export const ExampleView: React.FC<ExampleViewProps> = ({ request, example, orientation = 'horizontal' }) => {
   const exReq = example.request ?? {};
   const exRes = example.response ?? {};
   const method = exReq.method || getHttpMethod(request) || 'GET';
@@ -42,17 +35,23 @@ export const ExampleView: React.FC<ExampleViewProps> = ({ request, example }) =>
     [exReq.params, url]
   );
   const hasParams = pathParams.length > 0 || queryParams.length > 0;
-  const reqHeaders = exReq.headers ?? [];
-  const bodyView = getBodyView(exReq.body);
+  const reqHeaders = useMemo(() => exReq.headers ?? [], [exReq.headers]);
+  const bodyView = useMemo(() => getBodyView(exReq.body), [exReq.body]);
   const hasReqBody = bodyView.render !== 'none';
+  const reqHeaderRows = useMemo(() => headerRows(reqHeaders), [reqHeaders]);
 
-  const resHeaders = exRes.headers ?? [];
+  const resHeaders = useMemo(() => exRes.headers ?? [], [exRes.headers]);
   const resBody = exRes.body;
   const hasResBody = Boolean(resBody?.data?.trim());
+  const resHeaderRows = useMemo(() => headerRows(resHeaders), [resHeaders]);
 
-  // One draggable divider splits the Request/Response panes, shared with the
-  // live playground send-response splitter.
-  const { size: requestPaneWidth, isResizing, containerRef, startResize } = useSplitPane('horizontal');
+  const { size: paneSize, isResizing, containerRef, startResize } = useSplitPane(orientation);
+  const paneStyle = orientation === 'vertical' ? { height: `${paneSize}%` } : { width: `${paneSize}%` };
+  const statusBadge = status ? (
+    <span className="example-view-status" style={{ color: statusToneColor(status) }}>
+      {status} {statusText}
+    </span>
+  ) : null;
 
   return (
     <StyledWrapper data-testid="example-view">
@@ -65,15 +64,15 @@ export const ExampleView: React.FC<ExampleViewProps> = ({ request, example }) =>
         <MethodBadge method={method} />
         <span className="example-view-url">{url}</span>
         <CopyButton text={url} />
-        {status ? (
-          <span className="example-view-status" style={{ color: statusToneColor(status) }}>
-            {status} {statusText}
-          </span>
-        ) : null}
+        {statusBadge}
       </div>
 
-      <div className={`example-view-grid${isResizing ? ' is-resizing' : ''}`} ref={containerRef}>
-        <div className="example-view-pane" style={{ width: `${requestPaneWidth}%` }} data-testid="example-view-request">
+      <div
+        className={`example-view-grid${isResizing ? ' is-resizing' : ''}`}
+        data-orientation={orientation}
+        ref={containerRef}
+      >
+        <div className="example-view-pane" style={paneStyle} data-testid="example-view-request">
           <div className="example-view-pane-title">Request</div>
           {hasParams && (
             <div className="example-view-section">
@@ -84,7 +83,7 @@ export const ExampleView: React.FC<ExampleViewProps> = ({ request, example }) =>
           {reqHeaders.length > 0 && (
             <div className="example-view-section">
               <div className="example-view-section-label">HEADERS</div>
-              <PropertyTable rows={headerRows(reqHeaders)} />
+              <PropertyTable rows={reqHeaderRows} />
             </div>
           )}
           {hasReqBody && (
@@ -95,21 +94,17 @@ export const ExampleView: React.FC<ExampleViewProps> = ({ request, example }) =>
           )}
         </div>
 
-        <SplitDivider orientation="horizontal" onMouseDown={startResize} />
+        <SplitDivider orientation={orientation} onPointerDown={startResize} testId="example-view-divider" />
 
         <div className="example-view-pane example-view-pane-response" data-testid="example-view-response">
           <div className="example-view-pane-title">
             Response
-            {status ? (
-              <span className="example-view-status" style={{ color: statusToneColor(status) }}>
-                {status} {statusText}
-              </span>
-            ) : null}
+            {statusBadge}
           </div>
           {resHeaders.length > 0 && (
             <div className="example-view-section">
               <div className="example-view-section-label">HEADERS</div>
-              <PropertyTable rows={headerRows(resHeaders)} />
+              <PropertyTable rows={resHeaderRows} />
             </div>
           )}
           {hasResBody && (

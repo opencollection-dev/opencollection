@@ -58,18 +58,26 @@ export const StyledWrapper = styled.div`
     align-items: stretch;
     width: 100%;
   }
+  .example-view-grid[data-orientation='vertical'] {
+    flex-direction: column;
+  }
   .example-view-grid.is-resizing {
     cursor: col-resize;
     user-select: none;
   }
+  .example-view-grid[data-orientation='vertical'].is-resizing {
+    cursor: row-resize;
+  }
   .example-view-pane {
     flex: 0 0 auto;
     min-width: 0;
+    min-height: 0;
     overflow: auto;
   }
   .example-view-pane-response {
     flex: 1 1 0;
     width: auto;
+    height: auto;
   }
   .example-view-pane-title {
     display: flex;

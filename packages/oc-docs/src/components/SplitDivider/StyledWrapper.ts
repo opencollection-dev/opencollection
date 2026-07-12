@@ -4,7 +4,13 @@ export const StyledWrapper = styled.div`
   position: relative;
   flex: 0 0 auto;
   align-self: stretch;
+  touch-action: none;
   background: var(--border-color);
+  transition: background-color 0.15s;
+
+  &:hover {
+    background: var(--oc-border-border2);
+  }
 
   &::before {
     content: '';
@@ -14,6 +20,7 @@ export const StyledWrapper = styled.div`
     transform: translate(-50%, -50%);
     border-radius: 2px;
     background: var(--oc-border-border2);
+    transition: background-color 0.15s;
   }
   &:hover::before {
     background: var(--text-muted);

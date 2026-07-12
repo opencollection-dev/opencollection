@@ -7,6 +7,7 @@ import { StyledWrapper } from './StyledWrapper';
 import { getItemName, isFolder, isScriptFile, getRequestBadgeLabel } from '../../../../utils/schemaHelpers';
 import { getItemUuid } from '../../../../utils/itemUtils';
 import { orderSiblings } from '../../../../routing/navModel';
+import type { ExampleHighlight } from '../../../../store/slices/docsExamples';
 
 export interface CollectionRoot {
   name: string;
@@ -26,7 +27,7 @@ interface SidebarTreeProps {
   onNavigate: (slug: string) => void;
   onToggleFolder: (uuid: string) => void;
   collectionRoot?: CollectionRoot;
-  activeExample?: { requestUuid: string; index: number } | null;
+  activeExample?: ExampleHighlight | null;
   onExampleClick?: (requestUuid: string, index: number, request: HttpRequest) => void;
 }
 
@@ -41,15 +42,17 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
   activeExample = null,
   onExampleClick,
 }) => {
-  const [expandedRequests, setExpandedRequests] = useState<Set<string>>(new Set());
+  // Explicit expand/collapse intent per request uuid. When a request has no
+  // entry it follows the active example (auto-expand); once the user clicks the
+  // chevron, their choice wins, so the active request can be collapsed.
+  const [expandedOverride, setExpandedOverride] = useState<Map<string, boolean>>(new Map());
+  const isExpanded = (uuid: string): boolean =>
+    expandedOverride.has(uuid) ? Boolean(expandedOverride.get(uuid)) : activeExample?.requestUuid === uuid;
   const toggleRequest = (uuid: string) =>
-    setExpandedRequests((prev) => {
-      const next = new Set(prev);
-      if (next.has(uuid)) {
-        next.delete(uuid);
-      } else {
-        next.add(uuid);
-      }
+    setExpandedOverride((prev) => {
+      const current = prev.has(uuid) ? Boolean(prev.get(uuid)) : activeExample?.requestUuid === uuid;
+      const next = new Map(prev);
+      next.set(uuid, !current);
       return next;
     });
 
@@ -112,7 +115,7 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
         if (examples.length > 0 && uuid !== undefined) {
           // Auto-expand when this request owns the active example, so navigating
           // to an example reveals it (and so static render can show it).
-          const expanded = expandedRequests.has(uuid) || activeExample?.requestUuid === uuid;
+          const expanded = isExpanded(uuid);
           const chevron = (
             <button
               type="button"

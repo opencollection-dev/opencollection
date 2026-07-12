@@ -28,7 +28,7 @@ test.describe('Sidebar - Examples (docs)', () => {
     await expect(page.getByTestId('page')).toHaveAttribute('data-page-type', 'request');
     await expect(page).toHaveURL(/#\/billing\/customers\/get-all-customers$/);
 
-    const activeCard = page.locator('[data-active="true"]');
+    const activeCard = page.locator('[data-testid="example-card"][data-active="true"]');
     await expect(activeCard).toBeVisible();
     await expect(activeCard).toContainText(OK_EXAMPLE);
     await expect(sidebar.exampleRow(OK_EXAMPLE)).toHaveClass(/active/);
@@ -39,11 +39,11 @@ test.describe('Sidebar - Examples (docs)', () => {
   test('switching to a different example moves the highlight to it', async ({ sidebar, page }) => {
     await sidebar.toggleExamples('Get All Customers');
     await sidebar.exampleRow(OK_EXAMPLE).click();
-    await expect(page.locator('[data-active="true"]')).toContainText(OK_EXAMPLE);
+    await expect(page.locator('[data-testid="example-card"][data-active="true"]')).toContainText(OK_EXAMPLE);
 
     await sidebar.exampleRow(BAD_REQUEST_EXAMPLE).click();
 
-    const activeCard = page.locator('[data-active="true"]');
+    const activeCard = page.locator('[data-testid="example-card"][data-active="true"]');
     await expect(activeCard).toContainText(BAD_REQUEST_EXAMPLE);
     await expect(activeCard).not.toContainText(OK_EXAMPLE);
     await expect(sidebar.exampleRow(BAD_REQUEST_EXAMPLE)).toHaveClass(/active/);

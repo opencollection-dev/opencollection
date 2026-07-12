@@ -5,6 +5,7 @@ import EnvSwitcher from '../../EnvSwitcher/EnvSwitcher';
 import SidebarTree from '../../Docs/Sidebar/SidebarTree/SidebarTree';
 import IconButton from '../../../ui/IconButton/IconButton';
 import { SettingsIcon } from '../../../assets/icons';
+import type { ExampleHighlight } from '../../../store/slices/docsExamples';
 import { StyledWrapper } from './StyledWrapper';
 
 interface PlaygroundSidebarProps {
@@ -18,7 +19,7 @@ interface PlaygroundSidebarProps {
   onOpenCollection: () => void;
   collectionActive: boolean;
   testId?: string;
-  activeExample?: { requestUuid: string; index: number } | null;
+  activeExample?: ExampleHighlight | null;
   onExampleClick?: (requestUuid: string, index: number, request: HttpRequest) => void;
 }
 

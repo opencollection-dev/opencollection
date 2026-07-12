@@ -13,6 +13,7 @@ import {
   toggleFolderCollapse,
 } from '@slices/playground';
 import { selectActiveEnvName } from '../../../store/slices/env';
+import type { ExampleHighlight } from '@slices/docsExamples';
 import { useNavModel } from '../../../routing/hooks';
 import { usePlaygroundUrlState, useElementWidth } from '../../../hooks';
 import { getItemUuid, findItemByUuid } from '../../../utils/itemUtils';
@@ -71,7 +72,7 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
   // parent request row (selectedItemId still points at the parent request).
   const activeSlug = viewMode !== 'example' && selectedItemId ? uuidToSlug.get(selectedItemId) ?? '' : '';
 
-  const activeExample =
+  const activeExample: ExampleHighlight | null =
     viewMode === 'example' && selectedItemId != null && selectedExampleIndex != null
       ? { requestUuid: selectedItemId, index: selectedExampleIndex }
       : null;
@@ -176,10 +177,12 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
         | HttpRequestExample
         | undefined;
       if (example) {
-        return <ExampleView request={selectedItem as HttpRequest} example={example} />;
+        return <ExampleView request={selectedItem as HttpRequest} example={example} orientation={orientation} />;
       }
     }
-    if (viewMode === 'playground' && selectedItem && !isFolder(selectedItem) && collection) {
+    // Also render the live request when an example index no longer resolves (e.g.
+    // the examples array shrank), so we never land on the empty prompt instead.
+    if ((viewMode === 'playground' || viewMode === 'example') && selectedItem && !isFolder(selectedItem) && collection) {
       return (
         <PlaygroundView
           item={selectedItem as HttpRequest}

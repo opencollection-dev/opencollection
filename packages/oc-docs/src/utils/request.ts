@@ -4,8 +4,11 @@ import type {
   HttpRequest,
   HttpRequestBody,
   HttpRequestBodyVariant,
-  FileBodyVariant
+  FileBodyVariant,
+  HttpRequestHeader,
+  HttpResponseHeader
 } from '@opencollection/types/requests/http';
+import type { PropertyRow } from '../components/PropertyTable/PropertyTable';
 import type { Auth } from '@opencollection/types/common/auth';
 import type { Scripts } from '@opencollection/types/common/scripts';
 import type { Variable } from '@opencollection/types/common/variables';
@@ -69,6 +72,14 @@ export const getDescription = (item: unknown): string | undefined => {
   }
   return undefined;
 };
+
+export const headerRows = (headers: (HttpRequestHeader | HttpResponseHeader)[]): PropertyRow[] =>
+  headers.map((h) => ({
+    label: h.name,
+    value: h.value,
+    disabled: 'disabled' in h ? h.disabled : undefined,
+    description: getDescription(h)
+  }));
 
 export interface BodyTableRow {
   name: string;

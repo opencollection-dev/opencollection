@@ -1,23 +1,23 @@
 import React from 'react';
+import type { SplitOrientation } from '../../hooks/useSplitPane';
 import { StyledWrapper } from './StyledWrapper';
 
 interface SplitDividerProps {
-  /** Layout axis of the two panes. `horizontal` renders a vertical drag bar. */
-  orientation?: 'horizontal' | 'vertical';
-  onMouseDown: (e: React.MouseEvent) => void;
+  orientation?: SplitOrientation;
+  onPointerDown: (e: React.PointerEvent) => void;
   testId?: string;
 }
 
 export const SplitDivider: React.FC<SplitDividerProps> = ({
   orientation = 'horizontal',
-  onMouseDown,
+  onPointerDown,
   testId,
 }) => (
   <StyledWrapper
     className="split-divider"
     data-orientation={orientation}
     data-testid={testId}
-    onMouseDown={onMouseDown}
+    onPointerDown={onPointerDown}
   />
 );
 

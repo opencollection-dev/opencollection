@@ -1,54 +1,83 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-/**
- * Drives a two-pane split with one draggable divider. The divider resizes the
- * first pane along the layout axis: horizontal layout drags width, vertical
- * layout drags height. The ratio is clamped to 20-80% so neither pane collapses.
- *
- * Shared by the live playground request/response splitter and the read-only
- * example view, so both drag identically.
- *
- * `size` is the first pane's percentage. Attach `containerRef` to the flex row
- * that holds both panes, drive the first pane's width/height from `size`, and
- * wire `startResize` to the divider's onMouseDown. `isResizing` is true while a
- * drag is in progress (use it to suppress text selection).
- */
-export const useSplitPane = (
-  orientation: 'horizontal' | 'vertical' = 'horizontal',
-  initialSize = 50
-) => {
+const clamp = (value: number, min: number, max: number): number => Math.min(max, Math.max(min, value));
+
+export type SplitOrientation = 'horizontal' | 'vertical';
+
+interface Rect {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
+
+export const computeSplitPercent = (
+  rect: Rect,
+  clientX: number,
+  clientY: number,
+  orientation: SplitOrientation
+): number => {
+  const raw =
+    orientation === 'vertical'
+      ? ((clientY - rect.top) / rect.height) * 100
+      : ((clientX - rect.left) / rect.width) * 100;
+  return clamp(raw, 20, 80);
+};
+
+export const useSplitPane = (orientation: SplitOrientation = 'horizontal', initialSize = 50) => {
+  const sizesRef = useRef<Record<SplitOrientation, number>>({ horizontal: initialSize, vertical: initialSize });
   const [size, setSize] = useState(initialSize);
   const [isResizing, setIsResizing] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const startResize = useCallback((e: React.MouseEvent) => {
-    setIsResizing(true);
-    e.preventDefault();
-  }, []);
+  const rafRef = useRef(0);
+  const endRef = useRef<null | (() => void)>(null);
 
   useEffect(() => {
-    if (!isResizing) return;
+    setSize(sizesRef.current[orientation]);
+  }, [orientation]);
 
-    const onMove = (e: MouseEvent) => {
-      const el = containerRef.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const percent =
-        orientation === 'vertical'
-          ? ((e.clientY - rect.top) / rect.height) * 100
-          : ((e.clientX - rect.left) / rect.width) * 100;
-      if (percent < 20 || percent > 80) return;
-      setSize(percent);
-    };
-    const onUp = () => setIsResizing(false);
+  const startResize = useCallback(
+    (event: React.PointerEvent) => {
+      event.preventDefault();
+      const handle = event.currentTarget as HTMLElement;
+      const pointerId = event.pointerId;
+      handle.setPointerCapture?.(pointerId);
+      setIsResizing(true);
 
-    document.addEventListener('mousemove', onMove);
-    document.addEventListener('mouseup', onUp);
-    return () => {
-      document.removeEventListener('mousemove', onMove);
-      document.removeEventListener('mouseup', onUp);
-    };
-  }, [isResizing, orientation]);
+      const onMove = (moveEvent: PointerEvent) => {
+        const el = containerRef.current;
+        if (!el) return;
+        const percent = computeSplitPercent(el.getBoundingClientRect(), moveEvent.clientX, moveEvent.clientY, orientation);
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = requestAnimationFrame(() => {
+          sizesRef.current[orientation] = percent;
+          setSize(percent);
+        });
+      };
+      const end = () => {
+        setIsResizing(false);
+        cancelAnimationFrame(rafRef.current);
+        handle.releasePointerCapture?.(pointerId);
+        handle.removeEventListener('pointermove', onMove);
+        handle.removeEventListener('pointerup', end);
+        handle.removeEventListener('pointercancel', end);
+        endRef.current = null;
+      };
+      handle.addEventListener('pointermove', onMove);
+      handle.addEventListener('pointerup', end);
+      handle.addEventListener('pointercancel', end);
+      endRef.current = end;
+    },
+    [orientation]
+  );
+
+  useEffect(
+    () => () => {
+      endRef.current?.();
+      cancelAnimationFrame(rafRef.current);
+    },
+    []
+  );
 
   return { size, isResizing, containerRef, startResize };
 };

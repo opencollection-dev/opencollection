@@ -33,13 +33,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
     onNavigate?.();
   };
 
-  const goToExample = (requestUuid: string, index: number) => {
-    const slug = uuidToSlug.get(requestUuid);
-    if (slug === undefined) return;
-    dispatch(setExampleHighlight({ requestUuid, index }));
-    goTo(slug);
-  };
-
   const uuidToSlug = useMemo<Map<string, string>>(() => {
     const map = new Map<string, string>();
     for (const entry of model.ordered) {
@@ -53,6 +46,29 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
     dispatch(clearExampleHighlight());
     goTo(slug);
   };
+
+  const goToExample = (requestUuid: string, index: number) => {
+    const slug = uuidToSlug.get(requestUuid);
+    if (slug === undefined) return;
+    dispatch(setExampleHighlight({ requestUuid, index }));
+    goTo(slug);
+  };
+
+  // Clear the example highlight once we have left the request page it points at,
+  // so back/forward, a topbar link, or a deep-link never leaves it stale (which
+  // would blank every active row and re-scroll the card on a later visit). Only
+  // clears after the highlighted page was actually shown, avoiding the transient
+  // set-then-navigate window from goToExample.
+  const highlightSeenRef = useRef(false);
+  useEffect(() => {
+    if (!activeExample) {
+      highlightSeenRef.current = false;
+      return;
+    }
+    const highlightedSlug = uuidToSlug.get(activeExample.requestUuid);
+    if (highlightedSlug === activeSlug) highlightSeenRef.current = true;
+    else if (highlightSeenRef.current) dispatch(clearExampleHighlight());
+  }, [activeSlug, activeExample, uuidToSlug, dispatch]);
 
   const autoRevealedSlug = useRef<string | null>(null);
   useEffect(() => {

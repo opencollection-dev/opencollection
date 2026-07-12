@@ -123,7 +123,7 @@ const Playground: React.FC<PlaygroundProps> = ({ item, collection, selectedEnvir
           <RequestPane item={editableItem} onItemChange={handleItemChange} />
         </div>
 
-        <SplitDivider orientation={orientation} onMouseDown={startResize} />
+        <SplitDivider orientation={orientation} onPointerDown={startResize} testId="playground-divider" />
 
         <div className="flex-1 overflow-hidden min-h-0">
           <ResponsePane response={response} isLoading={isLoading} />

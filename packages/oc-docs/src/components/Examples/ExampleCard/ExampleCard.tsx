@@ -1,13 +1,9 @@
 import React, { Fragment, useEffect, useId, useMemo, useRef, useState } from 'react';
-import type {
-  HttpRequestExample,
-  HttpRequestHeader,
-  HttpResponseHeader
-} from '@opencollection/types/requests/http';
+import type { HttpRequestExample } from '@opencollection/types/requests/http';
 import { MethodBadge } from '../../MethodBadge/MethodBadge';
 import { ChevronArrow } from '../../ChevronArrow/ChevronArrow';
 import { CopyButton } from '../../../ui/CopyButton/CopyButton';
-import { PropertyTable, type PropertyRow } from '../../PropertyTable/PropertyTable';
+import { PropertyTable } from '../../PropertyTable/PropertyTable';
 import { TruncatedText } from '../../TruncatedText/TruncatedText';
 import { VariableText } from '../../VariableText/VariableText';
 import { Description } from '../../Description/Description';
@@ -16,7 +12,7 @@ import { RequestBody } from '../../Request/RequestBody/RequestBody';
 import { Code } from '../../Code/Code';
 import { PlayIcon } from '../../../assets/icons';
 import { resolvePathAndQueryParams } from '../../../utils/pathParams';
-import { getBodyView, getDescription } from '../../../utils/request';
+import { getBodyView, getDescription, headerRows } from '../../../utils/request';
 import { computeBodySize, formatBytes, responseBodyLanguage, responseBodyContentType, statusCodePhrase } from '../../../utils/exampleResponse';
 import { statusToneColor } from '../../../utils/common';
 import { StyledWrapper } from './StyledWrapper';
@@ -38,14 +34,6 @@ interface PaneTab {
   ctype: string;
   content: React.ReactNode;
 }
-
-const headerRows = (headers: (HttpRequestHeader | HttpResponseHeader)[]): PropertyRow[] =>
-  headers.map((h) => ({
-    label: h.name,
-    value: h.value,
-    disabled: 'disabled' in h ? h.disabled : undefined,
-    description: getDescription(h)
-  }));
 
 const headerCtype = (count: number): string => `${count} header${count === 1 ? '' : 's'}`;
 
