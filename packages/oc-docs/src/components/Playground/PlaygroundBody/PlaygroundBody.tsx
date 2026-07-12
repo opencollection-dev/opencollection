@@ -72,8 +72,13 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
   // parent request row (selectedItemId still points at the parent request).
   const activeSlug = viewMode !== 'example' && selectedItemId ? uuidToSlug.get(selectedItemId) ?? '' : '';
 
+  const exampleCount =
+    selectedItem && !isFolder(selectedItem) ? ((selectedItem as HttpRequest).examples?.length ?? 0) : 0;
   const activeExample: ExampleHighlight | null =
-    viewMode === 'example' && selectedItemId != null && selectedExampleIndex != null
+    viewMode === 'example' &&
+    selectedItemId != null &&
+    selectedExampleIndex != null &&
+    selectedExampleIndex < exampleCount
       ? { requestUuid: selectedItemId, index: selectedExampleIndex }
       : null;
 
