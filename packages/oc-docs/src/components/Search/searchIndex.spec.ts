@@ -101,15 +101,15 @@ const rec = (over: Partial<SearchRecord>): SearchRecord => ({
 
 describe('scoreRecord / searchRecords', () => {
   it('matches on name, url, params and description', () => {
-    expect(scoreRecord('hotel', rec({ name: 'Get Hotels' }))).not.toBeNull();
-    expect(scoreRecord('v1', rec({ url: '/api/v1/x' }))).not.toBeNull();
-    expect(scoreRecord('page', rec({ params: 'page 1' }))).not.toBeNull();
-    expect(scoreRecord('auth', rec({ description: 'authenticates the user' }))).not.toBeNull();
+    expect(scoreRecord('hotel', rec({ name: 'Get Hotels' }))).toBeGreaterThan(0);
+    expect(scoreRecord('v1', rec({ url: '/api/v1/x' }))).toBeGreaterThan(0);
+    expect(scoreRecord('page', rec({ params: 'page 1' }))).toBeGreaterThan(0);
+    expect(scoreRecord('auth', rec({ description: 'authenticates the user' }))).toBeGreaterThan(0);
   });
 
   it('weights a name hit above a description-only hit', () => {
-    const nameHit = scoreRecord('book', rec({ name: 'book' }))!;
-    const descHit = scoreRecord('book', rec({ description: 'book' }))!;
+    const nameHit = scoreRecord('book', rec({ name: 'book' }));
+    const descHit = scoreRecord('book', rec({ description: 'book' }));
     expect(nameHit).toBeGreaterThan(descHit);
   });
 
@@ -123,5 +123,41 @@ describe('scoreRecord / searchRecords', () => {
     const b = rec({ id: 'b', name: 'Booking list' });
     const out = searchRecords('hotel', [a, b]);
     expect(out.map((r) => r.id)).toEqual(['a']);
+  });
+
+  it('matches a whole word or a word prefix', () => {
+    expect(scoreRecord('customer', rec({ name: 'Get All Customers' }))).toBeGreaterThan(0);
+    expect(scoreRecord('cursor', rec({ description: 'uses cursor-based pagination' }))).toBeGreaterThan(0);
+    expect(scoreRecord('get all', rec({ name: 'Get All Hotels' }))).toBeGreaterThan(0);
+  });
+
+  it('matches a url path segment', () => {
+    expect(scoreRecord('v1', rec({ url: '{{baseUrl}}/api/v1/hotels' }))).toBeGreaterThan(0);
+    expect(scoreRecord('hotels', rec({ url: '{{baseUrl}}/api/v1/hotels' }))).toBeGreaterThan(0);
+  });
+
+  it('does not match a scattered subsequence (the reported "curs" -> "Customers" bug)', () => {
+    // "curs" appears in "Customers" only as c-u-s...r...s, never as a literal run.
+    expect(scoreRecord('curs', rec({ name: 'Get All Customers' }))).toBe(0);
+    expect(scoreRecord('curso', rec({ params: 'customer cus_ABC123 status open' }))).toBe(0);
+  });
+
+  it('does not match a fragment inside a longer word', () => {
+    expect(scoreRecord('get', rec({ description: 'delivered together in one call' }))).toBe(0);
+    expect(scoreRecord('ustomer', rec({ name: 'Customer' }))).toBe(0);
+  });
+
+  it('every returned record literally contains the query in a searched field', () => {
+    const recs = [
+      rec({ id: 'a', name: 'Get All Customers' }),
+      rec({ id: 'b', name: 'Get Currencies' }),
+      rec({ id: 'c', name: 'List invoices', description: 'cursor-based pagination' }),
+    ];
+    for (const q of ['curs', 'curso', 'cursor', 'invoice', 'currenc']) {
+      for (const hit of searchRecords(q, recs)) {
+        const haystack = [hit.name, hit.url, hit.params, hit.description].join(' ').toLowerCase();
+        expect(haystack).toContain(q.toLowerCase());
+      }
+    }
   });
 });

@@ -12,7 +12,7 @@
 import type { NavEntry } from '../../routing/types';
 import { getItemDocs, getItemDescription, getRequestUrl, getHttpParams } from '../../utils/schemaHelpers';
 import { getItemUuid } from '../../utils/itemUtils';
-import { fuzzyScore } from '../../utils/fuzzyMatch';
+import { wordMatchQuality } from '../../utils/wordMatch';
 
 export interface SearchRecord {
   /** Item UUID (the matchingItemIds contract + sidebar key). */
@@ -104,7 +104,7 @@ export const collectMethods = (entries: NavEntry[]): string[] => {
   });
 };
 
-/** Field weights: name dominates, then url, params, description. */
+/** Per-field weight: name dominates, then url, params, description. */
 const FIELD_WEIGHTS: Array<[keyof Pick<SearchRecord, 'name' | 'url' | 'params' | 'description'>, number]> = [
   ['name', 10],
   ['url', 4],
@@ -112,14 +112,13 @@ const FIELD_WEIGHTS: Array<[keyof Pick<SearchRecord, 'name' | 'url' | 'params' |
   ['description', 1],
 ];
 
-/** Best weighted fuzzy score across a record's searchable fields, or null. */
-export const scoreRecord = (query: string, rec: SearchRecord): number | null => {
-  let best: number | null = null;
+/** Best weighted word-match score across a record's searchable fields; 0 means no field matched. */
+export const scoreRecord = (query: string, rec: SearchRecord): number => {
+  let best = 0;
   for (const [field, weight] of FIELD_WEIGHTS) {
-    const s = fuzzyScore(query, rec[field]);
-    if (s === null) continue;
-    const weighted = s * weight;
-    best = best === null ? weighted : Math.max(best, weighted);
+    const quality = wordMatchQuality(query, rec[field]);
+    if (quality === null) continue;
+    best = Math.max(best, quality * weight);
   }
   return best;
 };
@@ -135,7 +134,7 @@ export const searchRecords = (query: string, records: SearchRecord[]): SearchRec
   const scored: Array<{ rec: SearchRecord; score: number }> = [];
   for (const rec of records) {
     const score = scoreRecord(q, rec);
-    if (score !== null) scored.push({ rec, score });
+    if (score > 0) scored.push({ rec, score });
   }
   scored.sort((a, b) => b.score - a.score);
   return scored.map((s) => s.rec);
