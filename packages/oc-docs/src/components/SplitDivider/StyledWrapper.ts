@@ -1,10 +1,5 @@
 import styled from '@emotion/styled';
 
-/**
- * A 5px draggable split divider with a darker center grab handle. The whole
- * track is draggable. Orientation switches the axis: `horizontal` layout gives a
- * vertical bar (drag left/right), `vertical` layout gives a horizontal bar.
- */
 export const StyledWrapper = styled.div`
   position: relative;
   flex: 0 0 auto;

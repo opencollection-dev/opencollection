@@ -1,9 +1,6 @@
 import styled from '@emotion/styled';
 
 export const StyledWrapper = styled.div`
-  /* Fill the playground view height as a flex child (height:100% is unreliable
-     for a flex item in a column container). No bottom padding so the split
-     divider reaches the very bottom edge. */
   flex: 1;
   min-height: 0;
   display: flex;
@@ -27,7 +24,6 @@ export const StyledWrapper = styled.div`
     color: var(--text-secondary);
     font-size: 13px;
   }
-  /* Match the docs request url bar: gray mantle bg, same height/padding. */
   .example-view-urlbar {
     flex: 0 0 auto;
     display: flex;
@@ -55,8 +51,6 @@ export const StyledWrapper = styled.div`
     font-size: 12px;
     font-weight: 700;
   }
-  /* Request | divider | Response. One draggable 5px divider spanning the full
-     height, with a darker center grab handle. The whole track is draggable. */
   .example-view-grid {
     flex: 1 1 auto;
     min-height: 0;

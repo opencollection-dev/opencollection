@@ -6,8 +6,6 @@ export const StyledWrapper = styled.div`
   overflow: hidden;
   background: var(--oc-background-base);
 
-  /* Flash the accent border briefly to point the eye at the card, then settle
-     back to the normal gray border. Thin 1px accent, no glow. */
   &.is-active {
     animation: exampleFlash 1.6s ease forwards;
   }
