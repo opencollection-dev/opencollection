@@ -154,9 +154,10 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
                       <SidebarNavLink
                         key={`${uuid}-example-${i}`}
                         label={example.name || `Example ${i + 1}`}
-                        level={itemLevel + 1}
+                        level={itemLevel}
                         active={isActive}
                         icon={<ExampleIcon />}
+                        chevron={<span className="navlink-spacer" aria-hidden="true" />}
                         muted
                         testId="sidebar-example"
                         onClick={() => onExampleClick?.(uuid, i, item as HttpRequest)}
