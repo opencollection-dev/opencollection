@@ -19,8 +19,7 @@
     "test": "npm run test:run --workspaces --if-present"
   },
   "lint-staged": {
-    "packages/oc-docs/**/*.{ts,tsx}": "eslint --config packages/oc-docs/eslint.config.js --max-warnings 0 --report-unused-disable-directives --fix",
-    "packages/oc-docs/**/*.{json,css,scss,md,yml,yaml}": "prettier --write"
+    "packages/oc-docs/**/*.{ts,tsx}": "eslint --config packages/oc-docs/eslint.config.js --max-warnings 0 --report-unused-disable-directives --fix"
   },
   "devDependencies": {
     "eslint-config-prettier": "^10.1.8",
