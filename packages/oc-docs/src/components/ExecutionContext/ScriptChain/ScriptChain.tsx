@@ -13,7 +13,7 @@ interface ScriptChainProps {
 }
 
 const HttpMarker: React.FC<{ position: number; url?: string }> = ({ position, url }) => (
-  <div className="script-row script-row--marker">
+  <div className="script-row">
     <div className="script-line script-http">
       <span className="step-num">{position}</span>
       <span aria-hidden="true" />

@@ -4,7 +4,7 @@ export const StyledWrapper = styled.div`
   background-color: var(--bg-secondary);
   border: 1px solid var(--oc-border-border2);
   border-left: 4px solid var(--oc-status-danger-border);
-  border-radius: var(--oc-border-radius-base);
+  border-radius: var(--oc-radius);
   padding: 1rem;
 
   .error-title {

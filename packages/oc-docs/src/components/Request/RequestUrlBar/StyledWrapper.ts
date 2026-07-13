@@ -6,7 +6,7 @@ export const StyledWrapper = styled.div`
   gap: 0.75rem;
   padding: 0.375rem 0.5rem;
   border: 1px solid var(--border-color);
-  border-radius: 0.5rem;
+  border-radius: var(--oc-radius);
   background-color: var(--oc-background-mantle);
 
   .request-url-bar-method {

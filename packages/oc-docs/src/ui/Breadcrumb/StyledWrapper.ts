@@ -8,7 +8,7 @@ export const StyledWrapper = styled.nav`
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.25rem;
+    gap: 0.375rem;
     font-family: var(--font-sans);
     font-weight: 400;
     font-size: 0.75rem;
@@ -18,10 +18,11 @@ export const StyledWrapper = styled.nav`
   li {
     display: inline-flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: 0.375rem;
   }
   .breadcrumb-sep {
-    color: var(--oc-breadcrumb-color-segments, var(--text-secondary));
+    font-size: 0.6875rem;
+    color: var(--oc-breadcrumb-color-segments, var(--text-muted));
   }
   .breadcrumb-link {
     border: none;
@@ -30,7 +31,7 @@ export const StyledWrapper = styled.nav`
     margin: 0;
     cursor: pointer;
     font: inherit;
-    color: var(--oc-breadcrumb-color-segments, var(--text-secondary));
+    color: var(--text-muted);
   }
   .breadcrumb-link:hover {
     color: var(--oc-breadcrumb-color-current, var(--text-primary));

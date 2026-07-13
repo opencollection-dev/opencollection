@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 export const StyledWrapper = styled.div`
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: var(--oc-radius);
   overflow: hidden;
   background: var(--oc-background-base);
 
@@ -53,7 +53,7 @@ export const StyledWrapper = styled.div`
     font-size: 12px;
     font-weight: 700;
     line-height: 1;
-    border-radius: 4px;
+    border-radius: var(--oc-radius);
     padding: 2px 6px;
   }
 
@@ -77,7 +77,7 @@ export const StyledWrapper = styled.div`
     background: var(--brand-soft);
     color: var(--primary-text);
     border: 1px solid var(--primary-color);
-    border-radius: 6px;
+    border-radius: var(--oc-radius);
     font-family: var(--font-sans);
     font-size: 11.5px;
     font-weight: 600;
@@ -102,6 +102,7 @@ export const StyledWrapper = styled.div`
   }
   .example-description {
     margin: 0 0.5rem 0.5rem 0.5rem;
+    font-size: 0.75rem;
   }
 
   .example-url-row {
@@ -117,9 +118,7 @@ export const StyledWrapper = styled.div`
     font-family: var(--font-sans);
     font-weight: 400;
     font-size: 0.75rem;
-    line-height: 1;
     letter-spacing: 0;
-    color: var(--oc-overlay-overlay1);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -213,7 +212,7 @@ export const StyledWrapper = styled.div`
     cursor: pointer;
     font-size: 11.5px;
     padding: 3px 9px;
-    border-radius: 4px;
+    border-radius: var(--oc-radius);
     background: transparent;
     font: inherit;
     font-size: 11.5px;

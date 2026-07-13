@@ -10,6 +10,6 @@ export const StyledWrapper = styled.div`
     bottom: 0;
     left: var(--guide-left, 14px);
     width: 1px;
-    background-color: var(--oc-border-border0);
+    background-color: var(--oc-background-surface0);
   }
 `;

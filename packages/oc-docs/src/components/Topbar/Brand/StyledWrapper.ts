@@ -15,7 +15,7 @@ export const StyledWrapper = styled.div`
     height: 26px;
     flex: none;
     overflow: hidden;
-    border-radius: var(--oc-border-radius-base);
+    border-radius: var(--oc-radius);
 
     img,
     svg {

@@ -6,14 +6,14 @@ export const StyledWrapper = styled.div`
   gap: 2px;
   padding: 3px;
   border: 1px solid var(--oc-background-surface2);
-  border-radius: 7px;
+  border-radius: var(--oc-radius);
   background-color: var(--oc-background-surface0);
 
   button {
     width: 26px;
     height: 24px;
     color: var(--text-secondary);
-    border-radius: 5px;
+    border-radius: var(--oc-radius);
   }
 
   button svg {
