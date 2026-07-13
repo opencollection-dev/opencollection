@@ -18,7 +18,7 @@ export const StyledWrapper = styled.div`
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    border-radius: 2px;
+    border-radius: 0.125rem;
     background: var(--oc-border-border2);
     transition: background-color 0.15s;
   }
@@ -32,8 +32,8 @@ export const StyledWrapper = styled.div`
     cursor: col-resize;
   }
   &[data-orientation='horizontal']::before {
-    width: 4px;
-    height: 32px;
+    width: 0.25rem;
+    height: 2rem;
   }
 
   &[data-orientation='vertical'] {
@@ -42,7 +42,7 @@ export const StyledWrapper = styled.div`
     cursor: row-resize;
   }
   &[data-orientation='vertical']::before {
-    width: 32px;
-    height: 4px;
+    width: 2rem;
+    height: 0.25rem;
   }
 `;
