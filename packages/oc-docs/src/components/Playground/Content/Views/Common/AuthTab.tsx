@@ -3,7 +3,6 @@ import React from 'react';
 interface AuthTabProps {
   auth: any;
   onAuthChange: (authType: string) => void;
-  onAuthFieldChange?: (field: string, value: string) => void;
   onItemChange?: (item: any) => void;
   item?: any;
   title?: string;
@@ -15,7 +14,6 @@ interface AuthTabProps {
 export const AuthTab: React.FC<AuthTabProps> = ({
   auth,
   onAuthChange,
-  onAuthFieldChange,
   onItemChange,
   item,
   title = "Authentication",
@@ -25,26 +23,16 @@ export const AuthTab: React.FC<AuthTabProps> = ({
 }) => {
   const authType = typeof auth === 'object' && auth !== null ? auth.type : auth === 'inherit' ? 'inherit' : 'none';
 
-  // Helper function to update auth in the correct location
   const updateItemAuth = (newAuth: any) => {
     if (!onItemChange || !item) return;
-    
-    // Check if item has 'request' property (Collection/Folder) or auth directly (HttpRequest)
-    if ('request' in item && item.request !== undefined) {
-      // Collection or Folder: auth is nested in request
-      onItemChange({ 
-        ...item, 
-        request: {
-          ...item.request,
-          auth: newAuth
-        }
-      });
+
+    // HttpRequests keep auth at the root; Collections/Folders nest it under `request`
+    // (created here when absent, so a collection with no request section still saves).
+    const isHttpRequest = 'http' in item || 'runtime' in item;
+    if (isHttpRequest) {
+      onItemChange({ ...item, auth: newAuth });
     } else {
-      // HttpRequest: auth is directly on item
-      onItemChange({ 
-        ...item, 
-        auth: newAuth
-      });
+      onItemChange({ ...item, request: { ...item.request, auth: newAuth } });
     }
   };
 

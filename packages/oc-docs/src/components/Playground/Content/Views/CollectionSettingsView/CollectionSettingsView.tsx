@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { OpenCollection } from '@opencollection/types';
-import type { StructuredText } from '@opencollection/types/common/description';
+import type { VariableValue, VariableValueOrVariants } from '@opencollection/types/common/variables';
 import Tabs from '../../../../../ui/Tabs/Tabs';
 import { type KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
 import HeadersTab from '../Common/HeadersTab/HeadersTab';
@@ -9,20 +9,24 @@ import AuthTab from '../Common/AuthTab';
 import ScriptsTab from '../Common/ScriptsTab/ScriptsTab';
 import TestsTab from '../Common/TestsTab/TestsTab';
 import OverviewTab from '../Common/OverviewTab/OverviewTab';
-import { EmptyState } from '../../../../../ui/EmptyState/EmptyState';
-import { BookIcon } from '../../../../../assets/icons';
 import { useAppDispatch } from '../../../../../store/hooks';
 import { updateCollectionSettings } from '@slices/playground';
-import { scriptsArrayToObject, scriptsObjectToArray } from '../../../../../utils/schemaHelpers';
+import { countEnabled, getItemDocs, scriptsArrayToObject, scriptsObjectToArray } from '../../../../../utils/schemaHelpers';
 import { unwrapVariableValue } from '../../../../../utils/variableResolution';
 
 interface CollectionSettingsProps {
   collection: OpenCollection;
 }
 
-const getCollectionDocs = (docs: OpenCollection['docs']): string | undefined => {
-  if (!docs) return undefined;
-  return typeof docs === 'string' ? docs : (docs as StructuredText).content;
+const retypeValue = (previous: VariableValue | undefined, next: string): VariableValue =>
+  previous && typeof previous === 'object' && 'data' in previous ? { ...previous, data: next } : next;
+
+const rewriteVariableValue = (original: VariableValueOrVariants | undefined, next: string): VariableValueOrVariants => {
+  if (Array.isArray(original)) {
+    const active = original.find((variant) => variant.selected) ?? original[0];
+    return original.map((variant) => (variant === active ? { ...variant, value: retypeValue(variant.value, next) } : variant));
+  }
+  return retypeValue(original, next);
 };
 
 const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) => {
@@ -35,11 +39,11 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
 
   const handleHeadersChange = (rows: KeyValueRow[]) => {
     const originals = collection.request?.headers ?? [];
-    const originalById = new Map(originals.map((header, index): [string, typeof header] => [`header-${index}`, header]));
+    const originalByName = new Map(originals.filter((header) => header.name).map((header): [string, typeof header] => [header.name as string, header]));
     updateRequest({
       ...collection.request,
       headers: rows.map((row) => ({
-        ...(originalById.get(row.id) ?? {}),
+        ...(originalByName.get(row.name) ?? {}),
         name: row.name,
         value: row.value,
         disabled: !row.enabled
@@ -49,13 +53,15 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
 
   const handleVariablesChange = (rows: KeyValueRow[]) => {
     const originals = collection.request?.variables ?? [];
-    const originalById = new Map(originals.map((variable, index): [string, typeof variable] => [`variable-${index}`, variable]));
+    const originalByName = new Map(originals.filter((variable) => variable.name).map((variable): [string, typeof variable] => [variable.name as string, variable]));
     updateRequest({
       ...collection.request,
       variables: rows.map((row) => {
-        const original = originalById.get(row.id);
-        const value = original && unwrapVariableValue(original.value) === row.value ? original.value : row.value;
-        return { ...(original ?? {}), name: row.name, value, disabled: !row.enabled };
+        const original = originalByName.get(row.name);
+        if (!original) return { name: row.name, value: row.value, disabled: !row.enabled };
+        const originalValue = 'value' in original ? original.value : undefined;
+        const value = unwrapVariableValue(originalValue) === row.value ? originalValue : rewriteVariableValue(originalValue, row.value);
+        return { ...original, name: row.name, value, disabled: !row.enabled };
       })
     });
   };
@@ -78,10 +84,6 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
   const variables = collection.request?.variables ?? [];
   const scripts = scriptsArrayToObject(collection.request?.scripts);
   const version = collection.info?.version;
-  const docs = getCollectionDocs(collection.docs);
-
-  const enabledCount = <T extends { disabled?: boolean }>(items: T[]): number | undefined =>
-    items.filter((item) => !item.disabled).length || undefined;
 
   const scriptCount = [scripts.preRequest, scripts.postResponse].filter((s) => Boolean(s && s.trim())).length || undefined;
 
@@ -89,25 +91,17 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
     {
       id: 'overview',
       label: 'Overview',
-      content: docs?.trim() ? (
-        <OverviewTab docs={docs} />
-      ) : (
-        <EmptyState
-          testId="overview-empty"
-          icon={<BookIcon />}
-          heading="No overview content yet"
-          subheading="This collection has no description or readme. Add one in Bruno to introduce your API to readers — what it does, who it's for, and how to authenticate."
-        />
-      )
+      content: <OverviewTab docs={getItemDocs(collection)} />
     },
     {
       id: 'headers',
       label: 'Headers',
-      contentIndicator: enabledCount(headers),
+      contentIndicator: countEnabled(headers),
       content: (
         <HeadersTab
           headers={headers}
           onHeadersChange={handleHeadersChange}
+          title=""
           description="Request headers sent with every request in this collection."
         />
       )
@@ -115,11 +109,12 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
     {
       id: 'variables',
       label: 'Vars',
-      contentIndicator: enabledCount(variables),
+      contentIndicator: countEnabled(variables),
       content: (
         <VariablesTab
           variables={variables}
           onVariablesChange={handleVariablesChange}
+          title=""
           description="Variables available to every request in this collection."
         />
       )
@@ -133,6 +128,7 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
           onAuthChange={handleAuthChange}
           onItemChange={handleCollectionChange}
           item={collection}
+          title=""
           description="Default authentication for this collection. Applies to any request using the Inherit option in its Auth tab."
           showInherit={false}
           showFullAuth={true}
@@ -147,6 +143,7 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
         <ScriptsTab
           scripts={scripts}
           onScriptChange={handleScriptChange}
+          title=""
           description="Pre and post-request scripts that run before and after every request in this collection is sent."
           showTests={false}
         />
@@ -159,6 +156,7 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
         <TestsTab
           scripts={scripts}
           onScriptChange={handleScriptChange}
+          title=""
           description="These tests run any time a request in this collection is sent."
         />
       )
