@@ -2,6 +2,7 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect } from 'vitest';
 import { useRenderToDom } from '../../../hooks/useRenderToDom';
+import { query } from '../../../test-utils/dom';
 import { ExampleCard } from './ExampleCard';
 import type { HttpRequestExample } from '@opencollection/types/requests/http';
 
@@ -228,7 +229,7 @@ describe('ExampleCard', () => {
         defaultExpanded
       />
     );
-    expect(root.querySelector('.property-type')?.text).toBe('uuid');
+    expect(query(root, '.property-type').text).toBe('uuid');
   });
 
   it('splits Params into Path and Query and labels the tab "path & query"', () => {
