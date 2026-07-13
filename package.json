@@ -19,13 +19,12 @@
     "test": "npm run test:run --workspaces --if-present"
   },
   "lint-staged": {
-    "packages/oc-docs/**/*.{ts,tsx}": [
-      "prettier --write",
-      "eslint --config packages/oc-docs/eslint.config.js --max-warnings 0 --report-unused-disable-directives"
-    ],
+    "packages/oc-docs/**/*.{ts,tsx}": "eslint --config packages/oc-docs/eslint.config.js --max-warnings 0 --report-unused-disable-directives --fix",
     "packages/oc-docs/**/*.{json,css,scss,md,yml,yaml}": "prettier --write"
   },
   "devDependencies": {
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.6",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.8",
     "prettier": "^3.9.5"
