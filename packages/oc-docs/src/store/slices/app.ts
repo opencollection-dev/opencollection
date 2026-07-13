@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { RootState } from '../store';
+import type { RootState } from '@store/store';
 
 export type CollectionStatus = 'idle' | 'loading' | 'succeeded' | 'failed';
 

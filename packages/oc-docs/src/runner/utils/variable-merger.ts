@@ -2,7 +2,7 @@ import type { OpenCollection } from '@opencollection/types';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { Variable } from '@opencollection/types/common/variables';
 import { getTreePathFromCollectionToItem } from './tree-utils';
-import { isFolder, getRequestVariables } from '../../utils/schemaHelpers';
+import { isFolder, getRequestVariables } from '@utils/schemaHelpers';
 
 /**
  * Merge variables from collection and folder hierarchy into the request

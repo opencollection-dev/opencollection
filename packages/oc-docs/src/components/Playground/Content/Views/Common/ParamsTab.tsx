@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import KeyValueTable, { type KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
+import KeyValueTable, { type KeyValueRow } from '@ui/KeyValueTable/KeyValueTable';
 
 interface ParamsTabProps {
   params: Array<{ name?: string; value?: string; disabled?: boolean; type?: string }>;

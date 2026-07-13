@@ -1,7 +1,7 @@
 import React from 'react';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { OpenCollection as OpenCollectionCollection } from '@opencollection/types';
-import { getItemName } from '../../../../../utils/schemaHelpers';
+import { getItemName } from '@utils/schemaHelpers';
 
 interface RequestHeaderProps {
   item: HttpRequest;

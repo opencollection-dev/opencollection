@@ -1,7 +1,7 @@
-import { useMarkdownRenderer } from '../../../../../../hooks';
+import { useMarkdownRenderer } from '@hooks';
 import { useMemo } from 'react';
 import { StyledWrapper } from './StyledWrapper';
-import { EmptyState } from '../../../../../../ui/EmptyState/EmptyState';
+import { EmptyState } from '@ui/EmptyState/EmptyState';
 import { BookIcon } from '../../../../../../assets/icons';
 
 const OverviewTab: React.FC<{ docs?: string }> = ({ docs }) => {

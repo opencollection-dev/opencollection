@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import { StyledWrapper } from './StyledWrapper';
-import { getHttpMethod, getRequestUrl, getHttpParams } from '../../../../../../utils/schemaHelpers';
-import { syncPathParams, syncQueryParams } from '../../../../../../utils/pathParams';
+import { getHttpMethod, getRequestUrl, getHttpParams } from '@utils/schemaHelpers';
+import { syncPathParams, syncQueryParams } from '@utils/pathParams';
 import { methodColorVars, getMethodColorVar } from '../../../../../../theme/methodColors';
 
 interface QueryBarProps {

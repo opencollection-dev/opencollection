@@ -1,4 +1,4 @@
-import { VARIABLE_NAME_REGEX } from '../../constants/regex';
+import { VARIABLE_NAME_REGEX } from '@constants/regex';
 
 const _interpolate = (str: string, _vars: any) => str;
 

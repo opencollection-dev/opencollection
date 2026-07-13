@@ -5,7 +5,7 @@ import type {
   VariableValueOrVariants,
   VariableValueType
 } from '@opencollection/types/common/variables';
-import { MANAGER_LABELS, TYPE_LABELS } from '../constants';
+import { MANAGER_LABELS, TYPE_LABELS } from '@constants';
 import { getDescription } from './request';
 
 const humanizeType = (type: VariableValueType | undefined): string => (type && TYPE_LABELS[type]) || 'String';

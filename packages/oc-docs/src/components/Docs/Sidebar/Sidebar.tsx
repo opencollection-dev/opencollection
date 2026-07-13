@@ -5,13 +5,13 @@ import SidebarTree from './SidebarTree/SidebarTree';
 import SidebarFooter from './SidebarFooter/SidebarFooter';
 import { CubeIcon, GlobeIcon } from '../../../assets/icons';
 import { StyledWrapper } from './StyledWrapper';
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { toggleItem, expandFolders, selectDocsCollection } from '../../../store/slices/docs';
-import { getItemUuid } from '../../../utils/itemUtils';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
+import { toggleItem, expandFolders, selectDocsCollection } from '@slices/docs';
+import { getItemUuid } from '@utils/itemUtils';
 import { useNavModel } from '../../../routing/hooks';
 import { normalizeSlug } from '../../../routing/resolve';
 import { OVERVIEW_SLUG, ENVIRONMENTS_SLUG } from '../../../routing/navModel';
-import { useDocsNavigate } from '../../../hooks';
+import { useDocsNavigate } from '@hooks';
 
 interface SidebarProps {
   onNavigate?: () => void;

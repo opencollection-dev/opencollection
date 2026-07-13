@@ -1,6 +1,6 @@
 import type { OpenCollection } from '@opencollection/types';
 import type { Item as OpenCollectionItem, Folder } from '@opencollection/types/collection/item';
-import { getItemName, getItemSeq, getItemType, isFolder, isScriptFile, getRequestBadgeLabel } from '../utils/schemaHelpers';
+import { getItemName, getItemSeq, getItemType, isFolder, isScriptFile, getRequestBadgeLabel } from '@utils/schemaHelpers';
 import { slugifySegment, dedupeSiblingSlugs } from './slug';
 import type { BreadcrumbSegment, NavEntry, NavModel, PageType } from './types';
 

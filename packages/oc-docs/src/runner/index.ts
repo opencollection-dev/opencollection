@@ -6,7 +6,7 @@ import ScriptRuntime from '../scripting/runtime/script-runtime';
 import AssertRuntime, { type AssertionResult } from '../scripting/runtime/assert-runtime';
 import { getTreePathFromCollectionToItem, mergeHeaders, mergeScripts, mergeAuth, interpolateVars } from './utils';
 import { getCollectionFolderRequestVariables } from './utils/variable-merger';
-import { getRequestScripts, getRequestAssertions, scriptsArrayToObject } from '../utils/schemaHelpers';
+import { getRequestScripts, getRequestAssertions, scriptsArrayToObject } from '@utils/schemaHelpers';
 
 export interface RunRequestOptions {
   item: HttpRequest;

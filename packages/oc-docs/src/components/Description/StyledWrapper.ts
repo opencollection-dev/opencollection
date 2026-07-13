@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { TruncatedText } from '../TruncatedText/TruncatedText';
+import { TruncatedText } from '@components/TruncatedText/TruncatedText';
 
 export const StyledWrapper = styled(TruncatedText)`
   margin-top: 0.25rem;

@@ -19,7 +19,17 @@
     "module": "ESNext",
     "baseUrl": ".",
     "paths": {
-      "@slices/*": ["src/store/slices/*"]
+      "@store/*": ["src/store/*"],
+      "@slices/*": ["src/store/slices/*"],
+      "@utils/*": ["src/utils/*"],
+      "@components/*": ["src/components/*"],
+      "@ui/*": ["src/ui/*"],
+      "@constants": ["src/constants"],
+      "@constants/*": ["src/constants/*"],
+      "@hooks": ["src/hooks"],
+      "@hooks/*": ["src/hooks/*"],
+      "@runner": ["src/runner"],
+      "@runner/*": ["src/runner/*"]
     }
   },
   "include": [

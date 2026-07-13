@@ -8,7 +8,7 @@ import React, {
   type ReactElement,
   type ReactNode
 } from 'react';
-import { Portal } from '../Portal/Portal';
+import { Portal } from '@ui/Portal/Portal';
 import { StyledWrapper } from './StyledWrapper';
 
 interface TooltipProps {

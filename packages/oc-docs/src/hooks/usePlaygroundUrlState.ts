@@ -6,7 +6,7 @@ import {
   DEFAULT_DOCK,
   readPlaygroundParams,
   writePlaygroundParams,
-} from '../utils/playgroundDock';
+} from '@utils/playgroundDock';
 
 export interface PlaygroundUrlApi extends PlaygroundUrlState {
   openPlayground: (requestSlug?: string | null) => void;

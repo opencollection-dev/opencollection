@@ -1,22 +1,22 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import Topbar from '../Topbar/Topbar';
-import EnvSwitcher from '../EnvSwitcher/EnvSwitcher';
-import ShowVarsToggle from '../ShowVarsToggle/ShowVarsToggle';
-import Sidebar from '../Docs/Sidebar/Sidebar';
-import SidebarDrawer from '../SidebarDrawer/SidebarDrawer';
-import IconButton from '../../ui/IconButton/IconButton';
+import Topbar from '@components/Topbar/Topbar';
+import EnvSwitcher from '@components/EnvSwitcher/EnvSwitcher';
+import ShowVarsToggle from '@components/ShowVarsToggle/ShowVarsToggle';
+import Sidebar from '@components/Docs/Sidebar/Sidebar';
+import SidebarDrawer from '@components/SidebarDrawer/SidebarDrawer';
+import IconButton from '@ui/IconButton/IconButton';
 import { ChevronLeftIcon, ChevronRightIcon } from '../../assets/icons';
-import PageRouter from '../PageRouter/PageRouter';
-import Playground from '../Playground/Playground';
-import SearchBar from '../Search/SearchBar/SearchBar';
-import { useSearchHotkey, usePlaygroundUrlState, useElementWidth } from '../../hooks';
-import { useAppSelector } from '../../store/hooks';
-import { selectDocsCollection } from '../../store/slices/docs';
-import { selectGitCollectionUrl } from '../../store/slices/app';
+import PageRouter from '@components/PageRouter/PageRouter';
+import Playground from '@components/Playground/Playground';
+import SearchBar from '@components/Search/SearchBar/SearchBar';
+import { useSearchHotkey, usePlaygroundUrlState, useElementWidth } from '@hooks';
+import { useAppSelector } from '@store/hooks';
+import { selectDocsCollection } from '@slices/docs';
+import { selectGitCollectionUrl } from '@slices/app';
 import { useActiveResolution } from '../../routing/hooks';
-import { layoutModeForWidth } from '../../hooks/useTopbarLayout';
-import { buildFetchInBrunoUrl } from '../../utils/buildFetchInBrunoUrl';
+import { layoutModeForWidth } from '@hooks/useTopbarLayout';
+import { buildFetchInBrunoUrl } from '@utils/buildFetchInBrunoUrl';
 import { StyledWrapper } from './StyledWrapper';
 
 interface AppShellProps {

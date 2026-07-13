@@ -1,4 +1,4 @@
-import { readPersistedMode } from '../store/slices/theme';
+import { readPersistedMode } from '@slices/theme';
 
 /** Set data-theme on the root element before first paint to avoid a flash. */
 export function applyTheme(): void {

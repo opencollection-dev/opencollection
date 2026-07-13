@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import CodeEditor from '../../../../../../ui/CodeEditor/CodeEditor';
-import Tabs from '../../../../../../ui/Tabs/Tabs';
+import CodeEditor from '@ui/CodeEditor/CodeEditor';
+import Tabs from '@ui/Tabs/Tabs';
 import { StyledWrapper } from './StyledWrapper';
 
 type ScriptSubTab = 'pre-request' | 'post-response';

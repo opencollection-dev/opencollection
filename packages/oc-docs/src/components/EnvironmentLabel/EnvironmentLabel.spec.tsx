@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
-import { useRenderToDom } from '../../hooks/useRenderToDom';
+import { useRenderToDom } from '@hooks/useRenderToDom';
 import { EnvironmentLabel } from './EnvironmentLabel';
 
 describe('EnvironmentLabel', () => {

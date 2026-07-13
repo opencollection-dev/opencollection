@@ -3,8 +3,8 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { parse } from 'node-html-parser';
 import { describe, it, expect } from 'vitest';
 import { AuthDetails } from './AuthDetails';
-import { AUTH_MODE_LABELS } from '../../constants';
-import { SECRET_MASK } from '../../constants';
+import { AUTH_MODE_LABELS } from '@constants';
+import { SECRET_MASK } from '@constants';
 
 const renderAuth = (ui: React.ReactElement) => {
   const html = renderToStaticMarkup(ui);

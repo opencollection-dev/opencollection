@@ -1,13 +1,13 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { OpenCollection as OpenCollectionCollection } from '@opencollection/types';
-import { requestRunner } from '../../../../../runner';
+import { requestRunner } from '@runner';
 import RequestHeader from './RequestPane/RequestHeader/RequestHeader';
 import QueryBar from './QueryBar/QueryBar';
 import RequestPane from './RequestPane/RequestPane';
 import ResponsePane from './ResponsePane/ResponsePane';
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { updatePlaygroundItem, setPlaygroundResponse, selectPlaygroundResponse } from '../../../../../store/slices/playground';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
+import { updatePlaygroundItem, setPlaygroundResponse, selectPlaygroundResponse } from '@slices/playground';
 
 interface PlaygroundProps {
   item: HttpRequest;

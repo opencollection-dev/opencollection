@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import type { OpenCollection } from '@opencollection/types';
-import Tabs from '../../../../../ui/Tabs/Tabs';
-import { type KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
-import HeadersTab from '../Common/HeadersTab/HeadersTab';
-import VariablesTab from '../Common/VariablesTab/VariablesTab';
-import AuthTab from '../Common/AuthTab';
-import ScriptsTab from '../Common/ScriptsTab/ScriptsTab';
-import { useAppDispatch } from '../../../../../store/hooks';
+import Tabs from '@ui/Tabs/Tabs';
+import { type KeyValueRow } from '@ui/KeyValueTable/KeyValueTable';
+import HeadersTab from '@components/Playground/Content/Views/Common/HeadersTab/HeadersTab';
+import VariablesTab from '@components/Playground/Content/Views/Common/VariablesTab/VariablesTab';
+import AuthTab from '@components/Playground/Content/Views/Common/AuthTab';
+import ScriptsTab from '@components/Playground/Content/Views/Common/ScriptsTab/ScriptsTab';
+import { useAppDispatch } from '@store/hooks';
 import { updateCollectionSettings } from '@slices/playground';
-import { scriptsArrayToObject, scriptsObjectToArray } from '../../../../../utils/schemaHelpers';
+import { scriptsArrayToObject, scriptsObjectToArray } from '@utils/schemaHelpers';
 
 interface CollectionSettingsProps {
   collection: OpenCollection;

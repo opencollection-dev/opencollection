@@ -2,11 +2,11 @@ import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import type { OpenCollection } from '@opencollection/types';
 import type { Environment } from '@opencollection/types/config/environments';
 import type { Variable } from '@opencollection/types/common/variables';
-import KeyValueTable, { KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
-import { SidebarContainer, SidebarItems, SidebarItem } from '../../../EnvListStyles/StyledWrapper';
-import { useAppDispatch } from '../../../../../store/hooks';
+import KeyValueTable, { KeyValueRow } from '@ui/KeyValueTable/KeyValueTable';
+import { SidebarContainer, SidebarItems, SidebarItem } from '@components/Playground/EnvListStyles/StyledWrapper';
+import { useAppDispatch } from '@store/hooks';
 import { updateCollectionEnvironments } from '@slices/playground';
-import { getDescription } from '../../../../../utils/request';
+import { getDescription } from '@utils/request';
 
 interface EnvironmentsViewProps {
   collection: OpenCollection | null;

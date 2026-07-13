@@ -4,12 +4,12 @@ import type { Item } from '@opencollection/types/collection/item';
 import type { GraphQLRequest } from '@opencollection/types/requests/graphql';
 import type { GrpcRequest } from '@opencollection/types/requests/grpc';
 import type { WebSocketRequest } from '@opencollection/types/requests/websocket';
-import { getItemName, getItemType } from '../../utils/schemaHelpers';
-import { buildBreadcrumbSegments } from '../../utils/common';
-import { PageWrapper } from '../PageWrapper/PageWrapper';
-import { Heading } from '../Heading/Heading';
-import { Breadcrumb, type BreadcrumbSegment } from '../../ui/Breadcrumb/Breadcrumb';
-import { EmptyState } from '../../ui/EmptyState/EmptyState';
+import { getItemName, getItemType } from '@utils/schemaHelpers';
+import { buildBreadcrumbSegments } from '@utils/common';
+import { PageWrapper } from '@components/PageWrapper/PageWrapper';
+import { Heading } from '@components/Heading/Heading';
+import { Breadcrumb, type BreadcrumbSegment } from '@ui/Breadcrumb/Breadcrumb';
+import { EmptyState } from '@ui/EmptyState/EmptyState';
 import { EyeOffIcon } from '../../assets/icons';
 import { StyledWrapper } from './StyledWrapper';
 

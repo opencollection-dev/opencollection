@@ -2,7 +2,7 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect } from 'vitest';
 import { FolderFilter } from './FolderFilter';
-import type { FolderOption } from '../searchIndex';
+import type { FolderOption } from '@components/Search/searchIndex';
 
 const folders: FolderOption[] = [
   { slug: 'hotels', name: 'Hotels' },

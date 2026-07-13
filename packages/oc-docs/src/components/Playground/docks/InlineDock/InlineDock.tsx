@@ -1,7 +1,7 @@
 import React from 'react';
-import PlaygroundHeader from '../../PlaygroundHeader/PlaygroundHeader';
-import { useDockResize } from '../../../../hooks/useDockResize';
-import type { DockMode } from '../../../../utils/playgroundDock';
+import PlaygroundHeader from '@components/Playground/PlaygroundHeader/PlaygroundHeader';
+import { useDockResize } from '@hooks/useDockResize';
+import type { DockMode } from '@utils/playgroundDock';
 import { StyledWrapper } from './StyledWrapper';
 
 interface InlineDockProps {

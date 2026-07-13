@@ -1,7 +1,7 @@
 import React from 'react';
-import { useResolvedVariables } from '../../../hooks';
-import { Popover } from '../../../ui/Popover/Popover';
-import { VariableInfoCard } from '../../VariableInfoCard/VariableInfoCard';
+import { useResolvedVariables } from '@hooks';
+import { Popover } from '@ui/Popover/Popover';
+import { VariableInfoCard } from '@components/VariableInfoCard/VariableInfoCard';
 import { StyledWrapper } from './StyledWrapper';
 
 export const VariableToken: React.FC<{ token: string; highlighted?: boolean }> = ({ token, highlighted = true }) => {

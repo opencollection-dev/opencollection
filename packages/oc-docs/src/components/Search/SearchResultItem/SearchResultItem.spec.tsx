@@ -2,7 +2,7 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect } from 'vitest';
 import { SearchResultItem } from './SearchResultItem';
-import type { SearchRecord } from '../searchIndex';
+import type { SearchRecord } from '@components/Search/searchIndex';
 
 const record: SearchRecord = {
   id: 'u1',

@@ -1,7 +1,7 @@
 import React from 'react';
-import { SubHeading } from '../../SubHeading/SubHeading';
-import { PropertyTable } from '../../PropertyTable/PropertyTable';
-import type { PreRequestVarRow, PostResponseVarRow } from '../../../utils/request';
+import { SubHeading } from '@components/SubHeading/SubHeading';
+import { PropertyTable } from '@components/PropertyTable/PropertyTable';
+import type { PreRequestVarRow, PostResponseVarRow } from '@utils/request';
 import { StyledWrapper } from './StyledWrapper';
 
 interface RequestVarsProps {

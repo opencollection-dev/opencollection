@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { toggleTheme } from '@slices/theme';
 
 const Button = styled.button`

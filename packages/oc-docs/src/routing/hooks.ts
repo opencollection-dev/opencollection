@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useAppSelector } from '../store/hooks';
-import { selectDocsCollection } from '../store/slices/docs';
+import { useAppSelector } from '@store/hooks';
+import { selectDocsCollection } from '@slices/docs';
 import { buildNavModel } from './navModel';
 import { resolveSlug, type Resolution } from './resolve';
 import type { NavModel } from './types';

@@ -1,6 +1,6 @@
 import React from 'react';
-import KeyValueTable, { type KeyValueRow } from '../../../../../../ui/KeyValueTable/KeyValueTable';
-import { unwrapVariableValue } from '../../../../../../utils/variableResolution';
+import KeyValueTable, { type KeyValueRow } from '@ui/KeyValueTable/KeyValueTable';
+import { unwrapVariableValue } from '@utils/variableResolution';
 import { StyledWrapper } from './StyledWrapper';
 
 interface VariablesTabProps {

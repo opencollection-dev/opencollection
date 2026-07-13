@@ -23,7 +23,14 @@ ${chunk.code}
 export default defineConfig({
   resolve: {
     alias: {
-      '@slices': resolve(__dirname, 'src/store/slices')
+      '@slices': resolve(__dirname, 'src/store/slices'),
+      '@store': resolve(__dirname, 'src/store'),
+      '@utils': resolve(__dirname, 'src/utils'),
+      '@components': resolve(__dirname, 'src/components'),
+      '@ui': resolve(__dirname, 'src/ui'),
+      '@constants': resolve(__dirname, 'src/constants'),
+      '@hooks': resolve(__dirname, 'src/hooks'),
+      '@runner': resolve(__dirname, 'src/runner')
     }
   },
   build: {

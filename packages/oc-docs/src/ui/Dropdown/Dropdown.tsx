@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { ChevronDownIcon } from '../../assets/icons';
-import { useClickOutside } from '../../hooks';
+import { useClickOutside } from '@hooks';
 import { StyledWrapper } from './StyledWrapper';
 
 interface DropdownProps {

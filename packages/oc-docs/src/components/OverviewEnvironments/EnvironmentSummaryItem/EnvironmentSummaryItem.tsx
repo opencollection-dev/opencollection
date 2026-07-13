@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Environment } from '@opencollection/types/config/environments';
-import { EnvironmentLabel } from '../../EnvironmentLabel/EnvironmentLabel';
+import { EnvironmentLabel } from '@components/EnvironmentLabel/EnvironmentLabel';
 import { StyledWrapper } from './StyledWrapper';
 
 const formatVariableCount = (count: number): string => `${count} variable${count === 1 ? '' : 's'}`;

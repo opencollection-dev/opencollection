@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useResolvedVariables } from '../../hooks';
-import { CopyButton } from '../../ui/CopyButton/CopyButton';
+import { useResolvedVariables } from '@hooks';
+import { CopyButton } from '@ui/CopyButton/CopyButton';
 import { EyeIcon, EyeOffIcon } from '../../assets/icons';
-import { SCOPE_LABELS, INVALID_NAME_WARNING, SECRET_MASK } from '../../constants';
-import type { VariableScope } from '../../utils/variableResolution';
+import { SCOPE_LABELS, INVALID_NAME_WARNING, SECRET_MASK } from '@constants';
+import type { VariableScope } from '@utils/variableResolution';
 import { StyledWrapper } from './StyledWrapper';
 
 interface VariableInfoCardProps {

@@ -11,7 +11,7 @@ import {
   getCollectionVariables,
   getShortMethod
 } from './request';
-import { AUTH_MODE_LABELS } from '../constants';
+import { AUTH_MODE_LABELS } from '@constants';
 
 describe('requestAuth', () => {
   it('humanizes auth modes with fallbacks', () => {

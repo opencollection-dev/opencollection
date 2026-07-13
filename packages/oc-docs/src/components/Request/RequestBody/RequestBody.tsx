@@ -1,10 +1,10 @@
 import React from 'react';
 import type { HttpRequestBody, HttpRequestBodyVariant } from '@opencollection/types/requests/http';
-import { Code } from '../../Code/Code';
-import { ContentTypeBadge } from '../../ContentTypeBadge/ContentTypeBadge';
-import { PropertyTable, type PropertyRow } from '../../PropertyTable/PropertyTable';
-import { VariableText } from '../../VariableText/VariableText';
-import { getBodyView, type BodyTableRow } from '../../../utils/request';
+import { Code } from '@components/Code/Code';
+import { ContentTypeBadge } from '@components/ContentTypeBadge/ContentTypeBadge';
+import { PropertyTable, type PropertyRow } from '@components/PropertyTable/PropertyTable';
+import { VariableText } from '@components/VariableText/VariableText';
+import { getBodyView, type BodyTableRow } from '@utils/request';
 import { StyledWrapper } from './StyledWrapper';
 
 interface RequestBodyProps {

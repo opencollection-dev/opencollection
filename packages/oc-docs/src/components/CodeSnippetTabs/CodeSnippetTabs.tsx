@@ -1,11 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import type { HttpRequestBody, HttpRequestBodyVariant, HttpRequestHeader } from '@opencollection/types/requests/http';
 import type { Auth } from '@opencollection/types/common/auth';
-import { Code } from '../Code/Code';
-import { CopyButton} from '../../ui/CopyButton/CopyButton';
-import { useResolvedVariables } from '../../hooks';
-import { SectionLabel } from '../SectionLabel/SectionLabel';
-import { Modal } from '../../ui/Modal/Modal';
+import { Code } from '@components/Code/Code';
+import { CopyButton} from '@ui/CopyButton/CopyButton';
+import { useResolvedVariables } from '@hooks';
+import { SectionLabel } from '@components/SectionLabel/SectionLabel';
+import { Modal } from '@ui/Modal/Modal';
 import { ExpandIcon } from '../../assets/icons';
 import {
   generateCurlCommand,
@@ -13,7 +13,7 @@ import {
   generatePythonCode,
   type SnippetHeader,
   type SnippetInput
-} from '../../utils/codeSnippets';
+} from '@utils/codeSnippets';
 import { StyledWrapper } from './StyledWrapper';
 
 interface CodeSnippetTabsProps {

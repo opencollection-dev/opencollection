@@ -3,10 +3,10 @@ import type { OpenCollection } from '@opencollection/types';
 import type { Environment } from '@opencollection/types/config/environments';
 import type { Item } from '@opencollection/types/collection/item';
 import type { Variable, SecretVariable } from '@opencollection/types/common/variables';
-import { useAppSelector } from '../store/hooks';
-import { selectDocsCollection } from '../store/slices/docs';
-import { selectActiveEnvName, selectShowVars } from '../store/slices/env';
-import { getRequestVariables, isFolder } from '../utils/schemaHelpers';
+import { useAppSelector } from '@store/hooks';
+import { selectDocsCollection } from '@slices/docs';
+import { selectActiveEnvName, selectShowVars } from '@slices/env';
+import { getRequestVariables, isFolder } from '@utils/schemaHelpers';
 import {
   buildScopedVariableModel,
   resolveVariables,
@@ -18,7 +18,7 @@ import {
   type ScopedVariableModel,
   type VariableScope,
   type VariableSource
-} from '../utils/variableResolution';
+} from '@utils/variableResolution';
 
 export interface VariableLookup {
   name: string;

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { RequestRunner } from './index';
-import { parseYaml } from '../utils/yamlUtils';
+import { parseYaml } from '@utils/yamlUtils';
 
 // Minimal collection YAML with one POST request
 const collectionYaml = `

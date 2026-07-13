@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import type { OpenCollection as OpenCollectionCollection } from '@opencollection/types';
-import EnvSwitcher from '../../EnvSwitcher/EnvSwitcher';
-import SidebarTree from '../../Docs/Sidebar/SidebarTree/SidebarTree';
-import IconButton from '../../../ui/IconButton/IconButton';
+import EnvSwitcher from '@components/EnvSwitcher/EnvSwitcher';
+import SidebarTree from '@components/Docs/Sidebar/SidebarTree/SidebarTree';
+import IconButton from '@ui/IconButton/IconButton';
 import { SettingsIcon } from '../../../assets/icons';
 import { StyledWrapper } from './StyledWrapper';
 

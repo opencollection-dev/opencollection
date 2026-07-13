@@ -6,8 +6,8 @@ import type { Auth } from '@opencollection/types/common/auth';
 import type { GraphQLRequest } from '@opencollection/types/requests/graphql';
 import type { GrpcRequest } from '@opencollection/types/requests/grpc';
 import type { WebSocketRequest } from '@opencollection/types/requests/websocket';
-import { useMarkdownRenderer } from '../../hooks';
-import { AUTH_MODE_LABELS } from '../../constants';
+import { useMarkdownRenderer } from '@hooks';
+import { AUTH_MODE_LABELS } from '@constants';
 import {
   getItemName,
   getHttpMethod,
@@ -20,7 +20,7 @@ import {
   getItemDescription,
   getRequestExamples,
   isUnsupportedRequest
-} from '../../utils/schemaHelpers';
+} from '@utils/schemaHelpers';
 import {
   resolveInheritedAuth,
   getPreRequestVars,
@@ -29,28 +29,28 @@ import {
   getScriptFlow,
   getBodyView,
   getDescription
-} from '../../utils/request';
-import { collectAssertions } from '../../utils/assertions';
-import { collectTests, collectRawTestScripts } from '../../utils/fileUtils';
-import { resolvePathAndQueryParams } from '../../utils/pathParams';
-import { buildBreadcrumbSegments } from '../../utils/common';
-import { PageWrapper } from '../../components/PageWrapper/PageWrapper';
-import { Heading } from '../../components/Heading/Heading';
-import { Section } from '../../components/Section/Section';
-import { Breadcrumb, type BreadcrumbSegment } from '../../ui/Breadcrumb/Breadcrumb';
-import { EmptyState } from '../../ui/EmptyState/EmptyState';
+} from '@utils/request';
+import { collectAssertions } from '@utils/assertions';
+import { collectTests, collectRawTestScripts } from '@utils/fileUtils';
+import { resolvePathAndQueryParams } from '@utils/pathParams';
+import { buildBreadcrumbSegments } from '@utils/common';
+import { PageWrapper } from '@components/PageWrapper/PageWrapper';
+import { Heading } from '@components/Heading/Heading';
+import { Section } from '@components/Section/Section';
+import { Breadcrumb, type BreadcrumbSegment } from '@ui/Breadcrumb/Breadcrumb';
+import { EmptyState } from '@ui/EmptyState/EmptyState';
 import { FileIcon, RefreshIcon } from '../../assets/icons';
-import { RequestUrlBar } from '../../components/Request/RequestUrlBar/RequestUrlBar';
-import { RequestDescription } from '../../components/Request/RequestDescription/RequestDescription';
-import { AuthDetails } from '../../components/AuthDetails/AuthDetails';
-import { RequestParams } from '../../components/Request/RequestParams/RequestParams';
-import { RequestBody } from '../../components/Request/RequestBody/RequestBody';
-import { ContentTypeBadge } from '../../components/ContentTypeBadge/ContentTypeBadge';
-import { PropertyTable } from '../../components/PropertyTable/PropertyTable';
-import { CodeSnippetTabs } from '../../components/CodeSnippetTabs/CodeSnippetTabs';
-import { Examples } from '../../components/Examples/Examples';
-import { ExecutionContext } from '../../components/ExecutionContext/ExecutionContext';
-import { UnsupportedRequest } from '../../components/UnsupportedRequest/UnsupportedRequest';
+import { RequestUrlBar } from '@components/Request/RequestUrlBar/RequestUrlBar';
+import { RequestDescription } from '@components/Request/RequestDescription/RequestDescription';
+import { AuthDetails } from '@components/AuthDetails/AuthDetails';
+import { RequestParams } from '@components/Request/RequestParams/RequestParams';
+import { RequestBody } from '@components/Request/RequestBody/RequestBody';
+import { ContentTypeBadge } from '@components/ContentTypeBadge/ContentTypeBadge';
+import { PropertyTable } from '@components/PropertyTable/PropertyTable';
+import { CodeSnippetTabs } from '@components/CodeSnippetTabs/CodeSnippetTabs';
+import { Examples } from '@components/Examples/Examples';
+import { ExecutionContext } from '@components/ExecutionContext/ExecutionContext';
+import { UnsupportedRequest } from '@components/UnsupportedRequest/UnsupportedRequest';
 import { StyledWrapper } from './StyledWrapper';
 
 interface RequestProps {

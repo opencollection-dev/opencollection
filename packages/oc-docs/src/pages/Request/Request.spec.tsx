@@ -4,7 +4,7 @@ import type { OpenCollection } from '@opencollection/types';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { Item } from '@opencollection/types/collection/item';
 import { Request } from './Request';
-import { useRenderToDom } from '../../hooks/useRenderToDom';
+import { useRenderToDom } from '@hooks/useRenderToDom';
 
 const collection: OpenCollection = {
   info: { name: 'Auth API', version: '1.0.0' },

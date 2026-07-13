@@ -1,7 +1,7 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import type { OpenCollection } from '@opencollection/types';
-import { useRenderToDom } from '../../hooks/useRenderToDom';
+import { useRenderToDom } from '@hooks/useRenderToDom';
 import { Folder } from './Folder';
 
 const collection = {

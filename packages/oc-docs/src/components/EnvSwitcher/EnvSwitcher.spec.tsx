@@ -2,9 +2,9 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Provider } from 'react-redux';
 import { describe, it, expect } from 'vitest';
-import { createOpenCollectionStore } from '../../store/store';
-import { setDocsCollection } from '../../store/slices/docs';
-import { setActiveEnv } from '../../store/slices/env';
+import { createOpenCollectionStore } from '@store/store';
+import { setDocsCollection } from '@slices/docs';
+import { setActiveEnv } from '@slices/env';
 import EnvSwitcher from './EnvSwitcher';
 
 const withEnvs: any = { config: { environments: [{ name: 'Dev' }, { name: 'Prod' }] } };

@@ -8,8 +8,8 @@ import type {
   OAuth2Settings,
   OAuth2AdditionalParameter
 } from '@opencollection/types/common/auth';
-import { PropertyTable, type PropertyRow } from '../PropertyTable/PropertyTable';
-import { ADDITIONAL_PARAM_GROUPS, AUTH_TYPES } from '../../constants';
+import { PropertyTable, type PropertyRow } from '@components/PropertyTable/PropertyTable';
+import { ADDITIONAL_PARAM_GROUPS, AUTH_TYPES } from '@constants';
 
 interface AuthDetailsProps {
   auth?: Auth;

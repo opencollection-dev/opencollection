@@ -1,6 +1,6 @@
 import React from 'react';
 import { OpenCollectionWordmark } from '../../../../assets/OpenCollectionWordmark';
-import ThemeToggle from '../../../ThemeToggle/ThemeToggle';
+import ThemeToggle from '@components/ThemeToggle/ThemeToggle';
 import { StyledWrapper } from './StyledWrapper';
 
 const SidebarFooter: React.FC = () => (

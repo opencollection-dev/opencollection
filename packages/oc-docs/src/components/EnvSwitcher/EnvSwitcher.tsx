@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Environment } from '@opencollection/types/config/environments';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { selectDocsCollection } from '../../store/slices/docs';
-import { selectActiveEnvName, setActiveEnv } from '../../store/slices/env';
-import { useClickOutside, useEscapeKey } from '../../hooks';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
+import { selectDocsCollection } from '@slices/docs';
+import { selectActiveEnvName, setActiveEnv } from '@slices/env';
+import { useClickOutside, useEscapeKey } from '@hooks';
 import { ChevronDownIcon } from '../../assets/icons';
-import { EnvironmentLabel } from '../EnvironmentLabel/EnvironmentLabel';
+import { EnvironmentLabel } from '@components/EnvironmentLabel/EnvironmentLabel';
 import { StyledWrapper } from './StyledWrapper';
 
 export interface EnvSwitcherProps {

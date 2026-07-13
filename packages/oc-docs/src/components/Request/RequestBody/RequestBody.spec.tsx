@@ -1,7 +1,7 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { RequestBody } from './RequestBody';
-import { useRenderToDom } from '../../../hooks/useRenderToDom';
+import { useRenderToDom } from '@hooks/useRenderToDom';
 
 describe('RequestBody', () => {
   it('renders a JSON body as a labelled code block', () => {

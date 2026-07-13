@@ -14,7 +14,7 @@ import {
   getPostResponseScript,
   getTestsScript,
   type ScriptsObject
-} from '../../utils/schemaHelpers';
+} from '@utils/schemaHelpers';
 
 /**
  * Merge headers from collection and folder hierarchy into the request

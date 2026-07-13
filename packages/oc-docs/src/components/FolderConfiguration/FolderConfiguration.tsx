@@ -1,10 +1,10 @@
 import React from 'react';
-import type { FolderConfig } from '../../utils/folder';
-import { Code } from '../Code/Code';
-import { SectionLabel } from '../SectionLabel/SectionLabel';
-import { PropertyTable } from '../PropertyTable/PropertyTable';
-import { AuthDetails } from '../AuthDetails/AuthDetails';
-import { ContentTypeBadge } from '../ContentTypeBadge/ContentTypeBadge';
+import type { FolderConfig } from '@utils/folder';
+import { Code } from '@components/Code/Code';
+import { SectionLabel } from '@components/SectionLabel/SectionLabel';
+import { PropertyTable } from '@components/PropertyTable/PropertyTable';
+import { AuthDetails } from '@components/AuthDetails/AuthDetails';
+import { ContentTypeBadge } from '@components/ContentTypeBadge/ContentTypeBadge';
 import { StyledWrapper } from './StyledWrapper';
 
 interface FolderConfigurationProps {

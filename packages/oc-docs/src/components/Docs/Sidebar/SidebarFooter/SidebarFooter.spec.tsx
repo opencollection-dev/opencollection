@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { Provider } from 'react-redux';
 import { describe, it, expect } from 'vitest';
 import SidebarFooter from './SidebarFooter';
-import { createOpenCollectionStore } from '../../../../store/store';
+import { createOpenCollectionStore } from '@store/store';
 
 const render = () =>
   renderToStaticMarkup(

@@ -10,9 +10,9 @@
  */
 
 import type { NavEntry } from '../../routing/types';
-import { getItemDocs, getItemDescription, getRequestUrl, getHttpParams } from '../../utils/schemaHelpers';
-import { getItemUuid } from '../../utils/itemUtils';
-import { fuzzyScore } from '../../utils/fuzzyMatch';
+import { getItemDocs, getItemDescription, getRequestUrl, getHttpParams } from '@utils/schemaHelpers';
+import { getItemUuid } from '@utils/itemUtils';
+import { fuzzyScore } from '@utils/fuzzyMatch';
 
 export interface SearchRecord {
   /** Item UUID (the matchingItemIds contract + sidebar key). */

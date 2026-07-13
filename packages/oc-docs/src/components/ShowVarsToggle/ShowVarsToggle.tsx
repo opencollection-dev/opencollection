@@ -1,6 +1,6 @@
 import React from 'react';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { selectShowVars, toggleShowVars } from '../../store/slices/env';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
+import { selectShowVars, toggleShowVars } from '@slices/env';
 import { StyledWrapper } from './StyledWrapper';
 
 export interface ShowVarsToggleProps {

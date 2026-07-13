@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { Assertion } from '@opencollection/types/common/assertions';
-import Tabs from '../../../../../../ui/Tabs/Tabs';
-import { KeyValueRow } from '../../../../../../ui/KeyValueTable/KeyValueTable';
-import HeadersTab from '../../Common/HeadersTab/HeadersTab';
-import ParamsTab from '../../Common/ParamsTab';
-import BodyTab from '../../Common/BodyTab';
-import AuthTab from '../../Common/AuthTab';
-import ScriptsTab from '../../Common/ScriptsTab/ScriptsTab';
-import TestsTab from '../../Common/TestsTab/TestsTab';
-import AssertsTab from '../../Common/AssertsTab';
-import VariablesTab from '../../Common/VariablesTab/VariablesTab';
+import Tabs from '@ui/Tabs/Tabs';
+import { KeyValueRow } from '@ui/KeyValueTable/KeyValueTable';
+import HeadersTab from '@components/Playground/Content/Views/Common/HeadersTab/HeadersTab';
+import ParamsTab from '@components/Playground/Content/Views/Common/ParamsTab';
+import BodyTab from '@components/Playground/Content/Views/Common/BodyTab';
+import AuthTab from '@components/Playground/Content/Views/Common/AuthTab';
+import ScriptsTab from '@components/Playground/Content/Views/Common/ScriptsTab/ScriptsTab';
+import TestsTab from '@components/Playground/Content/Views/Common/TestsTab/TestsTab';
+import AssertsTab from '@components/Playground/Content/Views/Common/AssertsTab';
+import VariablesTab from '@components/Playground/Content/Views/Common/VariablesTab/VariablesTab';
 import { 
   getHttpParams, 
   getHttpHeaders, 
@@ -22,8 +22,8 @@ import {
   scriptsArrayToObject,
   scriptsObjectToArray,
   getRequestUrl
-} from '../../../../../../utils/schemaHelpers';
-import { setUrlQueryParams } from '../../../../../../utils/pathParams';
+} from '@utils/schemaHelpers';
+import { setUrlQueryParams } from '@utils/pathParams';
 
 interface RequestPaneProps {
   item: HttpRequest;

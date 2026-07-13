@@ -5,9 +5,9 @@ import 'prismjs/components/prism-bash';
 import 'prismjs/components/prism-python';
 import 'prismjs/components/prism-json';
 import 'prismjs/components/prism-xml-doc';
-import { isTemplateVariable, templateVariableSplitRegex } from '../../utils/common';
-import { TEMPLATE_VARIABLE_SOURCE_PATTERN } from '../../constants';
-import { VariableToken } from '../VariableText/VariableToken/VariableToken';
+import { isTemplateVariable, templateVariableSplitRegex } from '@utils/common';
+import { TEMPLATE_VARIABLE_SOURCE_PATTERN } from '@constants';
+import { VariableToken } from '@components/VariableText/VariableToken/VariableToken';
 
 type PrismNode = string | Prism.Token;
 

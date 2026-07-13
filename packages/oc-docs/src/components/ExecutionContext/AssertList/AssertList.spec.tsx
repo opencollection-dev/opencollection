@@ -1,8 +1,8 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { AssertList } from './AssertList';
-import { useRenderToDom } from '../../../hooks/useRenderToDom';
-import type { AssertionRow } from '../../../utils/assertions';
+import { useRenderToDom } from '@hooks/useRenderToDom';
+import type { AssertionRow } from '@utils/assertions';
 
 const binary: AssertionRow = { level: 'request', expression: 'res.status', operatorLabel: 'equals', value: '200', isUnary: false, description: 'Status must be OK' };
 const unary: AssertionRow = { level: 'collection', expression: 'res.body.token', operatorLabel: 'is defined', isUnary: true };

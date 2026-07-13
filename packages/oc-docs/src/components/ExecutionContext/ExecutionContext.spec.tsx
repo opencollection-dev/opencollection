@@ -1,11 +1,11 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { ExecutionContext } from './ExecutionContext';
-import { useRenderToDom } from '../../hooks/useRenderToDom';
+import { useRenderToDom } from '@hooks/useRenderToDom';
 import { query } from '../../test-utils/dom';
-import type { ScriptChainStep } from '../../utils/request';
-import type { AssertionRow } from '../../utils/assertions';
-import type { TestRow, RawTestScript } from '../../utils/fileUtils';
+import type { ScriptChainStep } from '@utils/request';
+import type { AssertionRow } from '@utils/assertions';
+import type { TestRow, RawTestScript } from '@utils/fileUtils';
 
 const scriptChain: ScriptChainStep[] = [
   { level: 'collection', phase: 'before-request', label: 'Collection Pre-Request', sourceName: 'API', code: 'bru.setVar("x", 1)', order: 0 },

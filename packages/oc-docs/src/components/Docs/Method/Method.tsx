@@ -1,5 +1,5 @@
 import React from 'react';
-import { getShortMethod } from '../../../utils/request';
+import { getShortMethod } from '@utils/request';
 import { StyledWrapper } from './StyledWrapper';
 
 interface MethodProps {

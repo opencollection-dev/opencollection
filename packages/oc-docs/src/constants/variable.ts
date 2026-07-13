@@ -1,4 +1,4 @@
-import type { VariableScope } from '../utils/variableResolution';
+import type { VariableScope } from '@utils/variableResolution';
 
 export const SCOPE_LABELS: Record<VariableScope, string> = {
   collection: 'Collection',

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SECRET_MASK } from '../../constants';
+import { SECRET_MASK } from '@constants';
 import { StyledWrapper } from './StyledWrapper';
 
 interface SecretValueProps {

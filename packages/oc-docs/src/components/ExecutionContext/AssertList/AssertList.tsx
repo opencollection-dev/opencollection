@@ -1,9 +1,9 @@
 import React from 'react';
-import { ScopeTag } from '../ScopeTag/ScopeTag';
-import { VariableText } from '../../VariableText/VariableText';
-import { TruncatedText } from '../../TruncatedText/TruncatedText';
-import { Description } from '../../Description/Description';
-import type { AssertionRow } from '../../../utils/assertions';
+import { ScopeTag } from '@components/ExecutionContext/ScopeTag/ScopeTag';
+import { VariableText } from '@components/VariableText/VariableText';
+import { TruncatedText } from '@components/TruncatedText/TruncatedText';
+import { Description } from '@components/Description/Description';
+import type { AssertionRow } from '@utils/assertions';
 import { StyledWrapper } from './StyledWrapper';
 
 interface AssertListProps {

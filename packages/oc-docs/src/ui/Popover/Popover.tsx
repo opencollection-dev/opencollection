@@ -8,8 +8,8 @@ import React, {
   type ReactElement,
   type ReactNode
 } from 'react';
-import { Portal } from '../Portal/Portal';
-import { useEscapeKey } from '../../hooks/useEscapeKey';
+import { Portal } from '@ui/Portal/Portal';
+import { useEscapeKey } from '@hooks/useEscapeKey';
 import { StyledWrapper } from './StyledWrapper';
 
 interface PopoverProps {

@@ -2,9 +2,9 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Provider } from 'react-redux';
 import { describe, it, expect } from 'vitest';
-import { createOpenCollectionStore } from '../store/store';
-import { setDocsCollection } from '../store/slices/docs';
-import { setActiveEnv, setShowVars } from '../store/slices/env';
+import { createOpenCollectionStore } from '@store/store';
+import { setDocsCollection } from '@slices/docs';
+import { setActiveEnv, setShowVars } from '@slices/env';
 import { useVariableResolver, useResolvedVariables, ItemVariableResolverProvider } from './useVariableResolver';
 
 const collection: any = {

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { isMacPlatform } from '../utils/platform';
+import { isMacPlatform } from '@utils/platform';
 
 /**
  * Platform-aware search shortcut: ⌘K on macOS, Ctrl+K elsewhere. Never hardcodes

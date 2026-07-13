@@ -1,11 +1,11 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { describe, it, expect } from 'vitest';
-import { createOpenCollectionStore } from '../../store/store';
-import { setDocsCollection } from '../../store/slices/docs';
-import { setActiveEnv, setShowVars } from '../../store/slices/env';
-import { VariableResolverProvider } from '../../hooks';
-import { useRenderToDom } from '../../hooks/useRenderToDom';
+import { createOpenCollectionStore } from '@store/store';
+import { setDocsCollection } from '@slices/docs';
+import { setActiveEnv, setShowVars } from '@slices/env';
+import { VariableResolverProvider } from '@hooks';
+import { useRenderToDom } from '@hooks/useRenderToDom';
 import { VariableText } from './VariableText';
 
 const collection: any = {

@@ -4,21 +4,21 @@ import type {
   HttpRequestHeader,
   HttpResponseHeader
 } from '@opencollection/types/requests/http';
-import { MethodBadge } from '../../MethodBadge/MethodBadge';
-import { ChevronArrow } from '../../ChevronArrow/ChevronArrow';
-import { CopyButton } from '../../../ui/CopyButton/CopyButton';
-import { PropertyTable, type PropertyRow } from '../../PropertyTable/PropertyTable';
-import { TruncatedText } from '../../TruncatedText/TruncatedText';
-import { VariableText } from '../../VariableText/VariableText';
-import { Description } from '../../Description/Description';
-import { RequestParams } from '../../Request/RequestParams/RequestParams';
-import { RequestBody } from '../../Request/RequestBody/RequestBody';
-import { Code } from '../../Code/Code';
+import { MethodBadge } from '@components/MethodBadge/MethodBadge';
+import { ChevronArrow } from '@components/ChevronArrow/ChevronArrow';
+import { CopyButton } from '@ui/CopyButton/CopyButton';
+import { PropertyTable, type PropertyRow } from '@components/PropertyTable/PropertyTable';
+import { TruncatedText } from '@components/TruncatedText/TruncatedText';
+import { VariableText } from '@components/VariableText/VariableText';
+import { Description } from '@components/Description/Description';
+import { RequestParams } from '@components/Request/RequestParams/RequestParams';
+import { RequestBody } from '@components/Request/RequestBody/RequestBody';
+import { Code } from '@components/Code/Code';
 import { PlayIcon } from '../../../assets/icons';
-import { resolvePathAndQueryParams } from '../../../utils/pathParams';
-import { getBodyView, getDescription } from '../../../utils/request';
-import { computeBodySize, formatBytes, responseBodyLanguage, responseBodyContentType, statusCodePhrase } from '../../../utils/exampleResponse';
-import { statusToneColor } from '../../../utils/common';
+import { resolvePathAndQueryParams } from '@utils/pathParams';
+import { getBodyView, getDescription } from '@utils/request';
+import { computeBodySize, formatBytes, responseBodyLanguage, responseBodyContentType, statusCodePhrase } from '@utils/exampleResponse';
+import { statusToneColor } from '@utils/common';
 import { StyledWrapper } from './StyledWrapper';
 
 interface ExampleCardProps {

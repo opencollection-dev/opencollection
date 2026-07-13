@@ -1,8 +1,8 @@
 import React, { useId } from 'react';
-import { SectionLabel } from '../SectionLabel/SectionLabel';
-import { ChevronArrow } from '../ChevronArrow/ChevronArrow';
-import { Collapse } from '../../ui/Collapse/Collapse';
-import { useSessionStorage } from '../../hooks';
+import { SectionLabel } from '@components/SectionLabel/SectionLabel';
+import { ChevronArrow } from '@components/ChevronArrow/ChevronArrow';
+import { Collapse } from '@ui/Collapse/Collapse';
+import { useSessionStorage } from '@hooks';
 import { StyledWrapper } from './StyledWrapper';
 
 type HeadingLevel = 'h2' | 'h3' | 'h4';

@@ -1,6 +1,6 @@
 import React from 'react';
 import Editor from '@monaco-editor/react';
-import { useAppSelector } from '../../store/hooks';
+import { useAppSelector } from '@store/hooks';
 
 interface CodeEditorProps {
   value: string;

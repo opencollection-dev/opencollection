@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { Folder } from '@opencollection/types/collection/item';
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
 import {
   selectHydratedCollection,
   selectViewMode,
@@ -10,17 +10,17 @@ import {
   setSelectedItemId,
   toggleFolderCollapse,
 } from '@slices/playground';
-import { selectActiveEnvName } from '../../../store/slices/env';
+import { selectActiveEnvName } from '@slices/env';
 import { useNavModel } from '../../../routing/hooks';
-import { usePlaygroundUrlState, useElementWidth } from '../../../hooks';
-import { getItemUuid, findItemByUuid } from '../../../utils/itemUtils';
-import { isFolder } from '../../../utils/schemaHelpers';
-import PlaygroundView from '../Content/Views/PlaygroundView/PlaygroundView';
-import FolderSettingsView from '../Content/Views/FolderSettingsView/FolderSettingsView';
-import EnvironmentsView from '../Content/Views/EnvironmentsView/EnvironmentsView';
-import CollectionSettingsView from '../Content/Views/CollectionSettingsView/CollectionSettingsView';
-import PlaygroundSidebar from '../PlaygroundSidebar/PlaygroundSidebar';
-import type { DockMode } from '../../../utils/playgroundDock';
+import { usePlaygroundUrlState, useElementWidth } from '@hooks';
+import { getItemUuid, findItemByUuid } from '@utils/itemUtils';
+import { isFolder } from '@utils/schemaHelpers';
+import PlaygroundView from '@components/Playground/Content/Views/PlaygroundView/PlaygroundView';
+import FolderSettingsView from '@components/Playground/Content/Views/FolderSettingsView/FolderSettingsView';
+import EnvironmentsView from '@components/Playground/Content/Views/EnvironmentsView/EnvironmentsView';
+import CollectionSettingsView from '@components/Playground/Content/Views/CollectionSettingsView/CollectionSettingsView';
+import PlaygroundSidebar from '@components/Playground/PlaygroundSidebar/PlaygroundSidebar';
+import type { DockMode } from '@utils/playgroundDock';
 import { StyledWrapper } from './StyledWrapper';
 
 const ORIENTATION_BREAKPOINT = 640;

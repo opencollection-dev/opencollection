@@ -1,7 +1,7 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { Description } from './Description';
-import { useRenderToDom } from '../../hooks/useRenderToDom';
+import { useRenderToDom } from '@hooks/useRenderToDom';
 
 describe('Description', () => {
   it('renders a truncatable, tooltip-anchored line with the text', () => {

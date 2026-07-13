@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, it, expect } from 'vitest';
 import { SearchBar } from './SearchBar';
-import { createOpenCollectionStore } from '../../../store/store';
+import { createOpenCollectionStore } from '@store/store';
 
 const renderBar = () =>
   renderToStaticMarkup(

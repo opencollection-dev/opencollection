@@ -1,7 +1,7 @@
 import React from 'react';
 import { getMethodColorVar } from '../../../theme/methodColors';
-import { getShortMethod } from '../../../utils/request';
-import type { SearchRecord } from '../searchIndex';
+import { getShortMethod } from '@utils/request';
+import type { SearchRecord } from '@components/Search/searchIndex';
 import { StyledWrapper } from './StyledWrapper';
 
 interface SearchResultItemProps {

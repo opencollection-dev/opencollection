@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Assertion } from '@opencollection/types/common/assertions';
-import KeyValueTable, { type KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
+import KeyValueTable, { type KeyValueRow } from '@ui/KeyValueTable/KeyValueTable';
 
 /**
  * Assertion operators based on Bruno's implementation

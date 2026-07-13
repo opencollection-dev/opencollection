@@ -1,8 +1,8 @@
 import React from 'react';
-import { SecretValue } from '../../ui/SecretValue/SecretValue';
-import { VariableText } from '../VariableText/VariableText';
-import { TruncatedText } from '../TruncatedText/TruncatedText';
-import { Description } from '../Description/Description';
+import { SecretValue } from '@ui/SecretValue/SecretValue';
+import { VariableText } from '@components/VariableText/VariableText';
+import { TruncatedText } from '@components/TruncatedText/TruncatedText';
+import { Description } from '@components/Description/Description';
 import { StyledWrapper } from './StyledWrapper';
 
 export interface PropertyRow {

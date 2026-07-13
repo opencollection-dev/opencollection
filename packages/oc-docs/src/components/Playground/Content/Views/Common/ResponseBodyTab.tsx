@@ -1,5 +1,5 @@
 import React from 'react';
-import CodeEditor from '../../../../../ui/CodeEditor/CodeEditor';
+import CodeEditor from '@ui/CodeEditor/CodeEditor';
 
 interface ResponseBodyTabProps {
   response: any;

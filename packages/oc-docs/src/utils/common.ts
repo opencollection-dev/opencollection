@@ -1,9 +1,9 @@
 import { customAlphabet } from 'nanoid';
 import type { OpenCollection } from '@opencollection/types';
 import type { Item } from '@opencollection/types/collection/item';
-import type { BreadcrumbSegment } from '../ui/Breadcrumb/Breadcrumb';
+import type { BreadcrumbSegment } from '@ui/Breadcrumb/Breadcrumb';
 import { getItemName } from './schemaHelpers';
-import { TEMPLATE_VARIABLE_BODY_PATTERN, TEMPLATE_VARIABLE_SOURCE_PATTERN } from '../constants';
+import { TEMPLATE_VARIABLE_BODY_PATTERN, TEMPLATE_VARIABLE_SOURCE_PATTERN } from '@constants';
 
 // a customized version of nanoid without using _ and -
 export const uuid = () => {

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { isTemplateVariable, templateVariableSplitRegex } from '../../utils/common';
+import { isTemplateVariable, templateVariableSplitRegex } from '@utils/common';
 import { VariableToken } from './VariableToken/VariableToken';
 
 interface VariableTextProps {

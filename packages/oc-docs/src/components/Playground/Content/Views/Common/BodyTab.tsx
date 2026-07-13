@@ -1,7 +1,7 @@
 import React from 'react';
 import type { HttpRequest } from '@opencollection/types/requests/http';
-import CodeEditor from '../../../../../ui/CodeEditor/CodeEditor';
-import KeyValueTable, { type KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
+import CodeEditor from '@ui/CodeEditor/CodeEditor';
+import KeyValueTable, { type KeyValueRow } from '@ui/KeyValueTable/KeyValueTable';
 
 interface BodyTabProps {
   body: any;
