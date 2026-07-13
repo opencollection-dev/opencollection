@@ -35,10 +35,11 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
 
   const handleHeadersChange = (rows: KeyValueRow[]) => {
     const originals = collection.request?.headers ?? [];
+    const originalById = new Map(originals.map((header, index): [string, typeof header] => [`header-${index}`, header]));
     updateRequest({
       ...collection.request,
-      headers: rows.map((row, index) => ({
-        ...(originals[index] ?? {}),
+      headers: rows.map((row) => ({
+        ...(originalById.get(row.id) ?? {}),
         name: row.name,
         value: row.value,
         disabled: !row.enabled
@@ -48,12 +49,11 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
 
   const handleVariablesChange = (rows: KeyValueRow[]) => {
     const originals = collection.request?.variables ?? [];
+    const originalById = new Map(originals.map((variable, index): [string, typeof variable] => [`variable-${index}`, variable]));
     updateRequest({
       ...collection.request,
-      variables: rows.map((row, index) => {
-        // Preserve the original variable's description and typed/variant value when the
-        // displayed string wasn't changed, so editing one row doesn't flatten the rest.
-        const original = originals[index];
+      variables: rows.map((row) => {
+        const original = originalById.get(row.id);
         const value = original && unwrapVariableValue(original.value) === row.value ? original.value : row.value;
         return { ...(original ?? {}), name: row.name, value, disabled: !row.enabled };
       })
