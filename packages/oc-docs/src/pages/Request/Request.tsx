@@ -6,10 +6,8 @@ import type { Auth } from '@opencollection/types/common/auth';
 import type { GraphQLRequest } from '@opencollection/types/requests/graphql';
 import type { GrpcRequest } from '@opencollection/types/requests/grpc';
 import type { WebSocketRequest } from '@opencollection/types/requests/websocket';
+import { useLocation } from 'react-router-dom';
 import { useMarkdownRenderer } from '../../hooks';
-import { useAppSelector } from '../../store/hooks';
-import { selectExampleHighlight } from '../../store/slices/docsExamples';
-import { getItemUuid } from '../../utils/itemUtils';
 import { AUTH_MODE_LABELS } from '../../constants';
 import {
   getItemName,
@@ -87,12 +85,10 @@ const RequestContent: React.FC<RequestContentProps> = ({
   const body = getHttpBody(item);
   const examples = getRequestExamples(item);
 
-  const highlight = useAppSelector(selectExampleHighlight);
-  const currentUuid = getItemUuid(item);
-  const highlightedExampleIndex =
-    highlight && currentUuid !== undefined && highlight.requestUuid === currentUuid
-      ? highlight.index
-      : undefined;
+  // The example to flash/scroll to is carried on the navigation entry's state
+  // and always belongs to the request being shown, so no request match is needed.
+  const { state } = useLocation();
+  const highlightedExampleIndex = (state as { exampleIndex?: number } | null)?.exampleIndex;
 
   const { path: pathParams, query: queryParams } = useMemo(
     () => resolvePathAndQueryParams(params, url),

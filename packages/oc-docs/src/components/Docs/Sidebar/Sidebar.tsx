@@ -7,7 +7,6 @@ import { CubeIcon, GlobeIcon } from '../../../assets/icons';
 import { StyledWrapper } from './StyledWrapper';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { toggleItem, expandFolders, selectDocsCollection } from '../../../store/slices/docs';
-import { setExampleHighlight, selectExampleHighlight, clearExampleHighlight } from '../../../store/slices/docsExamples';
 import { getItemUuid } from '../../../utils/itemUtils';
 import { useNavModel } from '../../../routing/hooks';
 import { normalizeSlug } from '../../../routing/resolve';
@@ -24,9 +23,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
   const collection = useAppSelector(selectDocsCollection);
   const model = useNavModel();
   const docsNavigate = useDocsNavigate();
-  const { pathname } = useLocation();
+  const { pathname, state } = useLocation();
   const activeSlug = normalizeSlug(pathname);
-  const activeExample = useAppSelector(selectExampleHighlight);
 
   const goTo = (slug: string) => {
     docsNavigate(slug);
@@ -42,33 +40,23 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
     return map;
   }, [model]);
 
-  const navPlain = (slug: string) => {
-    dispatch(clearExampleHighlight());
-    goTo(slug);
-  };
+  // The highlighted example rides on the navigation entry's state, not the URL,
+  // so it is not shareable/deep-linked, clears itself on any navigation, and is
+  // restored correctly by browser back/forward. It always belongs to the request
+  // currently shown.
+  const exampleIndex = (state as { exampleIndex?: number } | null)?.exampleIndex;
+  const activeRequestUuid = getItemUuid(model.bySlug.get(activeSlug)?.item);
+  const activeExample =
+    exampleIndex != null && activeRequestUuid !== undefined
+      ? { requestUuid: activeRequestUuid, index: exampleIndex }
+      : null;
 
   const goToExample = (requestUuid: string, index: number) => {
     const slug = uuidToSlug.get(requestUuid);
     if (slug == null) return;
-    dispatch(setExampleHighlight({ requestUuid, index }));
-    goTo(slug);
+    docsNavigate(slug, { state: { exampleIndex: index } });
+    onNavigate?.();
   };
-
-  // Clear the example highlight once we have left the request page it points at,
-  // so back/forward, a topbar link, or a deep-link never leaves it stale (which
-  // would blank every active row and re-scroll the card on a later visit). Only
-  // clears after the highlighted page was actually shown, avoiding the transient
-  // set-then-navigate window from goToExample.
-  const highlightSeenRef = useRef(false);
-  useEffect(() => {
-    if (!activeExample) {
-      highlightSeenRef.current = false;
-      return;
-    }
-    const highlightedSlug = uuidToSlug.get(activeExample.requestUuid);
-    if (highlightedSlug === activeSlug) highlightSeenRef.current = true;
-    else if (highlightSeenRef.current) dispatch(clearExampleHighlight());
-  }, [activeSlug, activeExample, uuidToSlug, dispatch]);
 
   const autoRevealedSlug = useRef<string | null>(null);
   useEffect(() => {
@@ -104,7 +92,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
           icon={<CubeIcon />}
           active={activeSlug === OVERVIEW_SLUG}
           testId="sidebar-overview"
-          onClick={() => navPlain(OVERVIEW_SLUG)}
+          onClick={() => goTo(OVERVIEW_SLUG)}
         />
         {hasEnvironments && (
           <SidebarNavLink
@@ -112,7 +100,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
             icon={<GlobeIcon />}
             active={activeSlug === ENVIRONMENTS_SLUG}
             testId="sidebar-environments"
-            onClick={() => navPlain(ENVIRONMENTS_SLUG)}
+            onClick={() => goTo(ENVIRONMENTS_SLUG)}
           />
         )}
       </div>
@@ -127,7 +115,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
             // not its parent request row (even though we navigated to that page).
             activeSlug={activeExample ? '' : activeSlug}
             uuidToSlug={uuidToSlug}
-            onNavigate={navPlain}
+            onNavigate={goTo}
             onToggleFolder={(uuid) => dispatch(toggleItem(uuid))}
             activeExample={activeExample}
             onExampleClick={(requestUuid, index) => goToExample(requestUuid, index)}

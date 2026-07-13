@@ -5,8 +5,6 @@ import { MemoryRouter } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { createOpenCollectionStore } from '../../../store/store';
 import { setDocsCollection } from '../../../store/slices/docs';
-import { setExampleHighlight } from '../../../store/slices/docsExamples';
-import { getItemUuid } from '../../../utils/itemUtils';
 import { useRenderToDom } from '../../../hooks/useRenderToDom';
 import { query } from '../../../test-utils/dom';
 
@@ -17,15 +15,15 @@ const collection = {
   ],
 } as any;
 
+// The highlight rides on the navigation entry's state, so render at the request
+// route with { exampleIndex } in history state, exactly what a sidebar example
+// click produces.
 const buildSidebar = () => {
   const store = createOpenCollectionStore();
   store.dispatch(setDocsCollection(collection));
-  // The collection is hydrated with uuids on dispatch; read the request's uuid back.
-  const requestUuid = getItemUuid((store.getState().docs.collection as any).items[0])!;
-  store.dispatch(setExampleHighlight({ requestUuid, index: 0 }));
   return (
     <Provider store={store}>
-      <MemoryRouter>
+      <MemoryRouter initialEntries={[{ pathname: '/login', state: { exampleIndex: 0 } }]}>
         <Sidebar />
       </MemoryRouter>
     </Provider>

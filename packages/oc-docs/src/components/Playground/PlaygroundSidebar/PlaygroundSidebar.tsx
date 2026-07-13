@@ -5,7 +5,7 @@ import EnvSwitcher from '../../EnvSwitcher/EnvSwitcher';
 import SidebarTree from '../../Docs/Sidebar/SidebarTree/SidebarTree';
 import IconButton from '../../../ui/IconButton/IconButton';
 import { SettingsIcon } from '../../../assets/icons';
-import type { ExampleHighlight } from '../../../store/slices/docsExamples';
+import type { ExampleHighlight } from '../../Docs/Sidebar/SidebarTree/SidebarTree';
 import { StyledWrapper } from './StyledWrapper';
 
 interface PlaygroundSidebarProps {

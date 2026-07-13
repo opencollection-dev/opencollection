@@ -13,7 +13,7 @@ import {
   toggleFolderCollapse,
 } from '@slices/playground';
 import { selectActiveEnvName } from '../../../store/slices/env';
-import type { ExampleHighlight } from '@slices/docsExamples';
+import type { ExampleHighlight } from '../../Docs/Sidebar/SidebarTree/SidebarTree';
 import { useNavModel } from '../../../routing/hooks';
 import { usePlaygroundUrlState, useElementWidth } from '../../../hooks';
 import { getItemUuid, findItemByUuid } from '../../../utils/itemUtils';

@@ -7,7 +7,13 @@ import { StyledWrapper } from './StyledWrapper';
 import { getItemName, isFolder, isScriptFile, getRequestBadgeLabel } from '../../../../utils/schemaHelpers';
 import { getItemUuid } from '../../../../utils/itemUtils';
 import { orderSiblings } from '../../../../routing/navModel';
-import type { ExampleHighlight } from '../../../../store/slices/docsExamples';
+
+// The example a user jumped to from the sidebar: which request, and which of its
+// examples. Held transiently (navigation state), never persisted or routed.
+export interface ExampleHighlight {
+  requestUuid: string;
+  index: number;
+}
 
 export interface CollectionRoot {
   name: string;
