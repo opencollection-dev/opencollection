@@ -4,7 +4,6 @@ export const StyledWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 7px;
-  width: 100%;
   box-sizing: border-box;
   user-select: none;
   border-radius: var(--oc-radius);

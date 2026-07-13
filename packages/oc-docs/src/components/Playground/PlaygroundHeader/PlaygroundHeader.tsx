@@ -27,6 +27,7 @@ const PlaygroundHeader: React.FC<PlaygroundHeaderProps> = ({
   <StyledWrapper data-testid={testId}>
     <div className="header-left">
       <IconButton
+        className="header-sidebar-toggle"
         label="Toggle playground sidebar"
         title="Toggle sidebar"
         data-testid="playground-sidebar-toggle"
@@ -52,7 +53,7 @@ const PlaygroundHeader: React.FC<PlaygroundHeaderProps> = ({
           <ChevronDownIcon />
         </IconButton>
       )}
-      <IconButton label="Close playground" title="Close" data-testid="playground-close" onClick={onClose}>
+      <IconButton className="header-close" label="Close playground" title="Close" data-testid="playground-close" onClick={onClose}>
         <CloseIcon />
       </IconButton>
     </div>

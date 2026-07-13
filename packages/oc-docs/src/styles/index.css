@@ -558,6 +558,8 @@ tr.themed-row:nth-child(even) {
    SCROLLBARS
    ================================================================ */
 
+/* Clean thin scrollbar for playground scroll areas: transparent track (no
+   background column) and no border (no divider line beside the thumb). */
 .oc-playground ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -565,10 +567,12 @@ tr.themed-row:nth-child(even) {
 
 .oc-playground ::-webkit-scrollbar-track {
   background: transparent;
+  border: none;
 }
 
 .oc-playground ::-webkit-scrollbar-thumb {
   background-color: var(--oc-scrollbar-color);
+  border: none;
   border-radius: 20px;
 }
 

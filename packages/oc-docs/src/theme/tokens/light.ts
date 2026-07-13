@@ -127,7 +127,9 @@ export const light: Theme = {
     crust: p.background.CRUST,
     surface2: p.background.SURFACE2,
     surface1: p.background.SURFACE1,
-    surface0: p.background.SURFACE0
+    surface0: p.background.SURFACE0,
+    // Near-white raised surface (Figma: playground view-switcher track fill).
+    surfaceBright: '#fafafa'
   },
 
   status: {

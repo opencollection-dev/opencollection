@@ -5,14 +5,14 @@ export const StyledWrapper = styled.div`
   align-items: center;
   gap: 2px;
   padding: 3px;
-  border: 1px solid var(--oc-background-surface2);
+  border: 1px solid var(--oc-border-border0);
   border-radius: var(--oc-radius);
-  background-color: var(--oc-background-surface0);
+  background-color: var(--oc-background-surface-bright);
 
   button {
     width: 26px;
     height: 24px;
-    color: var(--text-secondary);
+    color: var(--oc-colors-text-subtext0);
     border-radius: var(--oc-radius);
   }
 
@@ -27,7 +27,7 @@ export const StyledWrapper = styled.div`
   }
 
   button.active {
-    color: var(--oc-colors-accent);
+    color: var(--oc-primary-solid);
     background-color: var(--oc-background-base);
     box-shadow: 0 1px 2px color-mix(in srgb, var(--oc-text) 12%, transparent);
   }

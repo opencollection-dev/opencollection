@@ -134,7 +134,9 @@ export const dark: Theme = {
     crust: '#333333',
     surface0: p.background.SURFACE0,
     surface1: colors.GRAY_3,
-    surface2: colors.GRAY_4
+    surface2: colors.GRAY_4,
+    // Raised surface; keeps the dark switcher track identical to surface0.
+    surfaceBright: p.background.SURFACE0
   },
 
   status: {

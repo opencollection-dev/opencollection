@@ -18,7 +18,7 @@ describe('Topbar', () => {
   it('renders the brand name and version', () => {
     const html = renderToStaticMarkup(<Topbar collectionName="Hotel Booking API" version="1.0.0" />);
     expect(html).toContain('Hotel Booking API');
-    expect(html).toContain('>1.0.0<');
+    expect(html).toContain('>Version : 1.0.0<');
     expect(html).not.toContain('v1.0.0');
   });
 

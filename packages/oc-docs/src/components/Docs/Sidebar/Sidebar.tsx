@@ -40,6 +40,28 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
     return map;
   }, [model]);
 
+  // Reveal the scrollbar thumb only while the list is active (mousemove/scroll),
+  // then hide it 1s after activity stops. Toggled via classList so pointer noise
+  // never triggers a re-render.
+  const itemsRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = itemsRef.current;
+    if (!el) return;
+    let timer: ReturnType<typeof setTimeout>;
+    const show = () => {
+      el.classList.add('scrolling');
+      clearTimeout(timer);
+      timer = setTimeout(() => el.classList.remove('scrolling'), 1000);
+    };
+    el.addEventListener('mousemove', show);
+    el.addEventListener('scroll', show, { passive: true });
+    return () => {
+      clearTimeout(timer);
+      el.removeEventListener('mousemove', show);
+      el.removeEventListener('scroll', show);
+    };
+  }, []);
+
   const autoRevealedSlug = useRef<string | null>(null);
   useEffect(() => {
     if (autoRevealedSlug.current === activeSlug) return;
@@ -89,7 +111,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
 
       <div className="sidebar-divider" />
 
-      <div className="sidebar-items">
+      <div className="sidebar-items" ref={itemsRef}>
         {collection?.items?.length ? (
           <SidebarTree
             items={collection.items}

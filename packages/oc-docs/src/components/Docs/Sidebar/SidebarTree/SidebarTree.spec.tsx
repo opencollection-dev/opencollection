@@ -72,7 +72,7 @@ describe('SidebarTree', () => {
     expect(html).toContain('GQL');
   });
 
-  it('renders script files as monospace with a .js suffix and no method label', () => {
+  it('renders script files with a .js suffix and a JS badge (default font label)', () => {
     const script = { type: 'script', uuid: 's1', name: 'setup' } as unknown as OpenCollectionItem;
     const html = renderToStaticMarkup(
       <SidebarTree
@@ -84,7 +84,8 @@ describe('SidebarTree', () => {
       />
     );
     expect(html).toContain('setup.js');
-    expect(html).toContain('navlink-label mono');
+    expect(html).not.toContain('navlink-label mono');
+    expect(html).toContain('>JS<');
   });
 });
 
