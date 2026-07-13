@@ -1,0 +1,321 @@
+.key-value-table-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.key-value-table-container {
+  overflow: auto;
+  border-radius: 0.375rem;
+  border: 0.0625rem solid var(--oc-table-border);
+  /* Thin, auto-hidden scrollbar — revealed only while pointing at the table. */
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.key-value-table-container:hover {
+  scrollbar-color: var(--oc-scrollbar-color) transparent;
+}
+
+.key-value-table-container::-webkit-scrollbar {
+  width: 0.375rem;
+  height: 0.375rem;
+}
+
+.key-value-table-container::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 0.375rem;
+}
+
+.key-value-table-container:hover::-webkit-scrollbar-thumb {
+  background-color: var(--oc-scrollbar-color);
+}
+
+.key-value-table {
+  width: 100%;
+  /* Keep columns readable on narrow/mobile viewports; the container scrolls past this. */
+  min-width: 28rem;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 12px;
+}
+
+.key-value-table thead {
+  background-color: var(--oc-background-mantle);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  border-bottom: 0.0625rem solid var(--oc-table-border);
+}
+
+.key-value-table thead th {
+  padding: 0.5rem 0.625rem 0.4375rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--oc-table-thead-color);
+  border-bottom: 0.0625rem solid var(--oc-table-border);
+  border-right: 0.0625rem solid var(--oc-table-border);
+  user-select: none;
+}
+
+.key-value-table thead th:last-child {
+  border-right: none;
+}
+
+.key-value-table col.col-key {
+  width: calc(30% + 1.625rem);
+}
+
+.key-value-table col.col-value {
+  width: auto;
+}
+
+.key-value-table col.col-actions {
+  width: 3.75rem;
+}
+
+.key-value-table tbody tr {
+  transition: background-color 0.1s ease;
+}
+
+.key-value-table tbody tr:hover {
+  background-color: transparent;
+}
+
+.key-value-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.key-value-table tbody td {
+  padding: 0;
+  vertical-align: middle;
+  border-bottom: 0.0625rem solid var(--oc-table-border);
+  border-right: 0.0625rem solid var(--oc-table-border);
+}
+
+.key-value-table tbody td:last-child {
+  border-right: none;
+}
+
+.key-value-table .key-cell {
+  display: flex;
+  align-items: center;
+  padding-left: 0.625rem;
+}
+
+.key-value-table .checkbox-slot {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  width: 1rem;
+  height: 1rem;
+}
+
+.key-value-table .key-cell .highlight-input,
+.key-value-table .key-cell .text-readonly {
+  flex: 1;
+  min-width: 0;
+}
+
+.key-value-table .col-actions {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.key-value-table .checkbox-input {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+  width: 1rem;
+  height: 1rem;
+  border: 0.0625rem solid var(--oc-table-border);
+  border-radius: 0.1875rem;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+}
+
+.key-value-table .checkbox-input:checked {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='12'%20height='12'%20viewBox='0%200%2012%2012'%3E%3Cpath%20fill='none'%20stroke='%23fff'%20stroke-width='1.67'%20stroke-linecap='round'%20stroke-linejoin='round'%20d='M3%206.2%205%208.4%209%203.8'/%3E%3C/svg%3E");
+}
+
+.key-value-table .text-input {
+  width: 100%;
+  border: 0.0625rem solid transparent;
+  outline: none;
+  background-color: transparent;
+  color: var(--oc-table-input-color);
+  padding: 0.625rem;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+  border-radius: 0.25rem;
+  transition: all 0.15s ease;
+  font-family: inherit;
+  vertical-align: middle;
+}
+
+.key-value-table .text-input:focus {
+  outline: none;
+}
+
+.key-value-table .highlight-input {
+  position: relative;
+  width: 100%;
+}
+
+.key-value-table .highlight-input .text-input {
+  display: block;
+  position: relative;
+  color: transparent;
+  caret-color: var(--oc-table-input-color);
+}
+
+.key-value-table .highlight-input-mirror {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  white-space: pre;
+  padding: 0.625rem;
+  border: 0.0625rem solid transparent;
+  border-radius: 0.25rem;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--oc-table-input-color);
+}
+
+.key-value-table .highlight-input-mirror .variable-valid {
+  color: var(--oc-codemirror-variable-valid);
+}
+
+.key-value-table .highlight-input-mirror .variable-invalid {
+  color: var(--oc-codemirror-variable-invalid);
+}
+
+.key-value-table .highlight-input-mirror .variable-prompt {
+  color: var(--oc-codemirror-variable-prompt);
+}
+
+.highlight-input-hover {
+  position: fixed;
+  z-index: var(--z-popover, 1000);
+  pointer-events: auto;
+}
+
+.highlight-input-suggestions {
+  position: fixed;
+  z-index: var(--z-popover, 1000);
+  margin: 0;
+  padding: 0.25rem;
+  list-style: none;
+  max-height: 12.5rem;
+  overflow-y: auto;
+  background: var(--bg-primary);
+  border: 0.0625rem solid var(--border-color);
+  border-radius: var(--oc-radius);
+  box-shadow: var(--shadow-md);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  pointer-events: auto;
+}
+
+.highlight-input-suggestion {
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--oc-radius);
+  color: var(--text-primary);
+  line-height: 1.25rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.highlight-input-suggestion.is-active {
+  background: var(--brand-soft);
+  color: var(--text-primary);
+}
+
+/* Read-only key cell: matches the .text-input box model for column alignment,
+   but renders as static, non-editable text. */
+.key-value-table .text-readonly {
+  display: block;
+  width: 100%;
+  border: 1px solid transparent;
+  padding: 5px 8px;
+  font-size: 12px;
+  color: var(--text-primary);
+  font-family: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.key-value-table .text-input::placeholder {
+  color: var(--oc-colors-text-subtext0);
+  opacity: 0.6;
+}
+
+.key-value-table .value-cell {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.key-value-table .value-cell-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.key-value-table .value-cell-trailing {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding-left: 0.625rem;
+}
+
+.key-value-table .value-cell-trailing .delete-button {
+  margin-right: 1.25rem;
+}
+
+.key-value-table .delete-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: var(--oc-colors-text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.key-value-table .delete-button:hover {
+  color: var(--oc-colors-text-danger);
+  background-color: color-mix(in srgb, var(--oc-colors-text-danger) 10%, transparent);
+}
+
+.key-value-table .delete-button svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Empty row styling - slightly dimmed */
+.key-value-table tbody tr.empty-row {
+  opacity: 0.7;
+}
+
+.key-value-table tbody tr.empty-row:hover {
+  background-color: transparent;
+}
+
