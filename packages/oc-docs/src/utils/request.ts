@@ -8,7 +8,7 @@ import type {
 } from '@opencollection/types/requests/http';
 import type { Auth } from '@opencollection/types/common/auth';
 import type { Scripts } from '@opencollection/types/common/scripts';
-import type { Variable, SecretVariable, VariableValueType } from '@opencollection/types/common/variables';
+import type { Variable, SecretVariable, VariableValue, VariableValueType } from '@opencollection/types/common/variables';
 import type { Action } from '@opencollection/types/common/actions';
 import {
   getRequestAuth,
@@ -73,13 +73,23 @@ export const getDescription = (item: unknown): string | undefined => {
 export const getValueType = (entity: { name: string; value: string; type?: string }): string | undefined =>
   entity?.type || undefined;
 
+const typeOfVariableValue = (value: VariableValue | undefined): VariableValueType | undefined =>
+  typeof value === 'object' ? value.type : undefined;
+
 export const getVariableType = (variable?: Variable | SecretVariable): VariableValueType | undefined => {
   if (!variable) return undefined;
-  if ('type' in variable && variable.type) return variable.type;
-  const value = 'value' in variable ? variable.value : undefined;
-  const chosen = Array.isArray(value) ? (value.find((variant) => variant.selected) ?? value[0])?.value : value;
-  if (chosen && typeof chosen === 'object') return chosen.type;
-  return undefined;
+
+  if ('secret' in variable) return variable.type;
+
+  const { value } = variable;
+
+  if (Array.isArray(value)) {
+    if (value.length === 0) return undefined;
+    const activeVariant = value.find((variant) => variant.selected) ?? value[0];
+    return typeOfVariableValue(activeVariant.value);
+  }
+
+  return typeOfVariableValue(value);
 };
 
 export interface BodyTableRow {
