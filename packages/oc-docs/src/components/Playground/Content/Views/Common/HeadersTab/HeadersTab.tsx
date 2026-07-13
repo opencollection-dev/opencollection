@@ -1,10 +1,11 @@
 import React, { useCallback, useState } from 'react';
-import KeyValueTable, { type KeyValueRow } from '../../../../../../ui/KeyValueTable/KeyValueTable';
+import KeyValueTable, { type KeyValueRow } from '../../../../../../components/KeyValueTable/KeyValueTable';
+import { STANDARD_HTTP_HEADERS, MIME_TYPES } from '../../../../../../constants/httpHeaders';
 import BulkEdit from '../BulkEdit/BulkEdit';
 import { StyledWrapper } from './StyledWrapper';
 
 interface HeadersTabProps {
-  headers: Array<{ name?: string; value?: string; disabled?: boolean }>;
+  headers: Array<{ name?: string; value?: string; disabled?: boolean; description?: unknown }>;
   onHeadersChange: (headers: KeyValueRow[]) => void;
   title?: string;
   description?: string;
@@ -16,7 +17,8 @@ const HeadersDisplay: React.FC<Omit<HeadersTabProps, 'title' | 'description'>> =
     id: `header-${index}`,
     name: header.name || '',
     value: header.value || '',
-    enabled: !header.disabled
+    enabled: !header.disabled,
+    description: header.description
   }));
 
   const toggleBulkEditView = useCallback(() => {
@@ -32,6 +34,9 @@ const HeadersDisplay: React.FC<Omit<HeadersTabProps, 'title' | 'description'>> =
           keyPlaceholder="Name"
           valuePlaceholder="Value"
           showEnabled={true}
+          inlineActions={true}
+          keyAutocomplete={STANDARD_HTTP_HEADERS}
+          valueAutocomplete={MIME_TYPES}
         />
       ) : (
         <BulkEdit data={headersData} onChange={onHeadersChange} idPrefix="header" />

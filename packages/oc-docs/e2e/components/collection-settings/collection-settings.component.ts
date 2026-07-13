@@ -7,7 +7,7 @@ export class CollectionSettingsComponent extends BaseComponent {
   readonly overviewMarkdown = this.view.getByTestId('overview-markdown-documentation');
   readonly overviewEmpty = this.view.getByTestId('overview-empty');
   readonly bulkEditToggle = this.view.getByTestId('bulk-edit-toggle');
-  readonly varsTable = this.view.getByTestId('key-value-table');
+  readonly varsTable = this.view.getByTestId('key-value-table').first();
   readonly authMode = this.view.getByTestId('auth-mode-select');
 
   tab(id: string): Locator {

@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import type { Folder } from '@opencollection/types/collection/item';
 import type { OpenCollection } from '@opencollection/types';
 import Tabs from '../../../../../ui/Tabs/Tabs';
-import { type KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
+import { type KeyValueRow } from '../../../../../components/KeyValueTable/KeyValueTable';
+import { rowToVariable } from '../../../../../utils/variableDataType';
 import HeadersTab from '../Common/HeadersTab/HeadersTab';
 import VariablesTab from '../Common/VariablesTab/VariablesTab';
 import AuthTab from '../Common/AuthTab';
@@ -52,17 +53,11 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({ folder, onFolderChange 
   };
 
   const handleVariablesChange = (variables: KeyValueRow[]) => {
-    const updatedVariables = variables.map((v) => ({
-      name: v.name,
-      value: v.value,
-      disabled: !v.enabled
-    }));
-
     const updatedFolder = {
       ...folder,
       request: {
         ...folder.request,
-        variables: updatedVariables
+        variables: variables.map(rowToVariable)
       }
     };
 

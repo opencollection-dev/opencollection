@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import type { OpenCollection } from '@opencollection/types';
 import type { VariableValue, VariableValueOrVariants } from '@opencollection/types/common/variables';
+import type { Action, ActionSetVariable } from '@opencollection/types/common/actions';
 import Tabs from '../../../../../ui/Tabs/Tabs';
-import { type KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
+import { type KeyValueRow } from '../../../../../components/KeyValueTable/KeyValueTable';
 import HeadersTab from '../Common/HeadersTab/HeadersTab';
 import VariablesTab from '../Common/VariablesTab/VariablesTab';
 import AuthTab from '../Common/AuthTab';
@@ -13,6 +14,10 @@ import { useAppDispatch } from '../../../../../store/hooks';
 import { updateCollectionSettings } from '@slices/playground';
 import { countEnabled, getItemDocs, scriptsArrayToObject, scriptsObjectToArray } from '../../../../../utils/schemaHelpers';
 import { unwrapVariableValue } from '../../../../../utils/variableResolution';
+import { StyledWrapper } from './StyledWrapper';
+
+const isAfterResponseSetVariable = (action: Action): action is ActionSetVariable =>
+  action.type === 'set-variable' && action.phase === 'after-response';
 
 interface CollectionSettingsProps {
   collection: OpenCollection;
@@ -46,7 +51,8 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
         ...(originalByName.get(row.name) ?? {}),
         name: row.name,
         value: row.value,
-        disabled: !row.enabled
+        disabled: !row.enabled,
+        ...(row.description !== undefined ? { description: row.description } : {})
       }))
     });
   };
@@ -71,6 +77,19 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
     updateRequest({ ...collection.request, variables: rows.map(reconcileVariable) });
   };
 
+  const handlePostResponseVarsChange = (rows: KeyValueRow[]) => {
+    const otherActions = (collection.request?.actions ?? []).filter((action) => !isAfterResponseSetVariable(action));
+    const postActions: ActionSetVariable[] = rows.map((row) => ({
+      type: 'set-variable',
+      phase: 'after-response',
+      selector: { expression: row.value, method: 'jsonq' },
+      variable: { name: row.name, scope: row.scope || 'runtime' },
+      disabled: !row.enabled,
+      ...(row.description !== undefined ? { description: row.description } : {})
+    }));
+    updateRequest({ ...collection.request, actions: [...otherActions, ...postActions] });
+  };
+
   const handleScriptChange = (scriptType: 'preRequest' | 'postResponse' | 'tests', value: string) => {
     const updatedScripts = { ...scriptsArrayToObject(collection.request?.scripts), [scriptType]: value };
     updateRequest({ ...collection.request, scripts: scriptsObjectToArray(updatedScripts) });
@@ -87,6 +106,15 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
 
   const headers = collection.request?.headers ?? [];
   const variables = collection.request?.variables ?? [];
+  const postResponseVars = (collection.request?.actions ?? [])
+    .filter(isAfterResponseSetVariable)
+    .map((action) => ({
+      name: action.variable?.name,
+      expr: action.selector?.expression,
+      disabled: action.disabled,
+      scope: action.variable?.scope,
+      description: action.description
+    }));
   const scripts = scriptsArrayToObject(collection.request?.scripts);
   const version = collection.info?.version;
 
@@ -107,7 +135,7 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
           headers={headers}
           onHeadersChange={handleHeadersChange}
           title=""
-          description="Request headers sent with every request in this collection."
+          description="Add request headers that will be sent with every request in this collection."
         />
       )
     },
@@ -119,8 +147,10 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
         <VariablesTab
           variables={variables}
           onVariablesChange={handleVariablesChange}
+          postResponseVars={postResponseVars}
+          onPostResponseVarsChange={handlePostResponseVarsChange}
+          exprHelp="You can write any valid JS Template Literal here"
           title=""
-          description="Variables available to every request in this collection."
         />
       )
     },
@@ -134,7 +164,7 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
           onItemChange={handleCollectionChange}
           item={collection}
           title=""
-          description="Default authentication for this collection. Applies to any request using the Inherit option in its Auth tab."
+          description="Configures authentication for the entire collection. This applies to all requests using the Inherit option in the Auth tab."
           showInherit={false}
           showFullAuth={true}
         />
@@ -149,7 +179,7 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
           scripts={scripts}
           onScriptChange={handleScriptChange}
           title=""
-          description="Pre and post-request scripts that run before and after every request in this collection is sent."
+          description="Write pre and post-request scripts that will run before and after any request in this collection is sent."
           showTests={false}
         />
       )
@@ -161,38 +191,33 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
         <TestsTab
           scripts={scripts}
           onScriptChange={handleScriptChange}
-          title=""
-          description="These tests run any time a request in this collection is sent."
+          description="These tests will run any time a request in this collection is sent."
         />
       )
     }
   ];
 
   return (
-    <div className="h-full flex flex-col px-5 mt-5">
-      <div className="flex items-baseline gap-2">
-        <h2 className="text-lg font-semibold leading-tight" style={{ color: 'var(--text-primary)' }}>
+    <StyledWrapper>
+      <div className="collection-settings-header">
+        <h2 className="collection-settings-title">
           {collection.info?.name || 'Collection Settings'}
         </h2>
-        {version && (
-          <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
-            Version {version}
-          </span>
-        )}
+        {version && <span className="collection-settings-version">Version {version}</span>}
       </div>
 
-      <div className="flex-1 overflow-hidden mt-4">
+      <div className="collection-settings-tabs">
         <Tabs
           tabs={tabs.map((tab) => ({
             ...tab,
-            content: <div className="py-3">{tab.content}</div>
+            content: <div className="collection-settings-tab-content">{tab.content}</div>
           }))}
           activeTab={activeTab}
           onTabChange={setActiveTab}
           testId="collection-settings-tabs"
         />
       </div>
-    </div>
+    </StyledWrapper>
   );
 };
 

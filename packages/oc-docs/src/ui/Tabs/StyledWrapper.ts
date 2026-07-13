@@ -67,7 +67,6 @@ export const StyledWrapper = styled.div`
   .tab-count {
     margin-left: 0.1875rem;
     font-size: 0.625rem;
-    font-weight: 500;
     line-height: 1;
     letter-spacing: 0;
     color: var(--text-secondary);
@@ -77,30 +76,34 @@ export const StyledWrapper = styled.div`
     gap: 0.5rem;
 
     .tab {
-      padding: 0.5rem 1rem;
-      margin-right: 0;
+      padding: 0.6rem 0.75rem;
       border: none;
       border-bottom: none;
       border-radius: var(--oc-radius);
       background: transparent;
-      color: var(--oc-tabs-color);
+      color: var(--text-muted);
+      font-size: 0.8125rem;
+      font-weight: 400;
+      line-height: 1;
 
-      /* No sliding underline in the button variant. */
       &::after {
         display: none;
       }
 
       &:hover:not(.is-active):not(.disabled) {
-        background: var(--oc-background-surface1);
         color: var(--text-primary);
       }
 
       &.is-active {
-        background: var(--oc-background-surface2);
+        background: var(--oc-background-surface0);
         color: var(--text-primary);
-        border-bottom-color: transparent;
+        font-weight: 600;
       }
     }
+  }
+
+  &.tabs-variant-button .tab-panel {
+    margin-top: 0.75rem;
   }
 
   .tabs-right {

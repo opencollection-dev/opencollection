@@ -1,41 +1,152 @@
 import React from 'react';
-import KeyValueTable, { type KeyValueRow } from '../../../../../../ui/KeyValueTable/KeyValueTable';
-import { unwrapVariableValue } from '../../../../../../utils/variableResolution';
+import type { Variable } from '@opencollection/types/common/variables';
+import KeyValueTable, { type KeyValueRow } from '../../../../../../components/KeyValueTable/KeyValueTable';
+import { Tooltip } from '../../../../../../ui/Tooltip/Tooltip';
+import { InfoTip } from '../../../../../../components/InfoTip/InfoTip';
+import { unwrapVariableTyped } from '../../../../../../utils/variableResolution';
+import {
+  VARIABLE_DATA_TYPES,
+  parseValueByDataType,
+  validateDataTypeValue,
+  type VariableDataType
+} from '../../../../../../utils/variableDataType';
+import { CaretIcon, WarningIcon } from '../../../../../../assets/icons';
 import { StyledWrapper } from './StyledWrapper';
 
+export interface PostResponseVar {
+  name?: string;
+  expr?: string;
+  disabled?: boolean;
+  scope?: string;
+  description?: unknown;
+}
+
 interface VariablesTabProps {
-  variables: Array<{ name?: string; value?: any; disabled?: boolean }>;
-  onVariablesChange: (variables: KeyValueRow[]) => void;
+  variables: Array<Variable | { name?: string; value?: unknown; disabled?: boolean }>;
+  onVariablesChange: (rows: KeyValueRow[]) => void;
+  postResponseVars?: PostResponseVar[];
+  onPostResponseVarsChange?: (rows: KeyValueRow[]) => void;
+  exprHelp?: string;
   title?: string;
   description?: string;
 }
 
+const toDataType = (dataType?: string): VariableDataType =>
+  dataType && (VARIABLE_DATA_TYPES as string[]).includes(dataType) ? (dataType as VariableDataType) : 'string';
+
+
 export const VariablesTab: React.FC<VariablesTabProps> = ({
   variables,
   onVariablesChange,
-  title = 'Variables',
+  postResponseVars,
+  onPostResponseVarsChange,
+  exprHelp = 'You can write any valid JS expression here',
+  title,
   description
 }) => {
-  const variablesData: KeyValueRow[] = (variables || []).map((variable, index) => ({
-    id: `variable-${index}`,
+  const preRequestRows: KeyValueRow[] = (variables || []).map((variable, index) => {
+    const { value, dataType } = unwrapVariableTyped((variable as Variable).value);
+    return {
+      id: `var-${index}`,
+      name: variable.name || '',
+      value,
+      enabled: !variable.disabled,
+      dataType: toDataType(dataType),
+      description: (variable as Variable).description,
+      originalValue: (variable as Variable).value
+    };
+  });
+
+  const postResponseRows: KeyValueRow[] = (postResponseVars || []).map((variable, index) => ({
+    id: `post-var-${index}`,
     name: variable.name || '',
-    value: unwrapVariableValue(variable.value),
-    enabled: !variable.disabled
+    value: variable.expr || '',
+    enabled: !variable.disabled,
+    scope: variable.scope,
+    description: variable.description
   }));
+
+  const typeColumn = {
+    key: 'datatype',
+    label: '',
+    render: (row: KeyValueRow, _index: number, updateField: (field: string, value: unknown) => void) => {
+      const dataType = toDataType(row.dataType);
+      const warning = validateDataTypeValue(parseValueByDataType(row.value, dataType), dataType);
+      return (
+        <div className="var-type">
+          {warning && (
+            <Tooltip content={warning}>
+              <span className="var-type-warning" role="img" aria-label={warning}>
+                <WarningIcon />
+              </span>
+            </Tooltip>
+          )}
+          <span className="var-type-control">
+            <span className="var-type-label" aria-hidden="true">
+              {dataType}
+            </span>
+            <span className="var-type-caret" aria-hidden="true">
+              <CaretIcon />
+            </span>
+            <select
+              className="var-type-select"
+              value={dataType}
+              aria-label="Variable data type"
+              onChange={(event) => updateField('dataType', event.target.value)}
+            >
+              {VARIABLE_DATA_TYPES.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+          </span>
+        </div>
+      );
+    }
+  };
 
   return (
     <StyledWrapper className="space-y-3">
-      <div className="flex items-center justify-between mb-2">
-        {Boolean(title) && <span className="title text-sm font-semibold">{title}</span>}
-        {Boolean(description) && <span className="description text-xs leading-tight">{description}</span>}
-      </div>
-      <KeyValueTable
-        data={variablesData}
-        onChange={onVariablesChange}
-        keyPlaceholder="Name"
-        valuePlaceholder="Value"
-        showEnabled={true}
-      />
+      {Boolean(title) && (
+        <div className="flex items-center justify-between mb-2">
+          <span className="title text-sm font-semibold">{title}</span>
+          {Boolean(description) && <span className="description text-xs leading-tight">{description}</span>}
+        </div>
+      )}
+
+      <section className="vars-section">
+        <h3 className="vars-section-title">Pre Request</h3>
+        <KeyValueTable
+          data={preRequestRows}
+          onChange={onVariablesChange}
+          keyPlaceholder="Name"
+          valuePlaceholder="Value"
+          showEnabled={true}
+          inlineActions={true}
+          additionalColumns={[typeColumn]}
+        />
+      </section>
+
+      {onPostResponseVarsChange && (
+        <section className="vars-section">
+          <h3 className="vars-section-title">Post Response</h3>
+          <KeyValueTable
+            data={postResponseRows}
+            onChange={onPostResponseVarsChange}
+            keyPlaceholder="Name"
+            valuePlaceholder="Expr"
+            valueHeader={
+              <span className="expr-header">
+                Expr
+                <InfoTip content={exprHelp} testId="post-response-expr-help" />
+              </span>
+            }
+            showEnabled={true}
+            inlineActions={true}
+          />
+        </section>
+      )}
     </StyledWrapper>
   );
 };

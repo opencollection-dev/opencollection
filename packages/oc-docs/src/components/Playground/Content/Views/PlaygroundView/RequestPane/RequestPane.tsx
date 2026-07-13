@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { Assertion } from '@opencollection/types/common/assertions';
 import Tabs from '../../../../../../ui/Tabs/Tabs';
-import { KeyValueRow } from '../../../../../../ui/KeyValueTable/KeyValueTable';
+import { KeyValueRow } from '../../../../../../components/KeyValueTable/KeyValueTable';
+import { rowToVariable } from '../../../../../../utils/variableDataType';
 import HeadersTab from '../../Common/HeadersTab/HeadersTab';
 import ParamsTab from '../../Common/ParamsTab';
 import BodyTab from '../../Common/BodyTab';
@@ -89,17 +90,12 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
   };
 
   const handleRequestVariablesChange = (variables: KeyValueRow[]) => {
-    const updatedVariables = variables.map(v => ({
-      name: v.name,
-      value: v.value,
-      disabled: !v.enabled
-    }));
-    onItemChange({ 
-      ...item, 
-      runtime: { 
-        ...item.runtime, 
-        variables: updatedVariables 
-      } 
+    onItemChange({
+      ...item,
+      runtime: {
+        ...item.runtime,
+        variables: variables.map(rowToVariable)
+      }
     });
   };
 

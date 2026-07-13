@@ -14,16 +14,10 @@ interface TestsTabProps {
 export const TestsTab: React.FC<TestsTabProps> = ({ scripts, onScriptChange, title, description }) => {
   return (
     <StyledWrapper className="space-y-3">
-      {Boolean(title) && (
-        <h4 className="title text-sm font-semibold mb-2">
-          {title}
-        </h4>
-      )}
-      {description && (
-        <div className="mb-4">
-          <span className="description text-xs leading-tight">
-            {description}
-          </span>
+      {(Boolean(title) || Boolean(description)) && (
+        <div className="flex items-center justify-between mb-4">
+          {Boolean(title) && <span className="title text-sm font-semibold">{title}</span>}
+          {description && <span className="description text-xs leading-tight">{description}</span>}
         </div>
       )}
       <CodeEditor
@@ -31,6 +25,7 @@ export const TestsTab: React.FC<TestsTabProps> = ({ scripts, onScriptChange, tit
         onChange={(value) => onScriptChange('tests', value)}
         language="javascript"
         height="400px"
+        hintsFor={['req', 'res', 'bru']}
       />
     </StyledWrapper>
   );
