@@ -51,6 +51,7 @@ export const StyledWrapper = styled.div`
   }
   .tab.is-active {
     color: var(--oc-tabs-active-color);
+    font-weight: 600;
   }
   .tab.is-active::after {
     transform: scaleX(1);
@@ -99,6 +100,7 @@ export const StyledWrapper = styled.div`
         background: var(--oc-background-surface2);
         color: var(--text-primary);
         border-bottom-color: transparent;
+        font-weight: 600;
       }
     }
   }

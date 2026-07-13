@@ -35,28 +35,24 @@ export const ScriptsTab: React.FC<ScriptsTabProps> = ({
       id: 'pre-request',
       label: 'Pre request',
       content: (
-        <div className="mt-3">
           <CodeEditor
             value={scripts.preRequest || ''}
             onChange={(value: string) => onScriptChange('preRequest', value)}
             language="javascript"
             height="300px"
           />
-        </div>
       )
     },
     {
       id: 'post-response',
       label: 'Post response',
       content: (
-        <div className="mt-3">
           <CodeEditor
             value={scripts.postResponse || ''}
             onChange={(value: string) => onScriptChange('postResponse', value)}
             language="javascript"
             height="300px"
           />
-        </div>
       )
     }
   ];
