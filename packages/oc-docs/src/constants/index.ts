@@ -1,5 +1,3 @@
-// Barrel for app-wide constants. Import everything from here (`../constants`),
-// not from the individual modules, so call sites have a single source.
 
 export { ADDITIONAL_PARAM_GROUPS, AUTH_MODE_LABELS, AUTH_TYPES, type AuthType } from './auth';
 
@@ -14,3 +12,5 @@ export {
 export { TEMPLATE_VARIABLE_BODY_PATTERN, TEMPLATE_VARIABLE_SOURCE_PATTERN } from './regex';
 
 export { TYPE_LABELS, MANAGER_LABELS } from './environment';
+
+export { SCOPE_LABELS, INVALID_NAME_WARNING, SECRET_MASK } from './variable';

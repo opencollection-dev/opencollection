@@ -199,7 +199,9 @@ describe('ExampleCard', () => {
       />
     );
     expect(html).toContain('>PATCH<');
-    expect(html).toContain('{{host}}/users/1');
+    expect(html).toContain('data-var-name="host"');
+    expect(html).toContain('/users/1');
+    expect(html).not.toContain('/parent');
   });
 
   it("falls back to the parent method when the example request omits one", () => {

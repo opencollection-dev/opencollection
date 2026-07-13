@@ -1,39 +1,33 @@
 import React, { useMemo } from 'react';
 import { isTemplateVariable, templateVariableSplitRegex } from '../../utils/common';
-import { useResolvedVariables } from '../../hooks';
-import { StyledWrapper } from './StyledWrapper';
+import { VariableToken } from './VariableToken/VariableToken';
 
 interface VariableTextProps {
   value: string;
   className?: string;
 }
 
-/**
- * Renders a string that may contain `{{var}}` tokens. Show-variables off: tokens
- * are shown verbatim and highlighted. On: tokens resolve against the active
- * environment; anything still unresolved (unknown or secret variables) stays
- * highlighted as a token, so a secret is never printed as plaintext.
- */
+type TextPart = { kind: 'token'; token: string } | { kind: 'text'; text: string };
+
 export const VariableText: React.FC<VariableTextProps> = ({ value, className }) => {
-  const { showVars, resolve } = useResolvedVariables();
-  const parts = useMemo(() => {
+  const parts = useMemo<TextPart[]>(() => {
     const source = value ?? '';
-    const display = showVars ? resolve(source) : source;
-    return display.split(templateVariableSplitRegex()).filter((part) => part !== '');
-  }, [value, showVars, resolve]);
+    return source
+      .split(templateVariableSplitRegex())
+      .filter((part) => part !== '')
+      .map((part) => (isTemplateVariable(part) ? { kind: 'token', token: part } : { kind: 'text', text: part }));
+  }, [value]);
 
   return (
-    <StyledWrapper className={['var-text', className].filter(Boolean).join(' ')}>
+    <span className={['var-text', className].filter(Boolean).join(' ')}>
       {parts.map((part, index) =>
-        isTemplateVariable(part) ? (
-          <span key={index} className="var">
-            {part}
-          </span>
+        part.kind === 'token' ? (
+          <VariableToken key={index} token={part.token} />
         ) : (
-          <React.Fragment key={index}>{part}</React.Fragment>
+          <React.Fragment key={index}>{part.text}</React.Fragment>
         )
       )}
-    </StyledWrapper>
+    </span>
   );
 };
 
