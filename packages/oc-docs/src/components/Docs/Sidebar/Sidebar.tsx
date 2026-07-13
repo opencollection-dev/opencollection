@@ -58,6 +58,28 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
     onNavigate?.();
   };
 
+  // Reveal the scrollbar thumb only while the list is active (mousemove/scroll),
+  // then hide it 1s after activity stops. Toggled via classList so pointer noise
+  // never triggers a re-render.
+  const itemsRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = itemsRef.current;
+    if (!el) return;
+    let timer: ReturnType<typeof setTimeout>;
+    const show = () => {
+      el.classList.add('scrolling');
+      clearTimeout(timer);
+      timer = setTimeout(() => el.classList.remove('scrolling'), 1000);
+    };
+    el.addEventListener('mousemove', show);
+    el.addEventListener('scroll', show, { passive: true });
+    return () => {
+      clearTimeout(timer);
+      el.removeEventListener('mousemove', show);
+      el.removeEventListener('scroll', show);
+    };
+  }, []);
+
   const autoRevealedSlug = useRef<string | null>(null);
   useEffect(() => {
     if (autoRevealedSlug.current === activeSlug) return;
@@ -80,10 +102,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
     if (uuids.length) dispatch(expandFolders(uuids));
   }, [activeSlug, model, dispatch]);
 
-  const hasEnvironments = Boolean(
-    (collection as { config?: { environments?: unknown[] } })?.config?.environments?.length
-  );
-
   return (
     <StyledWrapper className="sidebar" data-testid={testId}>
       <div className="sidebar-top-links">
@@ -94,20 +112,20 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
           testId="sidebar-overview"
           onClick={() => goTo(OVERVIEW_SLUG)}
         />
-        {hasEnvironments && (
-          <SidebarNavLink
-            label="Environments"
-            icon={<GlobeIcon />}
-            active={activeSlug === ENVIRONMENTS_SLUG}
-            testId="sidebar-environments"
-            onClick={() => goTo(ENVIRONMENTS_SLUG)}
-          />
-        )}
+        {/* Always shown, like Overview: with no environments the page renders
+            an empty state, so the section must stay reachable from the sidebar. */}
+        <SidebarNavLink
+          label="Environments"
+          icon={<GlobeIcon />}
+          active={activeSlug === ENVIRONMENTS_SLUG}
+          testId="sidebar-environments"
+          onClick={() => goTo(ENVIRONMENTS_SLUG)}
+        />
       </div>
 
       <div className="sidebar-divider" />
 
-      <div className="sidebar-items">
+      <div className="sidebar-items" ref={itemsRef}>
         {collection?.items?.length ? (
           <SidebarTree
             items={collection.items}

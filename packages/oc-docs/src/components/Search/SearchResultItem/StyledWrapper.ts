@@ -10,7 +10,7 @@ export const StyledWrapper = styled.button`
   text-align: left;
   background: transparent;
   border: 0;
-  border-radius: 7px;
+  border-radius: var(--oc-radius);
   font-family: var(--font-sans);
 
   &[data-active='true'] {

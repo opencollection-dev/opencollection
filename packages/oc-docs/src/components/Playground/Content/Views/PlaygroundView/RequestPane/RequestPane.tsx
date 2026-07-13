@@ -132,6 +132,7 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
     <HeadersTab
       headers={headers}
       onHeadersChange={handleHeadersChange}
+      title="Headers"
     />
   );
 
@@ -149,6 +150,7 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
       onAuthChange={() => {}} // Not used for full auth
       onItemChange={onItemChange}
       item={item}
+      title="Authentication"
       showFullAuth={true}
     />
   );
@@ -157,6 +159,7 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
     <ScriptsTab
       scripts={scriptsObj}
       onScriptChange={handleScriptChange}
+      title="Scripts"
       showTests={false}
     />
   );

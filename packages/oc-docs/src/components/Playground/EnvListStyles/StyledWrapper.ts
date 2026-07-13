@@ -25,7 +25,7 @@ export const SidebarContainer = styled.div`
 
   & .logo {
     padding: 0 8px 12px 8px;
-    border-bottom: 1px solid var(--oc-border-border1);
+    border-bottom: 1px solid var(--oc-border-border0);
     margin-bottom: 6px;
   }
 
@@ -85,7 +85,7 @@ export const SidebarItem = styled.div`
   & .method-badge {
     font-size: 10px;
     padding: 3px 6px;
-    border-radius: 4px;
+    border-radius: var(--oc-radius);
     font-weight: 600;
     min-width: 42px;
     text-align: center;

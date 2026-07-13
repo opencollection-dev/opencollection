@@ -5,7 +5,7 @@ export const StyledWrapper = styled.section`
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    margin-bottom: 0.75rem;
+    margin-bottom: 1.25rem;
   }
   .section-head .section-head-label {
     margin-bottom: 0;

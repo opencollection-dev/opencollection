@@ -81,7 +81,7 @@ export const StyledWrapper = styled.div`
       margin-right: 0;
       border: none;
       border-bottom: none;
-      border-radius: 0.5rem;
+      border-radius: var(--oc-radius);
       background: transparent;
       color: var(--oc-tabs-color);
 

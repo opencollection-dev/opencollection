@@ -8,17 +8,23 @@ export const StyledWrapper = styled.div`
   background-color: var(--oc-background-base);
   color: var(--oc-sidebar-color);
 
-  ::-webkit-scrollbar {
+  /* Clean thin scrollbar: transparent track (no background column) and no border
+     (no divider line beside it). The thumb is hidden by default and shown while
+     the list is active (.scrolling class, cleared 1s after activity stops). */
+  .sidebar-items::-webkit-scrollbar {
     width: 6px;
   }
-  ::-webkit-scrollbar-track {
+  .sidebar-items::-webkit-scrollbar-track {
     background: transparent;
+    border: none;
   }
-  ::-webkit-scrollbar-thumb {
+  .sidebar-items::-webkit-scrollbar-thumb {
     background-color: transparent;
+    border: none;
     border-radius: 20px;
+    transition: background-color 0.4s ease;
   }
-  &:hover ::-webkit-scrollbar-thumb {
+  .sidebar-items.scrolling::-webkit-scrollbar-thumb {
     background-color: var(--oc-scrollbar-color);
   }
 
