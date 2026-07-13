@@ -26,7 +26,7 @@ export const StyledWrapper = styled.div`
     color: var(--oc-colors-text-subtext1);
     background: transparent;
     border: 1px solid var(--oc-border-border2);
-    border-radius: 6px;
+    border-radius: var(--oc-radius);
     transition: border-color 0.12s ease, color 0.12s ease;
   }
 

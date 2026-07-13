@@ -7,8 +7,8 @@ export const StyledWrapper = styled.div`
   .test-head {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 11px 16px;
+    gap: 0.75rem;
+    padding: 0.6875rem 1rem;
     cursor: pointer;
   }
   .test-name {

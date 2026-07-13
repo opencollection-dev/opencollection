@@ -25,7 +25,7 @@ export const StyledWrapper = styled.div`
     height: 28px;
     justify-content: space-between;
     padding: 5px 8px;
-    border-radius: 6px;
+    border-radius: var(--oc-radius);
   }
 
   .controls .env-switcher-trigger-name {
@@ -37,7 +37,7 @@ export const StyledWrapper = styled.div`
     width: 28px;
     height: 28px;
     border: 1px solid var(--oc-border-border2);
-    border-radius: 6px;
+    border-radius: var(--oc-radius);
     color: var(--text-secondary);
   }
 

@@ -11,6 +11,7 @@ config:
       variables:
         - name: "host"
           value: "http://localhost:8081"
+          description: "Base URL for local testing"
         - name: "bearer_auth_token"
           secret: true
           type: "string"
@@ -35,9 +36,11 @@ request:
   headers:
     - name: "collection-header"
       value: "collection-header-value"
+      description: "Base URL for local testing"
   variables:
     - name: "collection_pre_var"
       value: "collection_pre_var_value"
+      description: "A pre-request variable for the collection"
     - name: "collection-var"
       value: "collection-var-value"
   auth:

@@ -27,7 +27,7 @@ export const StyledWrapper = styled.div`
     max-height: 88vh;
     background: var(--oc-background-base);
     border: 1px solid var(--border-color);
-    border-radius: 0.75rem;
+    border-radius: var(--oc-radius);
     box-shadow: var(--shadow-md);
     overflow: hidden;
     outline: none;

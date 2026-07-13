@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
 export const StyledWrapper = styled.div`
-  .script-row--marker {
-    border-top: 1px solid var(--oc-border-border0);
+  .script-row:not(:last-child) {
+    border-bottom: 1px solid var(--oc-border-border0);
   }
 
   .script-line {
@@ -10,7 +10,7 @@ export const StyledWrapper = styled.div`
     grid-template-columns: 1.25rem 0.875rem minmax(0, 1fr) auto;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.75rem 1rem;
+    padding: 0.5rem;
   }
   .step-num {
     justify-self: end;

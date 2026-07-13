@@ -16,7 +16,7 @@ export const StyledWrapper = styled.span`
   color: var(--oc-brand);
   background: var(--oc-background-base);
   border: 1px solid var(--oc-brand);
-  border-radius: var(--oc-border-radius-base);
+  border-radius: var(--oc-radius);
   transition: background-color 0.12s ease, opacity 0.12s ease;
 
   svg {
