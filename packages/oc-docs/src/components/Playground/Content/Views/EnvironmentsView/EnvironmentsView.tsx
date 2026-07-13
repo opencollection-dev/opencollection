@@ -5,7 +5,7 @@ import type { Variable, VariableValueType } from '@opencollection/types/common/v
 import KeyValueTable, { KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
 import Tabs from '../../../../../ui/Tabs/Tabs';
 import { EmptyState } from '../../../../../ui/EmptyState/EmptyState';
-import { EnvView, EnvMessage, EnvPills, EnvPill, EnvTabsArea } from './StyledWrapper';
+import { StyledWrapper } from './StyledWrapper';
 import { EnvironmentLabel } from '../../../../EnvironmentLabel/EnvironmentLabel';
 import EnvVarCards from './EnvVarCards';
 import { GlobeIcon } from '../../../../../assets/icons';
@@ -135,9 +135,11 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection, compact
 
   if (environments.length === 0) {
     return (
-      <EnvMessage>
-        <p>No environments found in this collection</p>
-      </EnvMessage>
+      <StyledWrapper>
+        <div className="env-message">
+          <p>No environments found in this collection</p>
+        </div>
+      </StyledWrapper>
     );
   }
 
@@ -192,33 +194,35 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection, compact
   }));
 
   return (
-    <EnvView>
+    <StyledWrapper>
       <div className="env-header">
         <h2 className="env-title">Environments</h2>
       </div>
 
-      <EnvPills>
+      <div className="env-pills">
         {environments.map((env: Environment, index: number) => (
-          <EnvPill
+          <button
             key={index}
-            className={selectedEnvironmentIndex === index ? 'active' : ''}
+            type="button"
+            className={`env-pill${selectedEnvironmentIndex === index ? ' active' : ''}`}
+            data-testid={`env-pill-${env.name || index}`}
             onClick={() => setSelectedEnvironmentIndex(index)}
           >
             <EnvironmentLabel name={env.name || `Environment ${index + 1}`} color={env.color} />
-          </EnvPill>
+          </button>
         ))}
-      </EnvPills>
+      </div>
 
-      <EnvTabsArea>
+      <div className="env-tabs-area">
         {selectedEnvironment ? (
           <Tabs defaultActiveTab="variables" tabs={tabs} />
         ) : (
-          <EnvMessage>
+          <div className="env-message">
             <p>Select an environment to view its variables</p>
-          </EnvMessage>
+          </div>
         )}
-      </EnvTabsArea>
-    </EnvView>
+      </div>
+    </StyledWrapper>
   );
 };
 

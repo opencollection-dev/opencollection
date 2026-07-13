@@ -2,7 +2,6 @@ import React from 'react';
 import { KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
 import { SecretValue } from '../../../../../ui/SecretValue/SecretValue';
 import { TrashIcon } from '../../../../../assets/icons';
-import { EnvCardList, EnvCard } from './StyledWrapper';
 
 interface EnvVarCardsProps {
   rows: KeyValueRow[];
@@ -16,9 +15,9 @@ const EnvVarCards: React.FC<EnvVarCardsProps> = ({ rows, onChange }) => {
   const remove = (index: number) => onChange(rows.filter((_, i) => i !== index));
 
   return (
-    <EnvCardList>
+    <div className="env-card-list">
       {rows.map((row, index) => (
-        <EnvCard key={row.id} className={row.enabled ? '' : 'disabled'}>
+        <div key={row.id} className={`env-card${row.enabled ? '' : ' disabled'}`}>
           <input
             type="checkbox"
             className="enabled"
@@ -28,6 +27,7 @@ const EnvVarCards: React.FC<EnvVarCardsProps> = ({ rows, onChange }) => {
           <div className="body">
             <input
               className="name"
+              data-testid={`env-var-name-${index}`}
               value={row.name}
               onChange={(e) => update(index, { name: e.target.value })}
             />
@@ -37,6 +37,7 @@ const EnvVarCards: React.FC<EnvVarCardsProps> = ({ rows, onChange }) => {
               ) : (
                 <input
                   className="value-input"
+                  data-testid={`env-var-value-${index}`}
                   value={row.value}
                   onChange={(e) => update(index, { value: e.target.value })}
                 />
@@ -53,9 +54,9 @@ const EnvVarCards: React.FC<EnvVarCardsProps> = ({ rows, onChange }) => {
           >
             <TrashIcon />
           </button>
-        </EnvCard>
+        </div>
       ))}
-    </EnvCardList>
+    </div>
   );
 };
 
