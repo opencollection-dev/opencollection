@@ -3,8 +3,6 @@ import { StyledWrapper } from './StyledWrapper';
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
-  fallback?: React.ReactNode;
-  testId?: string;
 }
 
 interface ErrorBoundaryState {
@@ -31,9 +29,8 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
 
   render(): React.ReactNode {
     if (!this.state.hasError) return this.props.children;
-    if (this.props.fallback !== undefined) return this.props.fallback;
     return (
-      <StyledWrapper data-testid={this.props.testId} role="alert">
+      <StyledWrapper role="alert">
         <p className="error-title">Something went wrong displaying this view.</p>
         <button type="button" className="error-retry" onClick={this.reset}>
           Try again

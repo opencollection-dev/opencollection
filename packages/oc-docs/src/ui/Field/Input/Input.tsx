@@ -6,41 +6,31 @@ interface InputProps {
   value: string;
   onChange: (value: string) => void;
   id?: string;
-  type?: string;
   secret?: boolean;
   placeholder?: string;
   testId?: string;
-  ariaLabel?: string;
-  disabled?: boolean;
-  className?: string;
 }
 
 export const Input: React.FC<InputProps> = ({
   value,
   onChange,
   id,
-  type = 'text',
   secret = false,
   placeholder,
-  testId,
-  ariaLabel,
-  disabled = false,
-  className
+  testId
 }) => {
   const [revealed, setRevealed] = useState(false);
-  const resolvedType = secret ? (revealed ? 'text' : 'password') : type;
+  const resolvedType = secret ? (revealed ? 'text' : 'password') : 'text';
 
   return (
-    <StyledWrapper className={['oc-input-wrapper', secret && 'oc-input-wrapper--secret', className].filter(Boolean).join(' ')}>
+    <StyledWrapper className={['oc-input-wrapper', secret && 'oc-input-wrapper--secret'].filter(Boolean).join(' ')}>
       <input
         id={id}
         type={resolvedType}
         className="oc-input"
         value={value}
         placeholder={placeholder}
-        aria-label={ariaLabel}
         data-testid={testId}
-        disabled={disabled}
         autoComplete="off"
         onChange={(event) => onChange(event.target.value)}
       />
@@ -51,7 +41,6 @@ export const Input: React.FC<InputProps> = ({
           aria-label={revealed ? 'Hide value' : 'Show value'}
           aria-pressed={revealed}
           data-testid={testId ? `${testId}-toggle` : undefined}
-          disabled={disabled}
           onClick={() => setRevealed((prev) => !prev)}
         >
           {revealed ? <EyeOffIcon /> : <EyeIcon />}

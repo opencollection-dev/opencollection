@@ -44,7 +44,8 @@ export const parseValueByDataType = (value: unknown, dataType?: VariableValueTyp
  */
 export const validateDataTypeValue = (value: unknown, dataType?: VariableValueType | string): string | null => {
   if (!dataType || dataType === 'string') return null;
-  if (value === undefined || value === null) return null;
+  // An empty/unset value isn't a type mismatch — don't warn on a field the user hasn't filled.
+  if (value === undefined || value === null || value === '') return null;
   if (dataType === 'number' && typeof value !== 'number') return `Value is not a valid ${dataType}`;
   if (dataType === 'boolean' && typeof value !== 'boolean') return `Value is not a valid ${dataType}`;
   if (dataType === 'object' && typeof value !== 'object') return `Value is not a valid ${dataType}`;
@@ -71,14 +72,24 @@ export const rowToVariable = (row: VariableRowInput): Variable => {
   const dataType = row.dataType && row.dataType !== 'string' ? (row.dataType as VariableValueType) : undefined;
   const description = row.description !== undefined ? { description: row.description as Variable['description'] } : {};
 
+  const nextValue = dataType ? { type: dataType, data: row.value } : row.value;
+
   if (row.originalValue !== undefined) {
     const original = unwrapVariableTyped(row.originalValue);
     const originalType = original.dataType && original.dataType !== 'string' ? original.dataType : undefined;
     if (original.value === row.value && originalType === dataType) {
       return { name: row.name, value: row.originalValue, disabled: !row.enabled, ...description };
     }
+    // The value or type changed. If the original carried variants, rewrite only the selected
+    // variant and keep the rest, so the non-selected variants aren't flattened away.
+    if (Array.isArray(row.originalValue)) {
+      const active = row.originalValue.find((variant) => variant.selected) ?? row.originalValue[0];
+      const variants = row.originalValue.map((variant) =>
+        variant === active ? { ...variant, value: nextValue } : variant
+      );
+      return { name: row.name, value: variants, disabled: !row.enabled, ...description };
+    }
   }
 
-  const value = dataType ? { type: dataType, data: row.value } : row.value;
-  return { name: row.name, value, disabled: !row.enabled, ...description };
+  return { name: row.name, value: nextValue, disabled: !row.enabled, ...description };
 };

@@ -7,7 +7,7 @@ import { rowToVariable } from '../../../../../../utils/variableDataType';
 import HeadersTab from '../../Common/HeadersTab/HeadersTab';
 import ParamsTab from '../../Common/ParamsTab';
 import BodyTab from '../../Common/BodyTab';
-import AuthTab from '../../Common/AuthTab';
+import AuthTab from '../../Common/AuthTab/AuthTab';
 import ScriptsTab from '../../Common/ScriptsTab/ScriptsTab';
 import TestsTab from '../../Common/TestsTab/TestsTab';
 import AssertsTab from '../../Common/AssertsTab';

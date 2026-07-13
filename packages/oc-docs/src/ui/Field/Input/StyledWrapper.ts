@@ -30,11 +30,6 @@ export const StyledWrapper = styled.div`
     outline: none;
   }
 
-  .oc-input:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
-  }
-
   &.oc-input-wrapper--secret .oc-input {
     padding-right: 2.25rem;
   }
@@ -61,10 +56,6 @@ export const StyledWrapper = styled.div`
   .oc-input-toggle:focus-visible {
     outline: 0.125rem solid var(--text-muted);
     outline-offset: 0.0625rem;
-  }
-
-  .oc-input-toggle:disabled {
-    cursor: not-allowed;
   }
 
   .oc-input-toggle svg {

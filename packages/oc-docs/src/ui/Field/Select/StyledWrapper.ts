@@ -14,11 +14,6 @@ export const StyledWrapper = styled.span`
   cursor: pointer;
   transition: border-color 0.15s ease;
 
-  &.oc-select--disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
-  }
-
   .oc-select-label {
     font-size: 0.75rem;
     font-weight: 600;

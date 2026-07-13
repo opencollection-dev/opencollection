@@ -16,10 +16,6 @@ export const setModelHints = (model: editor.ITextModel, roots: ScriptApiRoot[]):
   modelRoots.set(model, roots);
 };
 
-export const clearModelHints = (model: editor.ITextModel): void => {
-  modelRoots.delete(model);
-};
-
 /** Register the shared Bruno API completion provider for JavaScript, once per Monaco instance. */
 export const ensureScriptApiCompletions = (monaco: Monaco): void => {
   if (providerDisposable) return;

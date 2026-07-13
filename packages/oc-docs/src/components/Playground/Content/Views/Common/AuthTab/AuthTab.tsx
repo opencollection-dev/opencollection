@@ -1,6 +1,7 @@
 import React from 'react';
 import { Field, type SelectOption } from '../../../../../../ui/Field';
-import { AUTH_DEFAULTS, PLACEMENT_OPTIONS } from '../../../../../../constants';
+import { AUTH_DEFAULTS, AUTH_MODE_LABELS, PLACEMENT_OPTIONS } from '../../../../../../constants';
+import { REQUEST_PROTOCOL_KEYS } from '../../../../../../utils/schemaHelpers';
 import { StyledWrapper } from './StyledWrapper';
 
 interface AuthTabProps {
@@ -29,19 +30,18 @@ export const AuthTab: React.FC<AuthTabProps> = ({
   const modeOptions: SelectOption[] = [
     { value: 'none', label: 'No Auth' },
     ...(showInherit ? [{ value: 'inherit', label: 'Inherit' }] : []),
-    { value: 'basic', label: 'Basic Auth' },
-    { value: 'bearer', label: 'Bearer Token' },
-    { value: 'apikey', label: 'API Key' },
-    { value: 'digest', label: 'Digest Auth' },
-    { value: 'awsv4', label: 'AWS Signature v4' }
+    ...Object.keys(AUTH_DEFAULTS).map((mode) => ({ value: mode, label: AUTH_MODE_LABELS[mode] ?? mode }))
   ];
 
   const updateItemAuth = (newAuth: unknown) => {
     if (!onItemChange || !item) return;
-    if ('request' in item && item.request !== undefined) {
-      onItemChange({ ...item, request: { ...item.request, auth: newAuth } });
+    // Write auth where getRequestAuth reads it: a request keeps it in its protocol block
+    // (http/graphql/…); a Collection/Folder nests it under `request` (created if absent).
+    const protocolKey = REQUEST_PROTOCOL_KEYS.find((key) => key in item);
+    if (protocolKey) {
+      onItemChange({ ...item, [protocolKey]: { ...item[protocolKey], auth: newAuth } });
     } else {
-      onItemChange({ ...item, auth: newAuth });
+      onItemChange({ ...item, request: { ...item.request, auth: newAuth } });
     }
   };
 

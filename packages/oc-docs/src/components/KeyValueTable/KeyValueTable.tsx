@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useResolvedVariables } from '../../hooks/useVariableResolver';
-import { TruncatedText } from '../TruncatedText/TruncatedText';
-import HighlightedInput from './HighlightedInput';
+import HighlightedInput from '../HighlightedInput/HighlightedInput';
 import './KeyValueTable.css';
 
 export interface KeyValueRow {
@@ -36,6 +35,7 @@ interface KeyValueTableProps {
   valueAutocomplete?: string[];
   valueHeader?: React.ReactNode;
   inlineActions?: boolean;
+  testId?: string;
 }
 
 const generateId = () => `row_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -55,7 +55,8 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
   keyAutocomplete,
   valueAutocomplete,
   valueHeader,
-  inlineActions = false
+  inlineActions = false,
+  testId = 'key-value-table'
 }) => {
   const { isFound, names } = useResolvedVariables();
   const isEditingRef = useRef(false);
@@ -193,7 +194,7 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
   }, [disableNewRow, notifyChange]);
 
   return (
-    <div className={`key-value-table-wrapper ${className}`} data-testid="key-value-table">
+    <div className={`key-value-table-wrapper ${className}`} data-testid={testId}>
       <div className="key-value-table-container">
         <table className="key-value-table">
           <colgroup>
@@ -265,7 +266,9 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                         </span>
                       )}
                       {readOnlyKey ? (
-                        <TruncatedText className="text-readonly" text={row.name} />
+                        <span className="text-readonly" title={row.name}>
+                          {row.name}
+                        </span>
                       ) : (
                         <HighlightedInput
                           value={row.name}

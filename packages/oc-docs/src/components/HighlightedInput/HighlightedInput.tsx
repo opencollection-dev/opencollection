@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Portal } from '../../ui/Portal/Portal';
-import { VariableInfoCard } from '../../components/VariableInfoCard/VariableInfoCard';
+import { VariableInfoCard } from '../VariableInfoCard/VariableInfoCard';
 import { isTemplateVariable, templateVariableSplitRegex } from '../../utils/common';
 import { classifyVariableToken } from '../../utils/variableHighlight';
 import {
@@ -11,6 +11,7 @@ import {
   type AutocompleteContext
 } from '../../utils/variableAutocomplete';
 import { GAP, HOVER_CLOSE_MS, HOVER_OPEN_MS, VIEWPORT_MARGIN } from '../../constants/ui';
+import { StyledWrapper, HoverCard, Suggestions } from './StyledWrapper';
 
 interface HighlightedInputProps {
   value: string;
@@ -78,6 +79,7 @@ export const HighlightedInput: React.FC<HighlightedInputProps> = ({
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingCaret = useRef<number | null>(null);
   const justTypedRef = useRef(false);
+  const moveFrame = useRef<number | null>(null);
 
   const [hovered, setHovered] = useState<HoveredToken | null>(null);
   const [hoverPos, setHoverPos] = useState<Coords | null>(null);
@@ -113,6 +115,7 @@ export const HighlightedInput: React.FC<HighlightedInputProps> = ({
     () => () => {
       cancelOpen();
       cancelClose();
+      if (moveFrame.current !== null) cancelAnimationFrame(moveFrame.current);
     },
     [cancelOpen, cancelClose]
   );
@@ -127,6 +130,28 @@ export const HighlightedInput: React.FC<HighlightedInputProps> = ({
       setAutocomplete(null);
     }
   }, [value, cancelOpen, cancelClose]);
+
+  // Dismiss the portaled hover card / autocomplete on outside scroll or resize, so they never
+  // float detached from a cell that moved (the key-value table scrolls). Scrolls that originate
+  // inside the overlay itself are ignored.
+  useEffect(() => {
+    if (!hovered && !autocomplete) return undefined;
+    const dismiss = () => {
+      setHovered(null);
+      setAutocomplete(null);
+    };
+    const onScroll = (event: Event) => {
+      const target = event.target as Node | null;
+      if (target && (cardEl?.contains(target) || listEl?.contains(target))) return;
+      dismiss();
+    };
+    window.addEventListener('scroll', onScroll, true);
+    window.addEventListener('resize', dismiss);
+    return () => {
+      window.removeEventListener('scroll', onScroll, true);
+      window.removeEventListener('resize', dismiss);
+    };
+  }, [hovered, autocomplete, cardEl, listEl]);
 
   useLayoutEffect(() => {
     if (pendingCaret.current !== null && inputRef.current) {
@@ -259,33 +284,39 @@ export const HighlightedInput: React.FC<HighlightedInputProps> = ({
   };
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
-    const mirror = mirrorRef.current;
-    if (!mirror) return;
     const { clientX, clientY } = event;
-    const spans = mirror.querySelectorAll<HTMLElement>('.variable-valid, .variable-invalid');
-    let match: HoveredToken | null = null;
-    for (const span of Array.from(spans)) {
-      const rect = span.getBoundingClientRect();
-      if (clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom) {
-        const name = (span.textContent ?? '').slice(2, -2);
-        if (name.trim()) match = { name, rect };
-        break;
+    // Coalesce hit-testing to one frame — the loop measures each token, so running it per
+    // mousemove would thrash layout on a cell with several `{{var}}` tokens.
+    if (moveFrame.current !== null) return;
+    moveFrame.current = requestAnimationFrame(() => {
+      moveFrame.current = null;
+      const mirror = mirrorRef.current;
+      if (!mirror) return;
+      const spans = mirror.querySelectorAll<HTMLElement>('.variable-valid, .variable-invalid');
+      let match: HoveredToken | null = null;
+      for (const span of Array.from(spans)) {
+        const rect = span.getBoundingClientRect();
+        if (clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom) {
+          const name = (span.textContent ?? '').slice(2, -2);
+          if (name.trim()) match = { name, rect };
+          break;
+        }
       }
-    }
-    if (!match) {
-      if (hovered) scheduleClose();
-      else cancelOpen();
-      return;
-    }
-    cancelClose();
-    if (hovered && hovered.name === match.name) return;
-    cancelOpen();
-    const next = match;
-    openTimer.current = setTimeout(() => setHovered(next), HOVER_OPEN_MS);
+      if (!match) {
+        if (hovered) scheduleClose();
+        else cancelOpen();
+        return;
+      }
+      cancelClose();
+      if (hovered && hovered.name === match.name) return;
+      cancelOpen();
+      const next = match;
+      openTimer.current = setTimeout(() => setHovered(next), HOVER_OPEN_MS);
+    });
   };
 
   return (
-    <div className="highlight-input" onMouseMove={handleMouseMove} onMouseLeave={scheduleClose}>
+    <StyledWrapper className="highlight-input" onMouseMove={handleMouseMove} onMouseLeave={scheduleClose}>
       <div className="highlight-input-mirror" aria-hidden="true" ref={mirrorRef}>
         {renderTokens(value, isFound)}
       </div>
@@ -310,9 +341,8 @@ export const HighlightedInput: React.FC<HighlightedInputProps> = ({
       />
       {hovered && (
         <Portal>
-          <div
+          <HoverCard
             ref={setCardEl}
-            className="highlight-input-hover"
             onMouseEnter={cancelClose}
             onMouseLeave={scheduleClose}
             style={{
@@ -322,14 +352,13 @@ export const HighlightedInput: React.FC<HighlightedInputProps> = ({
             }}
           >
             <VariableInfoCard name={hovered.name} />
-          </div>
+          </HoverCard>
         </Portal>
       )}
       {autocomplete && (
         <Portal>
-          <ul
+          <Suggestions
             ref={setListEl}
-            className="highlight-input-suggestions"
             role="listbox"
             data-testid="variable-autocomplete"
             style={{
@@ -354,10 +383,10 @@ export const HighlightedInput: React.FC<HighlightedInputProps> = ({
                 {item}
               </li>
             ))}
-          </ul>
+          </Suggestions>
         </Portal>
       )}
-    </div>
+    </StyledWrapper>
   );
 };
 

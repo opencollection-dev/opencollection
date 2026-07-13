@@ -6,7 +6,7 @@ import { type KeyValueRow } from '../../../../../components/KeyValueTable/KeyVal
 import { rowToVariable } from '../../../../../utils/variableDataType';
 import HeadersTab from '../Common/HeadersTab/HeadersTab';
 import VariablesTab from '../Common/VariablesTab/VariablesTab';
-import AuthTab from '../Common/AuthTab';
+import AuthTab from '../Common/AuthTab/AuthTab';
 import ScriptsTab from '../Common/ScriptsTab/ScriptsTab';
 import { useAppDispatch } from '../../../../../store/hooks';
 import { updateFolderInCollection } from '@slices/playground';

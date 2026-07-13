@@ -47,12 +47,6 @@ describe('Select', () => {
     expect(root.querySelector('.oc-select-caret svg')).toBeTruthy();
   });
 
-  it('marks itself disabled', () => {
-    const root = render(<Select value="a" options={OPTIONS} onChange={noop} disabled />);
-    expect(query(root, '.oc-select').classNames).toContain('oc-select--disabled');
-    expect(query(root, '.oc-select-native').hasAttribute('disabled')).toBe(true);
-  });
-
   it('shows an empty label when the value matches no option', () => {
     const root = render(<Select value="z" options={OPTIONS} onChange={noop} />);
     expect(query(root, '.oc-select-label').text.trim()).toBe('');

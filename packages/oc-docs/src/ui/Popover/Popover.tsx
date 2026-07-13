@@ -10,6 +10,7 @@ import React, {
 } from 'react';
 import { Portal } from '../Portal/Portal';
 import { useEscapeKey } from '../../hooks/useEscapeKey';
+import { GAP, VIEWPORT_MARGIN } from '../../constants/ui';
 import { StyledWrapper } from './StyledWrapper';
 
 interface PopoverProps {
@@ -34,8 +35,6 @@ interface AnchorHandlers {
   onTouchStart?: React.TouchEventHandler<HTMLElement>;
 }
 
-const ANCHOR_GAP = 8;
-const VIEWPORT_MARGIN = 8;
 const OFFSCREEN = -9999;
 
 const clamp = (value: number, min: number, max: number): number => Math.min(Math.max(value, min), Math.max(min, max));
@@ -104,10 +103,10 @@ export const Popover: React.FC<PopoverProps> = ({
     const panelHeight = panelRef.current?.offsetHeight ?? 0;
     const { innerWidth, innerHeight } = window;
 
-    const roomBelow = innerHeight - rect.bottom - ANCHOR_GAP;
-    const roomAbove = rect.top - ANCHOR_GAP;
+    const roomBelow = innerHeight - rect.bottom - GAP;
+    const roomAbove = rect.top - GAP;
     const preferAbove = panelHeight > roomBelow && roomAbove > roomBelow;
-    const top = preferAbove ? rect.top - ANCHOR_GAP - panelHeight : rect.bottom + ANCHOR_GAP;
+    const top = preferAbove ? rect.top - GAP - panelHeight : rect.bottom + GAP;
 
     setPosition({
       top: clamp(top, VIEWPORT_MARGIN, innerHeight - VIEWPORT_MARGIN - panelHeight),

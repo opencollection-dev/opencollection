@@ -24,9 +24,8 @@ describe('Input', () => {
     expect(input.getAttribute('id')).toBe('my-input');
   });
 
-  it('honours a custom type and stays free of a reveal toggle', () => {
-    const root = render(<Input value="7" type="number" onChange={noop} testId="n" />);
-    expect(query(root, '.oc-input').getAttribute('type')).toBe('number');
+  it('stays free of a reveal toggle when not secret', () => {
+    const root = render(<Input value="7" onChange={noop} testId="n" />);
     expect(root.querySelector('.oc-input-toggle')).toBeNull();
   });
 
@@ -37,11 +36,5 @@ describe('Input', () => {
     const toggle = query(root, '[data-testid="my-secret-toggle"]');
     expect(toggle.getAttribute('aria-label')).toBe('Show value');
     expect(toggle.getAttribute('aria-pressed')).toBe('false');
-  });
-
-  it('disables the input and its toggle', () => {
-    const root = render(<Input value="" onChange={noop} secret disabled testId="d" />);
-    expect(query(root, '[data-testid="d"]').hasAttribute('disabled')).toBe(true);
-    expect(query(root, '[data-testid="d-toggle"]').hasAttribute('disabled')).toBe(true);
   });
 });

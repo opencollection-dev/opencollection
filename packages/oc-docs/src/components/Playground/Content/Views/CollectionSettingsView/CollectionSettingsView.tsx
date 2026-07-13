@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
 import type { OpenCollection } from '@opencollection/types';
-import type { VariableValue, VariableValueOrVariants } from '@opencollection/types/common/variables';
 import type { Action, ActionSetVariable } from '@opencollection/types/common/actions';
 import Tabs from '../../../../../ui/Tabs/Tabs';
 import { type KeyValueRow } from '../../../../../components/KeyValueTable/KeyValueTable';
 import HeadersTab from '../Common/HeadersTab/HeadersTab';
 import VariablesTab from '../Common/VariablesTab/VariablesTab';
-import AuthTab from '../Common/AuthTab';
+import AuthTab from '../Common/AuthTab/AuthTab';
 import ScriptsTab from '../Common/ScriptsTab/ScriptsTab';
 import TestsTab from '../Common/TestsTab/TestsTab';
 import OverviewTab from '../Common/OverviewTab/OverviewTab';
 import { useAppDispatch } from '../../../../../store/hooks';
 import { updateCollectionSettings } from '@slices/playground';
 import { countEnabled, getItemDocs, scriptsArrayToObject, scriptsObjectToArray } from '../../../../../utils/schemaHelpers';
-import { unwrapVariableValue } from '../../../../../utils/variableResolution';
+import { rowToVariable } from '../../../../../utils/variableDataType';
 import { StyledWrapper } from './StyledWrapper';
 
 const isAfterResponseSetVariable = (action: Action): action is ActionSetVariable =>
@@ -22,17 +21,6 @@ const isAfterResponseSetVariable = (action: Action): action is ActionSetVariable
 interface CollectionSettingsProps {
   collection: OpenCollection;
 }
-
-const retypeValue = (previous: VariableValue | undefined, next: string): VariableValue =>
-  previous && typeof previous === 'object' && 'data' in previous ? { ...previous, data: next } : next;
-
-const rewriteVariableValue = (original: VariableValueOrVariants | undefined, next: string): VariableValueOrVariants => {
-  if (Array.isArray(original)) {
-    const active = original.find((variant) => variant.selected) ?? original[0];
-    return original.map((variant) => (variant === active ? { ...variant, value: retypeValue(variant.value, next) } : variant));
-  }
-  return retypeValue(original, next);
-};
 
 const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) => {
   const dispatch = useAppDispatch();
@@ -58,23 +46,7 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
   };
 
   const handleVariablesChange = (rows: KeyValueRow[]) => {
-    const originals = collection.request?.variables ?? [];
-    const originalByName = new Map(originals.filter((variable) => variable.name).map((variable): [string, typeof variable] => [variable.name as string, variable]));
-
-    const reconcileVariable = (row: KeyValueRow) => {
-      const original = originalByName.get(row.name);
-      if (!original) return { name: row.name, value: row.value, disabled: !row.enabled };
-
-      // The flat editor only surfaces a variable's string value, so leave the original value
-      // untouched while that string is unchanged (preserving its declared data type and any
-      // non-selected variants) and only rebuild it once the user edits the string.
-      const originalValue = 'value' in original ? original.value : undefined;
-      const isUnchanged = unwrapVariableValue(originalValue) === row.value;
-      const value = isUnchanged ? originalValue : rewriteVariableValue(originalValue, row.value);
-      return { ...original, name: row.name, value, disabled: !row.enabled };
-    };
-
-    updateRequest({ ...collection.request, variables: rows.map(reconcileVariable) });
+    updateRequest({ ...collection.request, variables: rows.map(rowToVariable) });
   };
 
   const handlePostResponseVarsChange = (rows: KeyValueRow[]) => {

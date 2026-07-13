@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import type { Variable } from '@opencollection/types/common/variables';
 import KeyValueTable, { type KeyValueRow } from '../../../../../../components/KeyValueTable/KeyValueTable';
 import { Tooltip } from '../../../../../../ui/Tooltip/Tooltip';
@@ -34,6 +34,47 @@ interface VariablesTabProps {
 const toDataType = (dataType?: string): VariableDataType =>
   dataType && (VARIABLE_DATA_TYPES as string[]).includes(dataType) ? (dataType as VariableDataType) : 'string';
 
+const typeColumn = {
+  key: 'datatype',
+  label: '',
+  render: (row: KeyValueRow, _index: number, updateField: (field: string, value: unknown) => void) => {
+    const dataType = toDataType(row.dataType);
+    const warning = validateDataTypeValue(parseValueByDataType(row.value, dataType), dataType);
+    return (
+      <div className="var-type">
+        {warning && (
+          <Tooltip content={warning}>
+            <span className="var-type-warning" role="img" aria-label={warning}>
+              <WarningIcon />
+            </span>
+          </Tooltip>
+        )}
+        <span className="var-type-control">
+          <span className="var-type-label" aria-hidden="true">
+            {dataType}
+          </span>
+          <span className="var-type-caret" aria-hidden="true">
+            <CaretIcon />
+          </span>
+          <select
+            className="var-type-select"
+            value={dataType}
+            aria-label="Variable data type"
+            onChange={(event) => updateField('dataType', event.target.value)}
+          >
+            {VARIABLE_DATA_TYPES.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
+        </span>
+      </div>
+    );
+  }
+};
+
+const dataTypeColumns = [typeColumn];
 
 export const VariablesTab: React.FC<VariablesTabProps> = ({
   variables,
@@ -44,73 +85,41 @@ export const VariablesTab: React.FC<VariablesTabProps> = ({
   title,
   description
 }) => {
-  const preRequestRows: KeyValueRow[] = (variables || []).map((variable, index) => {
-    const { value, dataType } = unwrapVariableTyped((variable as Variable).value);
-    return {
-      id: `var-${index}`,
-      name: variable.name || '',
-      value,
-      enabled: !variable.disabled,
-      dataType: toDataType(dataType),
-      description: (variable as Variable).description,
-      originalValue: (variable as Variable).value
-    };
-  });
+  const preRequestRows = useMemo<KeyValueRow[]>(
+    () =>
+      (variables || []).map((variable, index) => {
+        const { value, dataType } = unwrapVariableTyped((variable as Variable).value);
+        return {
+          id: `var-${index}`,
+          name: variable.name || '',
+          value,
+          enabled: !variable.disabled,
+          dataType: toDataType(dataType),
+          description: (variable as Variable).description,
+          originalValue: (variable as Variable).value
+        };
+      }),
+    [variables]
+  );
 
-  const postResponseRows: KeyValueRow[] = (postResponseVars || []).map((variable, index) => ({
-    id: `post-var-${index}`,
-    name: variable.name || '',
-    value: variable.expr || '',
-    enabled: !variable.disabled,
-    scope: variable.scope,
-    description: variable.description
-  }));
-
-  const typeColumn = {
-    key: 'datatype',
-    label: '',
-    render: (row: KeyValueRow, _index: number, updateField: (field: string, value: unknown) => void) => {
-      const dataType = toDataType(row.dataType);
-      const warning = validateDataTypeValue(parseValueByDataType(row.value, dataType), dataType);
-      return (
-        <div className="var-type">
-          {warning && (
-            <Tooltip content={warning}>
-              <span className="var-type-warning" role="img" aria-label={warning}>
-                <WarningIcon />
-              </span>
-            </Tooltip>
-          )}
-          <span className="var-type-control">
-            <span className="var-type-label" aria-hidden="true">
-              {dataType}
-            </span>
-            <span className="var-type-caret" aria-hidden="true">
-              <CaretIcon />
-            </span>
-            <select
-              className="var-type-select"
-              value={dataType}
-              aria-label="Variable data type"
-              onChange={(event) => updateField('dataType', event.target.value)}
-            >
-              {VARIABLE_DATA_TYPES.map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
-          </span>
-        </div>
-      );
-    }
-  };
+  const postResponseRows = useMemo<KeyValueRow[]>(
+    () =>
+      (postResponseVars || []).map((variable, index) => ({
+        id: `post-var-${index}`,
+        name: variable.name || '',
+        value: variable.expr || '',
+        enabled: !variable.disabled,
+        scope: variable.scope,
+        description: variable.description
+      })),
+    [postResponseVars]
+  );
 
   return (
     <StyledWrapper className="space-y-3">
-      {Boolean(title) && (
+      {(Boolean(title) || Boolean(description)) && (
         <div className="flex items-center justify-between mb-2">
-          <span className="title text-sm font-semibold">{title}</span>
+          {Boolean(title) && <span className="title text-sm font-semibold">{title}</span>}
           {Boolean(description) && <span className="description text-xs leading-tight">{description}</span>}
         </div>
       )}
@@ -118,13 +127,14 @@ export const VariablesTab: React.FC<VariablesTabProps> = ({
       <section className="vars-section">
         <h3 className="vars-section-title">Pre Request</h3>
         <KeyValueTable
+          testId="variables-pre-request"
           data={preRequestRows}
           onChange={onVariablesChange}
           keyPlaceholder="Name"
           valuePlaceholder="Value"
           showEnabled={true}
           inlineActions={true}
-          additionalColumns={[typeColumn]}
+          additionalColumns={dataTypeColumns}
         />
       </section>
 
@@ -132,6 +142,7 @@ export const VariablesTab: React.FC<VariablesTabProps> = ({
         <section className="vars-section">
           <h3 className="vars-section-title">Post Response</h3>
           <KeyValueTable
+            testId="variables-post-response"
             data={postResponseRows}
             onChange={onPostResponseVarsChange}
             keyPlaceholder="Name"
