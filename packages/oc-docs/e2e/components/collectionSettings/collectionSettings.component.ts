@@ -23,7 +23,7 @@ export class CollectionSettingsComponent extends BaseComponent {
   }
 
   async open(): Promise<void> {
-    await this.collectionNode.getByRole('button', { name: /Bruno Testbench|Collection/ }).click();
+    await this.collectionNode.click();
   }
 
   async openTab(id: string): Promise<void> {
