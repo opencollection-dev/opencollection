@@ -1,8 +1,9 @@
 import React from 'react';
 import type { Variable } from '@opencollection/types/common/variables';
-import KeyValueTable, { type KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
-import { unwrapVariableValue } from '../../../../../utils/variableResolution';
-import { getVariableTypeLabel } from '../../../../../utils/request';
+import KeyValueTable, { type KeyValueRow } from '../../../../../../ui/KeyValueTable/KeyValueTable';
+import { unwrapVariableValue } from '../../../../../../utils/variableResolution';
+import { getVariableTypeLabel } from '../../../../../../utils/request';
+import { StyledWrapper } from './StyledWrapper';
 
 interface VariablesTabProps {
   variables: Array<{ name?: string; value?: any; disabled?: boolean }>;
@@ -32,26 +33,20 @@ export const VariablesTab: React.FC<VariablesTabProps> = ({
   }));
 
   return (
-    <div className="space-y-3">
+    <StyledWrapper className="space-y-3">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
-          {title}
-        </span>
-        {description && (
-          <span className="text-xs leading-tight" style={{ color: 'var(--text-secondary)' }}>
-            {description}
-          </span>
-        )}
+        {Boolean(title) && <span className="title text-sm font-semibold">{title}</span>}
+        {Boolean(description) && <span className="description text-xs leading-tight">{description}</span>}
       </div>
       <KeyValueTable
         data={variablesData}
         onChange={onVariablesChange}
-        keyPlaceholder="Variable name"
-        valuePlaceholder="Variable value"
+        keyPlaceholder="Name"
+        valuePlaceholder="Value"
         showEnabled={true}
         additionalColumns={[dataTypeColumn]}
       />
-    </div>
+    </StyledWrapper>
   );
 };
 

@@ -1,34 +1,87 @@
 import type { HttpRequest, HttpRequestHeader } from '@opencollection/types/requests/http';
-import type { Environment } from '@opencollection/types/config/environments';
+import { isPlainObject } from 'lodash-es';
 import { getRequestUrl, getHttpHeaders, getHttpBody, getHttpParams, getRequestAuth } from '../../utils/schemaHelpers';
 import { templateVariableGlobalRegex } from '../../utils/common';
+import { mockDataFunctions } from './faker-functions';
+
+// for dynamic vars ({{$randomUUID}} etc.), ported from @usebruno/common.
+const MOCK_PATTERN = /\{\{\$(\w+)\}\}/g;
+const JSON_SPECIAL_CHARS = /[\\\n\r\t"]/;
+
+const escapeJSONString = (str: string): string => {
+  if (!JSON_SPECIAL_CHARS.test(str)) {
+    return str;
+  }
+
+  return str
+    .replace(/\\/g, '\\\\')
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\r')
+    .replace(/\t/g, '\\t')
+    .replace(/"/g, '\\"');
+};
+
+const prepareMock = (str: string, escapeJSONStrings: boolean): string => {
+  return str.replace(MOCK_PATTERN, (match, keyword) => {
+    let generatedValue = mockDataFunctions[keyword as keyof typeof mockDataFunctions]?.();
+
+    if (generatedValue === undefined) {
+      return match;
+    }
+
+    generatedValue = String(generatedValue);
+
+    return escapeJSONStrings ? escapeJSONString(generatedValue) : generatedValue;
+  });
+};
+
+const prepareMockObj = (obj: Record<string, any>, escapeJSONStrings: boolean): Record<string, any> => {
+  const processed: Record<string, any> = {};
+
+  for (const [key, value] of Object.entries(obj)) {
+    if (typeof value === 'string') {
+      processed[key] = prepareMock(value, escapeJSONStrings);
+    } else if (isPlainObject(value)) {
+      // plain object only, to skip special objects like Date, RegExp, etc.
+      processed[key] = prepareMockObj(value, escapeJSONStrings);
+    } else {
+      processed[key] = value;
+    }
+  }
+
+  return processed;
+};
 
 /**
- * Simple variable interpolation function
- * Replaces {{variableName}} with actual values
+ * Resolve `{{...}}` in a string: built-in dynamic `{{$var}}` tokens first, then
+ * regular `{{var}}` lookups (also resolving dynamic tokens inside var values).
  */
 const interpolate = (str: string, variables: Record<string, any>, options: { escapeJSONStrings?: boolean } = {}): string => {
   if (!str || typeof str !== 'string') {
     return str;
   }
 
-  return str.replace(templateVariableGlobalRegex(), (match, variableName) => {
+  const escapeJSONStrings = options.escapeJSONStrings ?? false;
+  const mocked = prepareMock(str, escapeJSONStrings);
+  const preparedVars = isPlainObject(variables) ? prepareMockObj(variables, escapeJSONStrings) : variables;
+
+  return mocked.replace(templateVariableGlobalRegex(), (match, variableName) => {
     const trimmedName = variableName.trim();
-    
+
     // Handle nested object access (e.g., process.env.NODE_ENV)
-    const value = getNestedValue(variables, trimmedName);
-    
+    const value = getNestedValue(preparedVars, trimmedName);
+
     if (value === undefined || value === null) {
       return match; // Keep original if variable not found
     }
-    
+
     let result = String(value);
-    
+
     // Escape JSON strings if needed
-    if (options.escapeJSONStrings && typeof value === 'string') {
+    if (escapeJSONStrings && typeof value === 'string') {
       result = result.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
     }
-    
+
     return result;
   });
 };
@@ -73,7 +126,7 @@ export const interpolateVars = (
 ): HttpRequest => {
   // Clone the request to avoid mutation
   const interpolatedRequest = JSON.parse(JSON.stringify(request)) as HttpRequest;
-  
+
   // Combine all variable sources with proper precedence (later overrides earlier)
   const {
     globalEnvironmentVariables = {},
@@ -86,7 +139,7 @@ export const interpolateVars = (
     processEnvVars = {},
     promptVariables = {}
   } = variableSources;
-  
+
   const combinedVariables = {
     ...globalEnvironmentVariables,
     ...collectionVariables,
@@ -102,7 +155,7 @@ export const interpolateVars = (
       }
     }
   };
-  
+
   // Create interpolation function with combined variables
   const _interpolate = (str: string, options: { escapeJSONStrings?: boolean } = {}): string => {
     if (!str || typeof str !== 'string') {
@@ -116,7 +169,7 @@ export const interpolateVars = (
   if (!interpolatedRequest.http) {
     interpolatedRequest.http = { method: 'GET', url: '' };
   }
-  
+
   // Ensure runtime block exists for mutations
   if (!interpolatedRequest.runtime) {
     interpolatedRequest.runtime = {};
@@ -156,7 +209,7 @@ export const interpolateVars = (
   const currentBody = getHttpBody(interpolatedRequest);
   if (currentBody) {
     const body = currentBody;
-    
+
     if ('type' in body && 'data' in body) {
       if (contentType.includes('json') && body.type === 'json') {
         // Handle JSON body with proper escaping
@@ -176,7 +229,7 @@ export const interpolateVars = (
         if ('data' in body && Array.isArray(body.data)) {
           body.data = body.data.map((entry: any) => ({
             ...entry,
-            value: Array.isArray(entry.value) 
+            value: Array.isArray(entry.value)
               ? entry.value.map((v: any) => _interpolate(String(v)))
               : _interpolate(String(entry.value))
           }));
@@ -205,7 +258,7 @@ export const interpolateVars = (
   const currentAuth = getRequestAuth(interpolatedRequest);
   if (currentAuth && typeof currentAuth === 'object') {
     const auth = currentAuth;
-    
+
     switch (auth.type) {
       case 'basic':
         if ('username' in auth) auth.username = _interpolate(auth.username || '');

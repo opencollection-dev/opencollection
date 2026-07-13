@@ -52,9 +52,10 @@ export const buildBreadcrumbSegments = (
   return [{ name: collection?.info?.name || 'Overview', uuid: COLLECTION_ROOT_CRUMB }, ...folderCrumbs];
 };
 
-/** True when the whole string is exactly one `{{var}}` token (anchored, non-global → stateless). */
-export const isTemplateVariable = (value: string): boolean =>
-  new RegExp(`^${TEMPLATE_VARIABLE_SOURCE_PATTERN}$`).test(value);
+const TEMPLATE_VARIABLE_EXACT_REGEX = new RegExp(`^${TEMPLATE_VARIABLE_SOURCE_PATTERN}$`);
+
+/** True when the whole string is exactly one `{{var}}` token. */
+export const isTemplateVariable = (value: string): boolean => TEMPLATE_VARIABLE_EXACT_REGEX.test(value);
 
 /** Fresh global regex capturing the WHOLE `{{var}}` token, for `String.split` tokenizing (delimiter kept). New instance per call → no shared `lastIndex`. */
 export const templateVariableSplitRegex = (): RegExp => new RegExp(`(${TEMPLATE_VARIABLE_SOURCE_PATTERN})`, 'g');

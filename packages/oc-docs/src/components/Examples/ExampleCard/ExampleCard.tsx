@@ -9,6 +9,7 @@ import { ChevronArrow } from '../../ChevronArrow/ChevronArrow';
 import { CopyButton } from '../../../ui/CopyButton/CopyButton';
 import { PropertyTable, type PropertyRow } from '../../PropertyTable/PropertyTable';
 import { TruncatedText } from '../../TruncatedText/TruncatedText';
+import { VariableText } from '../../VariableText/VariableText';
 import { Description } from '../../Description/Description';
 import { RequestParams } from '../../Request/RequestParams/RequestParams';
 import { RequestBody } from '../../Request/RequestBody/RequestBody';
@@ -329,7 +330,9 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
 
               <div className="example-url-row">
                 <MethodBadge method={displayMethod} />
-                <TruncatedText className="example-url-text" text={displayUrl} />
+                <TruncatedText className="example-url-text" text={displayUrl}>
+                  <VariableText value={displayUrl} />
+                </TruncatedText>
                 <CopyButton text={displayUrl} />
               </div>
 
