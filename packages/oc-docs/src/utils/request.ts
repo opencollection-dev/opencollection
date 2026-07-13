@@ -19,6 +19,7 @@ import {
 } from './schemaHelpers';
 import { getItemUuid } from './itemUtils';
 import { COLLECTION_ROOT_CRUMB } from './common';
+import { TYPE_LABELS } from '../constants';
 
 export const humanizeAuthMode = (auth: Auth | undefined, labels: Record<string, string>): string => {
   if (!auth) return 'No Auth';
@@ -70,9 +71,6 @@ export const getDescription = (item: unknown): string | undefined => {
   return undefined;
 };
 
-export const getValueType = (entity: { name: string; value: string; type?: string }): string | undefined =>
-  entity?.type || undefined;
-
 const typeOfVariableValue = (value: VariableValue | undefined): VariableValueType | undefined =>
   typeof value === 'object' ? value.type : undefined;
 
@@ -90,6 +88,11 @@ export const getVariableType = (variable?: Variable | SecretVariable): VariableV
   }
 
   return typeOfVariableValue(value);
+};
+
+export const getVariableTypeLabel = (variable?: Variable | SecretVariable): string | undefined => {
+  const type = getVariableType(variable);
+  return type ? TYPE_LABELS[type] : undefined;
 };
 
 export interface BodyTableRow {
@@ -410,7 +413,7 @@ const flattenValue = (value: Variable['value']): string => {
 const toPreRequestVarRow = (variable: Variable): PreRequestVarRow => ({
   name: variable.name,
   value: flattenValue(variable.value),
-  type: getVariableType(variable),
+  type: getVariableTypeLabel(variable),
   description: getDescription(variable),
   disabled: variable.disabled
 });

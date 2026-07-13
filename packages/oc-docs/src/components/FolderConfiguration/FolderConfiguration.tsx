@@ -34,7 +34,6 @@ export const FolderConfiguration: React.FC<FolderConfigurationProps> = ({ config
             rows={config.headers.map((header) => ({
               label: header.name,
               value: header.value,
-              type: header.type,
               disabled: header.disabled,
               description: header.description
             }))}

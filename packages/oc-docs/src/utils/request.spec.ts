@@ -10,7 +10,6 @@ import {
   getPostResponseVars,
   getCollectionVariables,
   getShortMethod,
-  getValueType,
   getVariableType
 } from './request';
 import { AUTH_MODE_LABELS } from '../constants';
@@ -208,16 +207,6 @@ describe('buildScriptChain', () => {
   });
 });
 
-describe('getValueType', () => {
-  it('returns the declared data-type of a header', () => {
-    expect(getValueType({ name: 'X-Trace-Id', value: '{{uuid}}', type: 'uuid' })).toBe('uuid');
-  });
-
-  it('returns undefined when there is no type', () => {
-    expect(getValueType({ name: 'Accept', value: 'application/json' })).toBeUndefined();
-  });
-});
-
 describe('getVariableType', () => {
   it('reads a typed value, a secret type, and the selected variant', () => {
     expect(getVariableType({ name: 'a', value: { type: 'number', data: '1' } })).toBe('number');
@@ -239,7 +228,7 @@ describe('requestVars', () => {
     };
     expect(getPreRequestVars(item)).toEqual([
       { name: 'x', value: '1', type: undefined, disabled: undefined },
-      { name: 'y', value: 'z', type: 'string', disabled: undefined }
+      { name: 'y', value: 'z', type: 'String', disabled: undefined }
     ]);
   });
 

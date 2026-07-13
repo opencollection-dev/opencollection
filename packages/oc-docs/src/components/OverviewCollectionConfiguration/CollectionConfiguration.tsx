@@ -6,7 +6,7 @@ import { SubHeading } from '../SubHeading/SubHeading';
 import { PropertyTable, type PropertyRow } from '../PropertyTable/PropertyTable';
 import { AuthDetails } from '../AuthDetails/AuthDetails';
 import { VariablesPanel } from '../ExecutionContext/VariablesPanel/VariablesPanel';
-import { getDescription, getValueType, type PreRequestVarRow, type PostResponseVarRow } from '../../utils/request';
+import { getDescription, type PreRequestVarRow, type PostResponseVarRow } from '../../utils/request';
 import { hasConfiguredAuth } from '../../utils/collectionOverview';
 import { StyledWrapper } from './StyledWrapper';
 
@@ -40,7 +40,6 @@ export const CollectionConfiguration: React.FC<CollectionConfigurationProps> = (
     .map((header) => ({
       label: header.name,
       value: header.value,
-      type: getValueType(header),
       disabled: header.disabled,
       description: getDescription(header)
     }));

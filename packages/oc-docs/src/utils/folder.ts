@@ -2,12 +2,11 @@ import type { OpenCollection } from '@opencollection/types';
 import type { Item, Folder } from '@opencollection/types/collection/item';
 import type { Auth } from '@opencollection/types/common/auth';
 import { getItemName, isFolder, isScriptFile, scriptsArrayToObject } from './schemaHelpers';
-import { getDescription, getValueType, getRequestDefaultsVars, type PreRequestVarRow, type PostResponseVarRow } from './request';
+import { getDescription, getRequestDefaultsVars, type PreRequestVarRow, type PostResponseVarRow } from './request';
 
 export interface FolderHeaderRow {
   name: string;
   value: string;
-  type?: string;
   disabled?: boolean;
   description?: string;
 }
@@ -67,7 +66,6 @@ export const getFolderConfig = (
     .map((header) => ({
       name: header.name,
       value: header.value,
-      type: getValueType(header),
       disabled: header.disabled,
       description: getDescription(header)
     }));

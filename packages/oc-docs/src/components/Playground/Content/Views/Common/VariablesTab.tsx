@@ -1,5 +1,8 @@
 import React from 'react';
+import type { Variable } from '@opencollection/types/common/variables';
 import KeyValueTable, { type KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
+import { unwrapVariableValue } from '../../../../../utils/variableResolution';
+import { getVariableTypeLabel } from '../../../../../utils/request';
 
 interface VariablesTabProps {
   variables: Array<{ name?: string; value?: any; disabled?: boolean }>;
@@ -8,16 +11,23 @@ interface VariablesTabProps {
   description?: string;
 }
 
+const dataTypeColumn = {
+  key: 'type',
+  label: 'Data Type',
+  render: (row: KeyValueRow) => row.dataType || null
+};
+
 export const VariablesTab: React.FC<VariablesTabProps> = ({
   variables,
   onVariablesChange,
-  title = "Variables",
+  title = 'Variables',
   description
 }) => {
   const variablesData: KeyValueRow[] = (variables || []).map((variable, index) => ({
     id: `variable-${index}`,
     name: variable.name || '',
-    value: typeof variable.value === 'string' ? variable.value : '',
+    value: unwrapVariableValue(variable.value),
+    dataType: getVariableTypeLabel(variable as Variable),
     enabled: !variable.disabled
   }));
 
@@ -39,6 +49,7 @@ export const VariablesTab: React.FC<VariablesTabProps> = ({
         keyPlaceholder="Variable name"
         valuePlaceholder="Variable value"
         showEnabled={true}
+        additionalColumns={[dataTypeColumn]}
       />
     </div>
   );

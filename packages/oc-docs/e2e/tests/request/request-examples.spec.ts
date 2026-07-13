@@ -30,12 +30,11 @@ test.describe('Request page — Examples', () => {
       await expect(examples.requestBody(OK_EXAMPLE)).toContainText('10');
     });
 
-    test('switches to the Headers tab to reveal the request headers with their data-types', async ({ requestPage }) => {
+    test('switches to the Headers tab to reveal the request headers', async ({ requestPage }) => {
       const { examples } = requestPage;
       await examples.selectRequestTab(OK_EXAMPLE, 'headers');
       await expect(examples.requestBody(OK_EXAMPLE)).toContainText('Accept');
       await expect(examples.requestBody(OK_EXAMPLE)).toContainText('application/json');
-      await expect(examples.requestBody(OK_EXAMPLE).locator('.property-type', { hasText: 'uuid' })).toBeVisible();
     });
   });
 
@@ -46,12 +45,11 @@ test.describe('Request page — Examples', () => {
       await expect(examples.responseBody(OK_EXAMPLE)).toContainText('john.smith@example.com');
     });
 
-    test('switches to the Headers tab to reveal the response headers with their data-types', async ({ requestPage }) => {
+    test('switches to the Headers tab to reveal the response headers', async ({ requestPage }) => {
       const { examples } = requestPage;
       await examples.selectResponseTab(OK_EXAMPLE, 'headers');
       await expect(examples.responseBody(OK_EXAMPLE)).toContainText('x-total-count');
       await expect(examples.responseBody(OK_EXAMPLE)).toContainText('42');
-      await expect(examples.responseBody(OK_EXAMPLE).locator('.property-type', { hasText: 'integer' })).toBeVisible();
     });
   });
 
