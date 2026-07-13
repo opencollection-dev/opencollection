@@ -1,10 +1,10 @@
 import React from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect } from 'vitest';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import PlaygroundBody from './PlaygroundBody';
 import { createOpenCollectionStore } from '../../../store/store';
+import { useRenderToDom } from '../../../hooks/useRenderToDom';
 import {
   setPlaygroundCollection,
   setSelectedItemId,
@@ -36,7 +36,7 @@ describe('PlaygroundBody example view', () => {
     store.dispatch(setViewMode('example'));
 
     const ref = React.createRef<HTMLDivElement>();
-    const html = renderToStaticMarkup(
+    const root = useRenderToDom(
       <Provider store={store}>
         <MemoryRouter>
           <PlaygroundBody
@@ -49,6 +49,6 @@ describe('PlaygroundBody example view', () => {
         </MemoryRouter>
       </Provider>
     );
-    expect(html).toContain('example-view');
+    expect(root.querySelector('[data-testid="example-view"]')).not.toBeNull();
   });
 });

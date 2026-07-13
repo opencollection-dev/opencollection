@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect, vi } from 'vitest';
 import type { Item as OpenCollectionItem } from '@opencollection/types/collection/item';
 import SidebarTree from './SidebarTree';
+import { useRenderToDom } from '../../../../hooks/useRenderToDom';
 
 const req = (uuid: string, name: string, method: string): OpenCollectionItem =>
   ({ type: 'http', uuid, name, method } as unknown as OpenCollectionItem);
@@ -163,32 +164,36 @@ const baseProps = {
   onToggleFolder: () => {},
 };
 
-const renderTree = (props: Partial<React.ComponentProps<typeof SidebarTree>> = {}) =>
-  renderToStaticMarkup(<SidebarTree items={[requestWithExamples]} {...baseProps} {...props} />);
+const tree = (props: Partial<React.ComponentProps<typeof SidebarTree>> = {}) => (
+  <SidebarTree items={[requestWithExamples]} {...baseProps} {...props} />
+);
 
 describe('SidebarTree examples', () => {
   it('shows an example toggle for a request with examples but keeps rows collapsed by default', () => {
-    const html = renderTree();
-    expect(html).toContain('sidebar-example-toggle');
-    expect(html).not.toContain('Successful login');
+    const root = useRenderToDom(tree());
+    expect(root.querySelector('[data-testid="sidebar-example-toggle"]')).not.toBeNull();
+    expect(root.querySelectorAll('[data-testid="sidebar-example"]')).toHaveLength(0);
   });
 
   it('auto-expands and marks the active example row when activeExample matches', () => {
-    const html = renderTree({ activeExample: { requestUuid: 'req-1', index: 1 } });
-    expect(html).toContain('Successful login');
-    expect(html).toContain('Invalid credentials');
-    expect(html).toContain('active');
+    const root = useRenderToDom(tree({ activeExample: { requestUuid: 'req-1', index: 1 } }));
+    const rows = root.querySelectorAll('[data-testid="sidebar-example"]');
+    expect(rows).toHaveLength(2);
+    expect(rows[0].text).toContain('Successful login');
+    expect(rows[1].text).toContain('Invalid credentials');
+    expect(rows[1].getAttribute('class') ?? '').toContain('active');
+    expect(rows[0].getAttribute('class') ?? '').not.toContain('active');
   });
 
   it('renders a request without examples as a plain leaf (no toggle)', () => {
     const plain = { uuid: 'r2', type: 'http', name: 'Ping', method: 'GET' } as unknown as OpenCollectionItem;
-    const html = renderToStaticMarkup(
+    const root = useRenderToDom(
       <SidebarTree
         {...baseProps}
         items={[plain]}
         uuidToSlug={new Map([['r2', 'ping']])}
       />
     );
-    expect(html).not.toContain('sidebar-example-toggle');
+    expect(root.querySelector('[data-testid="sidebar-example-toggle"]')).toBeNull();
   });
 });

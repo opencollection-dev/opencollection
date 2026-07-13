@@ -1,7 +1,8 @@
 import React from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect } from 'vitest';
 import { ExampleView } from './ExampleView';
+import { useRenderToDom } from '../../../../../hooks/useRenderToDom';
+import { query } from '../../../../../test-utils/dom';
 
 const request = { type: 'http', method: 'POST', url: '{{baseUrl}}/api/v1/auth/login' } as any;
 const example = {
@@ -20,16 +21,16 @@ const example = {
 
 describe('ExampleView', () => {
   it('renders name, request and response panes read-only', () => {
-    const html = renderToStaticMarkup(<ExampleView request={request} example={example} />);
-    expect(html).toContain('Successful Login');
-    expect(html).toContain('example-view-request');
-    expect(html).toContain('example-view-response');
-    expect(html).toContain('200');
+    const root = useRenderToDom(<ExampleView request={request} example={example} />);
+    expect(query(root, '.example-view-name').text).toContain('Successful Login');
+    expect(root.querySelector('[data-testid="example-view-request"]')).not.toBeNull();
+    expect(root.querySelector('[data-testid="example-view-response"]')).not.toBeNull();
+    expect(root.text).toContain('200');
     // method/url fall back to the request's flat schema when the example omits them
-    expect(html).toContain('{{baseUrl}}/api/v1/auth/login');
-    expect(html).toContain('POST');
-    // nothing editable: no form controls in the markup
-    expect(html).not.toContain('<input');
-    expect(html).not.toContain('<textarea');
+    expect(query(root, '.example-view-url').text).toContain('{{baseUrl}}/api/v1/auth/login');
+    expect(root.text).toContain('POST');
+    // nothing editable: no form controls
+    expect(root.querySelector('input')).toBeNull();
+    expect(root.querySelector('textarea')).toBeNull();
   });
 });

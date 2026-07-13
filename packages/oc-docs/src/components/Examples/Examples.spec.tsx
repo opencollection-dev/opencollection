@@ -3,6 +3,8 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect } from 'vitest';
 import { Examples } from './Examples';
 import type { HttpRequestExample } from '@opencollection/types/requests/http';
+import { useRenderToDom } from '../../hooks/useRenderToDom';
+import { query } from '../../test-utils/dom';
 
 const examples: HttpRequestExample[] = [
   { name: 'Happy path', response: { status: 200, body: { type: 'json', data: '{}' } } },
@@ -25,14 +27,14 @@ describe('Examples', () => {
 
 describe('Examples highlight', () => {
   it('marks the highlighted card active', () => {
-    const html = renderToStaticMarkup(
+    const root = useRenderToDom(
       <Examples examples={examples} method="POST" url="/x" highlightedIndex={1} />
     );
-    expect(html).toContain('data-active="true"');
+    expect(query(root, '[data-active="true"]').text).toContain('Unauthorized');
   });
 
   it('marks no card active without a highlight', () => {
-    const html = renderToStaticMarkup(<Examples examples={examples} method="POST" url="/x" />);
-    expect(html).not.toContain('data-active="true"');
+    const root = useRenderToDom(<Examples examples={examples} method="POST" url="/x" />);
+    expect(root.querySelector('[data-active="true"]')).toBeNull();
   });
 });
