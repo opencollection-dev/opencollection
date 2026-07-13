@@ -165,7 +165,7 @@ const Pane: React.FC<{
   );
 };
 
-export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, onTry, defaultExpanded, active = false, testId = 'example-card' }) => {
+export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, onTry, defaultExpanded, active, testId = 'example-card' }) => {
   const [expanded, setExpanded] = useState(Boolean(defaultExpanded));
   const [mounted, setMounted] = useState(Boolean(defaultExpanded));
   const detailId = useId();
@@ -179,6 +179,9 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
     else el.setAttribute('inert', '');
   }, [expanded, mounted]);
 
+  // When this card becomes the highlighted one (navigated to from the sidebar),
+  // open it and scroll it into view. Runs on the `active` flip too, so switching
+  // highlight between already-mounted cards reveals the newly active one.
   useEffect(() => {
     if (!active) return;
     setMounted(true);

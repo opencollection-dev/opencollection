@@ -22,28 +22,37 @@ interface ExampleViewProps {
 }
 
 export const ExampleView: React.FC<ExampleViewProps> = ({ request, example, orientation = 'horizontal' }) => {
-  const exReq = example.request ?? {};
-  const exRes = example.response ?? {};
-  const method = exReq.method || getHttpMethod(request) || 'GET';
-  const url = exReq.url || getRequestUrl(request) || '';
-  const status = exRes.status;
-  const statusText = exRes.statusText || statusCodePhrase(status) || '';
-  const description = getDescription(example);
+  const model = useMemo(() => {
+    const exReq = example.request ?? {};
+    const exRes = example.response ?? {};
+    const url = exReq.url || getRequestUrl(request) || '';
+    const { path: pathParams, query: queryParams } = resolvePathAndQueryParams(exReq.params, url);
+    const bodyView = getBodyView(exReq.body);
+    const resBody = exRes.body;
+    return {
+      method: exReq.method || getHttpMethod(request) || 'GET',
+      url,
+      status: exRes.status,
+      statusText: exRes.statusText || statusCodePhrase(exRes.status) || '',
+      description: getDescription(example),
+      pathParams,
+      queryParams,
+      hasParams: pathParams.length > 0 || queryParams.length > 0,
+      reqHeaderRows: headerRows(exReq.headers ?? []),
+      reqBody: exReq.body,
+      hasReqBody: bodyView.render !== 'none',
+      resHeaderRows: headerRows(exRes.headers ?? []),
+      resBody,
+      hasResBody: Boolean(resBody?.data?.trim())
+    };
+  }, [example, request]);
 
-  const { path: pathParams, query: queryParams } = useMemo(
-    () => resolvePathAndQueryParams(exReq.params, url),
-    [exReq.params, url]
-  );
-  const hasParams = pathParams.length > 0 || queryParams.length > 0;
-  const reqHeaders = useMemo(() => exReq.headers ?? [], [exReq.headers]);
-  const bodyView = useMemo(() => getBodyView(exReq.body), [exReq.body]);
-  const hasReqBody = bodyView.render !== 'none';
-  const reqHeaderRows = useMemo(() => headerRows(reqHeaders), [reqHeaders]);
-
-  const resHeaders = useMemo(() => exRes.headers ?? [], [exRes.headers]);
-  const resBody = exRes.body;
-  const hasResBody = Boolean(resBody?.data?.trim());
-  const resHeaderRows = useMemo(() => headerRows(resHeaders), [resHeaders]);
+  const {
+    method, url, status, statusText, description,
+    pathParams, queryParams, hasParams,
+    reqHeaderRows, reqBody, hasReqBody,
+    resHeaderRows, resBody, hasResBody
+  } = model;
 
   const { size: paneSize, isResizing, containerRef, startResize } = useSplitPane(orientation);
   const paneStyle = orientation === 'vertical' ? { height: `${paneSize}%` } : { width: `${paneSize}%` };
@@ -80,7 +89,7 @@ export const ExampleView: React.FC<ExampleViewProps> = ({ request, example, orie
               <RequestParams path={pathParams} query={queryParams} />
             </div>
           )}
-          {reqHeaders.length > 0 && (
+          {reqHeaderRows.length > 0 && (
             <div className="example-view-section">
               <div className="example-view-section-label">HEADERS</div>
               <PropertyTable rows={reqHeaderRows} />
@@ -89,7 +98,7 @@ export const ExampleView: React.FC<ExampleViewProps> = ({ request, example, orie
           {hasReqBody && (
             <div className="example-view-section">
               <div className="example-view-section-label">BODY</div>
-              <RequestBody body={exReq.body} showContentType={false} />
+              <RequestBody body={reqBody} showContentType={false} />
             </div>
           )}
         </div>
@@ -101,7 +110,7 @@ export const ExampleView: React.FC<ExampleViewProps> = ({ request, example, orie
             Response
             {statusBadge}
           </div>
-          {resHeaders.length > 0 && (
+          {resHeaderRows.length > 0 && (
             <div className="example-view-section">
               <div className="example-view-section-label">HEADERS</div>
               <PropertyTable rows={resHeaderRows} />

@@ -1,5 +1,6 @@
 import type { Locator } from '@playwright/test';
 import { BaseComponent } from './base.component';
+import { exampleToggleFor, exampleRowFor } from './exampleSidebar.helpers';
 
 export class SidebarComponent extends BaseComponent {
   readonly items = this.page.getByTestId('sidebar-item');
@@ -26,11 +27,11 @@ export class SidebarComponent extends BaseComponent {
   }
 
   exampleToggle(requestName: string): Locator {
-    return this.item(requestName).first().getByTestId('sidebar-example-toggle');
+    return exampleToggleFor(this.item(requestName).first());
   }
 
   exampleRow(exampleName: string): Locator {
-    return this.page.getByTestId('sidebar-example').filter({ hasText: exampleName });
+    return exampleRowFor(this.page, exampleName);
   }
 
   async toggleExamples(requestName: string): Promise<void> {

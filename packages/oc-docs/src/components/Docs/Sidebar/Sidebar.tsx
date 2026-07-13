@@ -49,7 +49,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
 
   const goToExample = (requestUuid: string, index: number) => {
     const slug = uuidToSlug.get(requestUuid);
-    if (slug === undefined) return;
+    if (slug == null) return;
     dispatch(setExampleHighlight({ requestUuid, index }));
     goTo(slug);
   };

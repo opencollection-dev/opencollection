@@ -90,7 +90,7 @@ export const StyledWrapper = styled.div`
 
   .navlink-spacer {
     flex-shrink: 0;
-    width: 12px;
+    width: 0.75rem;
   }
 
   .navlink-chevron {
@@ -98,7 +98,7 @@ export const StyledWrapper = styled.div`
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 12px;
+    width: 0.75rem;
     height: 18px;
     padding: 0;
     background: transparent;

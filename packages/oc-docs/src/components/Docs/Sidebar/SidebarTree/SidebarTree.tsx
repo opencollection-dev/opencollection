@@ -39,7 +39,7 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
   onNavigate,
   onToggleFolder,
   collectionRoot,
-  activeExample = null,
+  activeExample,
   onExampleClick,
 }) => {
   // Explicit expand/collapse intent per request uuid. When a request has no

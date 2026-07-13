@@ -19,7 +19,7 @@ export const Examples: React.FC<ExamplesProps> = ({ examples, method, url, onTry
   // A highlight that no longer resolves (out of range) falls back to the
   // default of opening the first card, never leaving every card collapsed.
   const validHighlight =
-    highlightedIndex !== undefined && highlightedIndex >= 0 && highlightedIndex < examples.length;
+    highlightedIndex != null && highlightedIndex >= 0 && highlightedIndex < examples.length;
 
   return (
     <StyledWrapper className={['examples', className].filter(Boolean).join(' ')} data-testid={testId}>

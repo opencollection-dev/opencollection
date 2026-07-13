@@ -6,15 +6,15 @@ export const StyledWrapper = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: 16px 16px 0;
+  padding: 1rem 1rem 0;
   background: var(--bg-primary);
 
   .example-view-head {
     flex: 0 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    margin-bottom: 12px;
+    gap: 0.25rem;
+    margin-bottom: 0.75rem;
   }
   .example-view-name {
     font-weight: 600;
@@ -22,7 +22,7 @@ export const StyledWrapper = styled.div`
   }
   .example-view-desc {
     color: var(--text-secondary);
-    font-size: 13px;
+    font-size: 0.8125rem;
   }
   .example-view-urlbar {
     flex: 0 0 auto;
@@ -33,7 +33,7 @@ export const StyledWrapper = styled.div`
     border: 1px solid var(--border-color);
     border-radius: 0.5rem;
     background-color: var(--oc-background-mantle);
-    margin-bottom: 16px;
+    margin-bottom: 1rem;
   }
   .example-view-url {
     flex: 1 1 auto;
@@ -48,7 +48,7 @@ export const StyledWrapper = styled.div`
   }
   .example-view-status {
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: 0.75rem;
     font-weight: 700;
   }
   .example-view-grid {
@@ -82,20 +82,20 @@ export const StyledWrapper = styled.div`
   .example-view-pane-title {
     display: flex;
     align-items: baseline;
-    gap: 8px;
-    font-size: 13px;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
     font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 8px;
+    margin-bottom: 0.5rem;
   }
   .example-view-section {
-    margin-bottom: 16px;
+    margin-bottom: 1rem;
   }
   .example-view-section-label {
-    font-size: 11px;
+    font-size: 0.6875rem;
     font-weight: 700;
     letter-spacing: 0.06em;
     color: var(--text-secondary);
-    margin-bottom: 6px;
+    margin-bottom: 0.375rem;
   }
 `;
