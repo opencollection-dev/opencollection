@@ -54,16 +54,21 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
   const handleVariablesChange = (rows: KeyValueRow[]) => {
     const originals = collection.request?.variables ?? [];
     const originalByName = new Map(originals.filter((variable) => variable.name).map((variable): [string, typeof variable] => [variable.name as string, variable]));
-    updateRequest({
-      ...collection.request,
-      variables: rows.map((row) => {
-        const original = originalByName.get(row.name);
-        if (!original) return { name: row.name, value: row.value, disabled: !row.enabled };
-        const originalValue = 'value' in original ? original.value : undefined;
-        const value = unwrapVariableValue(originalValue) === row.value ? originalValue : rewriteVariableValue(originalValue, row.value);
-        return { ...original, name: row.name, value, disabled: !row.enabled };
-      })
-    });
+
+    const reconcileVariable = (row: KeyValueRow) => {
+      const original = originalByName.get(row.name);
+      if (!original) return { name: row.name, value: row.value, disabled: !row.enabled };
+
+      // The flat editor only surfaces a variable's string value, so leave the original value
+      // untouched while that string is unchanged (preserving its declared data type and any
+      // non-selected variants) and only rebuild it once the user edits the string.
+      const originalValue = 'value' in original ? original.value : undefined;
+      const isUnchanged = unwrapVariableValue(originalValue) === row.value;
+      const value = isUnchanged ? originalValue : rewriteVariableValue(originalValue, row.value);
+      return { ...original, name: row.name, value, disabled: !row.enabled };
+    };
+
+    updateRequest({ ...collection.request, variables: rows.map(reconcileVariable) });
   };
 
   const handleScriptChange = (scriptType: 'preRequest' | 'postResponse' | 'tests', value: string) => {

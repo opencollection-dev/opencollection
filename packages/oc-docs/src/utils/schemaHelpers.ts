@@ -239,12 +239,16 @@ export const getHttpParams = (item: HttpRequest | null | undefined): HttpRequest
   return [];
 };
 
+// A request nests its auth inside its protocol-detail block. Reads (getRequestAuth)
+// and writes (AuthTab) share this list so the two can't drift.
+export const REQUEST_PROTOCOL_KEYS = ['http', 'graphql', 'grpc', 'websocket'] as const;
+
 export const getRequestAuth = (item: RequestItem | null | undefined): any => {
   if (!item) return undefined;
 
   // Current schema: auth is part of the protocol-detail block.
   const blocks = item as Record<string, { auth?: unknown } | undefined>;
-  for (const key of ['http', 'graphql', 'grpc', 'websocket']) {
+  for (const key of REQUEST_PROTOCOL_KEYS) {
     if (blocks[key]?.auth !== undefined) {
       return blocks[key]?.auth;
     }
@@ -461,13 +465,13 @@ export const getTestsScript = (scripts: Scripts | Record<string, string> | null 
   return (scripts as any).tests;
 };
 
+export const countEnabled = <T extends { disabled?: boolean }>(items: T[] | undefined): number | undefined =>
+  (items ?? []).filter((item) => !item.disabled).length || undefined;
+
 /**
  * Get docs from an item (at root level in new schema)
  * Handles both string format and object format { content, type }
  */
-export const countEnabled = <T extends { disabled?: boolean }>(items: T[] | undefined): number | undefined =>
-  (items ?? []).filter((item) => !item.disabled).length || undefined;
-
 export const getItemDocs = (item: { docs?: unknown } | null | undefined): string | undefined => {
   if (!item) return undefined;
 

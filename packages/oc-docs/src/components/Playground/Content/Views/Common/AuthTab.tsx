@@ -1,4 +1,5 @@
 import React from 'react';
+import { REQUEST_PROTOCOL_KEYS } from '../../../../../utils/schemaHelpers';
 
 interface AuthTabProps {
   auth: any;
@@ -26,11 +27,12 @@ export const AuthTab: React.FC<AuthTabProps> = ({
   const updateItemAuth = (newAuth: any) => {
     if (!onItemChange || !item) return;
 
-    // HttpRequests keep auth at the root; Collections/Folders nest it under `request`
-    // (created here when absent, so a collection with no request section still saves).
-    const isHttpRequest = 'http' in item || 'runtime' in item;
-    if (isHttpRequest) {
-      onItemChange({ ...item, auth: newAuth });
+    // Write auth where getRequestAuth reads it: a request keeps it inside its protocol
+    // block (http/graphql/…); a Collection/Folder nests it under `request` (created here
+    // when absent, so a collection with no request section still saves).
+    const protocolKey = REQUEST_PROTOCOL_KEYS.find((key) => key in item);
+    if (protocolKey) {
+      onItemChange({ ...item, [protocolKey]: { ...item[protocolKey], auth: newAuth } });
     } else {
       onItemChange({ ...item, request: { ...item.request, auth: newAuth } });
     }
