@@ -89,11 +89,11 @@ export const Popover: React.FC<PopoverProps> = ({
   useEffect(() => clearTimer, [clearTimer]);
 
   const updatePosition = useCallback(() => {
-    const anchor = anchorRef.current;
-    if (!anchor) return;
+    const anchorEl = anchorRef.current;
+    if (!anchorEl) return;
     const panelWidth = panelRef.current?.offsetWidth ?? 0;
     const panelHeight = panelRef.current?.offsetHeight ?? 0;
-    setPosition(computeAnchoredPosition(anchor.getBoundingClientRect(), panelWidth, panelHeight));
+    setPosition(computeAnchoredPosition(anchorEl.getBoundingClientRect(), panelWidth, panelHeight));
   }, []);
 
   useEffect(() => {
