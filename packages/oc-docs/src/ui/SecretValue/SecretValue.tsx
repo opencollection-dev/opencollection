@@ -4,7 +4,7 @@ import { EyeIcon, EyeOffIcon } from '../../assets/icons';
 import { StyledWrapper } from './StyledWrapper';
 
 interface SecretValueProps {
-  value?: string | React.ReactNode;
+  value?: React.ReactNode;
   align?: 'between' | 'start';
   readOnly?: boolean;
   testId?: string;
