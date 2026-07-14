@@ -8,10 +8,12 @@ import { UnsupportedRequestPage } from '../pages/unsupported-request.page';
 import { SidebarComponent } from '../components/sidebar.component';
 import { TooltipComponent } from '../components/tooltip.component';
 import { PlaygroundComponent } from '../components/playground.component';
+import { CollectionSettingsComponent } from '../components/collection-settings/collection-settings.component';
 import { ThemeToggleComponent } from '../components/layout/theme-toggle.component';
 import { PageHeaderComponent } from '../components/layout/page-header.component';
 import { SearchComponent } from '../components/search/search.component';
 import { EnvSwitcherComponent } from '../components/layout/env-switcher.component';
+import { VariableCardComponent } from '../components/variable-card.component';
 
 type Fixtures = {
   overviewPage: OverviewPage;
@@ -23,10 +25,12 @@ type Fixtures = {
   sidebar: SidebarComponent;
   tooltip: TooltipComponent;
   playground: PlaygroundComponent;
+  collectionSettings: CollectionSettingsComponent;
   pageHeader: PageHeaderComponent;
   envSwitcher: EnvSwitcherComponent;
   themeToggle: ThemeToggleComponent;
   search: SearchComponent;
+  variableCard: VariableCardComponent;
 };
 
 export const test = base.extend<Fixtures>({
@@ -63,10 +67,16 @@ export const test = base.extend<Fixtures>({
   playground: async ({ page }, use) => {
     await use(new PlaygroundComponent(page));
   },
+  collectionSettings: async ({ page }, use) => {
+    await use(new CollectionSettingsComponent(page));
+  },
   themeToggle: async ({ page }, use) => {
     await use(new ThemeToggleComponent(page));
   },
   search: async ({ page }, use) => {
     await use(new SearchComponent(page));
+  },
+  variableCard: async ({ page }, use) => {
+    await use(new VariableCardComponent(page));
   }
 });

@@ -15,7 +15,9 @@ export {
   useVariableResolver,
   useResolvedVariables,
   VariableResolverProvider,
-  type VariableResolver
+  ItemVariableResolverProvider,
+  type VariableResolver,
+  type VariableLookup
 } from './useVariableResolver';
 export { usePlaygroundUrlState, type PlaygroundUrlApi } from './usePlaygroundUrlState';
 export { useDocsNavigate } from './useDocsNavigate';

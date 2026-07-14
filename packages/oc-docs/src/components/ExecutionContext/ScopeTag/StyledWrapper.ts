@@ -5,7 +5,7 @@ export const StyledWrapper = styled.span`
   font-size: 10.5px;
   font-weight: 500;
   padding: 2px 8px;
-  border-radius: 4px;
+  border-radius: var(--oc-radius);
   flex-shrink: 0;
 
   &.scope-tag--request {

@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 export const StyledWrapper = styled.div`
   .snippet-box {
     border: 1px solid var(--border-color);
-    border-radius: 0.5rem;
+    border-radius: var(--oc-radius);
     overflow: hidden;
     background: var(--oc-background-base);
   }

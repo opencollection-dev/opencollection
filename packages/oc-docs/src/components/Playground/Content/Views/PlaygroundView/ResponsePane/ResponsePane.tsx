@@ -144,6 +144,7 @@ const ResponsePane: React.FC<ResponsePaneProps> = ({ response, isLoading }) => {
   return (
     <StyledWrapper>
       <Tabs
+        className='h-full'
         tabs={tabs}
         activeTab={activeTab}
         onTabChange={setActiveTab}

@@ -78,7 +78,7 @@ export const StyledWrapper = styled.div`
     width: 22px;
     height: 22px;
     border: 1px solid var(--oc-border-border0);
-    border-radius: 6px;
+    border-radius: var(--oc-radius);
     background-color: var(--oc-background-base);
     color: var(--oc-colors-text-subtext0);
   }

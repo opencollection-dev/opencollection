@@ -32,6 +32,7 @@
   --oc-background-surface2: #e5e5e5;
   --oc-background-surface1: #eaeaea;
   --oc-background-surface0: #f1f1f1;
+  --oc-background-surface-bright: #fafafa;
   --oc-status-info-background: rgba(52,106,178,0.15);
   --oc-status-info-text: hsl(214, 55%, 45%);
   --oc-status-info-border: hsl(214, 55%, 45%);
@@ -351,6 +352,7 @@
   --oc-background-surface0: #26292b;
   --oc-background-surface1: #444444;
   --oc-background-surface2: #666666;
+  --oc-background-surface-bright: #26292b;
   --oc-status-info-background: rgba(139,194,249,0.15);
   --oc-status-info-text: hsl(210, 90%, 76%);
   --oc-status-info-border: hsl(210, 90%, 76%);

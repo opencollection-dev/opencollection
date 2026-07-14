@@ -4,10 +4,9 @@ export const StyledWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 7px;
-  width: 100%;
   box-sizing: border-box;
   user-select: none;
-  border-radius: 6px;
+  border-radius: var(--oc-radius);
   color: var(--oc-sidebar-color);
   transition: background-color 0.12s ease, color 0.12s ease;
 
@@ -33,7 +32,7 @@ export const StyledWrapper = styled.div`
 
   &.active .navlink-icon,
   &.active .navlink-chevron {
-    color: var(--oc-colors-accent);
+    color: var(--oc-colors-text-subtext1);
   }
 
   .navlink-main {
@@ -47,7 +46,7 @@ export const StyledWrapper = styled.div`
     border: 0;
     cursor: pointer;
     text-align: left;
-    font-size: 12px;
+    font-size: var(--font-size-base);
     line-height: 1.25;
     font-weight: inherit;
     color: inherit;
@@ -67,7 +66,7 @@ export const StyledWrapper = styled.div`
   }
 
   .navlink-icon {
-    color: var(--oc-overlay-overlay0);
+    color: var(--oc-colors-text-subtext1);
   }
 
   .navlink-icon svg {
@@ -98,8 +97,8 @@ export const StyledWrapper = styled.div`
     padding: 0;
     background: transparent;
     border: 0;
-    border-radius: 4px;
-    color: var(--oc-overlay-overlay0);
+    border-radius: var(--oc-radius);
+    color: var(--oc-colors-text-subtext1);
     cursor: pointer;
   }
 
@@ -124,9 +123,5 @@ export const StyledWrapper = styled.div`
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-
-  .navlink-label.mono {
-    font-family: var(--font-mono);
   }
 `;

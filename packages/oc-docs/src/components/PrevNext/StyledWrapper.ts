@@ -23,14 +23,14 @@ export const StyledWrapper = styled.nav`
     width: 100%;
     min-height: 65px;
     padding: 14px 18px;
-    border-radius: 8px;
-    border: 1px solid var(--oc-border-border1, var(--border-color));
+    border-radius: var(--oc-radius);
+    border: 1px solid var(--oc-border-border0, var(--border-color));
     text-decoration: none;
     transition: border-color 0.12s ease, background-color 0.12s ease;
   }
   @media (hover: hover) {
     .prevnext-card:hover {
-      background-color: color-mix(in srgb, var(--oc-text) 6%, transparent);
+      background-color: var(--oc-background-mantle);
     }
   }
   .prevnext-card:active {

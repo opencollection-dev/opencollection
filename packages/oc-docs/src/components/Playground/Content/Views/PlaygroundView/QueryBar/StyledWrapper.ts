@@ -4,7 +4,7 @@ export const StyledWrapper = styled.div`
   gap: 0.5rem;
   padding: 0.25rem 0.375rem;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--oc-radius);
   transition: border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
               box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   background-color: var(--bg-primary);

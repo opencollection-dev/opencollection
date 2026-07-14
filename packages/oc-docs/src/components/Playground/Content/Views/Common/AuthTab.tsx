@@ -1,9 +1,9 @@
 import React from 'react';
+import { REQUEST_PROTOCOL_KEYS } from '../../../../../utils/schemaHelpers';
 
 interface AuthTabProps {
   auth: any;
   onAuthChange: (authType: string) => void;
-  onAuthFieldChange?: (field: string, value: string) => void;
   onItemChange?: (item: any) => void;
   item?: any;
   title?: string;
@@ -15,7 +15,6 @@ interface AuthTabProps {
 export const AuthTab: React.FC<AuthTabProps> = ({
   auth,
   onAuthChange,
-  onAuthFieldChange,
   onItemChange,
   item,
   title = "Authentication",
@@ -25,26 +24,17 @@ export const AuthTab: React.FC<AuthTabProps> = ({
 }) => {
   const authType = typeof auth === 'object' && auth !== null ? auth.type : auth === 'inherit' ? 'inherit' : 'none';
 
-  // Helper function to update auth in the correct location
   const updateItemAuth = (newAuth: any) => {
     if (!onItemChange || !item) return;
-    
-    // Check if item has 'request' property (Collection/Folder) or auth directly (HttpRequest)
-    if ('request' in item && item.request !== undefined) {
-      // Collection or Folder: auth is nested in request
-      onItemChange({ 
-        ...item, 
-        request: {
-          ...item.request,
-          auth: newAuth
-        }
-      });
+
+    // Write auth where getRequestAuth reads it: a request keeps it inside its protocol
+    // block (http/graphql/…); a Collection/Folder nests it under `request` (created here
+    // when absent, so a collection with no request section still saves).
+    const protocolKey = REQUEST_PROTOCOL_KEYS.find((key) => key in item);
+    if (protocolKey) {
+      onItemChange({ ...item, [protocolKey]: { ...item[protocolKey], auth: newAuth } });
     } else {
-      // HttpRequest: auth is directly on item
-      onItemChange({ 
-        ...item, 
-        auth: newAuth
-      });
+      onItemChange({ ...item, request: { ...item.request, auth: newAuth } });
     }
   };
 
@@ -88,6 +78,7 @@ export const AuthTab: React.FC<AuthTabProps> = ({
       <div className="space-y-3">
         <div className="flex items-center">
           <select
+            data-testid="auth-mode-select"
             value={authType}
             onChange={(e) => handleAuthTypeChange(e.target.value)}
             className="px-2 py-1 text-sm border rounded"
@@ -130,6 +121,7 @@ export const AuthTab: React.FC<AuthTabProps> = ({
                     Username:
                   </label>
                   <input
+                    data-testid="auth-username"
                     type="text"
                     value={auth.username || ''}
                     onChange={(e) => {
@@ -149,6 +141,7 @@ export const AuthTab: React.FC<AuthTabProps> = ({
                     Password:
                   </label>
                   <input
+                    data-testid="auth-password"
                     type="password"
                     value={auth.password || ''}
                     onChange={(e) => {

@@ -46,14 +46,14 @@ describe('buildNavModel — ordered sequence', () => {
       'authentication/login',
       'authentication/register',
       'hotels',
-      'hotels/browse-search',
+      'hotels/browse-%26-search',
       'ping',
     ]);
   });
 
-  it('omits the environments entry when the collection has none', () => {
+  it('keeps the environments entry even when the collection has none (the page shows an empty state)', () => {
     const c = collection([req('Ping', 1)], false);
-    expect(slugs(c)).toEqual([OVERVIEW_SLUG, 'ping']);
+    expect(slugs(c)).toEqual([OVERVIEW_SLUG, ENVIRONMENTS_SLUG, 'ping']);
   });
 
   it('sorts requests by seq (mirrors the Bruno app)', () => {
@@ -91,7 +91,7 @@ describe('buildNavModel — slugs & metadata', () => {
   it('builds full path-based slugs from the folder hierarchy', () => {
     const model = buildNavModel(sample());
     expect(model.bySlug.has('authentication/login')).toBe(true);
-    expect(model.bySlug.has('hotels/browse-search')).toBe(true);
+    expect(model.bySlug.has('hotels/browse-%26-search')).toBe(true);
   });
 
   it('exposes ancestors (folder chain above the node)', () => {

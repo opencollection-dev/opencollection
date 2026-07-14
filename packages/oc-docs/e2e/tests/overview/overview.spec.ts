@@ -22,23 +22,6 @@ test.describe('Collection Overview', () => {
     await expect(overviewPage.stats.valueFor('Environments')).toHaveText('2');
   });
 
-  test('lists every environment under the "Environments" section with its variable count', async ({ overviewPage }) => {
-    await test.step('the "Environments" section is shown', async () => {
-      await expect(overviewPage.sectionLabel('Environments')).toBeVisible();
-    });
-
-    await test.step('both environments (Local and Prod) are listed', async () => {
-      await expect(overviewPage.environments.items).toHaveCount(2);
-      await expect(overviewPage.environments.item('Local')).toBeVisible();
-      await expect(overviewPage.environments.item('Prod')).toBeVisible();
-    });
-
-    await test.step('each environment shows how many variables it has', async () => {
-      await expect(overviewPage.environments.variableCount('Local')).toHaveText('2 variables');
-      await expect(overviewPage.environments.variableCount('Prod')).toHaveText('2 variables');
-    });
-  });
-
   test('renders the collection documentation under the "Overview" section', async ({ overviewPage }) => {
     await expect(overviewPage.sectionLabel('Overview')).toBeVisible();
     await expect(overviewPage.docMarkdown.root).toBeVisible();

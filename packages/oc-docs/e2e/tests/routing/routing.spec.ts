@@ -61,6 +61,24 @@ test.describe('page-based navigation', () => {
     await expect(page.getByRole('heading', { name: 'Setup Script', level: 1 })).toBeVisible();
   });
 
+  test('a folder whose name has special characters resolves via its encoded slug', async ({ page }) => {
+    // "Customers/%$" -> the slash/percent/dollar are percent-encoded, so the
+    // folder keeps its own page instead of colliding or collapsing.
+    await page.goto(page$('customers%2F%25%24'));
+    const active = page.getByTestId('page');
+    await expect(active).toHaveAttribute('data-page-slug', 'customers%2F%25%24');
+    await expect(active).toHaveAttribute('data-page-type', 'folder');
+    await expect(page.getByTestId('folder-title')).toHaveText('Customers/%$');
+  });
+
+  test('a request inside a special-character folder deep-links (encoded parent + separator)', async ({ page }) => {
+    await page.goto(page$('customers%2F%25%24/list-customers'));
+    const active = page.getByTestId('page');
+    await expect(active).toHaveAttribute('data-page-slug', 'customers%2F%25%24/list-customers');
+    await expect(active).toHaveAttribute('data-page-type', 'request');
+    await expect(page.getByTestId('request-title')).toHaveText('List customers');
+  });
+
   test('unknown slug redirects to the overview', async ({ page }) => {
     await page.goto(page$('does/not/exist'));
     await expect(page.getByTestId('page')).toHaveAttribute('data-page-type', 'overview');

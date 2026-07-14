@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 export const StyledWrapper = styled.div`
-  z-index: 1000;
+  z-index: var(--z-popover, 1000);
   max-width: min(24rem, calc(100vw - 1rem));
   padding: 0.25rem 0.5rem;
   border-radius: var(--oc-radius);

@@ -18,13 +18,13 @@ export const StyledWrapper = styled.div`
     font-weight: 600;
   }
   .overview-stats-row {
-    margin-top: 1.5rem;
+    margin-top: 1.25rem;
   }
 
   .overview-body {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 3rem;
+    gap: 4.5rem;
     margin-top: 2rem;
     padding-top: 2rem;
     border-top: 1px solid var(--border-color);
@@ -45,5 +45,12 @@ export const StyledWrapper = styled.div`
 
   .overview-markdown {
     margin-top: 0.25rem;
+  }
+
+  [data-testid='overview-section-label'] > [data-testid='section-label'] {
+    color: var(--text-muted);
+  }
+  .overview-col-right [data-testid='overview-section-label'] > [data-testid='section-label'] {
+    margin-bottom: 1rem;
   }
 `;

@@ -1,6 +1,7 @@
 import React, { Suspense, lazy, useEffect, useMemo, useRef } from 'react';
 import { CopyButton } from '../../ui/CopyButton/CopyButton';
 import { StyledWrapper } from './CodeViewer/StyledWrapper';
+import { HighlightedCode } from './HighlightedCode';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/components/prism-bash';
@@ -17,6 +18,8 @@ interface CodeProps {
   onChange?: (value: string) => void;
   showLineNumbers?: boolean;
   showCopy?: boolean;
+  variableAware?: boolean;
+  copyText?: string;
 
   surface?: 'base' | 'muted';
   testId?: string;
@@ -24,7 +27,10 @@ interface CodeProps {
   className?: string;
 }
 
-type CodeViewerProps = Pick<CodeProps, 'code' | 'language' | 'showLineNumbers' | 'showCopy' | 'surface' | 'className' | 'testId'>;
+type CodeViewerProps = Pick<
+  CodeProps,
+  'code' | 'language' | 'showLineNumbers' | 'showCopy' | 'surface' | 'variableAware' | 'copyText' | 'className' | 'testId'
+>;
 
 const CodeViewer: React.FC<CodeViewerProps> = ({
   code = '',
@@ -32,16 +38,18 @@ const CodeViewer: React.FC<CodeViewerProps> = ({
   showLineNumbers = false,
   showCopy = true,
   surface = 'base',
+  variableAware = false,
+  copyText,
   className,
   testId
 }) => {
   const preRef = useRef<HTMLPreElement>(null);
 
   useEffect(() => {
-    if (preRef.current) {
+    if (!variableAware && preRef.current) {
       Prism.highlightAllUnder(preRef.current);
     }
-  }, [code, language]);
+  }, [code, language, variableAware]);
 
   const lineCount = useMemo(() => (code ? code.split('\n').length : 1), [code]);
 
@@ -49,8 +57,10 @@ const CodeViewer: React.FC<CodeViewerProps> = ({
     .filter(Boolean)
     .join(' ');
   const codeEl = (
-    <pre ref={preRef} className="m-0">
-      <code className={`language-${language} font-mono`}>{code}</code>
+    <pre ref={variableAware ? undefined : preRef} className="m-0">
+      <code className={`language-${language} font-mono`}>
+        {variableAware ? <HighlightedCode code={code} language={language} /> : code}
+      </code>
     </pre>
   );
 
@@ -59,7 +69,7 @@ const CodeViewer: React.FC<CodeViewerProps> = ({
       <div className="relative">
         {showCopy && (
           <CopyButton
-            text={code}
+            text={copyText ?? code}
             label="Copy code"
             className="code-copy-floating"
             testId={testId ? `${testId}-copy` : undefined}
@@ -91,6 +101,8 @@ export const Code: React.FC<CodeProps> = ({
   showLineNumbers = false,
   showCopy = true,
   surface = 'base',
+  variableAware = false,
+  copyText,
   height = '200px',
   className,
   testId = 'code'
@@ -110,6 +122,8 @@ export const Code: React.FC<CodeProps> = ({
       showLineNumbers={showLineNumbers}
       showCopy={showCopy}
       surface={surface}
+      variableAware={variableAware}
+      copyText={copyText}
       className={className}
       testId={testId}
     />

@@ -124,7 +124,7 @@ test.describe('playground docks (desktop)', () => {
   test('clicking the collection root opens the collection view', async ({ page, playground }) => {
     await page.goto(openAt('bottom'));
     await playground.collectionNode.getByRole('button', { name: /Bruno Testbench|Collection/ }).click();
-    await expect(playground.view).toContainText(/Headers|Variables|Auth|Scripts/);
+    await expect(playground.view).toContainText(/Overview|Headers|Vars|Auth|Scripts|Tests/);
   });
 
   test('inline dock: sidebar is closed by default and overlays the view when opened', async ({ page, playground }) => {

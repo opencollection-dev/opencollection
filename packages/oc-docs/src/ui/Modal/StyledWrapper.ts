@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 export const StyledWrapper = styled.div`
   position: fixed;
   inset: 0;
-  z-index: 1000;
+  z-index: var(--z-modal, 100);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -27,7 +27,7 @@ export const StyledWrapper = styled.div`
     max-height: 88vh;
     background: var(--oc-background-base);
     border: 1px solid var(--border-color);
-    border-radius: 0.75rem;
+    border-radius: var(--oc-radius);
     box-shadow: var(--shadow-md);
     overflow: hidden;
     outline: none;

@@ -54,7 +54,7 @@ const Brand: React.FC<BrandProps> = ({
           </span>
           {version && (
             <span className="topbar-brand-version" data-testid={`${testId}-version`}>
-              {version}
+              {`Version : ${version}`}
             </span>
           )}
         </span>

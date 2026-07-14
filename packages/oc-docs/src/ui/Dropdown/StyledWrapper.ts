@@ -18,7 +18,7 @@ export const StyledWrapper = styled.div`
     color: var(--oc-colors-text-subtext1);
     background: transparent;
     border: 1px solid var(--oc-border-border2);
-    border-radius: 6px;
+    border-radius: var(--oc-radius);
     transition: border-color 0.12s ease, color 0.12s ease;
   }
   .dropdown-button:hover {
@@ -54,8 +54,8 @@ export const StyledWrapper = styled.div`
     padding: 8px;
     list-style: none;
     background: var(--oc-background-base);
-    border: 1px solid var(--oc-border-border1);
-    border-radius: 8px;
+    border: 1px solid var(--oc-border-border0);
+    border-radius: var(--oc-radius);
   }
   .dropdown-menu.align-right {
     left: auto;
@@ -79,7 +79,7 @@ export const StyledWrapper = styled.div`
     color: var(--oc-text);
     background: transparent;
     border: 0;
-    border-radius: 5px;
+    border-radius: var(--oc-radius);
   }
   .dropdown-option:hover,
   .dropdown-option:focus-visible {

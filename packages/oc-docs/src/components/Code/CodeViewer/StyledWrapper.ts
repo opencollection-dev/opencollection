@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 export const StyledWrapper = styled.div`
   background-color: var(--oc-background-base);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--oc-radius);
 
   &.code--muted {
     background-color: var(--oc-background-mantle);
