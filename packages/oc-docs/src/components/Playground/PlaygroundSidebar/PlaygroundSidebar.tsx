@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import type { OpenCollection as OpenCollectionCollection } from '@opencollection/types';
 import EnvSwitcher from '../../EnvSwitcher/EnvSwitcher';
 import SidebarTree from '../../Docs/Sidebar/SidebarTree/SidebarTree';
 import IconButton from '../../../ui/IconButton/IconButton';
 import { SettingsIcon } from '../../../assets/icons';
+import { useAutoHideScrollbar, useIsMobileDevice } from '../../../hooks';
 import { StyledWrapper } from './StyledWrapper';
 
 interface PlaygroundSidebarProps {
@@ -34,8 +35,15 @@ const PlaygroundSidebar: React.FC<PlaygroundSidebarProps> = ({
   const [collectionCollapsed, setCollectionCollapsed] = useState(false);
   const name = collection?.info?.name || 'Collection';
 
+  // Fade the scrollbar after 1s idle, same behaviour as the docs sidebar.
+  const treeRef = useRef<HTMLDivElement>(null);
+  useAutoHideScrollbar(treeRef);
+
+  // Smaller nav text on real mobile/tablet OSes only (not a width breakpoint).
+  const isMobileDevice = useIsMobileDevice();
+
   return (
-    <StyledWrapper data-testid={testId}>
+    <StyledWrapper className={isMobileDevice ? 'mobile' : undefined} data-testid={testId}>
       <div className="controls">
         <EnvSwitcher testId="playground-env-switcher" />
         <IconButton
@@ -49,7 +57,7 @@ const PlaygroundSidebar: React.FC<PlaygroundSidebarProps> = ({
         </IconButton>
       </div>
 
-      <div className="tree">
+      <div className="tree" ref={treeRef}>
         {collection?.items ? (
           <SidebarTree
             items={collection.items}

@@ -9,6 +9,7 @@ import {
   setViewMode,
   setSelectedItemId,
   toggleFolderCollapse,
+  expandFolders,
 } from '@slices/playground';
 import { selectActiveEnvName } from '../../../store/slices/env';
 import { useNavModel } from '../../../routing/hooks';
@@ -83,6 +84,15 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
       appliedSlugRef.current = requestSlug;
       dispatch(setSelectedItemId(uuid));
       dispatch(setViewMode('playground'));
+      // Reveal the request's ancestor folders, so a deep-link / reload lands on
+      // the request with its folders open in the tree (the docs sidebar does the
+      // same). Expand-only, so it won't reopen a folder the user just collapsed.
+      const ancestorUuids: string[] = [];
+      for (const ancestor of entry?.ancestors ?? []) {
+        const ancestorUuid = getItemUuid(model.bySlug.get(ancestor.slug)?.item);
+        if (ancestorUuid) ancestorUuids.push(ancestorUuid);
+      }
+      if (ancestorUuids.length) dispatch(expandFolders(ancestorUuids));
     }
   }, [requestSlug, model, dispatch, appliedSlugRef]);
 

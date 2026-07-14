@@ -151,12 +151,24 @@ const playgroundSlice = createSlice({
     // Collection Mutation Actions
     toggleFolderCollapse: (state: PlaygroundState, action: PayloadAction<string>) => {
       if (!state.hydratedCollection?.items) return;
-      
+
       const uuid = action.payload;
       findAndUpdateItem(state.hydratedCollection.items, uuid, (item) => {
         const currentCollapsed = (item as any).isCollapsed ?? true;
         (item as any).isCollapsed = !currentCollapsed;
       });
+    },
+    // Expand-only: force the given folders open (used to reveal the active
+    // request's ancestors on deep-link / reload). Never collapses, so it does
+    // not fight a folder the user manually closed.
+    expandFolders: (state: PlaygroundState, action: PayloadAction<string[]>) => {
+      if (!state.hydratedCollection?.items || action.payload.length === 0) return;
+      const targets = new Set(action.payload);
+      for (const uuid of targets) {
+        findAndUpdateItem(state.hydratedCollection.items, uuid, (item) => {
+          (item as { isCollapsed?: boolean }).isCollapsed = false;
+        });
+      }
     },
     updateCollectionSettings: (state: PlaygroundState, action: PayloadAction<OpenCollectionCollection>) => {
       state.collection = action.payload;
@@ -193,6 +205,7 @@ export const {
   setViewMode,
   setSelectedItemId,
   toggleFolderCollapse,
+  expandFolders,
   updateCollectionSettings,
   updateCollectionEnvironments,
   updateFolderInCollection

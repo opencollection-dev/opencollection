@@ -33,13 +33,8 @@ export const StyledWrapper = styled.div`
     width: 40px;
     height: 4px;
     border-radius: 999px;
-    background-color: var(--oc-border-border0);
+    background-color: var(--oc-border-border2);
     transition: background-color 0.15s ease;
-  }
-
-  .resize-handle:hover::after,
-  &.dragging .resize-handle::after {
-    background-color: var(--oc-border-border1);
   }
 
   .dock-content {

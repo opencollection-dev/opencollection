@@ -174,4 +174,14 @@ test.describe('playground docks (desktop)', () => {
     await expect(playground.header).toBeVisible();      // playground did NOT close
     await expect(page).toHaveURL(/pg=1/);               // playground params preserved
   });
+
+  test('deep-link / reload to a nested request reveals its ancestor folders', async ({ page, playground }) => {
+    await page.goto('/#/?pg=1&dock=bottom&pgReq=billing/customers/get-all-customers');
+    await expect(playground.sidebarPanel).toBeVisible();
+    // billing + customers auto-expand, so the request row is rendered in the tree.
+    await expect(playground.treeItems.filter({ hasText: 'Get All Customers' })).toBeVisible();
+    // Still revealed after a full reload while sitting on the request.
+    await page.reload();
+    await expect(playground.treeItems.filter({ hasText: 'Get All Customers' })).toBeVisible();
+  });
 });

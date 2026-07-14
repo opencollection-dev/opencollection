@@ -43,10 +43,19 @@ export const StyledWrapper = styled.div`
     background-color: var(--oc-border-border0);
   }
 
+  /* Real mobile/tablet OS only (class set from useIsMobileDevice, not a width
+     breakpoint): drop the nav text 13px -> 12px. */
+  &.mobile .navlink-main {
+    font-size: 12px;
+  }
+
   .sidebar-items {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    padding: 0 6px;
+    /* No right padding: the selected-row highlight ends at the row's own
+       margin-right (4px nested / 8px root) from the right edge, not that plus a
+       container gap. Left keeps 6px. */
+    padding: 0 0 0 6px;
   }
 `;

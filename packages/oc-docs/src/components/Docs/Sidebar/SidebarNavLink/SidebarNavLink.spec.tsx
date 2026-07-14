@@ -52,7 +52,10 @@ describe('SidebarNavLink', () => {
     expect(html).not.toContain('navlink-label mono');
   });
 
-  it('indents by level (chevron + gap step of 19px)', () => {
-    expect(renderToStaticMarkup(<SidebarNavLink label="Nested" level={2} />)).toContain('padding-left:46px');
+  it('indents by level via margin (chevron + gap step of 19px) with a 4px inner pad', () => {
+    const html = renderToStaticMarkup(<SidebarNavLink label="Nested" level={2} />);
+    // level*19 + 4 = 42px margin; the fixed 4px pad restores the level*19+8 glyph offset.
+    expect(html).toContain('margin-left:42px');
+    expect(html).toContain('padding-left:4px');
   });
 });

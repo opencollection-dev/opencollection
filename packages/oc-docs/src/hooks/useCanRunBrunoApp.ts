@@ -24,17 +24,18 @@ export interface DeviceEnv {
  *
  * Pure so it can be unit tested against a device matrix without a DOM.
  */
-export const computeCanRunBrunoApp = ({
-  anyHoverFine,
-  userAgent,
-  platform,
-  maxTouchPoints,
-}: DeviceEnv): boolean => {
-  const isMobileOS =
-    /Android|iPhone|iPad|iPod/.test(userAgent) ||
-    (platform === 'MacIntel' && maxTouchPoints > 1);
-  return anyHoverFine && !isMobileOS;
-};
+/**
+ * A genuine mobile/tablet OS (phones + touch iPads, including one masquerading as
+ * `MacIntel` with a trackpad folio). Deliberately based on the OS/input, NOT the
+ * viewport, so a narrow laptop window (or the docs shrunk beside the inline
+ * playground) is never mistaken for mobile.
+ */
+export const computeIsMobileOS = ({ userAgent, platform, maxTouchPoints }: DeviceEnv): boolean =>
+  /Android|iPhone|iPad|iPod/.test(userAgent) ||
+  (platform === 'MacIntel' && maxTouchPoints > 1);
+
+export const computeCanRunBrunoApp = (env: DeviceEnv): boolean =>
+  env.anyHoverFine && !computeIsMobileOS(env);
 
 const POINTER_QUERY = '(any-hover: hover) and (any-pointer: fine)';
 
@@ -67,4 +68,17 @@ export const useCanRunBrunoApp = (): boolean => {
   }, []);
 
   return canRun;
+};
+
+/**
+ * True on a genuine mobile/tablet OS, independent of viewport width. The OS does
+ * not change during a session, so it is measured once (SSR/no-window safe →
+ * `false`). Use this, not a width breakpoint, to gate mobile-only styling that
+ * must NOT trigger on a shrunk laptop window.
+ */
+export const useIsMobileDevice = (): boolean => {
+  const [isMobile] = useState(() =>
+    typeof window === 'undefined' ? false : computeIsMobileOS(readDeviceEnv())
+  );
+  return isMobile;
 };
