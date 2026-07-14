@@ -10,7 +10,7 @@ import React, {
 } from 'react';
 import { Portal } from '../Portal/Portal';
 import { useEscapeKey } from '../../hooks/useEscapeKey';
-import { GAP, VIEWPORT_MARGIN } from '../../constants/ui';
+import { computeAnchoredPosition } from '../../utils/anchoredPosition';
 import { StyledWrapper } from './StyledWrapper';
 
 interface PopoverProps {
@@ -36,8 +36,6 @@ interface AnchorHandlers {
 }
 
 const OFFSCREEN = -9999;
-
-const clamp = (value: number, min: number, max: number): number => Math.min(Math.max(value, min), Math.max(min, max));
 
 /** Runs the anchor's own handler (if any) and then ours. */
 const chain =
@@ -98,20 +96,9 @@ export const Popover: React.FC<PopoverProps> = ({
   const updatePosition = useCallback(() => {
     const anchor = anchorRef.current;
     if (!anchor) return;
-    const rect = anchor.getBoundingClientRect();
     const panelWidth = panelRef.current?.offsetWidth ?? 0;
     const panelHeight = panelRef.current?.offsetHeight ?? 0;
-    const { innerWidth, innerHeight } = window;
-
-    const roomBelow = innerHeight - rect.bottom - GAP;
-    const roomAbove = rect.top - GAP;
-    const preferAbove = panelHeight > roomBelow && roomAbove > roomBelow;
-    const top = preferAbove ? rect.top - GAP - panelHeight : rect.bottom + GAP;
-
-    setPosition({
-      top: clamp(top, VIEWPORT_MARGIN, innerHeight - VIEWPORT_MARGIN - panelHeight),
-      left: clamp(rect.left, VIEWPORT_MARGIN, innerWidth - VIEWPORT_MARGIN - panelWidth)
-    });
+    setPosition(computeAnchoredPosition(anchor.getBoundingClientRect(), panelWidth, panelHeight));
   }, []);
 
   useEffect(() => {

@@ -10,7 +10,8 @@ import {
   getWordContext,
   type AutocompleteContext
 } from '../../utils/variableAutocomplete';
-import { GAP, HOVER_CLOSE_MS, HOVER_OPEN_MS, VIEWPORT_MARGIN } from '../../constants/ui';
+import { HOVER_CLOSE_MS, HOVER_OPEN_MS } from '../../constants/ui';
+import { computeAnchoredPosition } from '../../utils/anchoredPosition';
 import { StyledWrapper, HoverCard, Suggestions } from './StyledWrapper';
 
 interface HighlightedInputProps {
@@ -41,8 +42,6 @@ interface Coords {
   left: number;
   width?: number;
 }
-
-const clamp = (value: number, min: number, max: number): number => Math.min(Math.max(value, min), Math.max(min, max));
 
 const renderTokens = (text: string, isFound: (name: string) => boolean) =>
   text.split(templateVariableSplitRegex()).map((part, index) => {
@@ -83,6 +82,7 @@ export const HighlightedInput: React.FC<HighlightedInputProps> = ({
   const pendingCaret = useRef<number | null>(null);
   const justTypedRef = useRef(false);
   const moveFrame = useRef<number | null>(null);
+  const overCardRef = useRef(false);
 
   const [hovered, setHovered] = useState<HoveredToken | null>(null);
   const [hoverPos, setHoverPos] = useState<Coords | null>(null);
@@ -140,6 +140,7 @@ export const HighlightedInput: React.FC<HighlightedInputProps> = ({
   useEffect(() => {
     if (!hovered && !autocomplete) return undefined;
     const dismiss = () => {
+      if (overCardRef.current) return;
       setHovered(null);
       setAutocomplete(null);
     };
@@ -156,6 +157,11 @@ export const HighlightedInput: React.FC<HighlightedInputProps> = ({
     };
   }, [hovered, autocomplete, cardEl, listEl]);
 
+  // The card exists only while `hovered` is set, so once it clears the pointer can't be over it.
+  useEffect(() => {
+    if (!hovered) overCardRef.current = false;
+  }, [hovered]);
+
   useLayoutEffect(() => {
     if (pendingCaret.current !== null && inputRef.current) {
       const caret = pendingCaret.current;
@@ -170,17 +176,7 @@ export const HighlightedInput: React.FC<HighlightedInputProps> = ({
       setHoverPos(null);
       return;
     }
-    const { innerWidth, innerHeight } = window;
-    const cardWidth = cardEl.offsetWidth;
-    const cardHeight = cardEl.offsetHeight;
-    const roomBelow = innerHeight - hovered.rect.bottom - GAP;
-    const roomAbove = hovered.rect.top - GAP;
-    const preferAbove = cardHeight > roomBelow && roomAbove > roomBelow;
-    const top = preferAbove ? hovered.rect.top - GAP - cardHeight : hovered.rect.bottom + GAP;
-    setHoverPos({
-      top: clamp(top, VIEWPORT_MARGIN, innerHeight - VIEWPORT_MARGIN - cardHeight),
-      left: clamp(hovered.rect.left, VIEWPORT_MARGIN, innerWidth - VIEWPORT_MARGIN - cardWidth)
-    });
+    setHoverPos(computeAnchoredPosition(hovered.rect, cardEl.offsetWidth, cardEl.offsetHeight));
   }, [hovered, cardEl]);
 
   useLayoutEffect(() => {
@@ -189,16 +185,8 @@ export const HighlightedInput: React.FC<HighlightedInputProps> = ({
       return;
     }
     const rect = inputRef.current.getBoundingClientRect();
-    const { innerWidth, innerHeight } = window;
-    const listHeight = listEl.offsetHeight;
-    const roomBelow = innerHeight - rect.bottom - GAP;
-    const preferAbove = listHeight > roomBelow && rect.top - GAP > roomBelow;
-    const top = preferAbove ? rect.top - GAP - listHeight : rect.bottom + GAP;
-    setListPos({
-      top: clamp(top, VIEWPORT_MARGIN, innerHeight - VIEWPORT_MARGIN - listHeight),
-      left: clamp(rect.left, VIEWPORT_MARGIN, innerWidth - VIEWPORT_MARGIN - rect.width),
-      width: rect.width
-    });
+    // Clamp by the anchor width — the list is min-width'd to the input and carries its own width.
+    setListPos({ ...computeAnchoredPosition(rect, rect.width, listEl.offsetHeight), width: rect.width });
   }, [autocomplete, listEl]);
 
   useEffect(() => {
@@ -306,6 +294,9 @@ export const HighlightedInput: React.FC<HighlightedInputProps> = ({
         }
       }
       if (!match) {
+        // If the pointer has moved onto the hover card, leave it open — a frame queued by the
+        // last in-input move must not re-close the card once it has been entered.
+        if (overCardRef.current) return;
         if (hovered) scheduleClose();
         else cancelOpen();
         return;
@@ -346,8 +337,14 @@ export const HighlightedInput: React.FC<HighlightedInputProps> = ({
         <Portal>
           <HoverCard
             ref={setCardEl}
-            onMouseEnter={cancelClose}
-            onMouseLeave={scheduleClose}
+            onMouseEnter={() => {
+              overCardRef.current = true;
+              cancelClose();
+            }}
+            onMouseLeave={() => {
+              overCardRef.current = false;
+              scheduleClose();
+            }}
             style={{
               top: hoverPos ? hoverPos.top : -9999,
               left: hoverPos ? hoverPos.left : -9999,
