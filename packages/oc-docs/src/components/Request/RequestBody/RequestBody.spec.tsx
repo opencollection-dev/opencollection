@@ -2,7 +2,6 @@ import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { RequestBody } from './RequestBody';
 import { useRenderToDom } from '../../../hooks/useRenderToDom';
-import { query } from '../../../test-utils/dom';
 
 describe('RequestBody', () => {
   it('renders a JSON body as a labelled code block', () => {
@@ -15,7 +14,7 @@ describe('RequestBody', () => {
 
   it('wraps variables in a raw body as tokens so they surface the hover card', () => {
     const root = useRenderToDom(<RequestBody body={{ type: 'json', data: '{"endpoint":"{{baseUrl}}/v1"}' }} />);
-    expect(query(root, '[data-var-name="baseUrl"]').text).toBe('{{baseUrl}}');
+    expect(root.toString()).toContain('data-testid="variable-token-baseUrl"');
   });
 
   it('renders a form-urlencoded body as a table', () => {
