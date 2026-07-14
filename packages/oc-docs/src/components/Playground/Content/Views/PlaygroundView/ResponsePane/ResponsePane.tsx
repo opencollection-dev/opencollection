@@ -133,6 +133,7 @@ const ResponsePane: React.FC<ResponsePaneProps> = ({ response, isLoading }) => {
   return (
     <div className="h-full" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <Tabs
+        className='h-full'
         tabs={tabs}
         activeTab={activeTab}
         onTabChange={setActiveTab}

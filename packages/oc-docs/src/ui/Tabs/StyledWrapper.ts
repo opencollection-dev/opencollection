@@ -51,6 +51,7 @@ export const StyledWrapper = styled.div`
   }
   .tab.is-active {
     color: var(--oc-tabs-active-color);
+    font-weight: 600;
   }
   .tab.is-active::after {
     transform: scaleX(1);
@@ -128,6 +129,7 @@ export const StyledWrapper = styled.div`
     margin-top: 1rem;
     min-width: 0;
     animation: oc-tab-panel-in 0.2s var(--oc-tab-ease) 0.04s backwards;
+    flex: 1;
   }
   .tab-panel:focus {
     outline: none;

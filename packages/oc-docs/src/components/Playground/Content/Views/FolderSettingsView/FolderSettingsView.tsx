@@ -225,14 +225,7 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({ folder, onFolderChange 
       </div>
 
       <div className="flex-1 overflow-hidden mt-4">
-        <Tabs
-          tabs={tabs.map((tab) => ({
-            ...tab,
-            content: <div className="py-3">{tab.content}</div>
-          }))}
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-        />
+        <Tabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
     </div>
   );
