@@ -7,6 +7,7 @@ interface SecretValueProps {
   align?: 'between' | 'start';
   readOnly?: boolean;
   testId?: string;
+  children?: React.ReactNode;
 }
 
 const EyeIcon: React.FC<{ off?: boolean }> = ({ off }) => (
@@ -25,7 +26,7 @@ const EyeIcon: React.FC<{ off?: boolean }> = ({ off }) => (
   </svg>
 );
 
-export const SecretValue: React.FC<SecretValueProps> = ({ value = '', align = 'between', readOnly = false, testId = 'secret-value' }) => {
+export const SecretValue: React.FC<SecretValueProps> = ({ value = '', align = 'between', readOnly = false, testId = 'secret-value', children }) => {
   const [revealed, setRevealed] = useState(false);
   const showValue = revealed && !readOnly;
 
@@ -37,7 +38,7 @@ export const SecretValue: React.FC<SecretValueProps> = ({ value = '', align = 'b
       data-testid={testId}
     >
       <span className="secret-value-text" aria-hidden={!showValue} data-testid={testId ? `${testId}-text` : undefined}>
-        {showValue ? value : SECRET_MASK}
+        {showValue ? children ?? value : SECRET_MASK}
       </span>
       {readOnly ? (
         <span

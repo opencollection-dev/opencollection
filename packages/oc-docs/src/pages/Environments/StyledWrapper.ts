@@ -103,7 +103,6 @@ export const StyledWrapper = styled.div`
     font-family: var(--font-sans);
     font-weight: 400;
     font-size: 0.75rem;
-    line-height: 1;
     letter-spacing: 0;
     color: var(--text-secondary); /* #666666 */
   }

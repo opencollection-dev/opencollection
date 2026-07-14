@@ -13,7 +13,6 @@ export const StyledWrapper = styled.div`
   background: var(--bg-primary);
   border: 0.0625rem solid var(--border-color);
   border-radius: var(--oc-radius);
-  box-shadow: var(--shadow-md);
 
   * {
     box-sizing: border-box;
@@ -32,35 +31,41 @@ export const StyledWrapper = styled.div`
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    line-height: 1;
     color: var(--text-primary);
   }
 
   .var-scope-badge {
     flex-shrink: 0;
-    display: inline-block;
-    padding: 0.125rem 0.375rem;
-    font-size: 0.6875rem;
+    display: inline-flex;
+    align-items: center;
+    height: 1.1875rem;
+    padding: 0 0.375rem;
+    font-weight: 500;
+    font-size: 0.75rem;
+    line-height: 1;
     letter-spacing: 0.03125rem;
     color: var(--primary-color);
     background: var(--brand-soft);
     border: 0.0625rem solid color-mix(in srgb, var(--primary-color) 8%, transparent);
-    border-radius: var(--oc-radius);
+    border-radius: 0.25rem;
   }
 
   .var-value-container {
     position: relative;
-    max-height: 13.1875rem;
+    height: 2.25rem;
+    padding: 0.5rem;
     overflow-y: auto;
     overflow-x: hidden;
-    background: var(--bg-secondary);
-    border: 0.0625rem solid var(--border-strong);
+    background: var(--oc-background-surface-bright);
+    border: none;
     border-radius: var(--oc-radius);
   }
 
   .var-value-display {
-    min-height: 1.75rem;
-    padding: 0.375rem 1.5rem 0.375rem 0.5rem;
+    padding-right: 1.5rem;
     font-family: var(--font-sans);
     font-size: 0.8125rem;
     font-weight: 400;
@@ -73,8 +78,9 @@ export const StyledWrapper = styled.div`
 
   .var-icons {
     position: absolute;
-    top: 0.375rem;
+    top: 50%;
     right: 0.5rem;
+    transform: translateY(-50%);
     display: flex;
     gap: 0.25rem;
     z-index: 1;

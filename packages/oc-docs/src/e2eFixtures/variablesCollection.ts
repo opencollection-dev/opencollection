@@ -48,6 +48,7 @@ export const variablesFixtureCollection = {
           seq: 1,
           method: 'GET',
           url: '{{host}}/customers/{{userId}}?v={{apiVersion}}',
+          auth: { type: 'bearer', token: '{{bearer_token}}' },
           headers: [
             { name: 'Authorization', value: 'Bearer {{bearer_token}}' },
             { name: 'X-Endpoint', value: '{{endpoint}}' },

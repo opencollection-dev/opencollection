@@ -84,6 +84,18 @@ test.describe('Variable hover card', () => {
     await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe('super-secret-token');
   });
 
+  test('a revealed secret field shows the hover card for its variable token', async ({ page, variableCard }) => {
+    const auth = page.getByTestId('request-section-auth');
+    await expect(auth.getByTestId('variable-token-bearer_token')).toHaveCount(0);
+
+    await auth.getByTestId('auth-details-secret-toggle').click();
+
+    await auth.getByTestId('variable-token-bearer_token').hover();
+    await expect(variableCard.card).toBeVisible();
+    await expect(variableCard.scopeBadge).toHaveText('Environment');
+    await expect(variableCard.revealToggle).toBeVisible();
+  });
+
   test('copies the resolved value from the copy button', async ({ page, variableCard }) => {
     await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
     await variableCard.pinToken('apiVersion');
