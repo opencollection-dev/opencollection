@@ -12,6 +12,8 @@ import { useNavModel } from '../../../routing/hooks';
 import { normalizeSlug } from '../../../routing/resolve';
 import { OVERVIEW_SLUG, ENVIRONMENTS_SLUG } from '../../../routing/navModel';
 import { useDocsNavigate } from '../../../hooks';
+import { NavigationState } from 'src/hooks/useDocsNavigate';
+import { NavModel } from 'src/routing';
 
 interface SidebarProps {
   onNavigate?: () => void;
@@ -23,7 +25,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
   const collection = useAppSelector(selectDocsCollection);
   const model = useNavModel();
   const docsNavigate = useDocsNavigate();
-  const { pathname, state } = useLocation();
+  const { pathname } = useLocation();
   const activeSlug = normalizeSlug(pathname);
 
   const goTo = (slug: string) => {
@@ -40,23 +42,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
     return map;
   }, [model]);
 
-  // The highlighted example rides on the navigation entry's state, not the URL,
-  // so it is not shareable/deep-linked, clears itself on any navigation, and is
-  // restored correctly by browser back/forward. It always belongs to the request
-  // currently shown.
-  const exampleIndex = (state as { exampleIndex?: number } | null)?.exampleIndex;
-  const activeRequestUuid = getItemUuid(model.bySlug.get(activeSlug)?.item);
-  const activeExample =
-    exampleIndex != null && activeRequestUuid !== undefined
-      ? { requestUuid: activeRequestUuid, index: exampleIndex }
-      : null;
-
-  const goToExample = (requestUuid: string, index: number) => {
-    const slug = uuidToSlug.get(requestUuid);
-    if (slug == null) return;
-    docsNavigate(slug, { state: { exampleIndex: index } });
-    onNavigate?.();
-  };
+  const { activeExample, goToExample } = useActiveExample(model, activeSlug, uuidToSlug, onNavigate);
 
   // Reveal the scrollbar thumb only while the list is active (mousemove/scroll),
   // then hide it 1s after activity stops. Toggled via classList so pointer noise
@@ -145,5 +131,37 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
     </StyledWrapper>
   );
 };
+
+export function useActiveExample(
+  model: NavModel,
+  activeSlug: string,
+  uuidToSlug: Map<string, string>,
+  onNavigate?: () => void
+) {
+  // The highlighted example rides on the navigation entry's state, not the URL,
+  // so it is not shareable/deep-linked, clears itself on any navigation, and is
+  // restored correctly by browser back/forward. It always belongs to the request
+  // currently shown.
+  const { state } = useLocation();
+  const docsNavigate = useDocsNavigate();
+  const exampleIndex = (state as NavigationState | null)?.exampleIndex;
+  const activeRequestUuid = getItemUuid(model.bySlug.get(activeSlug)?.item);
+  const activeExample =
+    exampleIndex != null && activeRequestUuid !== undefined
+      ? { requestUuid: activeRequestUuid, index: exampleIndex }
+      : null;
+
+  const goToExample = (requestUuid: string, index: number) => {
+    const slug = uuidToSlug.get(requestUuid);
+    if (slug == null) return;
+    docsNavigate(slug, { state: { exampleIndex: index } });
+    onNavigate?.();
+  };
+
+  return {
+    goToExample,
+    activeExample
+  };
+}
 
 export default Sidebar;
