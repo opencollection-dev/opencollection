@@ -22,6 +22,11 @@ import EnvironmentsView from '../Content/Views/EnvironmentsView/EnvironmentsView
 import CollectionSettingsView from '../Content/Views/CollectionSettingsView/CollectionSettingsView';
 import PlaygroundSidebar from '../PlaygroundSidebar/PlaygroundSidebar';
 import type { DockMode } from '../../../utils/playgroundDock';
+import {
+  resolvePlaygroundTarget,
+  PLAYGROUND_ENVIRONMENTS_SLUG,
+  PLAYGROUND_COLLECTION_SLUG,
+} from './resolvePlaygroundTarget';
 import { StyledWrapper } from './StyledWrapper';
 
 const ORIENTATION_BREAKPOINT = 640;
@@ -70,30 +75,20 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
   const viewWidth = useElementWidth(viewRef);
   const orientation = viewWidth > 0 && viewWidth < ORIENTATION_BREAKPOINT ? 'vertical' : 'horizontal';
 
-  // Apply the URL's request slug once per value (deep-link / Try). Keyed on the
-  // slug, not selectedItemId, so opening the gear or a folder (which clears the
-  // selection) is not immediately reverted back to the request.
+  // Apply the URL's pgReq target once per value (deep-link / Try / reload). It
+  // carries the request/folder slug OR a ~environments / ~collection token, so
+  // the folder, environments and collection-settings views survive a refresh too
+  // (not just requests). Keyed on the slug (not selectedItemId), and only marked
+  // applied once resolvePlaygroundTarget returns non-null, so an item slug that
+  // arrives before the collection hydrates is retried when the model loads.
   useEffect(() => {
     if (!requestSlug || appliedSlugRef.current === requestSlug) return;
-    const entry = model.bySlug.get(requestSlug);
-    const uuid = entry ? getItemUuid(entry.item) : undefined;
-    // Only mark the slug applied once it actually resolves, so a deep-link / Try
-    // that arrives before the collection hydrates is retried when the model
-    // loads (the effect re-runs on `model`) instead of being dropped.
-    if (uuid) {
-      appliedSlugRef.current = requestSlug;
-      dispatch(setSelectedItemId(uuid));
-      dispatch(setViewMode('playground'));
-      // Reveal the request's ancestor folders, so a deep-link / reload lands on
-      // the request with its folders open in the tree (the docs sidebar does the
-      // same). Expand-only, so it won't reopen a folder the user just collapsed.
-      const ancestorUuids: string[] = [];
-      for (const ancestor of entry?.ancestors ?? []) {
-        const ancestorUuid = getItemUuid(model.bySlug.get(ancestor.slug)?.item);
-        if (ancestorUuid) ancestorUuids.push(ancestorUuid);
-      }
-      if (ancestorUuids.length) dispatch(expandFolders(ancestorUuids));
-    }
+    const target = resolvePlaygroundTarget(requestSlug, model);
+    if (!target) return; // item not resolvable yet -> retry when `model` updates
+    appliedSlugRef.current = requestSlug;
+    dispatch(setSelectedItemId(target.uuid));
+    dispatch(setViewMode(target.view));
+    if (target.ancestors.length) dispatch(expandFolders(target.ancestors));
   }, [requestSlug, model, dispatch, appliedSlugRef]);
 
   // In the inline dock the sidebar is an overlay, so close it once the user has
@@ -109,12 +104,9 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
       const uuid = getItemUuid(entry.item);
       if (!uuid) return;
       dispatch(setSelectedItemId(uuid));
-      if (isFolder(entry.item)) {
-        dispatch(setViewMode('folder-settings'));
-      } else {
-        dispatch(setViewMode('playground'));
-        setRequestSlug(slug);
-      }
+      dispatch(setViewMode(isFolder(entry.item) ? 'folder-settings' : 'playground'));
+      // Persist folders too (not just requests), so a folder view survives reload.
+      setRequestSlug(slug);
       closeSidebarIfInline();
     },
     [model, dispatch, setRequestSlug, closeSidebarIfInline]
@@ -125,14 +117,16 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
   const openEnvironments = useCallback(() => {
     dispatch(setViewMode('environments'));
     dispatch(setSelectedItemId(null));
+    setRequestSlug(PLAYGROUND_ENVIRONMENTS_SLUG); // persist so reload restores it
     closeSidebarIfInline();
-  }, [dispatch, closeSidebarIfInline]);
+  }, [dispatch, setRequestSlug, closeSidebarIfInline]);
 
   const openCollection = useCallback(() => {
     dispatch(setViewMode('collection-settings'));
     dispatch(setSelectedItemId(null));
+    setRequestSlug(PLAYGROUND_COLLECTION_SLUG); // persist so reload restores it
     closeSidebarIfInline();
-  }, [dispatch, closeSidebarIfInline]);
+  }, [dispatch, setRequestSlug, closeSidebarIfInline]);
 
   const view = (() => {
     if (viewMode === 'collection-settings' && collection) return <CollectionSettingsView collection={collection} />;

@@ -184,4 +184,35 @@ test.describe('playground docks (desktop)', () => {
     await page.reload();
     await expect(playground.treeItems.filter({ hasText: 'Get All Customers' })).toBeVisible();
   });
+
+  // Opening a folder / environments / collection-settings must persist in the URL
+  // (pgReq) so a reload restores that view instead of snapping back to the request.
+  test('opening a folder persists in the url and survives reload', async ({ page, playground }) => {
+    await page.goto('/#/?pg=1&dock=bottom&pgReq=billing/customers/get-all-customers');
+    await expect(playground.sidebarPanel).toBeVisible();
+    await playground.treeItems.filter({ hasText: /^billing$/ }).first().click();
+    // pgReq switches to the folder slug (billing), no longer the request path.
+    await expect(page).toHaveURL(/pgReq=billing(?!%2Fcustomers)/);
+    await page.reload();
+    await expect(page).toHaveURL(/pgReq=billing(?!%2Fcustomers)/);
+    await expect(playground.view).toBeVisible();
+  });
+
+  test('opening environments persists in the url and survives reload', async ({ page, playground }) => {
+    await page.goto('/#/?pg=1&dock=bottom&pgReq=billing/customers/get-all-customers');
+    await playground.gear.click();
+    await expect(page).toHaveURL(/pgReq=(~|%7E)environments/);
+    await page.reload();
+    await expect(page).toHaveURL(/pgReq=(~|%7E)environments/);
+    await expect(playground.view).toBeVisible();
+  });
+
+  test('opening collection settings persists in the url and survives reload', async ({ page, playground }) => {
+    await page.goto('/#/?pg=1&dock=bottom&pgReq=billing/customers/get-all-customers');
+    await playground.collectionNode.click();
+    await expect(page).toHaveURL(/pgReq=(~|%7E)collection/);
+    await page.reload();
+    await expect(page).toHaveURL(/pgReq=(~|%7E)collection/);
+    await expect(playground.view).toBeVisible();
+  });
 });
