@@ -22,7 +22,8 @@ const collection: any = {
         variables: [
           { name: 'host', value: 'https://dev.test' },
           { name: 'endpoint', value: '{{host}}/v1' },
-          { name: 'bearer_token', value: 'super-secret', secret: true }
+          { name: 'bearer_token', value: 'super-secret', secret: true },
+          { name: 'emptyValue', value: '' }
         ]
       }
     ]
@@ -58,14 +59,19 @@ describe('VariableInfoCard', () => {
     expect(part(useRenderToDom(cardTree('endpoint')), 'value')?.text).toBe('https://dev.test/v1');
   });
 
-  it('masks a secret value with a reveal toggle and never prints the plaintext', () => {
+  it('shows a (Secret) placeholder with no reveal/copy and never prints the plaintext', () => {
     const root = useRenderToDom(cardTree('bearer_token'));
-    const value = part(root, 'value')?.text ?? '';
-    expect(value).not.toContain('super-secret');
-    expect(value.length).toBeGreaterThan(0);
-    expect(/^\*+$/.test(value)).toBe(true);
-    expect(part(root, 'reveal')).not.toBeNull();
-    expect(part(root, 'copy')).not.toBeNull();
+    expect(part(root, 'value')?.text).toBe('(Secret)');
+    expect(root.toString()).not.toContain('super-secret');
+    expect(part(root, 'reveal')).toBeNull();
+    expect(part(root, 'copy')).toBeNull();
+  });
+
+  it('shows an (empty) placeholder with no copy control when the value is blank', () => {
+    const root = useRenderToDom(cardTree('emptyValue'));
+    expect(part(root, 'scope')?.text).toBe('Environment');
+    expect(part(root, 'value')?.text).toBe('(empty)');
+    expect(part(root, 'copy')).toBeNull();
   });
 
   it('pretty-prints an object-typed value', () => {

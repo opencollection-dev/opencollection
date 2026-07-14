@@ -2,8 +2,8 @@ import styled from '@emotion/styled';
 
 export const StyledWrapper = styled.div`
   box-sizing: border-box;
-  min-width: 18.1875rem;
-  max-width: 18.1875rem;
+  width: 18.1875rem;
+  max-width: calc(100vw - 1rem);
   margin: 0;
   padding: 0.5rem;
   font-family: var(--font-sans);
@@ -74,6 +74,11 @@ export const StyledWrapper = styled.div`
     word-break: break-all;
     overflow-wrap: break-word;
     white-space: pre-wrap;
+  }
+
+  .var-value-placeholder {
+    font-style: italic;
+    color: var(--text-tertiary);
   }
 
   .var-icons {

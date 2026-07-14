@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useResolvedVariables } from '../../hooks';
 import { CopyButton } from '../../ui/CopyButton/CopyButton';
-import { EyeIcon, EyeOffIcon } from '../../assets/icons';
-import { SCOPE_LABELS, INVALID_NAME_WARNING, SECRET_MASK } from '../../constants';
+import { SCOPE_LABELS, INVALID_NAME_WARNING } from '../../constants';
 import type { VariableScope } from '../../utils/variableResolution';
 import { StyledWrapper } from './StyledWrapper';
 
@@ -20,7 +19,6 @@ const getReadOnlyNote = (scope: VariableScope, activeEnvName: string | null): st
 export const VariableInfoCard: React.FC<VariableInfoCardProps> = ({ name, testId = 'variable-info-card' }) => {
   const { lookup, activeEnvName } = useResolvedVariables();
   const info = lookup(name);
-  const [revealed, setRevealed] = useState(false);
 
   const header = (
     <div className="var-info-header">
@@ -56,37 +54,32 @@ export const VariableInfoCard: React.FC<VariableInfoCardProps> = ({ name, testId
   }
 
   const readOnlyNote = getReadOnlyNote(info.scope, activeEnvName);
-
-  const displayText = info.secret && !revealed ? SECRET_MASK : info.value;
+  const placeholder = info.secret ? '(Secret)' : info.value === '' ? '(empty)' : null;
 
   return (
     <StyledWrapper className="variable-info-card" data-testid={testId}>
       {header}
       <div className="var-value-container">
-        <div className="var-value-display" data-testid={`${testId}-value`}>
-          {displayText}
-        </div>
-        <div className="var-icons">
-          {info.secret && (
-            <button
-              type="button"
-              className="secret-toggle-button"
-              aria-pressed={revealed}
-              aria-label={revealed ? 'Hide value' : 'Show value'}
-              data-testid={`${testId}-reveal`}
-              onClick={() => setRevealed((prev) => !prev)}
-            >
-              {revealed ? <EyeOffIcon /> : <EyeIcon />}
-            </button>
-          )}
-          <CopyButton
-            text={info.value}
-            label="Copy value"
-            resetAfterMs={1000}
-            className="copy-button"
-            testId={`${testId}-copy`}
-          />
-        </div>
+        {placeholder ? (
+          <div className="var-value-display var-value-placeholder" data-testid={`${testId}-value`}>
+            {placeholder}
+          </div>
+        ) : (
+          <>
+            <div className="var-value-display" data-testid={`${testId}-value`}>
+              {info.value}
+            </div>
+            <div className="var-icons">
+              <CopyButton
+                text={info.value}
+                label="Copy value"
+                resetAfterMs={1000}
+                className="copy-button"
+                testId={`${testId}-copy`}
+              />
+            </div>
+          </>
+        )}
       </div>
       {readOnlyNote && (
         <div className="var-readonly-note" data-testid={`${testId}-note`}>
