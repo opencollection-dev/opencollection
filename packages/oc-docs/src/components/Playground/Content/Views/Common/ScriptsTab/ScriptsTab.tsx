@@ -35,28 +35,24 @@ export const ScriptsTab: React.FC<ScriptsTabProps> = ({
       id: 'pre-request',
       label: 'Pre request',
       content: (
-        <div className="mt-3">
-          <CodeEditor
-            value={scripts.preRequest || ''}
-            onChange={(value: string) => onScriptChange('preRequest', value)}
-            language="javascript"
-            height="300px"
-          />
-        </div>
+        <CodeEditor
+          value={scripts.preRequest || ''}
+          onChange={(value: string) => onScriptChange('preRequest', value)}
+          language="javascript"
+          height="300px"
+        />
       )
     },
     {
       id: 'post-response',
       label: 'Post response',
       content: (
-        <div className="mt-3">
-          <CodeEditor
-            value={scripts.postResponse || ''}
-            onChange={(value: string) => onScriptChange('postResponse', value)}
-            language="javascript"
-            height="300px"
-          />
-        </div>
+        <CodeEditor
+          value={scripts.postResponse || ''}
+          onChange={(value: string) => onScriptChange('postResponse', value)}
+          language="javascript"
+          height="300px"
+        />
       )
     }
   ];
@@ -64,16 +60,8 @@ export const ScriptsTab: React.FC<ScriptsTabProps> = ({
   return (
     <StyledWrapper className="space-y-4">
       <div className="flex items-center justify-between mb-4">
-        {Boolean(title) && (
-          <span className="title text-sm font-semibold">
-            {title}
-          </span>
-        )}
-        {description && (
-          <span className="description text-xs leading-tight">
-            {description}
-          </span>
-        )}
+        {Boolean(title) && <span className="title text-sm font-semibold">{title}</span>}
+        {description && <span className="description text-xs leading-tight">{description}</span>}
       </div>
 
       <div className="space-y-4">
@@ -87,9 +75,7 @@ export const ScriptsTab: React.FC<ScriptsTabProps> = ({
 
         {showTests && (
           <div>
-            <label className="label block text-sm font-medium mb-2">
-              Tests
-            </label>
+            <label className="label block text-sm font-medium mb-2">Tests</label>
             <CodeEditor
               value={scripts.tests || ''}
               onChange={(value: string) => onScriptChange('tests', value)}
