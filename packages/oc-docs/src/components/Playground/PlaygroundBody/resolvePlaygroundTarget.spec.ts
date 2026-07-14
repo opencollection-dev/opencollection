@@ -40,7 +40,7 @@ describe('resolvePlaygroundTarget', () => {
     expect(resolvePlaygroundTarget(PLAYGROUND_ENVIRONMENTS_SLUG, model)).toEqual({
       view: 'environments',
       uuid: null,
-      ancestors: [],
+      expandUuids: [],
     });
   });
 
@@ -48,7 +48,7 @@ describe('resolvePlaygroundTarget', () => {
     expect(resolvePlaygroundTarget(PLAYGROUND_COLLECTION_SLUG, model)).toEqual({
       view: 'collection-settings',
       uuid: null,
-      ancestors: [],
+      expandUuids: [],
     });
   });
 
@@ -56,15 +56,16 @@ describe('resolvePlaygroundTarget', () => {
     expect(resolvePlaygroundTarget('billing/get-customers', model)).toEqual({
       view: 'playground',
       uuid: 'req-get-customers',
-      ancestors: ['folder-billing'],
+      expandUuids: ['folder-billing'],
     });
   });
 
-  it('maps a folder slug to the folder-settings view', () => {
+  it('maps a folder slug to the folder-settings view and expands the folder itself', () => {
+    // Expands the folder's own uuid so opening it reveals its children, matching docs.
     expect(resolvePlaygroundTarget('billing', model)).toEqual({
       view: 'folder-settings',
       uuid: 'folder-billing',
-      ancestors: [],
+      expandUuids: ['folder-billing'],
     });
   });
 

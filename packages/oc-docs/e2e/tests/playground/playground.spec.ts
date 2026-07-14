@@ -127,6 +127,32 @@ test.describe('playground docks (desktop)', () => {
     await expect(playground.view).toContainText(/Overview|Headers|Vars|Auth|Scripts|Tests/);
   });
 
+  // Clicking a folder row opens its settings AND expands it in the tree (matches
+  // docs), so its children become visible; the chevron alone toggles collapse.
+  test('clicking a folder opens its settings and expands it in the tree', async ({ page, playground }) => {
+    await page.goto(openAt('bottom'));
+    await expect(playground.sidebarPanel).toBeVisible();
+    // customers is nested under the collapsed billing folder, so it is hidden.
+    await expect(playground.treeItems.filter({ hasText: /^customers$/ })).toHaveCount(0);
+    await playground.treeItems.filter({ hasText: /^billing$/ }).first().click();
+    // billing expands: its child folder is revealed and the URL carries the folder.
+    await expect(playground.treeItems.filter({ hasText: /^customers$/ })).toBeVisible();
+    await expect(page).toHaveURL(/pgReq=billing(?!%2F)/);
+  });
+
+  // Clicking the collection root re-expands the tree too, not just opens the view.
+  test('clicking the collection root re-expands the tree', async ({ page, playground }) => {
+    await page.goto(openAt('bottom'));
+    await expect(playground.sidebarPanel).toBeVisible();
+    // Collapse the collection from its chevron -> top-level items disappear.
+    await playground.collectionNode.getByRole('button', { name: /Collapse collection|Expand collection/ }).click();
+    await expect(playground.treeItems.filter({ hasText: /^billing$/ })).toHaveCount(0);
+    // Clicking the root row brings the tree back and shows the collection view.
+    await playground.collectionNode.getByRole('button', { name: /Bruno Testbench|Collection/ }).click();
+    await expect(playground.treeItems.filter({ hasText: /^billing$/ })).toBeVisible();
+    await expect(playground.view).toContainText(/Overview|Headers|Vars|Auth|Scripts|Tests/);
+  });
+
   test('inline dock: sidebar is closed by default and overlays the view when opened', async ({ page, playground }) => {
     await page.goto(openAt('inline'));
     await expect(playground.sidebarPanel).toHaveCount(0);   // closed by default in inline

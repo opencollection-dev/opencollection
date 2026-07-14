@@ -93,7 +93,7 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
     appliedSlugRef.current = requestSlug;
     dispatch(setSelectedItemId(target.uuid));
     dispatch(setViewMode(target.view));
-    if (target.ancestors.length) dispatch(expandFolders(target.ancestors));
+    if (target.expandUuids.length) dispatch(expandFolders(target.expandUuids));
   }, [requestSlug, model, collection, dispatch, appliedSlugRef]);
 
   // In the inline dock the sidebar is an overlay, so close it once the user has

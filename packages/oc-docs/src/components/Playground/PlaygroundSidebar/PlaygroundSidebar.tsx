@@ -69,7 +69,12 @@ const PlaygroundSidebar: React.FC<PlaygroundSidebarProps> = ({
               collapsed: collectionCollapsed,
               active: collectionActive,
               onToggle: () => setCollectionCollapsed((v) => !v),
-              onClick: onOpenCollection,
+              // Clicking the root opens collection settings and expands the tree,
+              // mirroring how opening a folder reveals its contents.
+              onClick: () => {
+                setCollectionCollapsed(false);
+                onOpenCollection();
+              },
               testId: 'sidebar-collection-root',
             }}
           />
