@@ -10,7 +10,8 @@ export const variablesFixtureCollection = {
         variables: [
           { name: 'host', value: 'https://api.dev.example.com' },
           { name: 'endpoint', value: '{{host}}/v1' },
-          { name: 'bearer_token', value: 'super-secret-token', secret: true }
+          { name: 'bearer_token', value: 'super-secret-token', secret: true },
+          { name: 'emptyValue', value: '' }
         ]
       }
     ]
@@ -54,7 +55,8 @@ export const variablesFixtureCollection = {
             { name: 'X-Folder', value: '{{folderScope}}' },
             { name: 'X-Profile', value: '{{profile}}' },
             { name: 'X-Home', value: '{{process.env.HOME}}' },
-            { name: 'X-Random', value: '{{$randomInt}}' }
+            { name: 'X-Random', value: '{{$randomInt}}' },
+            { name: 'X-Empty', value: '{{emptyValue}}' }
           ],
           runtime: {
             variables: [{ name: 'userId', value: 'req-42' }]
