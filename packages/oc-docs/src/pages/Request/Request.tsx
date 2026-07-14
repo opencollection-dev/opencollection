@@ -53,6 +53,7 @@ import { Examples } from '../../components/Examples/Examples';
 import { ExecutionContext } from '../../components/ExecutionContext/ExecutionContext';
 import { UnsupportedRequest } from '../../components/UnsupportedRequest/UnsupportedRequest';
 import { StyledWrapper } from './StyledWrapper';
+import { NavigationState } from 'src/hooks/useDocsNavigate';
 
 interface RequestProps {
   item: HttpRequest | WebSocketRequest | GraphQLRequest | GrpcRequest;
@@ -88,7 +89,7 @@ const RequestContent: React.FC<RequestContentProps> = ({
   // The example to flash/scroll to is carried on the navigation entry's state
   // and always belongs to the request being shown, so no request match is needed.
   const { state } = useLocation();
-  const highlightedExampleIndex = (state as { exampleIndex?: number })?.exampleIndex;
+  const highlightedExampleIndex = (state as NavigationState)?.exampleIndex;
 
   const { path: pathParams, query: queryParams } = useMemo(
     () => resolvePathAndQueryParams(params, url),

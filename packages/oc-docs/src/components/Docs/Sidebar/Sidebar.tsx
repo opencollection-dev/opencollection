@@ -144,7 +144,7 @@ export function useActiveExample(
   // currently shown.
   const { state } = useLocation();
   const docsNavigate = useDocsNavigate();
-  const exampleIndex = (state as NavigationState | null)?.exampleIndex;
+  const exampleIndex = (state as NavigationState)?.exampleIndex;
   const activeRequestUuid = getItemUuid(model.bySlug.get(activeSlug)?.item);
   const activeExample =
     exampleIndex != null && activeRequestUuid !== undefined
