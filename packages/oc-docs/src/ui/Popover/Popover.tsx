@@ -10,7 +10,7 @@ import React, {
 } from 'react';
 import { Portal } from '../Portal/Portal';
 import { useEscapeKey } from '../../hooks/useEscapeKey';
-import { computeAnchoredPosition } from '../../utils/anchoredPosition';
+import { computeAnchoredPosition, type AnchoredPosition } from '../../utils/anchoredPosition';
 import { StyledWrapper } from './StyledWrapper';
 
 interface PopoverProps {
@@ -21,11 +21,6 @@ interface PopoverProps {
   disabled?: boolean;
   className?: string;
   testId?: string;
-}
-
-interface Position {
-  top: number;
-  left: number;
 }
 
 interface AnchorHandlers {
@@ -56,7 +51,7 @@ export const Popover: React.FC<PopoverProps> = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [pinned, setPinned] = useState(false);
-  const [position, setPosition] = useState<Position | null>(null);
+  const [position, setPosition] = useState<AnchoredPosition | null>(null);
   const anchorRef = useRef<HTMLElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);

@@ -11,7 +11,7 @@ import {
   type AutocompleteContext
 } from '../../utils/variableAutocomplete';
 import { HOVER_CLOSE_MS, HOVER_OPEN_MS } from '../../constants/ui';
-import { computeAnchoredPosition } from '../../utils/anchoredPosition';
+import { computeAnchoredPosition, type AnchoredPosition } from '../../utils/anchoredPosition';
 import { StyledWrapper, HoverCard, Suggestions } from './StyledWrapper';
 
 interface HighlightedInputProps {
@@ -37,9 +37,7 @@ interface Autocomplete {
   caret: number;
 }
 
-interface Coords {
-  top: number;
-  left: number;
+interface Coords extends AnchoredPosition {
   width?: number;
 }
 
