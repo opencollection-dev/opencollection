@@ -16,7 +16,7 @@ export const StyledWrapper = styled.div`
     margin: 0;
     border-radius: var(--oc-radius);
     background: var(--oc-background-base);
-    box-shadow: inset 0 0 0 1px var(--border-color);
+    border: 1px solid var(--border-color);
     overflow: hidden;
   }
 
@@ -37,6 +37,9 @@ export const StyledWrapper = styled.div`
   }
   &.property-table--no-row-borders .property-row + .property-row {
     border-top: none;
+  }
+  &.property-table--no-row-borders .property-box {
+    border: none;
   }
   .property-row--disabled {
     opacity: 0.55;
@@ -72,6 +75,7 @@ export const StyledWrapper = styled.div`
   .property-value-main {
     min-width: 0;
     flex: 0 1 auto;
+    color: var(--oc-colors-text-subtext2);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

@@ -17,7 +17,7 @@ export const StyledWrapper = styled.div`
     justify-content: center;
     width: 2.75rem;
     height: 2.75rem;
-    border-radius: 0.625rem;
+    border-radius: var(--oc-radius);
     background: var(--oc-background-mantle);
     color: var(--text-secondary);
     flex-shrink: 0;
@@ -37,7 +37,7 @@ export const StyledWrapper = styled.div`
 
   .folder-header-count {
     padding: 0.125rem 0.5rem;
-    border-radius: 0.25rem;
+    border-radius: var(--oc-radius);
     background: var(--oc-background-surface0);
     font-family: var(--font-sans);
     font-weight: 700;

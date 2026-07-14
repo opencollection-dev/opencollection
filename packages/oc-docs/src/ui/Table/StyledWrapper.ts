@@ -2,8 +2,8 @@ import styled from '@emotion/styled';
 
 export const StyledWrapper = styled.div`
   width: 100%;
-  border: 1px solid var(--oc-border-border1); /* #e5e5e5 */
-  border-radius: 0.5rem;
+  border: 1px solid var(--oc-border-border0);
+  border-radius: var(--oc-radius);
   overflow-x: auto;
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
@@ -97,7 +97,7 @@ export const StyledWrapper = styled.div`
     align-items: center;
     justify-content: center;
     padding: 0.125rem 0.375rem;
-    border-radius: 0.375rem;
+    border-radius: var(--oc-radius);
     font-family: var(--font-sans);
     font-size: 0.6875rem;
     font-weight: 500;
@@ -117,7 +117,7 @@ export const StyledWrapper = styled.div`
 
   .table-group-meta {
     margin-left: auto;
-    border: 1px solid var(--oc-border-border1);
+    border: 1px solid var(--oc-border-border0);
     background: var(--oc-background-base);
     color: var(--text-muted);
   }

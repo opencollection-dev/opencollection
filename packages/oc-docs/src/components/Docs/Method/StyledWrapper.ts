@@ -7,7 +7,7 @@ export const StyledWrapper = styled.div`
   padding: 0.1rem 0.4rem;
   font-size: 9px;
   font-weight: 700;
-  border-radius: 3px;
+  border-radius: var(--oc-radius);
   text-transform: uppercase;
   font-family: var(--font-sans);
   min-width: 36px;

@@ -30,7 +30,7 @@ export const StyledWrapper = styled.div`
 
   .exec-card-box {
     border: 1px solid var(--border-color);
-    border-radius: 0.625rem;
+    border-radius: var(--oc-radius);
     background: var(--oc-background-base);
   }
   .exec-card-box.exec-card-box--bare {
@@ -46,7 +46,7 @@ export const StyledWrapper = styled.div`
     letter-spacing: 0;
     color: var(--oc-colors-text-subtext1);
     border: 1px solid var(--border-color);
-    border-radius: 0.25rem;
+    border-radius: var(--oc-radius);
     padding: 0.125rem 0.25rem;
     white-space: nowrap;
   }

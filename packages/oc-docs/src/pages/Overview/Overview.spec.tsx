@@ -5,7 +5,7 @@ import type { OpenCollection } from '@opencollection/types';
 import { Overview } from './Overview';
 
 describe('Overview', () => {
-  it('renders the headline, stats, environments, docs and configuration', () => {
+  it('renders the headline, stats, docs and configuration', () => {
     const collection: OpenCollection = {
       info: { name: 'Hotel Booking API', version: '1.0.0' },
       config: { environments: [{ name: 'Development', variables: [{ name: 'baseUrl', value: 'x' }] }] },
@@ -17,8 +17,6 @@ describe('Overview', () => {
 
     expect(html).toContain('Hotel Booking API');
     expect(html).toContain('Version : 1.0.0');
-    expect(html).toContain('Development');
-    expect(html).toContain('1 variable');
     expect(html).toContain('Accept');
     expect(html).toContain('application/json');
     expect(html).toContain('Getting started'); // collection docs rendered
@@ -32,7 +30,6 @@ describe('Overview', () => {
 
     const html = renderToStaticMarkup(<Overview collection={collection} />);
 
-    expect(html).toContain('No environments yet');
     expect(html).toContain('No overview content yet');
     expect(html).toContain('No configuration set');
   });

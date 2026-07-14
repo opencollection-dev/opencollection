@@ -7,13 +7,12 @@ import { scriptsArrayToObject } from '../../utils/schemaHelpers';
 import { getCollectionVariables } from '../../utils/request';
 import { AUTH_MODE_LABELS } from '../../constants';
 import { CollectionStats } from '../../components/CollectionStats/CollectionStats';
-import { EnvironmentSummary } from '../../components/OverviewEnvironments/EnvironmentSummary/EnvironmentSummary';
 import { CollectionConfiguration } from '../../components/OverviewCollectionConfiguration/CollectionConfiguration';
 import { EmptyState } from '../../ui/EmptyState/EmptyState';
 import { PageWrapper } from '../../components/PageWrapper/PageWrapper';
 import { Heading } from '../../components/Heading/Heading';
 import { Section } from '../../components/Section/Section';
-import { GlobeIcon, BookIcon } from '../../assets/icons';
+import { BookIcon } from '../../assets/icons';
 import { StyledWrapper } from './StyledWrapper';
 
 const getDocsContent = (docs: OpenCollection['docs']): string => {
@@ -42,14 +41,12 @@ export const Overview: React.FC<OverviewProps> = ({ collection, testId = 'overvi
   const { preVars, postVars } = useMemo(() => getCollectionVariables(collection), [collection.request]);
   const version = collection.info?.version;
   const name = collection.info?.name || 'Untitled Collection';
-  const environments = collection.config?.environments ?? [];
 
   const docsHtml = useMemo(() => {
     const content = getDocsContent(collection.docs);
     return content ? md.render(content) : '';
   }, [collection.docs, md]);
 
-  const hasEnvironments = environments.length > 0;
   const hasOverview = Boolean(docsHtml);
   const hasConfig = useMemo(
     () => hasCollectionConfiguration(
@@ -79,23 +76,6 @@ export const Overview: React.FC<OverviewProps> = ({ collection, testId = 'overvi
 
         <div className="overview-body">
           <div className="overview-col-left">
-            <Section label="Environments" testId="overview-section-label">
-              {hasEnvironments ? (
-                <EnvironmentSummary
-                  environments={environments}
-                  testId="overview-environment-list"
-                  itemTestId="overview-environment-item"
-                />
-              ) : (
-                <EmptyState
-                  testId="overview-empty"
-                  icon={<GlobeIcon />}
-                  heading="No environments yet"
-                  subheading="This collection has no environments configured. Add one in Bruno to manage base URLs and variables."
-                />
-              )}
-            </Section>
-
             <Section label="Overview" testId="overview-section-label">
               {hasOverview ? (
                 <div

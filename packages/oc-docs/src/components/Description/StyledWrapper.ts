@@ -6,7 +6,6 @@ export const StyledWrapper = styled(TruncatedText)`
   font-family: var(--font-sans);
   font-weight: 400;
   font-size: 0.6875rem;
-  line-height: 1.45;
-  color: var(--oc-colors-text-subtext1);
+  color: var(--oc-colors-text-subtext0);
   cursor: pointer;
 `;

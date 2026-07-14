@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 export const StyledWrapper = styled.div`
   .assert-item {
-    padding: 0.6875rem 1rem;
+    padding: 0.5rem 1rem;
   }
   .assert-item:not(:first-child) {
     border-top: 0.0625rem solid var(--oc-border-border0);

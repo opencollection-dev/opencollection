@@ -22,7 +22,7 @@ export const StyledWrapper = styled.div`
     display: inline-flex;
     align-items: center;
     padding: 0.375rem 0.75rem;
-    border-radius: 0.375rem;
+    border-radius: var(--oc-radius);
     border: none;
     background: transparent;
     font-family: var(--font-sans);

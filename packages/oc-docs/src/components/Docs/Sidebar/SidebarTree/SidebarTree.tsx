@@ -77,7 +77,7 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
                 onClick={() => slug !== undefined && onNavigate(slug)}
               />
               {expanded && children.length > 0 && (
-                <StyledWrapper style={{ '--guide-left': `${itemLevel * 14 + 14}px` } as React.CSSProperties}>
+                <StyledWrapper style={{ '--guide-left': `${itemLevel * 19 + 14}px` } as React.CSSProperties}>
                   {renderItems(children, itemLevel + 1)}
                 </StyledWrapper>
               )}
@@ -96,7 +96,7 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
             level={itemLevel}
             active={active}
             method={method}
-            mono={script}
+            script={script}
             muted
             testId="sidebar-item"
             slug={slug}
