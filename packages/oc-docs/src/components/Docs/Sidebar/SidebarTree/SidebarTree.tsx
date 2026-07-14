@@ -33,7 +33,7 @@ interface SidebarTreeProps {
   onNavigate: (slug: string) => void;
   onToggleFolder: (uuid: string) => void;
   collectionRoot?: CollectionRoot;
-  activeExample?: ExampleHighlight | null;
+  activeExample: ExampleHighlight | null;
   onExampleClick?: (requestUuid: string, index: number, request: HttpRequest) => void;
 }
 

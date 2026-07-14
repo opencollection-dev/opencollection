@@ -6,24 +6,20 @@ import SidebarTree from './SidebarTree';
 import { useRenderToDom } from '../../../../hooks/useRenderToDom';
 
 const req = (uuid: string, name: string, method: string): OpenCollectionItem =>
-  ({ type: 'http', uuid, name, method } as unknown as OpenCollectionItem);
-const folder = (
-  uuid: string,
-  name: string,
-  items: OpenCollectionItem[],
-  isCollapsed = false
-): OpenCollectionItem =>
-  ({ type: 'folder', uuid, name, items, isCollapsed } as unknown as OpenCollectionItem);
+  ({ type: 'http', uuid, name, method }) as unknown as OpenCollectionItem;
+const folder = (uuid: string, name: string, items: OpenCollectionItem[], isCollapsed = false): OpenCollectionItem =>
+  ({ type: 'folder', uuid, name, items, isCollapsed }) as unknown as OpenCollectionItem;
 
 const uuidToSlug = new Map<string, string>([
   ['f-auth', 'authentication'],
-  ['r-login', 'authentication/login'],
+  ['r-login', 'authentication/login']
 ]);
 
 const noop = () => {};
 const render = (props: Partial<React.ComponentProps<typeof SidebarTree>> = {}) =>
   renderToStaticMarkup(
     <SidebarTree
+      activeExample={null}
       items={[folder('f-auth', 'Authentication', [req('r-login', 'Login', 'POST')])]}
       activeSlug=""
       uuidToSlug={uuidToSlug}
@@ -43,7 +39,7 @@ describe('SidebarTree', () => {
 
   it('hides children of a collapsed folder', () => {
     const html = render({
-      items: [folder('f-auth', 'Authentication', [req('r-login', 'Login', 'POST')], true)],
+      items: [folder('f-auth', 'Authentication', [req('r-login', 'Login', 'POST')], true)]
     });
     expect(html).toContain('Authentication');
     expect(html).not.toContain('Login');
@@ -57,10 +53,11 @@ describe('SidebarTree', () => {
     const items = [
       { type: 'websocket', uuid: 'w1', name: 'Live Feed' },
       { type: 'grpc', uuid: 'g1', name: 'Stream' },
-      { type: 'graphql', uuid: 'q1', name: 'Query' },
+      { type: 'graphql', uuid: 'q1', name: 'Query' }
     ] as unknown as OpenCollectionItem[];
     const html = renderToStaticMarkup(
       <SidebarTree
+        activeExample={null}
         items={items}
         activeSlug=""
         uuidToSlug={new Map()}
@@ -77,6 +74,7 @@ describe('SidebarTree', () => {
     const script = { type: 'script', uuid: 's1', name: 'setup' } as unknown as OpenCollectionItem;
     const html = renderToStaticMarkup(
       <SidebarTree
+        activeExample={null}
         items={[script]}
         activeSlug=""
         uuidToSlug={new Map([['s1', 'setup']])}
@@ -91,15 +89,14 @@ describe('SidebarTree', () => {
 });
 
 describe('SidebarTree collectionRoot', () => {
-  const items = [
-    { type: 'http-request', name: 'get users', uuid: 'u1', method: 'GET' } as never,
-  ];
+  const items = [{ type: 'http-request', name: 'get users', uuid: 'u1', method: 'GET' } as never];
   const base = {
     items,
     activeSlug: '',
     uuidToSlug: new Map([['u1', 'get-users']]),
     onNavigate: noop,
     onToggleFolder: noop,
+    activeExample: null
   };
 
   it('renders no collection root when the prop is omitted (docs parity)', () => {
@@ -112,13 +109,14 @@ describe('SidebarTree collectionRoot', () => {
     const html = renderToStaticMarkup(
       <SidebarTree
         {...base}
+        activeExample={null}
         collectionRoot={{
           name: 'Bruno Testbench',
           collapsed: false,
           active: false,
           onToggle: noop,
           onClick,
-          testId: 'sidebar-collection-root',
+          testId: 'sidebar-collection-root'
         }}
       />
     );
@@ -131,13 +129,14 @@ describe('SidebarTree collectionRoot', () => {
     const html = renderToStaticMarkup(
       <SidebarTree
         {...base}
+        activeExample={null}
         collectionRoot={{
           name: 'Bruno Testbench',
           collapsed: true,
           active: false,
           onToggle: noop,
           onClick: noop,
-          testId: 'sidebar-collection-root',
+          testId: 'sidebar-collection-root'
         }}
       />
     );
@@ -154,8 +153,8 @@ const requestWithExamples = {
   method: 'POST',
   examples: [
     { name: 'Successful login', response: { status: 200 } },
-    { name: 'Invalid credentials', response: { status: 401 } },
-  ],
+    { name: 'Invalid credentials', response: { status: 401 } }
+  ]
 } as unknown as OpenCollectionItem;
 
 const baseProps = {
@@ -163,6 +162,7 @@ const baseProps = {
   uuidToSlug: new Map<string, string>([['req-1', 'login']]),
   onNavigate: () => {},
   onToggleFolder: () => {},
+  activeExample: null
 };
 
 const tree = (props: Partial<React.ComponentProps<typeof SidebarTree>> = {}) => (
@@ -193,6 +193,7 @@ describe('SidebarTree examples', () => {
         {...baseProps}
         items={[plain]}
         uuidToSlug={new Map([['r2', 'ping']])}
+        activeExample={null}
       />
     );
     expect(root.querySelector('[data-testid="sidebar-example-toggle"]')).toBeNull();

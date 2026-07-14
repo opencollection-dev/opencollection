@@ -19,7 +19,7 @@ interface PlaygroundSidebarProps {
   onOpenCollection: () => void;
   collectionActive: boolean;
   testId?: string;
-  activeExample?: ExampleHighlight | null;
+  activeExample: ExampleHighlight | null;
   onExampleClick?: (requestUuid: string, index: number, request: HttpRequest) => void;
 }
 
