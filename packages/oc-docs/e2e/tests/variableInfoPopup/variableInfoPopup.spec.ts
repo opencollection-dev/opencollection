@@ -48,6 +48,22 @@ test.describe('Variable hover card', () => {
     await expect(variableCard.value).toHaveText('example-value');
   });
 
+  test('shows the card for a variable used in the request body', async ({ page, variableCard }) => {
+    const body = page.getByTestId('request-section-body');
+    await body.getByTestId('variable-token-host').hover();
+    await expect(variableCard.card).toBeVisible();
+    await expect(variableCard.scopeBadge).toHaveText('Environment');
+    await expect(variableCard.value).toHaveText('https://api.dev.example.com');
+  });
+
+  test('masks a secret referenced in the request body', async ({ page, variableCard }) => {
+    const body = page.getByTestId('request-section-body');
+    await body.getByTestId('variable-token-bearer_token').hover();
+    await expect(variableCard.card).toBeVisible();
+    await expect(variableCard.scopeBadge).toHaveText('Environment');
+    await expect(variableCard.revealToggle).toBeVisible();
+  });
+
   test('pretty-prints an object-typed value', async ({ variableCard }) => {
     await variableCard.hoverToken('profile');
     await expect(variableCard.card).toBeVisible();

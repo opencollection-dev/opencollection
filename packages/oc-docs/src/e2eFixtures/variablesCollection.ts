@@ -57,6 +57,10 @@ export const variablesFixtureCollection = {
             { name: 'X-Home', value: '{{process.env.HOME}}' },
             { name: 'X-Random', value: '{{$randomInt}}' }
           ],
+          body: {
+            type: 'json',
+            data: '{\n  "endpoint": "{{host}}/orders",\n  "token": "{{bearer_token}}"\n}'
+          },
           runtime: {
             variables: [{ name: 'userId', value: 'req-42' }]
           },
