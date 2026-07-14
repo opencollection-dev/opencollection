@@ -88,7 +88,7 @@ const RequestContent: React.FC<RequestContentProps> = ({
   // The example to flash/scroll to is carried on the navigation entry's state
   // and always belongs to the request being shown, so no request match is needed.
   const { state } = useLocation();
-  const highlightedExampleIndex = (state as { exampleIndex?: number } | null)?.exampleIndex;
+  const highlightedExampleIndex = (state as { exampleIndex?: number })?.exampleIndex;
 
   const { path: pathParams, query: queryParams } = useMemo(
     () => resolvePathAndQueryParams(params, url),
