@@ -40,6 +40,14 @@ export const statusToneColor = (status?: number): string => {
   return 'var(--oc-status-danger-text)';
 };
 
+// Tinted background token for a status badge, matching statusToneColor's tone.
+export const statusToneBackground = (status?: number): string => {
+  if (status === undefined) return 'transparent';
+  if (status < 300) return 'var(--oc-status-success-background)';
+  if (status < 400) return 'var(--oc-status-info-background)';
+  return 'var(--oc-status-danger-background)';
+};
+
 export const COLLECTION_ROOT_CRUMB = '__collection_root__';
 
 export const buildBreadcrumbSegments = (

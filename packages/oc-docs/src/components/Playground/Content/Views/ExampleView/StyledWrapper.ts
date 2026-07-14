@@ -50,6 +50,8 @@ export const StyledWrapper = styled.div`
     font-family: var(--font-mono);
     font-size: 0.75rem;
     font-weight: 700;
+    padding: 0.125rem 0.375rem;
+    border-radius: var(--oc-radius);
   }
   .example-view-grid {
     flex: 1 1 auto;

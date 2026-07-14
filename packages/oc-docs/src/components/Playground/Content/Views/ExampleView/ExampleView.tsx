@@ -11,7 +11,7 @@ import { resolvePathAndQueryParams } from '../../../../../utils/pathParams';
 import { getBodyView, getDescription, headerRows } from '../../../../../utils/request';
 import { getHttpMethod, getRequestUrl } from '../../../../../utils/schemaHelpers';
 import { responseBodyLanguage, statusCodePhrase } from '../../../../../utils/exampleResponse';
-import { statusToneColor } from '../../../../../utils/common';
+import { statusToneColor, statusToneBackground } from '../../../../../utils/common';
 import { useSplitPane, type SplitOrientation } from '../../../../../hooks/useSplitPane';
 import { StyledWrapper } from './StyledWrapper';
 
@@ -57,7 +57,10 @@ export const ExampleView: React.FC<ExampleViewProps> = ({ request, example, orie
   const { size: paneSize, isResizing, containerRef, startResize } = useSplitPane(orientation);
   const paneStyle = orientation === 'vertical' ? { height: `${paneSize}%` } : { width: `${paneSize}%` };
   const statusBadge = status ? (
-    <span className="example-view-status" style={{ color: statusToneColor(status) }}>
+    <span
+      className="example-view-status"
+      style={{ color: statusToneColor(status), backgroundColor: statusToneBackground(status) }}
+    >
       {status} {statusText}
     </span>
   ) : null;
