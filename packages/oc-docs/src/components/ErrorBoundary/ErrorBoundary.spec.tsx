@@ -14,6 +14,16 @@ describe('ErrorBoundary', () => {
     expect(query(root, '.ok').text).toBe('fine');
   });
 
+  it('keeps a provided fallback dormant while its children render', () => {
+    const root = useRenderToDom(
+      <ErrorBoundary fallback={<span className="fb">fallback</span>}>
+        <span className="ok">fine</span>
+      </ErrorBoundary>
+    );
+    expect(query(root, '.ok').text).toBe('fine');
+    expect(root.querySelector('.fb')).toBeNull();
+  });
+
   it('flags an error via getDerivedStateFromError', () => {
     expect(ErrorBoundary.getDerivedStateFromError()).toEqual({ hasError: true });
   });

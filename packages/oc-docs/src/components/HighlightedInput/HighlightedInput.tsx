@@ -20,6 +20,7 @@ interface HighlightedInputProps {
   isFound: (name: string) => boolean;
   names: string[];
   anywordHints?: string[];
+  variablesAutocomplete?: boolean;
   title?: string;
 }
 
@@ -58,8 +59,9 @@ const renderTokens = (text: string, isFound: (name: string) => boolean) =>
 /**
  * A single-line text input that paints `{{var}}` tokens in Bruno's variable
  * colours, shows the variable info card on hover, and offers autocomplete for
- * both `{{variables}}` and a static word list (`anywordHints` — e.g. HTTP header
- * names or MIME types, matching Bruno's name/value cells). The real <input>
+ * `{{variables}}` (unless `variablesAutocomplete` is false — the app only suggests
+ * variables in value cells, never in param/variable name cells) and a static word
+ * list (`anywordHints` — e.g. HTTP header names or MIME types). The real <input>
  * carries a transparent text fill above a read-only mirror that paints the
  * tokens, so caret/selection/typing stay native; hover is resolved by
  * hit-testing the pointer against the mirror's valid/invalid token rects.
@@ -71,6 +73,7 @@ export const HighlightedInput: React.FC<HighlightedInputProps> = ({
   isFound,
   names,
   anywordHints,
+  variablesAutocomplete = true,
   title
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -205,7 +208,7 @@ export const HighlightedInput: React.FC<HighlightedInputProps> = ({
   const contextAt = (text: string, caret: number): AutocompleteContext | null => {
     const before = text.slice(0, caret);
     const variable = getVariableContext(before);
-    if (variable) return variable.word ? variable : null;
+    if (variable) return variablesAutocomplete && variable.word ? variable : null;
     if (anywordHints && anywordHints.length) {
       const word = getWordContext(before);
       return word.word ? word : null;
@@ -217,7 +220,7 @@ export const HighlightedInput: React.FC<HighlightedInputProps> = ({
     const before = nextValue.slice(0, caret);
     const variable = getVariableContext(before);
     if (variable) {
-      const items = variable.word ? buildVariableSuggestions(variable.word, names) : [];
+      const items = variablesAutocomplete && variable.word ? buildVariableSuggestions(variable.word, names) : [];
       setAutocomplete(items.length ? { items, active: 0, start: variable.start, caret } : null);
       return;
     }

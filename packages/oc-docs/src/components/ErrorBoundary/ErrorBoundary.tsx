@@ -3,6 +3,7 @@ import { StyledWrapper } from './StyledWrapper';
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
+  fallback?: React.ReactNode;
 }
 
 interface ErrorBoundaryState {
@@ -12,7 +13,8 @@ interface ErrorBoundaryState {
 /**
  * Contains render/commit errors from a subtree so one failing view can't blank the
  * whole app. Give it a `key` tied to the route so navigating away mounts a fresh
- * boundary instead of stranding the user on the fallback.
+ * boundary instead of stranding the user on the fallback. Pass `fallback` to replace
+ * the default retry UI with a context-specific message.
  */
 export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   state: ErrorBoundaryState = { hasError: false };
@@ -29,6 +31,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
 
   render(): React.ReactNode {
     if (!this.state.hasError) return this.props.children;
+    if (this.props.fallback !== undefined) return this.props.fallback;
     return (
       <StyledWrapper role="alert">
         <p className="error-title">Something went wrong displaying this view.</p>

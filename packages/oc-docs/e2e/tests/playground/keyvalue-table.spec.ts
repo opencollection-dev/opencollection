@@ -30,4 +30,33 @@ test.describe('KeyValueTable — tooltips & mobile scroll', () => {
       .evaluate((el) => el.scrollWidth > el.clientWidth + 1);
     expect(overflows).toBe(true);
   });
+
+  test('offers {{variable}} autocomplete in the value cell but not the name cell', async ({ page }) => {
+    const kvt = page.getByTestId('key-value-table');
+    const autocomplete = page.getByTestId('variable-autocomplete');
+
+    // Value cell: a `{{` reference surfaces the collection's variables.
+    await kvt.locator('.col-value input.text-input').last().click();
+    await page.keyboard.type('{{coll');
+    await expect(autocomplete).toBeVisible();
+
+    await page.keyboard.press('Escape');
+    await expect(autocomplete).toHaveCount(0);
+
+    // Name cell: the same reference must not open the dropdown — the app only
+    // autocompletes variables in value cells, never in param/variable name cells.
+    await kvt.locator('.col-key input.text-input').last().click();
+    await page.keyboard.type('{{coll');
+    await page.waitForTimeout(250);
+    await expect(autocomplete).toHaveCount(0);
+  });
+
+  test('flags a header name that contains a space with an inline error', async ({ page }) => {
+    const kvt = page.getByTestId('key-value-table');
+    await kvt.locator('.col-key input.text-input').last().click();
+    await page.keyboard.type('Bad Name');
+    const error = kvt.locator('.cell-error').first();
+    await expect(error).toBeVisible();
+    await expect(error).toHaveAttribute('aria-label', 'Header name cannot contain spaces or newlines');
+  });
 });

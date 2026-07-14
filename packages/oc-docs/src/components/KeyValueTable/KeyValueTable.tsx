@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useResolvedVariables } from '../../hooks/useVariableResolver';
+import { Tooltip } from '../../ui/Tooltip/Tooltip';
+import { WarningIcon } from '../../assets/icons';
 import HighlightedInput from '../HighlightedInput/HighlightedInput';
 import './KeyValueTable.css';
 
@@ -33,6 +35,7 @@ interface KeyValueTableProps {
   readOnlyKey?: boolean;
   keyAutocomplete?: string[];
   valueAutocomplete?: string[];
+  getRowError?: (row: KeyValueRow, index: number, field: 'name' | 'value') => string | null;
   valueHeader?: React.ReactNode;
   inlineActions?: boolean;
   testId?: string;
@@ -54,6 +57,7 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
   readOnlyKey = false,
   keyAutocomplete,
   valueAutocomplete,
+  getRowError,
   valueHeader,
   inlineActions = false,
   testId = 'key-value-table'
@@ -193,6 +197,18 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
     });
   }, [disableNewRow, notifyChange]);
 
+  const cellError = (row: KeyValueRow, index: number, field: 'name' | 'value') => {
+    const message = getRowError?.(row, index, field);
+    if (!message) return null;
+    return (
+      <Tooltip content={message}>
+        <span className="cell-error" role="img" aria-label={message}>
+          <WarningIcon />
+        </span>
+      </Tooltip>
+    );
+  };
+
   return (
     <div className={`key-value-table-wrapper ${className}`} data-testid={testId}>
       <div className="key-value-table-container">
@@ -277,9 +293,11 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                           isFound={isFound}
                           names={names}
                           anywordHints={keyAutocomplete}
+                          variablesAutocomplete={false}
                           title={row.name}
                         />
                       )}
+                      {!isLastEmptyRow && cellError(row, index, 'name')}
                     </div>
                   </td>
                   <td className="col-value">
@@ -296,6 +314,7 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                             title={row.value}
                           />
                         </div>
+                        {!isLastEmptyRow && cellError(row, index, 'value')}
                         {!isLastEmptyRow && (
                           <div className="value-cell-trailing">
                             {additionalColumns.map((col) => (

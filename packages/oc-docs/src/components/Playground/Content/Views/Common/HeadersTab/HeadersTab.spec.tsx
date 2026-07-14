@@ -37,4 +37,19 @@ describe('HeadersTab', () => {
     const root = useRenderToDom(<HeadersTab headers={[]} onHeadersChange={noop} />);
     expect(query(root, '[data-testid="bulk-edit-toggle"]').text.trim()).toBe('Bulk edit');
   });
+
+  it('flags a header name with spaces and a value with newlines', () => {
+    const root = useRenderToDom(
+      <HeadersTab headers={[{ name: 'Bad Name', value: 'line1\nline2' }]} onHeadersChange={noop} />
+    );
+    expect(root.querySelector('[aria-label="Header name cannot contain spaces or newlines"]')).toBeTruthy();
+    expect(root.querySelector('[aria-label="Header value cannot contain newlines"]')).toBeTruthy();
+  });
+
+  it('shows no error for a valid header', () => {
+    const root = useRenderToDom(
+      <HeadersTab headers={[{ name: 'Content-Type', value: 'application/json' }]} onHeadersChange={noop} />
+    );
+    expect(root.querySelector('.cell-error')).toBeNull();
+  });
 });

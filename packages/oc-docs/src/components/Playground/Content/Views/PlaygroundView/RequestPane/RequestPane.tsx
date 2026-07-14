@@ -35,7 +35,12 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
   const [activeTab, setActiveTab] = useState('params');
 
   const handleParamsChange = (params: KeyValueRow[]) => {
+    const originals = getHttpParams(item) as Array<{ name?: string }>;
+    const originalByName = new Map(
+      originals.filter((param) => param.name).map((param): [string, typeof param] => [param.name as string, param])
+    );
     const updatedParams = params.map(p => ({
+      ...(originalByName.get(p?.name) ?? {}),
       name: p?.name,
       value: p?.value,
       disabled: !p?.enabled,
@@ -53,10 +58,16 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
   };
 
   const handleHeadersChange = (headers: KeyValueRow[]) => {
+    const originals = getHttpHeaders(item);
+    const originalByName = new Map(
+      originals.filter((header) => header.name).map((header): [string, typeof header] => [header.name as string, header])
+    );
     const updatedHeaders = headers.map(h => ({
+      ...(originalByName.get(h.name) ?? {}),
       name: h.name,
       value: h.value,
-      disabled: !h.enabled
+      disabled: !h.enabled,
+      ...(h.description !== undefined ? { description: h.description } : {})
     }));
     onItemChange({ 
       ...item, 

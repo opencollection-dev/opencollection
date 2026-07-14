@@ -45,6 +45,20 @@ describe('VariablesTab', () => {
     expect(root.querySelector('.var-type-warning')).toBeNull();
   });
 
+  it('flags a variable name with invalid characters', () => {
+    const root = useRenderToDom(
+      <VariablesTab variables={[{ name: 'bad name', value: 'x' }]} onVariablesChange={noop} />
+    );
+    expect(query(root, '.cell-error').getAttribute('aria-label')).toContain('Variable contains invalid characters');
+  });
+
+  it('shows no error for a valid variable name', () => {
+    const root = useRenderToDom(
+      <VariablesTab variables={[{ name: 'baseUrl', value: 'x' }]} onVariablesChange={noop} />
+    );
+    expect(root.querySelector('.cell-error')).toBeNull();
+  });
+
   it('omits the Post Response section unless post-response props are given', () => {
     const root = useRenderToDom(<VariablesTab variables={[]} onVariablesChange={noop} />);
     expect(sectionTitles(root)).not.toContain('Post Response');

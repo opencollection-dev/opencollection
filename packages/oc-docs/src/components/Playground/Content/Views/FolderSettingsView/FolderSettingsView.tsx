@@ -31,10 +31,16 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({ folder, onFolderChange 
   const [activeTab, setActiveTab] = useState('overview');
 
   const handleHeadersChange = (headers: KeyValueRow[]) => {
+    const originals = folder.request?.headers ?? [];
+    const originalByName = new Map(
+      originals.filter((header) => header.name).map((header): [string, typeof header] => [header.name as string, header])
+    );
     const updatedHeaders = headers.map((h) => ({
+      ...(originalByName.get(h.name) ?? {}),
       name: h.name,
       value: h.value,
-      disabled: !h.enabled
+      disabled: !h.enabled,
+      ...(h.description !== undefined ? { description: h.description } : {})
     }));
 
     const updatedFolder = {

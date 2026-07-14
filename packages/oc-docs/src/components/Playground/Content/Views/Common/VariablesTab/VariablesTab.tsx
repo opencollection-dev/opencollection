@@ -10,6 +10,7 @@ import {
   validateDataTypeValue,
   type VariableDataType
 } from '../../../../../../utils/variableDataType';
+import { VARIABLE_NAME_REGEX } from '../../../../../../constants/regex';
 import { CaretIcon, WarningIcon } from '../../../../../../assets/icons';
 import { StyledWrapper } from './StyledWrapper';
 
@@ -33,6 +34,15 @@ interface VariablesTabProps {
 
 const toDataType = (dataType?: string): VariableDataType =>
   dataType && (VARIABLE_DATA_TYPES as string[]).includes(dataType) ? (dataType as VariableDataType) : 'string';
+
+const getVariableError = (row: KeyValueRow, _index: number, field: 'name' | 'value'): string | null => {
+  if (field !== 'name') return null;
+  if (!row.name || row.name.trim() === '') return null;
+  if (!VARIABLE_NAME_REGEX.test(row.name)) {
+    return 'Variable contains invalid characters. Must only contain alphanumeric characters, "-", "_", "."';
+  }
+  return null;
+};
 
 const typeColumn = {
   key: 'datatype',
@@ -135,6 +145,7 @@ export const VariablesTab: React.FC<VariablesTabProps> = ({
           showEnabled={true}
           inlineActions={true}
           additionalColumns={dataTypeColumns}
+          getRowError={getVariableError}
         />
       </section>
 
@@ -155,6 +166,7 @@ export const VariablesTab: React.FC<VariablesTabProps> = ({
             }
             showEnabled={true}
             inlineActions={true}
+            getRowError={getVariableError}
           />
         </section>
       )}
