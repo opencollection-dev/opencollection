@@ -46,7 +46,7 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
   onToggleFolder,
   collectionRoot,
   activeExample,
-  onExampleClick,
+  onExampleClick
 }) => {
   // Explicit expand/collapse intent per request uuid. When a request has no
   // entry it follows the active example (auto-expand); once the user clicks the
@@ -154,8 +154,7 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
               {expanded && (
                 <StyledWrapper style={{ '--guide-left': `${itemLevel * 14 + 14}px` } as React.CSSProperties}>
                   {examples.map((example, i) => {
-                    const isActive =
-                      activeExample?.requestUuid === uuid && activeExample.index === i;
+                    const isActive = activeExample?.requestUuid === uuid && activeExample.index === i;
                     return (
                       <SidebarNavLink
                         key={`${uuid}-example-${i}`}
@@ -195,21 +194,6 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
   );
 
   if (collectionRoot) {
-    const chevron = (
-      <button
-        type="button"
-        className={`navlink-chevron${collectionRoot.collapsed ? '' : ' expanded'}`}
-        aria-label={collectionRoot.collapsed ? 'Expand collection' : 'Collapse collection'}
-        aria-expanded={!collectionRoot.collapsed}
-        onClick={(e) => {
-          e.stopPropagation();
-          collectionRoot.onToggle();
-        }}
-      >
-        <ChevronRightIcon />
-      </button>
-    );
-
     return (
       <>
         <SidebarNavLink
@@ -217,7 +201,7 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
           level={0}
           active={collectionRoot.active}
           icon={collectionRoot.icon}
-          chevron={chevron}
+          chevron={<ChevronButton collectionRoot={collectionRoot} />}
           testId={collectionRoot.testId ?? 'sidebar-collection-root'}
           onClick={collectionRoot.onClick}
         />
@@ -231,6 +215,27 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
   }
 
   return <>{renderItems(items, level)}</>;
+};
+
+interface ChevronButtonProps {
+  collectionRoot: CollectionRoot;
+}
+
+export const ChevronButton: React.FC<ChevronButtonProps> = ({ collectionRoot }) => {
+  return (
+    <button
+      type="button"
+      className={`navlink-chevron${collectionRoot.collapsed ? '' : ' expanded'}`}
+      aria-label={collectionRoot.collapsed ? 'Expand collection' : 'Collapse collection'}
+      aria-expanded={!collectionRoot.collapsed}
+      onClick={(e) => {
+        e.stopPropagation();
+        collectionRoot.onToggle();
+      }}
+    >
+      <ChevronRightIcon />
+    </button>
+  );
 };
 
 export default SidebarTree;

@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 export const StyledWrapper = styled.div`
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 0.4375rem;
   box-sizing: border-box;
   user-select: none;
   border-radius: var(--oc-radius);
@@ -40,8 +40,8 @@ export const StyledWrapper = styled.div`
     min-width: 0;
     display: flex;
     align-items: center;
-    gap: 7px;
-    padding: 5px 8px 5px 0;
+    gap: 0.4375rem;
+    padding: 0.3125rem 0.5rem 0.3125rem 0;
     background: transparent;
     border: 0;
     cursor: pointer;
@@ -53,9 +53,9 @@ export const StyledWrapper = styled.div`
   }
 
   .navlink-main:focus-visible {
-    outline: 2px solid var(--oc-colors-accent);
-    outline-offset: -2px;
-    border-radius: 6px;
+    outline: 0.125rem solid var(--oc-colors-accent);
+    outline-offset: -0.125rem;
+    border-radius: 0.375rem;
   }
 
   .navlink-leading {
@@ -70,16 +70,16 @@ export const StyledWrapper = styled.div`
   }
 
   .navlink-icon svg {
-    width: 12px;
-    height: 12px;
+    width: 0.75rem;
+    height: 0.75rem;
   }
 
   .navlink-method {
-    width: 34px;
+    width: 2.125rem;
     flex-shrink: 0;
-    margin-right: -4px;
+    margin-right: -0.25rem;
     font-family: var(--font-mono);
-    font-size: 10.5px;
+    font-size: 0.65625rem;
     line-height: 1.2;
     font-weight: 700;
     letter-spacing: 0.04em;
@@ -98,7 +98,7 @@ export const StyledWrapper = styled.div`
     align-items: center;
     justify-content: center;
     width: 0.75rem;
-    height: 18px;
+    height: 1.125rem;
     padding: 0;
     background: transparent;
     border: 0;
@@ -108,13 +108,13 @@ export const StyledWrapper = styled.div`
   }
 
   .navlink-chevron:focus-visible {
-    outline: 2px solid var(--oc-colors-accent);
-    outline-offset: -2px;
+    outline: 0.125rem solid var(--oc-colors-accent);
+    outline-offset: -0.125rem;
   }
 
   .navlink-chevron svg {
-    width: 12px;
-    height: 12px;
+    width: 0.75rem;
+    height: 0.75rem;
     transition: transform 0.2s ease;
   }
 

@@ -77,7 +77,7 @@ export const headerRows = (headers: (HttpRequestHeader | HttpResponseHeader)[]):
   headers.map((h) => ({
     label: h.name,
     value: h.value,
-    disabled: 'disabled' in h ? h.disabled : undefined,
+    disabled: Boolean((h as HttpRequestHeader).disabled),
     description: getDescription(h)
   }));
 

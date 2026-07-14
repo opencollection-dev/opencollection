@@ -472,7 +472,7 @@ export const countEnabled = <T extends { disabled?: boolean }>(items: T[] | unde
  * Get docs from an item (at root level in new schema)
  * Handles both string format and object format { content, type }
  */
-export const getItemDocs = (item: { docs?: unknown } | null | undefined): string | undefined => {
+export const getItemDocs = (item: OpenCollectionItem | null | undefined): string | undefined => {
   if (!item) return undefined;
 
   if ('docs' in item) {

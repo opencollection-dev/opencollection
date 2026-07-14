@@ -27,8 +27,8 @@ export const StyledWrapper = styled.div`
   }
 
   &[data-orientation='horizontal'] {
-    width: 5px;
-    margin: 0 10px;
+    width: 0.3125rem;
+    margin: 0 0.625rem;
     cursor: col-resize;
   }
   &[data-orientation='horizontal']::before {
@@ -37,8 +37,8 @@ export const StyledWrapper = styled.div`
   }
 
   &[data-orientation='vertical'] {
-    height: 5px;
-    margin: 10px 0;
+    height: 0.3125rem;
+    margin: 0.625rem 0;
     cursor: row-resize;
   }
   &[data-orientation='vertical']::before {
