@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 export const StyledWrapper = styled.div`
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--oc-radius);
   overflow: hidden;
   transition: border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
               box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);

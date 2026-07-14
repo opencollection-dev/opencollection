@@ -7,7 +7,7 @@ export const StyledWrapper = styled.div`
   flex-direction: column;
   width: 100%;
   min-height: 0;
-  border-top: 1px solid var(--oc-border-border2);
+  border-top: 1px solid var(--oc-border-border0);
   background-color: var(--oc-background-base);
 
   &.dragging {
@@ -33,13 +33,13 @@ export const StyledWrapper = styled.div`
     width: 40px;
     height: 4px;
     border-radius: 999px;
-    background-color: var(--oc-colors-text-subtext0);
+    background-color: var(--oc-border-border0);
     transition: background-color 0.15s ease;
   }
 
   .resize-handle:hover::after,
   &.dragging .resize-handle::after {
-    background-color: var(--oc-colors-text-subtext2);
+    background-color: var(--oc-border-border1);
   }
 
   .dock-content {

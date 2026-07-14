@@ -11,7 +11,7 @@ export const StyledWrapper = styled.button`
   background: transparent;
   color: var(--oc-text);
   border: none;
-  border-radius: var(--oc-border-radius-base);
+  border-radius: var(--oc-radius);
   cursor: pointer;
   transition: background-color 0.12s ease, color 0.12s ease;
 

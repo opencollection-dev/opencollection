@@ -51,9 +51,9 @@ describe('buildNavModel — ordered sequence', () => {
     ]);
   });
 
-  it('omits the environments entry when the collection has none', () => {
+  it('keeps the environments entry even when the collection has none (the page shows an empty state)', () => {
     const c = collection([req('Ping', 1)], false);
-    expect(slugs(c)).toEqual([OVERVIEW_SLUG, 'ping']);
+    expect(slugs(c)).toEqual([OVERVIEW_SLUG, ENVIRONMENTS_SLUG, 'ping']);
   });
 
   it('sorts requests by seq (mirrors the Bruno app)', () => {

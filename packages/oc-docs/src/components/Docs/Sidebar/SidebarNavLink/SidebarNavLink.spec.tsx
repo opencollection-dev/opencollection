@@ -45,11 +45,14 @@ describe('SidebarNavLink', () => {
     expect(html).toContain('data-testid="sidebar-item"');
   });
 
-  it('marks the label as monospace for script rows', () => {
-    expect(renderToStaticMarkup(<SidebarNavLink label="setup.js" mono />)).toContain('navlink-label mono');
+  it('renders a JS badge in the method column for script rows, label stays default font', () => {
+    const html = renderToStaticMarkup(<SidebarNavLink label="setup.js" script />);
+    expect(html).toContain('navlink-method');
+    expect(html).toContain('>JS<');
+    expect(html).not.toContain('navlink-label mono');
   });
 
-  it('indents by level', () => {
-    expect(renderToStaticMarkup(<SidebarNavLink label="Nested" level={2} />)).toContain('padding-left:36px');
+  it('indents by level (chevron + gap step of 19px)', () => {
+    expect(renderToStaticMarkup(<SidebarNavLink label="Nested" level={2} />)).toContain('padding-left:46px');
   });
 });

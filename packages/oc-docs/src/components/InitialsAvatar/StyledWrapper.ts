@@ -7,7 +7,7 @@ export const StyledWrapper = styled.span`
   width: 26px;
   height: 26px;
   flex: none;
-  border-radius: var(--oc-border-radius-base);
+  border-radius: var(--oc-radius);
   background: linear-gradient(135deg, #d37f17 0%, #dc9741 100%);
   color: #fff;
   font-family: var(--font-mono);

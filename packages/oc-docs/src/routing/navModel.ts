@@ -9,11 +9,6 @@ export const OVERVIEW_SLUG = '';
 /** Built-ins are tilde-prefixed so user content can never collide with them. */
 export const ENVIRONMENTS_SLUG = '~environments';
 
-const hasEnvironments = (collection: OpenCollection): boolean => {
-  const envs = (collection as { config?: { environments?: unknown[] } })?.config?.environments;
-  return Array.isArray(envs) && envs.length > 0;
-};
-
 const isSeqValid = (seq: number | undefined): boolean =>
   typeof seq === 'number' && Number.isFinite(seq) && Number.isInteger(seq) && seq > 0;
 
@@ -133,16 +128,17 @@ export const buildNavModel = (collection: OpenCollection | null | undefined): Na
     depth: -1,
   });
 
-  if (collection && hasEnvironments(collection)) {
-    ordered.push({
-      slug: ENVIRONMENTS_SLUG,
-      type: 'environments',
-      name: 'Environments',
-      item: null,
-      ancestors: [],
-      depth: -1,
-    });
-  }
+  // Environments always gets a nav entry, even when the collection has none:
+  // the page itself renders an empty state ("No environments configured") so
+  // the section stays discoverable in the sidebar. Mirrors the Overview entry.
+  ordered.push({
+    slug: ENVIRONMENTS_SLUG,
+    type: 'environments',
+    name: 'Environments',
+    item: null,
+    ancestors: [],
+    depth: -1,
+  });
 
   walk(collection?.items, '', [], 0, ordered);
 

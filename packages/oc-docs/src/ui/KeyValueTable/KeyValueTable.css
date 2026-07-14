@@ -6,7 +6,7 @@
 
 .key-value-table-container {
   overflow-y: auto;
-  border-radius: 0.25rem;
+  border-radius: var(--oc-radius);
   border: 1px solid var(--oc-table-border);
 }
 
@@ -111,7 +111,7 @@
   color: var(--oc-table-input-color);
   padding: 5px 8px;
   font-size: 0.875rem;
-  border-radius: 0.25rem;
+  border-radius: var(--oc-radius);
   transition: all 0.15s ease;
   font-family: inherit;
   vertical-align: middle;
@@ -156,7 +156,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  border-radius: 0.25rem;
+  border-radius: var(--oc-radius);
   transition: color 0.15s ease, background-color 0.15s ease;
 }
 

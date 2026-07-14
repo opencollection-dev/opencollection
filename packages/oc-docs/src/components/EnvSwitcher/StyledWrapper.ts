@@ -7,12 +7,12 @@ export const StyledWrapper = styled.div`
   .env-switcher-trigger {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    padding: 5px 12px;
+    gap: 0.4375rem;
+    padding: 0.21875rem 0.5rem;
     box-sizing: border-box;
     background: var(--oc-app-collection-toolbar-environment-selector-bg);
-    border: 1px solid var(--oc-app-collection-toolbar-environment-selector-border);
-    border-radius: var(--oc-border-radius-base);
+    border: 1px solid var(--oc-border-border1);
+    border-radius: var(--oc-radius);
     cursor: pointer;
     font-family: var(--font-sans);
     font-size: 12px;
@@ -57,8 +57,7 @@ export const StyledWrapper = styled.div`
     box-sizing: border-box;
     background: var(--oc-dropdown-bg);
     border: 1px solid var(--oc-dropdown-separator);
-    border-radius: 8px;
-    box-shadow: var(--oc-dropdown-shadow);
+    border-radius: var(--oc-radius);
   }
 
   .env-switcher-option {
@@ -71,7 +70,7 @@ export const StyledWrapper = styled.div`
     box-sizing: border-box;
     background: transparent;
     border: none;
-    border-radius: 4px;
+    border-radius: var(--oc-radius);
     cursor: pointer;
     font-family: var(--font-sans);
     font-size: 12px;

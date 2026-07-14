@@ -21,7 +21,7 @@ export const StyledWrapper = styled.div`
     width: calc(100vw - 48px);
     height: calc(100vh - 56px);
     border: 1px solid var(--oc-border-border2);
-    border-radius: 12px;
+    border-radius: var(--oc-radius);
     overflow: hidden;
     background-color: var(--oc-background-base);
     box-shadow: 0 24px 60px color-mix(in srgb, var(--oc-text) 22%, transparent);

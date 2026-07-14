@@ -32,7 +32,6 @@ export const StyledWrapper = styled.div`
   .request-fullwidth {
     margin-top: 2rem;
     padding-top: 2rem;
-    border-top: 1px solid var(--border-color);
   }
 
   @container docs (max-width: 1024px) {

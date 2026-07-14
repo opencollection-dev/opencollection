@@ -4,16 +4,16 @@ import { describe, it, expect } from 'vitest';
 import Brand from './Brand';
 
 describe('Brand', () => {
-  it('shows the collection name and the version verbatim', () => {
+  it('shows the collection name and the version with a "Version : " prefix', () => {
     const html = renderToStaticMarkup(<Brand collectionName="Hotel Booking API" version="1.0.0" />);
     expect(html).toContain('Hotel Booking API');
-    expect(html).toContain('>1.0.0<');
+    expect(html).toContain('>Version : 1.0.0<');
     expect(html).not.toContain('v1.0.0');
   });
 
-  it('shows a user-authored "v" prefix exactly as given', () => {
+  it('keeps a user-authored "v" prefix on the version value verbatim', () => {
     const html = renderToStaticMarkup(<Brand collectionName="X" version="v2.3" />);
-    expect(html).toContain('>v2.3<');
+    expect(html).toContain('>Version : v2.3<');
     expect(html).not.toContain('vv2.3');
   });
 

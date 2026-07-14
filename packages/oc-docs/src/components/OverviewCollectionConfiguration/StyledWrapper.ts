@@ -2,11 +2,11 @@ import styled from '@emotion/styled';
 
 export const StyledWrapper = styled.div`
   .config-group + .config-group {
-    margin-top: 1.75rem;
+    margin-top: 1.875rem;
   }
 
   .config-group + .config-hidden {
-    margin-top: 1.75rem;
+    margin-top: 1.875rem;
   }
 
   .config-empty-message {

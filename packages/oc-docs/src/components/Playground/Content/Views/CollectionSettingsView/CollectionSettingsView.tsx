@@ -1,268 +1,195 @@
 import React, { useState } from 'react';
 import type { OpenCollection } from '@opencollection/types';
+import type { VariableValue, VariableValueOrVariants } from '@opencollection/types/common/variables';
 import Tabs from '../../../../../ui/Tabs/Tabs';
 import { type KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
 import HeadersTab from '../Common/HeadersTab/HeadersTab';
 import VariablesTab from '../Common/VariablesTab/VariablesTab';
 import AuthTab from '../Common/AuthTab';
 import ScriptsTab from '../Common/ScriptsTab/ScriptsTab';
+import TestsTab from '../Common/TestsTab/TestsTab';
+import OverviewTab from '../Common/OverviewTab/OverviewTab';
 import { useAppDispatch } from '../../../../../store/hooks';
 import { updateCollectionSettings } from '@slices/playground';
-import { scriptsArrayToObject, scriptsObjectToArray } from '../../../../../utils/schemaHelpers';
+import { countEnabled, getItemDocs, scriptsArrayToObject, scriptsObjectToArray } from '../../../../../utils/schemaHelpers';
+import { unwrapVariableValue } from '../../../../../utils/variableResolution';
 
 interface CollectionSettingsProps {
   collection: OpenCollection;
 }
 
+const retypeValue = (previous: VariableValue | undefined, next: string): VariableValue =>
+  previous && typeof previous === 'object' && 'data' in previous ? { ...previous, data: next } : next;
+
+const rewriteVariableValue = (original: VariableValueOrVariants | undefined, next: string): VariableValueOrVariants => {
+  if (Array.isArray(original)) {
+    const active = original.find((variant) => variant.selected) ?? original[0];
+    return original.map((variant) => (variant === active ? { ...variant, value: retypeValue(variant.value, next) } : variant));
+  }
+  return retypeValue(original, next);
+};
+
 const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) => {
   const dispatch = useAppDispatch();
-  const [activeTab, setActiveTab] = useState('headers');
+  const [activeTab, setActiveTab] = useState('overview');
 
-  const handleHeadersChange = (headers: KeyValueRow[]) => {
-    const updatedHeaders = headers.map(h => ({
-      name: h.name,
-      value: h.value,
-      disabled: !h.enabled
-    }));
-    
-    const updatedCollection = {
-      ...collection,
-      request: {
-        ...collection.request,
-        headers: updatedHeaders
-      }
-    };
-    dispatch(updateCollectionSettings(updatedCollection));
+  const updateRequest = (request: NonNullable<OpenCollection['request']>) => {
+    dispatch(updateCollectionSettings({ ...collection, request }));
   };
 
-  const handleVariablesChange = (variables: KeyValueRow[]) => {
-    const updatedVariables = variables.map(v => ({
-      name: v.name,
-      value: v.value,
-      disabled: !v.enabled
-    }));
-    
-    const updatedCollection = {
-      ...collection,
-      request: {
-        ...collection.request,
-        variables: updatedVariables
-      }
+  const handleHeadersChange = (rows: KeyValueRow[]) => {
+    const originals = collection.request?.headers ?? [];
+    const originalByName = new Map(originals.filter((header) => header.name).map((header): [string, typeof header] => [header.name as string, header]));
+    updateRequest({
+      ...collection.request,
+      headers: rows.map((row) => ({
+        ...(originalByName.get(row.name) ?? {}),
+        name: row.name,
+        value: row.value,
+        disabled: !row.enabled
+      }))
+    });
+  };
+
+  const handleVariablesChange = (rows: KeyValueRow[]) => {
+    const originals = collection.request?.variables ?? [];
+    const originalByName = new Map(originals.filter((variable) => variable.name).map((variable): [string, typeof variable] => [variable.name as string, variable]));
+
+    const reconcileVariable = (row: KeyValueRow) => {
+      const original = originalByName.get(row.name);
+      if (!original) return { name: row.name, value: row.value, disabled: !row.enabled };
+
+      // The flat editor only surfaces a variable's string value, so leave the original value
+      // untouched while that string is unchanged (preserving its declared data type and any
+      // non-selected variants) and only rebuild it once the user edits the string.
+      const originalValue = 'value' in original ? original.value : undefined;
+      const isUnchanged = unwrapVariableValue(originalValue) === row.value;
+      const value = isUnchanged ? originalValue : rewriteVariableValue(originalValue, row.value);
+      return { ...original, name: row.name, value, disabled: !row.enabled };
     };
-    dispatch(updateCollectionSettings(updatedCollection));
+
+    updateRequest({ ...collection.request, variables: rows.map(reconcileVariable) });
   };
 
   const handleScriptChange = (scriptType: 'preRequest' | 'postResponse' | 'tests', value: string) => {
-    const currentScriptsObj = scriptsArrayToObject(collection.request?.scripts);
-    const updatedScriptsObj = { ...currentScriptsObj, [scriptType]: value };
-    
-    const updatedCollection = {
-      ...collection,
-      request: {
-        ...collection.request,
-        scripts: scriptsObjectToArray(updatedScriptsObj)
-      }
-    } as OpenCollection;
-    dispatch(updateCollectionSettings(updatedCollection));
+    const updatedScripts = { ...scriptsArrayToObject(collection.request?.scripts), [scriptType]: value };
+    updateRequest({ ...collection.request, scripts: scriptsObjectToArray(updatedScripts) });
   };
 
   const handleAuthChange = (authType: string) => {
-    let auth: any = 'inherit';
-    
-    if (authType !== 'none' && authType !== 'inherit') {
-      auth = { type: authType };
-    } else if (authType === 'none') {
-      auth = undefined;
-    }
-    
-    const updatedCollection = {
-      ...collection,
-      request: {
-        ...collection.request,
-        auth
-      }
-    };
-    dispatch(updateCollectionSettings(updatedCollection));
+    const auth = authType === 'none' ? undefined : authType === 'inherit' ? 'inherit' : { type: authType };
+    updateRequest({ ...collection.request, auth: auth as NonNullable<OpenCollection['request']>['auth'] });
   };
 
   const handleCollectionChange = (updatedCollection: OpenCollection) => {
     dispatch(updateCollectionSettings(updatedCollection));
   };
 
-  const handleInfoChange = (field: 'name' | 'summary' | 'version', value: string) => {
-    const updatedCollection = {
-      ...collection,
-      info: {
-        ...collection.info,
-        [field]: value
-      }
-    };
-    dispatch(updateCollectionSettings(updatedCollection));
-  };
+  const headers = collection.request?.headers ?? [];
+  const variables = collection.request?.variables ?? [];
+  const scripts = scriptsArrayToObject(collection.request?.scripts);
+  const version = collection.info?.version;
 
-  const renderInfo = () => {
-    const info = collection.info || {};
-
-    return (
-      <div className="space-y-3">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
-            Collection Information
-          </span>
-          <span className="text-xs leading-tight" style={{ color: 'var(--text-secondary)' }}>
-            Basic metadata about your collection
-          </span>
-        </div>
-        
-        <div className="space-y-3">
-          <div>
-            <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-primary)' }}>
-              Name
-            </label>
-            <input
-              type="text"
-              value={info.name || ''}
-              onChange={(e) => handleInfoChange('name', e.target.value)}
-              placeholder="Collection name"
-              className="w-full px-2.5 py-1.5 text-sm border rounded"
-              style={{
-                backgroundColor: 'var(--bg-secondary)',
-                borderColor: 'var(--border-color)',
-                color: 'var(--text-primary)'
-              }}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-primary)' }}>
-              Summary
-            </label>
-            <textarea
-              value={info.summary || ''}
-              onChange={(e) => handleInfoChange('summary', e.target.value)}
-              placeholder="Brief description of your collection"
-              rows={2}
-              className="w-full px-2.5 py-1.5 text-sm border rounded resize-none"
-              style={{
-                backgroundColor: 'var(--bg-secondary)',
-                borderColor: 'var(--border-color)',
-                color: 'var(--text-primary)'
-              }}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-primary)' }}>
-              Version
-            </label>
-            <input
-              type="text"
-              value={info.version || ''}
-              onChange={(e) => handleInfoChange('version', e.target.value)}
-              placeholder="1.0.0"
-              className="w-full px-2.5 py-1.5 text-sm border rounded"
-              style={{
-                backgroundColor: 'var(--bg-secondary)',
-                borderColor: 'var(--border-color)',
-                color: 'var(--text-primary)'
-              }}
-            />
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const renderHeaders = () => (
-    <HeadersTab
-      headers={collection.request?.headers || []}
-      onHeadersChange={handleHeadersChange}
-      title="Collection Headers"
-      description="These headers will be inherited by all requests in this collection"
-    />
-  );
-
-  const renderVariables = () => (
-    <VariablesTab
-      variables={collection.request?.variables || []}
-      onVariablesChange={handleVariablesChange}
-      title="Collection Variables"
-      description="These variables will be available to all requests in this collection"
-    />
-  );
-
-  const renderAuth = () => (
-    <AuthTab
-      auth={collection.request?.auth}
-      onAuthChange={handleAuthChange}
-      onItemChange={handleCollectionChange}
-      item={collection}
-      title="Collection Authentication"
-      description="Default authentication method for all requests in this collection"
-      showInherit={true}
-      showFullAuth={true}
-    />
-  );
-
-  const renderScripts = () => (
-    <ScriptsTab
-      scripts={scriptsArrayToObject(collection.request?.scripts)}
-      onScriptChange={handleScriptChange}
-      title="Collection Scripts"
-      description="These scripts will run for all requests in this collection"
-      showTests={true}
-    />
-  );
+  const scriptCount = [scripts.preRequest, scripts.postResponse].filter((s) => Boolean(s && s.trim())).length || undefined;
 
   const tabs = [
-    { 
-      id: 'info', 
-      label: 'Info', 
-      content: renderInfo() 
+    {
+      id: 'overview',
+      label: 'Overview',
+      content: <OverviewTab docs={getItemDocs(collection)} />
     },
-    { 
-      id: 'headers', 
-      label: 'Headers', 
-      contentIndicator: collection.request?.headers?.length || undefined,
-      content: renderHeaders() 
+    {
+      id: 'headers',
+      label: 'Headers',
+      contentIndicator: countEnabled(headers),
+      content: (
+        <HeadersTab
+          headers={headers}
+          onHeadersChange={handleHeadersChange}
+          title=""
+          description="Request headers sent with every request in this collection."
+        />
+      )
     },
-    { 
-      id: 'auth', 
-      label: 'Auth', 
-      content: renderAuth() 
+    {
+      id: 'variables',
+      label: 'Vars',
+      contentIndicator: countEnabled(variables),
+      content: (
+        <VariablesTab
+          variables={variables}
+          onVariablesChange={handleVariablesChange}
+          title=""
+          description="Variables available to every request in this collection."
+        />
+      )
     },
-    { 
-      id: 'variables', 
-      label: 'Variables', 
-      contentIndicator: collection.request?.variables?.length || undefined,
-      content: renderVariables() 
+    {
+      id: 'auth',
+      label: 'Auth',
+      content: (
+        <AuthTab
+          auth={collection.request?.auth}
+          onAuthChange={handleAuthChange}
+          onItemChange={handleCollectionChange}
+          item={collection}
+          title=""
+          description="Default authentication for this collection. Applies to any request using the Inherit option in its Auth tab."
+          showInherit={false}
+          showFullAuth={true}
+        />
+      )
     },
-    { 
-      id: 'scripts', 
-      label: 'Scripts', 
-      content: renderScripts() 
+    {
+      id: 'scripts',
+      label: 'Scripts',
+      contentIndicator: scriptCount,
+      content: (
+        <ScriptsTab
+          scripts={scripts}
+          onScriptChange={handleScriptChange}
+          title=""
+          description="Pre and post-request scripts that run before and after every request in this collection is sent."
+          showTests={false}
+        />
+      )
+    },
+    {
+      id: 'tests',
+      label: 'Tests',
+      content: (
+        <TestsTab
+          scripts={scripts}
+          onScriptChange={handleScriptChange}
+          title=""
+          description="These tests run any time a request in this collection is sent."
+        />
+      )
     }
   ];
 
   return (
-    <div className="h-full flex flex-col px-4">
-      <div className="border-b my-2 py-2" style={{ borderColor: 'var(--border-color)' }}>
-        <h2 className="text-lg font-semibold leading-tight mb-2" style={{ color: 'var(--text-primary)' }}>
+    <div className="h-full flex flex-col px-5 mt-5">
+      <div className="flex items-baseline gap-2">
+        <h2 className="text-lg font-semibold leading-tight" style={{ color: 'var(--text-primary)' }}>
           {collection.info?.name || 'Collection Settings'}
         </h2>
-        <p className="text-sm mt-1 leading-tight" style={{ color: 'var(--text-secondary)' }}>
-          Configure default settings for all requests in this collection
-        </p>
+        {version && (
+          <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
+            Version {version}
+          </span>
+        )}
       </div>
-      
-      <div className="flex-1 overflow-hidden">
+
+      <div className="flex-1 overflow-hidden mt-4">
         <Tabs
-          tabs={tabs.map(tab => ({
+          tabs={tabs.map((tab) => ({
             ...tab,
             content: <div className="py-3">{tab.content}</div>
           }))}
           activeTab={activeTab}
           onTabChange={setActiveTab}
+          testId="collection-settings-tabs"
         />
       </div>
     </div>

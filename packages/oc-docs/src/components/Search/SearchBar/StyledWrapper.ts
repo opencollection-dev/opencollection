@@ -16,8 +16,8 @@ export const StyledWrapper = styled.div`
     display: flex;
     flex-direction: column;
     background: var(--oc-background-mantle);
-    border: 1px solid var(--oc-border-border1);
-    border-radius: 6px;
+    border: 1px solid var(--oc-border-border0);
+    border-radius: var(--oc-radius);
     overflow: hidden;
   }
 
@@ -29,8 +29,8 @@ export const StyledWrapper = styled.div`
     width: min(660px, 92vw);
     max-height: min(454px, calc(100vh - 72px));
     background: var(--oc-background-base);
-    border-color: var(--oc-border-border2);
-    border-radius: 10px;
+    border-color: var(--oc-border-border1);
+    border-radius: var(--oc-radius);
     overflow: visible;
   }
 
@@ -43,11 +43,16 @@ export const StyledWrapper = styled.div`
     box-sizing: border-box;
     flex-shrink: 0;
   }
+  
+  .search-panel:hover {
+    border: 1px solid var(--oc-border-border1);
+  }
+ 
   .search-panel[data-open='true'] .search-inputrow {
     height: 40px;
     padding: 0 12px;
     gap: 9px;
-    border-bottom: 1px solid var(--oc-border-border1);
+    border-bottom: 1px solid var(--oc-border-border0);
   }
 
   .search-field-icon {
@@ -92,7 +97,7 @@ export const StyledWrapper = styled.div`
     cursor: pointer;
     background: transparent;
     border: 0;
-    border-radius: 4px;
+    border-radius: var(--oc-radius);
     color: var(--oc-colors-text-subtext1);
   }
   .search-close svg {
@@ -112,7 +117,7 @@ export const StyledWrapper = styled.div`
     padding: 0 12px;
     box-sizing: border-box;
     flex-shrink: 0;
-    border-bottom: 1px solid var(--oc-border-border1);
+    border-bottom: 1px solid var(--oc-border-border0);
   }
   [data-testid='search-folder-filter'],
   .search-clear {
@@ -166,7 +171,7 @@ export const StyledWrapper = styled.div`
     width: 48px;
     height: 48px;
     margin-bottom: 10px;
-    border-radius: 14px;
+    border-radius: var(--oc-radius);
   }
   .search-empty-icon[data-tone='brand'] {
     background: color-mix(in srgb, var(--oc-accents-primary) 8%, transparent);
@@ -204,7 +209,7 @@ export const StyledWrapper = styled.div`
     color: var(--oc-accents-primary);
     background: color-mix(in srgb, var(--oc-accents-primary) 8%, transparent);
     border: 0;
-    border-radius: 6px;
+    border-radius: var(--oc-radius);
   }
 
   @media (max-width: 1023px) {

@@ -16,7 +16,7 @@ export const StyledWrapper = styled.span`
 
   .environment-label-dot--empty {
     background: transparent;
-    border: 1px solid var(--text-tertiary);
+    border: 1px solid var(--oc-border-border2);
   }
 
   .environment-label-name {

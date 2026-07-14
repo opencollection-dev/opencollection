@@ -17,7 +17,7 @@ test.describe('Page header', () => {
 
     await expect(pageHeader.root).toBeVisible();
     await expect(pageHeader.brandName).toContainText('Bruno Testbench');
-    await expect(pageHeader.brandVersion).toHaveText('1.0.0');
+    await expect(pageHeader.brandVersion).toHaveText('Version : 1.0.0');
 
     // Sticky: header stays at the top after the page scrolls.
     await page.mouse.wheel(0, 600);
