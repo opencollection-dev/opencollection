@@ -44,8 +44,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
   // Scrollbar thumb shows only while the list is active, then fades after 1s idle
   // (paired with the .sidebar-items[.scrolling] CSS below). Shared with the
   // playground sidebar so both behave identically.
-  const itemsRef = useRef<HTMLDivElement>(null);
-  useAutoHideScrollbar(itemsRef);
+  const setItemsScrollRef = useAutoHideScrollbar<HTMLDivElement>();
 
   // Slightly smaller nav text on real mobile/tablet OSes only. Gated on the
   // device (not viewport) so a shrunk laptop window keeps the 13px desktop size.
@@ -85,7 +84,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
 
       <div className="sidebar-divider" />
 
-      <div className="sidebar-items" ref={itemsRef}>
+      <div className="sidebar-items" ref={setItemsScrollRef}>
         {collection?.items?.length ? (
           <SidebarTree
             items={collection.items}

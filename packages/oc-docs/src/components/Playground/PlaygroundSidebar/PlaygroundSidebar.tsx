@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import type { OpenCollection as OpenCollectionCollection } from '@opencollection/types';
 import EnvSwitcher from '../../EnvSwitcher/EnvSwitcher';
 import SidebarTree from '../../Docs/Sidebar/SidebarTree/SidebarTree';
@@ -36,8 +36,7 @@ const PlaygroundSidebar: React.FC<PlaygroundSidebarProps> = ({
   const name = collection?.info?.name || 'Collection';
 
   // Fade the scrollbar after 1s idle, same behaviour as the docs sidebar.
-  const treeRef = useRef<HTMLDivElement>(null);
-  useAutoHideScrollbar(treeRef);
+  const setTreeScrollRef = useAutoHideScrollbar<HTMLDivElement>();
 
   // Smaller nav text on real mobile/tablet OSes only (not a width breakpoint).
   const isMobileDevice = useIsMobileDevice();
@@ -57,7 +56,7 @@ const PlaygroundSidebar: React.FC<PlaygroundSidebarProps> = ({
         </IconButton>
       </div>
 
-      <div className="tree" ref={treeRef}>
+      <div className="tree" ref={setTreeScrollRef}>
         {collection?.items ? (
           <SidebarTree
             items={collection.items}

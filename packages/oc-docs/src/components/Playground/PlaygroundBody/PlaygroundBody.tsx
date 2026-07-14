@@ -85,11 +85,16 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
     if (!requestSlug || appliedSlugRef.current === requestSlug) return;
     const target = resolvePlaygroundTarget(requestSlug, model);
     if (!target) return; // item not resolvable yet -> retry when `model` updates
+    // Item targets select from / expand against the playground's hydrated
+    // collection, which is a separate slice from `model`. If it has not landed
+    // yet, wait (don't claim) so expandFolders is not dropped and never retried;
+    // the ~environments / ~collection tokens (uuid null) need no collection.
+    if (target.uuid && !collection?.items) return;
     appliedSlugRef.current = requestSlug;
     dispatch(setSelectedItemId(target.uuid));
     dispatch(setViewMode(target.view));
     if (target.ancestors.length) dispatch(expandFolders(target.ancestors));
-  }, [requestSlug, model, dispatch, appliedSlugRef]);
+  }, [requestSlug, model, collection, dispatch, appliedSlugRef]);
 
   // In the inline dock the sidebar is an overlay, so close it once the user has
   // picked something to view (mirrors a mobile navigation drawer).
@@ -97,36 +102,30 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
     if (dock === 'inline') onCloseSidebar();
   }, [dock, onCloseSidebar]);
 
+  // These only record the pgReq slug (folders too, so a folder view survives
+  // reload); the apply effect above is the single place that turns a slug into
+  // selection + view + folder reveal, so a click and a reload take the same path.
   const handleNavigate = useCallback(
     (slug: string) => {
       const entry = model.bySlug.get(slug);
-      if (!entry) return;
-      const uuid = getItemUuid(entry.item);
-      if (!uuid) return;
-      dispatch(setSelectedItemId(uuid));
-      dispatch(setViewMode(isFolder(entry.item) ? 'folder-settings' : 'playground'));
-      // Persist folders too (not just requests), so a folder view survives reload.
+      if (!entry || !getItemUuid(entry.item)) return; // ignore rows that don't resolve
       setRequestSlug(slug);
       closeSidebarIfInline();
     },
-    [model, dispatch, setRequestSlug, closeSidebarIfInline]
+    [model, setRequestSlug, closeSidebarIfInline]
   );
 
   const handleToggleFolder = useCallback((uuid: string) => dispatch(toggleFolderCollapse(uuid)), [dispatch]);
 
   const openEnvironments = useCallback(() => {
-    dispatch(setViewMode('environments'));
-    dispatch(setSelectedItemId(null));
-    setRequestSlug(PLAYGROUND_ENVIRONMENTS_SLUG); // persist so reload restores it
+    setRequestSlug(PLAYGROUND_ENVIRONMENTS_SLUG); // effect applies the view; persists for reload
     closeSidebarIfInline();
-  }, [dispatch, setRequestSlug, closeSidebarIfInline]);
+  }, [setRequestSlug, closeSidebarIfInline]);
 
   const openCollection = useCallback(() => {
-    dispatch(setViewMode('collection-settings'));
-    dispatch(setSelectedItemId(null));
-    setRequestSlug(PLAYGROUND_COLLECTION_SLUG); // persist so reload restores it
+    setRequestSlug(PLAYGROUND_COLLECTION_SLUG); // effect applies the view; persists for reload
     closeSidebarIfInline();
-  }, [dispatch, setRequestSlug, closeSidebarIfInline]);
+  }, [setRequestSlug, closeSidebarIfInline]);
 
   const view = (() => {
     if (viewMode === 'collection-settings' && collection) return <CollectionSettingsView collection={collection} />;

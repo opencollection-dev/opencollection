@@ -1,5 +1,4 @@
-import { useEffect } from 'react';
-import type { RefObject } from 'react';
+import { useCallback, useRef } from 'react';
 
 /**
  * Wire an element's scrollbar to show only while the user is active over it.
@@ -29,14 +28,27 @@ export function attachAutoHideScrollbar(el: HTMLElement, idleMs = 1000): () => v
 }
 
 /**
- * React wrapper around {@link attachAutoHideScrollbar}. Pass a ref to the scroll
- * container; pair it with CSS that hides the thumb by default and shows it under
- * `.<container>.scrolling`.
+ * React wrapper around {@link attachAutoHideScrollbar}. Returns a ref callback to
+ * put on the scroll container; pair it with CSS that hides the thumb by default
+ * and shows it under `.<container>.scrolling`.
+ *
+ * A ref callback (not a RefObject effect) so it (re)attaches whenever the node
+ * actually mounts or changes, and detaches on unmount. This keeps it correct for
+ * a container that only renders later (e.g. after a loading state), which a
+ * mount-only effect over a RefObject would silently miss.
  */
-export function useAutoHideScrollbar(ref: RefObject<HTMLElement | null>, idleMs = 1000): void {
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    return attachAutoHideScrollbar(el, idleMs);
-  }, [ref, idleMs]);
+export function useAutoHideScrollbar<T extends HTMLElement = HTMLElement>(
+  idleMs = 1000
+): (el: T | null) => void {
+  const cleanupRef = useRef<(() => void) | null>(null);
+  return useCallback(
+    (el: T | null) => {
+      if (cleanupRef.current) {
+        cleanupRef.current();
+        cleanupRef.current = null;
+      }
+      if (el) cleanupRef.current = attachAutoHideScrollbar(el, idleMs);
+    },
+    [idleMs]
+  );
 }
