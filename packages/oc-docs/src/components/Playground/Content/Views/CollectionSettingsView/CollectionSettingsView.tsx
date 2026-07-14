@@ -35,13 +35,15 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
     const originalByName = new Map(originals.filter((header) => header.name).map((header): [string, typeof header] => [header.name as string, header]));
     updateRequest({
       ...collection.request,
-      headers: rows.map((row) => ({
-        ...(originalByName.get(row.name) ?? {}),
-        name: row.name,
-        value: row.value,
-        disabled: !row.enabled,
-        ...(row.description !== undefined ? { description: row.description } : {})
-      }))
+      headers: rows.map((row) => {
+        const description = 'description' in row ? row.description : originalByName.get(row.name)?.description;
+        return {
+          name: row.name,
+          value: row.value,
+          disabled: !row.enabled,
+          ...(description !== undefined ? { description } : {})
+        };
+      })
     });
   };
 

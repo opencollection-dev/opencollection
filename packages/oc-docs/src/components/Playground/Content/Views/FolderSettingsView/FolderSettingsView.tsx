@@ -35,13 +35,15 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({ folder, onFolderChange 
     const originalByName = new Map(
       originals.filter((header) => header.name).map((header): [string, typeof header] => [header.name as string, header])
     );
-    const updatedHeaders = headers.map((h) => ({
-      ...(originalByName.get(h.name) ?? {}),
-      name: h.name,
-      value: h.value,
-      disabled: !h.enabled,
-      ...(h.description !== undefined ? { description: h.description } : {})
-    }));
+    const updatedHeaders = headers.map((h) => {
+      const description = 'description' in h ? h.description : originalByName.get(h.name)?.description;
+      return {
+        name: h.name,
+        value: h.value,
+        disabled: !h.enabled,
+        ...(description !== undefined ? { description } : {})
+      };
+    });
 
     const updatedFolder = {
       ...folder,
