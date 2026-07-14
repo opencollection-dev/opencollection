@@ -138,7 +138,7 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
                 onClick={() => slug !== undefined && onNavigate(slug)}
               />
               {expanded && (
-                <StyledWrapper style={{ '--guide-left': `${itemLevel * 14 + 14}px` } as React.CSSProperties}>
+                <StyledWrapper style={{ '--guide-left': `${itemLevel * 19 + 14}px` } as React.CSSProperties}>
                   {examples.map((example, i) => {
                     const isActive = activeExample?.requestUuid === uuid && activeExample.index === i;
                     return (
