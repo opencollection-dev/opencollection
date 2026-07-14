@@ -8,16 +8,11 @@ import { useAppDispatch } from '../../../../../store/hooks';
 import { updateCollectionEnvironments } from '@slices/playground';
 import { getDescription, getVariableTypeLabel } from '../../../../../utils/request';
 import { unwrapVariableValue } from '../../../../../utils/variableResolution';
+import { dataTypeColumn } from '../../../../../constants/dataTypeColumn';
 
 interface EnvironmentsViewProps {
   collection: OpenCollection | null;
 }
-
-const dataTypeColumn = {
-  key: 'type',
-  label: 'Data Type',
-  render: (row: KeyValueRow) => row.dataType || null
-};
 
 const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection }) => {
   const dispatch = useAppDispatch();

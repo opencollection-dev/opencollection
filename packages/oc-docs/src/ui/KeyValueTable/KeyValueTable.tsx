@@ -9,17 +9,19 @@ export interface KeyValueRow {
   [key: string]: any;
 }
 
+export interface AdditionalColumn {
+  key: string;
+  label: string;
+  render: (row: KeyValueRow, index: number) => React.ReactNode;
+}
+
 interface KeyValueTableProps {
   data: KeyValueRow[];
   onChange: (data: KeyValueRow[]) => void;
   keyPlaceholder?: string;
   valuePlaceholder?: string;
   showEnabled?: boolean;
-  additionalColumns?: Array<{
-    key: string;
-    label: string;
-    render: (row: KeyValueRow, index: number) => React.ReactNode;
-  }>;
+  additionalColumns?: AdditionalColumn[];
   className?: string;
   disableNewRow?: boolean;
   disableDelete?: boolean;

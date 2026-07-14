@@ -4,6 +4,7 @@ import KeyValueTable, { type KeyValueRow } from '../../../../../../ui/KeyValueTa
 import { unwrapVariableValue } from '../../../../../../utils/variableResolution';
 import { getVariableTypeLabel } from '../../../../../../utils/request';
 import { StyledWrapper } from './StyledWrapper';
+import { dataTypeColumn } from '../../../../../../constants/dataTypeColumn';
 
 interface VariablesTabProps {
   variables: Array<{ name?: string; value?: any; disabled?: boolean }>;
@@ -11,12 +12,6 @@ interface VariablesTabProps {
   title?: string;
   description?: string;
 }
-
-const dataTypeColumn = {
-  key: 'type',
-  label: 'Data Type',
-  render: (row: KeyValueRow) => row.dataType || null
-};
 
 export const VariablesTab: React.FC<VariablesTabProps> = ({
   variables,

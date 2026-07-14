@@ -18,6 +18,7 @@ import {
   getRequestVariables
 } from './schemaHelpers';
 import { getItemUuid } from './itemUtils';
+import { isSecretVariable } from './variableResolution';
 import { COLLECTION_ROOT_CRUMB } from './common';
 import { TYPE_LABELS } from '../constants';
 
@@ -77,7 +78,7 @@ const typeOfVariableValue = (value: VariableValue | undefined): VariableValueTyp
 export const getVariableType = (variable?: Variable | SecretVariable): VariableValueType | undefined => {
   if (!variable) return undefined;
 
-  if ('secret' in variable) return variable.type;
+  if (isSecretVariable(variable)) return variable.type;
 
   const { value } = variable;
 
