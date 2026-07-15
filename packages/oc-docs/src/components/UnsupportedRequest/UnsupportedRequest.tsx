@@ -1,17 +1,15 @@
-import React, { Key, useMemo } from 'react';
-import type { OpenCollection } from '@opencollection/types';
-import type { Item } from '@opencollection/types/collection/item';
+import React, { useMemo } from 'react';
 import type { GraphQLRequest } from '@opencollection/types/requests/graphql';
 import type { GrpcRequest } from '@opencollection/types/requests/grpc';
 import type { WebSocketRequest } from '@opencollection/types/requests/websocket';
-import { getItemDescription, getItemDocs, getItemName, getItemType, getRequestUrl } from '../../utils/schemaHelpers';
-import { buildBreadcrumbSegments, getValidClasses } from '../../utils/common';
+import { getItemDescription, getItemDocs, getItemType, getRequestUrl } from '../../utils/schemaHelpers';
+import { getValidClasses } from '../../utils/common';
 import { Heading } from '../Heading/Heading';
-import { Breadcrumb, type BreadcrumbSegment } from '../../ui/Breadcrumb/Breadcrumb';
 import { EmptyState } from '../../ui/EmptyState/EmptyState';
 import Description from '../Description/Description';
 import RequestUrlBar from '../Request/RequestUrlBar/RequestUrlBar';
 import RequestDescription from '../Request/RequestDescription/RequestDescription';
+import BreadcrumbWrapper, { type BreadcrumbWrapperProps } from './BreadcrumbsWrapper/BreadcrumbsWrapper';
 
 const REQUEST_TYPE_LABELS: Record<string, { shortName: string; fullName: string }> = {
   websocket: {
@@ -38,14 +36,7 @@ function getRequestTypeLabel(label: string | undefined) {
   return REQUEST_TYPE_LABELS[label] ?? fallback;
 }
 
-interface BreadcrumbWrapperProps {
-  showBreadcrumbs: boolean;
-  item: Item;
-  customName?: string;
-  collection?: OpenCollection | null;
-  ancestry?: Item[];
-  onBreadcrumbClick?: (uuid: string) => void;
-}
+
 
 interface UnsupportedEmptyStateProps {
   icon: React.ReactNode;
@@ -107,32 +98,5 @@ export const UnsupportedRequest: React.FC<UnsupportedRequestProps> = ({
   );
 };
 
-const BreadcrumbWrapper: React.FC<BreadcrumbWrapperProps> = ({
-  showBreadcrumbs,
-  item,
-  collection,
-  ancestry = [],
-  customName,
-  onBreadcrumbClick
-}) => {
-  const name = getItemName(item) || customName;
-  const segments = useMemo<BreadcrumbSegment[]>(
-    () => (showBreadcrumbs ? buildBreadcrumbSegments(collection, ancestry) : []),
-    [collection, ancestry, showBreadcrumbs]
-  );
-
-  if (!showBreadcrumbs) {
-    return null;
-  }
-
-  return (
-    <Breadcrumb
-      segments={segments}
-      current={name}
-      onSegmentClick={onBreadcrumbClick}
-      testId="unsupported-request-breadcrumb"
-    />
-  );
-};
 
 export default UnsupportedRequest;
