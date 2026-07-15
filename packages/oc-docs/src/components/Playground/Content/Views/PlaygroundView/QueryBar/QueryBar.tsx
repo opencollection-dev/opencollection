@@ -3,7 +3,7 @@ import type { HttpRequest } from '@opencollection/types/requests/http';
 import { StyledWrapper } from './StyledWrapper';
 import { getHttpMethod, getRequestUrl, getHttpParams } from '../../../../../../utils/schemaHelpers';
 import { syncPathParams, syncQueryParams } from '../../../../../../utils/pathParams';
-import { methodColorVars, getMethodColorVar } from '../../../../../../theme/methodColors';
+import { availableMethods, getMethodColorVar } from '../../../../../../theme/methodColors';
 
 interface QueryBarProps {
   item: HttpRequest;
@@ -50,12 +50,10 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
     onItemChange(updatedItem);
   };
 
-  const getMethodColor = getMethodColorVar;
-
   return (
-    <StyledWrapper 
+    <StyledWrapper
       className="flex items-stretch"
-      style={{ 
+      style={{
         height: '36px'
       }}
     >
@@ -65,10 +63,10 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
           data-testid="query-bar-method-select"
           value={method}
           onChange={(e) => handleMethodChange(e.target.value)}
-          style={{ color: getMethodColor(method) }}
+          style={{ color: getMethodColorVar(method) }}
         >
-          {Object.keys(methodColorVars).map((m) => (
-            <option key={m} value={m} style={{ color: getMethodColor(m) }}>
+          {Object.keys(availableMethods).map((m) => (
+            <option key={m} value={m} style={{ color: getMethodColorVar(m) }}>
               {m}
             </option>
           ))}

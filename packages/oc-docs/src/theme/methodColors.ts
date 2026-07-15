@@ -12,14 +12,16 @@ export const methodColorVars: Record<string, string> = {
   DELETE: 'var(--oc-request-methods-delete)',
   HEAD: 'var(--oc-request-methods-head)',
   OPTIONS: 'var(--oc-request-methods-options)',
-  // Currently not supported in OC Docs
-  // commented as part of BRU-3833
-  // GRAPHQL: 'var(--oc-request-gql)',
-  // GQL: 'var(--oc-request-gql)',
-  // GRPC: 'var(--oc-request-grpc)',
-  // WEBSOCKET: 'var(--oc-request-ws)',
-  // WS: 'var(--oc-request-ws)',
+  GRAPHQL: 'var(--oc-request-gql)',
+  GQL: 'var(--oc-request-gql)',
+  GRPC: 'var(--oc-request-grpc)',
+  WEBSOCKET: 'var(--oc-request-ws)',
+  WS: 'var(--oc-request-ws)'
 };
+
+const notSupportedMethods = ['GRAPHQL', 'GQL', 'GRPC', 'WEBSOCKET', 'WS'];
+
+export const availableMethods = Object.keys(methodColorVars).filter((option) => !notSupportedMethods.includes(option));
 
 /** Method colour var, case-insensitive, with a muted fallback for unknown methods. */
 export const getMethodColorVar = (method?: string): string =>
