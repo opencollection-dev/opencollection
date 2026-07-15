@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { Folder } from '@opencollection/types/collection/item';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
@@ -96,34 +96,31 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
 
   // In the inline dock the sidebar is an overlay, so close it once the user has
   // picked something to view (mirrors a mobile navigation drawer).
-  const closeSidebarIfInline = useCallback(() => {
+  const closeSidebarIfInline = () => {
     if (dock === 'inline') onCloseSidebar();
-  }, [dock, onCloseSidebar]);
+  };
 
   // Clicking something in the sidebar just writes it to the URL (folders too, so
   // a folder view comes back on reload). The effect above is what actually opens
   // it, so a click and a reload go through the exact same path.
-  const handleNavigate = useCallback(
-    (slug: string) => {
-      const entry = model.bySlug.get(slug);
-      if (!entry || !getItemUuid(entry.item)) return; // not a real item, ignore the click
-      setRequestSlug(slug);
-      closeSidebarIfInline();
-    },
-    [model, setRequestSlug, closeSidebarIfInline]
-  );
+  const handleNavigate = (slug: string) => {
+    const entry = model.bySlug.get(slug);
+    if (!entry || !getItemUuid(entry.item)) return; // not a real item, ignore the click
+    setRequestSlug(slug);
+    closeSidebarIfInline();
+  };
 
-  const handleToggleFolder = useCallback((uuid: string) => dispatch(toggleFolderCollapse(uuid)), [dispatch]);
+  const handleToggleFolder = (uuid: string) => dispatch(toggleFolderCollapse(uuid));
 
-  const openEnvironments = useCallback(() => {
+  const openEnvironments = () => {
     setRequestSlug(PLAYGROUND_ENVIRONMENTS_SLUG); // effect opens the view; reload brings it back
     closeSidebarIfInline();
-  }, [setRequestSlug, closeSidebarIfInline]);
+  };
 
-  const openCollection = useCallback(() => {
+  const openCollection = () => {
     setRequestSlug(PLAYGROUND_COLLECTION_SLUG); // effect opens the view; reload brings it back
     closeSidebarIfInline();
-  }, [setRequestSlug, closeSidebarIfInline]);
+  };
 
   const view = (() => {
     if (viewMode === 'collection-settings' && collection) return <CollectionSettingsView collection={collection} />;
