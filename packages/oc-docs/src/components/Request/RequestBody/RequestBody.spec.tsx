@@ -12,6 +12,11 @@ describe('RequestBody', () => {
     expect(code?.text).toContain('a@b.com');
   });
 
+  it('wraps variables in a raw body as tokens so they surface the hover card', () => {
+    const root = useRenderToDom(<RequestBody body={{ type: 'json', data: '{"endpoint":"{{baseUrl}}/v1"}' }} />);
+    expect(root.toString()).toContain('data-testid="variable-token-baseUrl"');
+  });
+
   it('renders a form-urlencoded body as a table', () => {
     const root = useRenderToDom(
       <RequestBody body={{ type: 'form-urlencoded', data: [{ name: 'name', value: 'Alice' }] }} />

@@ -1,5 +1,5 @@
 import type { Locator } from '@playwright/test';
-import { BaseComponent } from './base.component';
+import { BaseComponent } from '../base.component';
 
 export class VariableCardComponent extends BaseComponent {
   readonly card = this.page.getByTestId('variable-info-card');
@@ -15,7 +15,7 @@ export class VariableCardComponent extends BaseComponent {
   readonly editors = this.card.locator('textarea, input, .CodeMirror');
 
   token(name: string): Locator {
-    return this.page.getByTestId(`variable-token-${name}`).first();
+    return this.root.getByTestId(`variable-token-${name}`).first();
   }
 
   async hoverToken(name: string): Promise<void> {
