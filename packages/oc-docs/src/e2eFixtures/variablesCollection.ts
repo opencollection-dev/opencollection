@@ -49,6 +49,7 @@ export const variablesFixtureCollection = {
           seq: 1,
           method: 'GET',
           url: '{{host}}/customers/{{userId}}?v={{apiVersion}}',
+          auth: { type: 'bearer', token: '{{bearer_token}}' },
           headers: [
             { name: 'Authorization', value: 'Bearer {{bearer_token}}' },
             { name: 'X-Endpoint', value: '{{endpoint}}' },
@@ -58,6 +59,10 @@ export const variablesFixtureCollection = {
             { name: 'X-Random', value: '{{$randomInt}}' },
             { name: 'X-Empty', value: '{{emptyValue}}' }
           ],
+          body: {
+            type: 'json',
+            data: '{\n  "endpoint": "{{host}}/orders",\n  "token": "{{bearer_token}}"\n}'
+          },
           runtime: {
             variables: [{ name: 'userId', value: 'req-42' }]
           },

@@ -38,7 +38,7 @@ export const Overview: React.FC<OverviewProps> = ({ collection, testId = 'overvi
     [counts]
   );
   const scripts = useMemo(() => scriptsArrayToObject(collection.request?.scripts), [collection.request]);
-  const { preVars, postVars } = useMemo(() => getCollectionVariables(collection), [collection.request]);
+  const { preVars, postVars } = useMemo(() => getCollectionVariables(collection), [collection]);
   const version = collection.info?.version;
   const name = collection.info?.name || 'Untitled Collection';
 

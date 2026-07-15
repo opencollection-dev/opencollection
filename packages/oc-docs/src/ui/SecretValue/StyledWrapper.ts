@@ -56,4 +56,10 @@ export const StyledWrapper = styled.span`
     color: var(--text-tertiary);
     flex-shrink: 0;
   }
+
+  .secret-value-toggle svg,
+  .secret-value-icon svg {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
 `;

@@ -2,6 +2,7 @@ import { BasePage } from './base.page';
 import { SidebarComponent } from '../components/sidebar.component';
 import { BreadcrumbComponent } from '../components/breadcrumb.component';
 import { FolderConfigurationComponent } from '../components/folder/folder-configuration.component';
+import { VariableCardComponent } from '../components/variable-card/variable-card.component';
 
 export class FolderPage extends BasePage {
   readonly root = this.page.getByTestId('folder-page');
@@ -14,6 +15,7 @@ export class FolderPage extends BasePage {
   readonly sidebar = new SidebarComponent(this.page);
   readonly breadcrumb = new BreadcrumbComponent(this.page, 'folder-breadcrumb');
   readonly configuration = new FolderConfigurationComponent(this.page);
+  readonly variableCard = new VariableCardComponent(this.page, this.root);
 
   async open(trail: string[]): Promise<void> {
     await this.navigate('/');

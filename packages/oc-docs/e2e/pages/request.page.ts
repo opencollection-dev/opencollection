@@ -6,6 +6,7 @@ import { RequestUrlBarComponent } from '../components/request/url-bar.component'
 import { CodeSnippetComponent } from '../components/request/code-snippet.component';
 import { ExamplesComponent } from '../components/request/examples.component';
 import { ExecutionContextComponent } from '../components/request/execution-context.component';
+import { VariableCardComponent } from '../components/variable-card/variable-card.component';
 
 export class RequestPage extends BasePage {
   readonly root = this.page.getByTestId('request-page');
@@ -19,6 +20,9 @@ export class RequestPage extends BasePage {
 
   readonly examples = new ExamplesComponent(this.page);
   readonly executionContext = new ExecutionContextComponent(this.page);
+
+  readonly variableCard = new VariableCardComponent(this.page, this.root);
+  readonly bodyVariableCard = new VariableCardComponent(this.page, this.section('body'));
 
   async open(path: string[]): Promise<void> {
     await this.navigate('/');
