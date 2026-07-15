@@ -70,8 +70,9 @@ export const UnsupportedRequest: React.FC<UnsupportedRequestProps> = ({
   testId = 'unsupported-request'
 }) => {
   const { icon, heading, subheadingSuffix } = emptyStateProps;
+  console.log({item})
   const { shortName, fullName } = useMemo(() => getRequestTypeLabel(getItemType(item)), [item]);
-  const subheading = useMemo(() => [fullName, subheadingSuffix.trim()].join(' '), [subheadingSuffix]);
+  const subheading = useMemo(() => [fullName, subheadingSuffix.trim()].join(' '), [fullName, subheadingSuffix]);
 
   return (
     <div className={getValidClasses(className, 'w-full')} data-testid={testId}>
