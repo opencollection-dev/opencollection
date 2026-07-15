@@ -43,11 +43,23 @@ export const VariableInfoCard: React.FC<VariableInfoCardProps> = ({ name, testId
   }
 
   if (info.scope === 'dynamic') {
+    if (info.dynamicKind === 'unknown') {
+      return (
+        <StyledWrapper className="variable-info-card" data-testid={testId}>
+          {header}
+          <div className="var-warning-note" data-testid={`${testId}-warning`}>
+            {`Unknown dynamic variable "${info.name}". Check the variable name.`}
+          </div>
+        </StyledWrapper>
+      );
+    }
     return (
       <StyledWrapper className="variable-info-card" data-testid={testId}>
         {header}
         <div className="var-readonly-note" data-testid={`${testId}-note`}>
-          Generates random value on each request
+          {info.dynamicKind === 'time'
+            ? 'Generates current timestamp on each request'
+            : 'Generates random value on each request'}
         </div>
       </StyledWrapper>
     );

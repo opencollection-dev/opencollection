@@ -3,10 +3,28 @@ import { usePlaygroundUrlState } from '../../hooks';
 import InlineDock from './docks/InlineDock/InlineDock';
 import BottomSheetDock from './docks/BottomSheetDock/BottomSheetDock';
 import ModalDock from './docks/ModalDock/ModalDock';
-import PlaygroundBoundary from './PlaygroundBody/PlaygroundBoundary';
+import { ErrorBoundary } from '../ErrorBoundary/ErrorBoundary';
 
 // Lazy so opening the dock shell never eagerly loads the runner/QuickJS runtime.
 const PlaygroundBody = lazy(() => import('./PlaygroundBody/PlaygroundBody'));
+
+const playgroundLoadError = (
+  <div
+    data-testid="playground-load-error"
+    style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: '100%',
+      padding: 16,
+      textAlign: 'center',
+      color: 'var(--text-secondary)',
+      fontSize: 13,
+    }}
+  >
+    The playground failed to load in this environment.
+  </div>
+);
 
 const Playground: React.FC = () => {
   const { open, dock, requestSlug, setDock, closePlayground } = usePlaygroundUrlState();
@@ -35,7 +53,7 @@ const Playground: React.FC = () => {
   };
 
   const body = (
-    <PlaygroundBoundary>
+    <ErrorBoundary fallback={playgroundLoadError}>
       <Suspense fallback={<div data-testid="playground-loading" style={{ padding: 16 }} />}>
         <PlaygroundBody
           requestSlug={requestSlug}
@@ -45,7 +63,7 @@ const Playground: React.FC = () => {
           appliedSlugRef={appliedSlugRef}
         />
       </Suspense>
-    </PlaygroundBoundary>
+    </ErrorBoundary>
   );
 
   if (dock === 'inline') return <InlineDock {...shared}>{body}</InlineDock>;

@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Assertion } from '@opencollection/types/common/assertions';
-import KeyValueTable, { type KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
+import KeyValueTable, { type KeyValueRow } from '../../../../../components/KeyValueTable/KeyValueTable';
 
 /**
  * Assertion operators based on Bruno's implementation
@@ -163,7 +163,6 @@ export const AssertsTab: React.FC<AssertsTabProps> = ({
             key: 'operator',
             label: 'Operator',
             render: (row, index) => {
-              const isUnary = UNARY_OPERATORS.includes(row.operator);
               return (
                 <select
                   value={row.operator}

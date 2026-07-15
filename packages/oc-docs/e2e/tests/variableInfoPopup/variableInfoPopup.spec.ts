@@ -114,18 +114,12 @@ test.describe('Variable hover card', () => {
     await expect(variableCard.copyButton).toHaveCount(0);
   });
 
-  test('a revealed secret field shows the hover card for its variable token', async ({ page, requestPage, variableCard }) => {
-    const auth = requestPage.section('auth');
-    const authSecret = new SecretValueComponent(page, 'auth-details-secret');
-    await expect(variableCard.token('bearer_token', auth)).toHaveCount(0);
-
-    await authSecret.toggleReveal();
-
-    await variableCard.hoverToken('bearer_token', auth);
-
+  test('shows an (empty) placeholder with no copy for a defined variable that has no value', async ({ variableCard }) => {
+    await variableCard.hoverToken('emptyValue');
     await expect(variableCard.card).toBeVisible();
     await expect(variableCard.scopeBadge).toHaveText('Environment');
-    await expect(variableCard.value).toHaveText('(Secret)');
+    await expect(variableCard.value).toHaveText('(empty)');
+    await expect(variableCard.copyButton).toHaveCount(0);
   });
 
   test('copies the resolved value from the copy button', async ({ page, variableCard }) => {

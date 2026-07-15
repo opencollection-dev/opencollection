@@ -10,6 +10,7 @@ import React, {
 } from 'react';
 import { Portal } from '../Portal/Portal';
 import { useEscapeKey } from '../../hooks/useEscapeKey';
+import { computeAnchoredPosition, type AnchoredPosition } from '../../utils/anchoredPosition';
 import { StyledWrapper } from './StyledWrapper';
 
 interface PopoverProps {
@@ -22,11 +23,6 @@ interface PopoverProps {
   testId?: string;
 }
 
-interface Position {
-  top: number;
-  left: number;
-}
-
 interface AnchorHandlers {
   onMouseEnter?: React.MouseEventHandler<HTMLElement>;
   onMouseLeave?: React.MouseEventHandler<HTMLElement>;
@@ -34,11 +30,7 @@ interface AnchorHandlers {
   onTouchStart?: React.TouchEventHandler<HTMLElement>;
 }
 
-const ANCHOR_GAP = 8;
-const VIEWPORT_MARGIN = 8;
 const OFFSCREEN = -9999;
-
-const clamp = (value: number, min: number, max: number): number => Math.min(Math.max(value, min), Math.max(min, max));
 
 /** Runs the anchor's own handler (if any) and then ours. */
 const chain =
@@ -59,7 +51,7 @@ export const Popover: React.FC<PopoverProps> = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [pinned, setPinned] = useState(false);
-  const [position, setPosition] = useState<Position | null>(null);
+  const [position, setPosition] = useState<AnchoredPosition | null>(null);
   const anchorRef = useRef<HTMLElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -97,22 +89,11 @@ export const Popover: React.FC<PopoverProps> = ({
   useEffect(() => clearTimer, [clearTimer]);
 
   const updatePosition = useCallback(() => {
-    const anchor = anchorRef.current;
-    if (!anchor) return;
-    const rect = anchor.getBoundingClientRect();
+    const anchorEl = anchorRef.current;
+    if (!anchorEl) return;
     const panelWidth = panelRef.current?.offsetWidth ?? 0;
     const panelHeight = panelRef.current?.offsetHeight ?? 0;
-    const { innerWidth, innerHeight } = window;
-
-    const roomBelow = innerHeight - rect.bottom - ANCHOR_GAP;
-    const roomAbove = rect.top - ANCHOR_GAP;
-    const preferAbove = panelHeight > roomBelow && roomAbove > roomBelow;
-    const top = preferAbove ? rect.top - ANCHOR_GAP - panelHeight : rect.bottom + ANCHOR_GAP;
-
-    setPosition({
-      top: clamp(top, VIEWPORT_MARGIN, innerHeight - VIEWPORT_MARGIN - panelHeight),
-      left: clamp(rect.left, VIEWPORT_MARGIN, innerWidth - VIEWPORT_MARGIN - panelWidth)
-    });
+    setPosition(computeAnchoredPosition(anchorEl.getBoundingClientRect(), panelWidth, panelHeight));
   }, []);
 
   const setPanelRef = useCallback(

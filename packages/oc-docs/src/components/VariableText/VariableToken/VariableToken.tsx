@@ -17,6 +17,7 @@ export const VariableToken: React.FC<{ token: string; highlighted?: boolean }> =
         className={['var', variant].filter(Boolean).join(' ')}
         data-var-name={name}
         data-testid={`variable-token-${name}`}
+        translate="no"
       >
         {display}
       </StyledWrapper>

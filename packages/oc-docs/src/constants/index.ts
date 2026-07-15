@@ -1,5 +1,12 @@
 
-export { ADDITIONAL_PARAM_GROUPS, AUTH_MODE_LABELS, AUTH_TYPES, type AuthType } from './auth';
+export {
+  ADDITIONAL_PARAM_GROUPS,
+  AUTH_DEFAULTS,
+  AUTH_MODE_LABELS,
+  AUTH_TYPES,
+  PLACEMENT_OPTIONS,
+  type AuthType
+} from './auth';
 
 export {
   BODY_TYPES,

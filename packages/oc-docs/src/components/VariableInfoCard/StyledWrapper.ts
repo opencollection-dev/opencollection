@@ -96,7 +96,6 @@ export const StyledWrapper = styled.div`
     height: 1em;
   }
 
-  .var-icons .secret-toggle-button,
   .var-icons .copy-button {
     display: inline-flex;
     align-items: center;
@@ -112,15 +111,13 @@ export const StyledWrapper = styled.div`
     transition: opacity 0.15s ease, color 0.15s ease;
   }
 
-  .var-icons .secret-toggle-button:hover,
   .var-icons .copy-button:hover {
     opacity: 1;
     color: var(--text-primary);
     background: transparent;
   }
 
-  .var-icons .copy-button:focus-visible,
-  .var-icons .secret-toggle-button:focus-visible {
+  .var-icons .copy-button:focus-visible {
     outline: 0.125rem solid var(--primary-color);
     outline-offset: 0.0625rem;
   }

@@ -46,7 +46,8 @@ const cardTree = (name: string) => {
 
 const selector = (suffix: string) => `[data-testid="variable-info-card-${suffix}"]`;
 
-const part = (root: ReturnType<typeof useRenderToDom>, suffix: string) => query(root, selector(suffix));
+const part = (root: ReturnType<typeof useRenderToDom>, suffix: string) =>
+  query(root, selector(suffix));
 
 describe('VariableInfoCard', () => {
   it('shows name + scope badge + resolved value for an environment variable', () => {
@@ -99,6 +100,19 @@ describe('VariableInfoCard', () => {
     expect(part(root, 'scope').text).toBe('Dynamic');
     expect(part(root, 'note').text).toContain('random value');
     expect(root.querySelector(selector('value'))).toBeNull();
+  });
+
+  it('notes a time-based dynamic variable with the timestamp wording', () => {
+    const root = useRenderToDom(cardTree('$timestamp'));
+    expect(part(root, 'scope').text).toBe('Dynamic');
+    expect(part(root, 'note').text).toContain('current timestamp');
+  });
+
+  it('warns on an unknown dynamic ($) function name', () => {
+    const root = useRenderToDom(cardTree('$notAFunc'));
+    expect(part(root, 'scope').text).toBe('Dynamic');
+    expect(part(root, 'warning').text).toContain('Unknown dynamic variable');
+    expect(root.querySelector(selector('note'))).toBeNull();
   });
 
   it('reports an undefined variable with a note', () => {
