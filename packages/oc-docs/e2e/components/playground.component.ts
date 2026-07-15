@@ -1,6 +1,5 @@
 import type { Locator } from '@playwright/test';
 import { BaseComponent } from './base.component';
-import { exampleToggleFor, exampleRowFor } from './exampleSidebar.helpers';
 import type { DockMode } from '../../src/utils/playgroundDock';
 
 export class PlaygroundComponent extends BaseComponent {
@@ -21,13 +20,16 @@ export class PlaygroundComponent extends BaseComponent {
   readonly inlinePanel = this.page.getByTestId('playground-dock-inline-panel');
   readonly bottomPanel = this.page.getByTestId('playground-dock-bottom-panel');
   readonly modalPanel = this.page.getByTestId('playground-dock-modal-panel');
+  readonly exampleView = this.page.getByTestId('example-view');
+  readonly exampleViewRequest = this.page.getByTestId('example-view-request');
+  readonly exampleViewResponse = this.page.getByTestId('example-view-response');
 
   exampleToggle(requestName: string): Locator {
-    return exampleToggleFor(this.treeItems.filter({ hasText: requestName }));
+    return this.treeItems.filter({ hasText: requestName }).getByTestId('sidebar-example-toggle');
   }
 
   exampleRow(exampleName: string): Locator {
-    return exampleRowFor(this.sidebarPanel, exampleName);
+    return this.sidebarPanel.getByTestId('sidebar-example').filter({ hasText: exampleName });
   }
 
   dockButton(mode: DockMode): Locator {

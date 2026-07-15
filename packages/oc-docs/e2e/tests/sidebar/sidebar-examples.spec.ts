@@ -20,6 +20,7 @@ test.describe('Sidebar - Examples (docs)', () => {
 
   test('clicking an example navigates to the parent request page and highlights the matching example card', async ({
     sidebar,
+    requestPage,
     page,
   }) => {
     await sidebar.toggleExamples('Get All Customers');
@@ -28,22 +29,22 @@ test.describe('Sidebar - Examples (docs)', () => {
     await expect(page.getByTestId('page')).toHaveAttribute('data-page-type', 'request');
     await expect(page).toHaveURL(/#\/billing\/customers\/get-all-customers$/);
 
-    const activeCard = page.locator('[data-testid="example-card"][data-active="true"]');
+    const activeCard = requestPage.examples.activeCard;
     await expect(activeCard).toBeVisible();
     await expect(activeCard).toContainText(OK_EXAMPLE);
     await expect(sidebar.exampleRow(OK_EXAMPLE)).toHaveClass(/active/);
     // Only the example row is active, not its parent request row.
-    await expect(sidebar.items.filter({ hasText: 'Get All Customers' })).not.toHaveClass(/active/);
+    await expect(sidebar.item('Get All Customers')).not.toHaveClass(/active/);
   });
 
-  test('switching to a different example moves the highlight to it', async ({ sidebar, page }) => {
+  test('switching to a different example moves the highlight to it', async ({ sidebar, requestPage }) => {
     await sidebar.toggleExamples('Get All Customers');
     await sidebar.exampleRow(OK_EXAMPLE).click();
-    await expect(page.locator('[data-testid="example-card"][data-active="true"]')).toContainText(OK_EXAMPLE);
+    await expect(requestPage.examples.activeCard).toContainText(OK_EXAMPLE);
 
     await sidebar.exampleRow(BAD_REQUEST_EXAMPLE).click();
 
-    const activeCard = page.locator('[data-testid="example-card"][data-active="true"]');
+    const activeCard = requestPage.examples.activeCard;
     await expect(activeCard).toContainText(BAD_REQUEST_EXAMPLE);
     await expect(activeCard).not.toContainText(OK_EXAMPLE);
     await expect(sidebar.exampleRow(BAD_REQUEST_EXAMPLE)).toHaveClass(/active/);
