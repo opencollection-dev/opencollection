@@ -3,6 +3,7 @@ import { useResolvedVariables } from '../../hooks/useVariableResolver';
 import { Tooltip } from '../../ui/Tooltip/Tooltip';
 import { WarningIcon } from '../../assets/icons';
 import HighlightedInput from '../HighlightedInput/HighlightedInput';
+import { SecretValue } from '../../ui/SecretValue/SecretValue';
 import './KeyValueTable.css';
 
 export interface KeyValueRow {
@@ -72,14 +73,14 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
     if (disableNewRow) {
       return data.map((row, idx) => ({ ...row, id: row.id || `row-${idx}` }));
     }
-    
-    const hasEmptyRow = data.length > 0 && 
+
+    const hasEmptyRow = data.length > 0 &&
       (!data[data.length - 1].name || data[data.length - 1].name.trim() === '');
-    
+
     if (hasEmptyRow) {
       return data.map((row, idx) => ({ ...row, id: row.id || `row-${idx}` }));
     }
-    
+
     return [
       ...data.map((row, idx) => ({ ...row, id: row.id || `row-${idx}` })),
       {
@@ -107,11 +108,11 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
       setRows(newRows);
       return;
     }
-    
-    const hasEmptyRow = data.length > 0 && 
+
+    const hasEmptyRow = data.length > 0 &&
       (!data[data.length - 1].name || data[data.length - 1].name.trim() === '');
-    
-    const newRows = hasEmptyRow 
+
+    const newRows = hasEmptyRow
       ? data.map((row, idx) => ({ ...row, id: row.id || `row-${idx}` }))
       : [
           ...data.map((row, idx) => ({ ...row, id: row.id || `row-${idx}` })),
@@ -122,12 +123,12 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
             enabled: true
           }
         ];
-    
+
     setRows(newRows);
   }, [data, disableNewRow]);
 
   const notifyChange = useCallback((updatedRows: KeyValueRow[]) => {
-    const nonEmptyRows = updatedRows.filter(row => 
+    const nonEmptyRows = updatedRows.filter(row =>
       row.name && row.name.trim() !== ''
     );
     onChange(nonEmptyRows);
@@ -142,7 +143,7 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
 
   const handleFieldChange = (index: number, field: string, value: any) => {
     isEditingRef.current = true;
-    
+
     const updatedRows = [...rows];
     const currentRow = updatedRows[index];
     const oldName = currentRow.name;
@@ -180,8 +181,8 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
       const updatedRows = prevRows.filter((_, i) => i !== index);
 
       if (!disableNewRow) {
-        const hasEmptyLastRow = updatedRows.length > 0 && 
-          (!updatedRows[updatedRows.length - 1].name || 
+        const hasEmptyLastRow = updatedRows.length > 0 &&
+          (!updatedRows[updatedRows.length - 1].name ||
            updatedRows[updatedRows.length - 1].name.trim() === '');
 
         if (!hasEmptyLastRow) {
@@ -307,16 +308,24 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                     {inlineActions ? (
                       <div className="value-cell">
                         <div className="value-cell-field">
-                          <HighlightedInput
-                            value={row.value}
-                            placeholder={isLastEmptyRow ? valuePlaceholder : ''}
-                            onValueChange={(v) => handleFieldChange(index, 'value', v)}
-                            isFound={isFound}
-                            names={names}
-                            anywordHints={valueAutocomplete}
-                            title={row.value}
-                            testId={`${testId}-value-input`}
-                          />
+                          {row.secret ? (
+                            <SecretValue
+                              value={row.value}
+                              placeholder={isLastEmptyRow ? valuePlaceholder : undefined}
+                              onChange={(v) => handleFieldChange(index, 'value', v)}
+                            />
+                          ) : (
+                            <HighlightedInput
+                              value={row.value}
+                              placeholder={isLastEmptyRow ? valuePlaceholder : ''}
+                              onValueChange={(v) => handleFieldChange(index, 'value', v)}
+                              isFound={isFound}
+                              names={names}
+                              anywordHints={valueAutocomplete}
+                              title={row.value}
+                              testId={`${testId}-value-input`}
+                            />
+                          )}
                         </div>
                         {!isLastEmptyRow && cellError(row, index, 'value')}
                         {!isLastEmptyRow && (
@@ -328,6 +337,12 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                           </div>
                         )}
                       </div>
+                    ) : row.secret ? (
+                      <SecretValue
+                        value={row.value}
+                        placeholder={isLastEmptyRow ? valuePlaceholder : undefined}
+                        onChange={(v) => handleFieldChange(index, 'value', v)}
+                      />
                     ) : (
                       <HighlightedInput
                         value={row.value}
@@ -361,4 +376,3 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
 };
 
 export default KeyValueTable;
-

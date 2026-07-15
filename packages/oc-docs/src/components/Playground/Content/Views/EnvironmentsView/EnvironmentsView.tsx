@@ -46,7 +46,8 @@ export const rowToVariable = (row: KeyValueRow): Variable => {
   const source = (row.source as Variable | undefined) ?? ({} as Variable);
   if (row.secret) {
     const secret = { ...source, name: row.name, disabled: !row.enabled, secret: true } as Variable & { value?: unknown };
-    delete secret.value;
+    if (row.value) secret.value = row.value;
+    else delete secret.value;
     return secret;
   }
   return { ...source, name: row.name, value: writeBackValue(source.value, row.value), disabled: !row.enabled };
