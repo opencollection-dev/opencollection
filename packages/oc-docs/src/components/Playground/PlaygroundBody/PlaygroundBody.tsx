@@ -8,14 +8,14 @@ import {
   selectSelectedItemId,
   setViewMode,
   setSelectedItemId,
-  toggleFolderCollapse
+  toggleFolderCollapse,
 } from '@slices/playground';
 import { selectActiveEnvName } from '../../../store/slices/env';
 import { useNavModel } from '../../../routing/hooks';
 import { usePlaygroundUrlState, useElementWidth } from '../../../hooks';
 import { getItemUuid, findItemByUuid } from '../../../utils/itemUtils';
 import { isFolder } from '../../../utils/schemaHelpers';
-import RequestPlaygroundView from '../Content/Views/PlaygroundView/RequestPlaygroundView';
+import PlaygroundView from '../Content/Views/PlaygroundView/PlaygroundView';
 import FolderSettingsView from '../Content/Views/FolderSettingsView/FolderSettingsView';
 import EnvironmentsView from '../Content/Views/EnvironmentsView/EnvironmentsView';
 import CollectionSettingsView from '../Content/Views/CollectionSettingsView/CollectionSettingsView';
@@ -40,7 +40,7 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
   sidebarOpen,
   dock,
   onCloseSidebar,
-  appliedSlugRef
+  appliedSlugRef,
 }) => {
   const dispatch = useAppDispatch();
   const model = useNavModel();
@@ -59,8 +59,11 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
     return map;
   }, [model]);
 
-  const selectedItem = useMemo(() => findItemByUuid(collection?.items, selectedItemId), [collection, selectedItemId]);
-  const activeSlug = selectedItemId ? (uuidToSlug.get(selectedItemId) ?? '') : '';
+  const selectedItem = useMemo(
+    () => findItemByUuid(collection?.items, selectedItemId),
+    [collection, selectedItemId]
+  );
+  const activeSlug = selectedItemId ? uuidToSlug.get(selectedItemId) ?? '' : '';
 
   const viewRef = useRef<HTMLDivElement>(null);
   const viewWidth = useElementWidth(viewRef);
@@ -131,7 +134,7 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
     }
     if (viewMode === 'playground' && selectedItem && !isFolder(selectedItem) && collection) {
       return (
-        <RequestPlaygroundView
+        <PlaygroundView
           item={selectedItem as HttpRequest}
           collection={collection}
           selectedEnvironment={activeEnvName ?? ''}

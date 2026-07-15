@@ -7,11 +7,7 @@ import QueryBar from './QueryBar/QueryBar';
 import RequestPane from './RequestPane/RequestPane';
 import ResponsePane from './ResponsePane/ResponsePane';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import {
-  updatePlaygroundItem,
-  setPlaygroundResponse,
-  selectPlaygroundResponse
-} from '../../../../../store/slices/playground';
+import { updatePlaygroundItem, setPlaygroundResponse, selectPlaygroundResponse } from '../../../../../store/slices/playground';
 import { isUnsupportedRequest } from '../../../../../utils/schemaHelpers';
 import UnsupportedRequest from '../../../../UnsupportedRequest/UnsupportedRequest';
 import { FileNotFoundIcon } from '../../../../../assets/icons';
@@ -23,16 +19,11 @@ interface RequestPlaygroundView {
   orientation?: 'horizontal' | 'vertical';
 }
 
-const HttpRequestPlaygroundView: React.FC<RequestPlaygroundView> = ({
-  item,
-  collection,
-  selectedEnvironment = '',
-  orientation = 'horizontal'
-}) => {
+const HttpRequestPlaygroundView: React.FC<RequestPlaygroundView> = ({ item, collection, selectedEnvironment = '', orientation = 'horizontal' }) => {
   const dispatch = useAppDispatch();
   const [editableItem, setEditableItem] = useState<HttpRequest>(item);
   const itemUuid = (item as any).uuid;
-  const response = useAppSelector((state) => selectPlaygroundResponse(state, itemUuid));
+  const response = useAppSelector(state => selectPlaygroundResponse(state, itemUuid));
   const [isLoading, setIsLoading] = useState(false);
   // The request/response split is one draggable divider whose axis follows the
   // orientation: horizontal layout resizes width, vertical layout resizes height.
@@ -49,24 +40,21 @@ const HttpRequestPlaygroundView: React.FC<RequestPlaygroundView> = ({
   }, [item]);
 
   // Save changes to Redux with debouncing
-  const handleItemChange = useCallback(
-    (updatedItem: HttpRequest) => {
-      setEditableItem(updatedItem);
-
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
+  const handleItemChange = useCallback((updatedItem: HttpRequest) => {
+    setEditableItem(updatedItem);
+    
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+    
+    saveTimeoutRef.current = setTimeout(() => {
+      const itemUuid = (updatedItem as any).uuid || (item as any).uuid;
+      if (itemUuid) {
+        const itemWithUuid = { ...updatedItem, uuid: itemUuid } as any;
+        dispatch(updatePlaygroundItem({ uuid: itemUuid, item: itemWithUuid }));
       }
-
-      saveTimeoutRef.current = setTimeout(() => {
-        const itemUuid = (updatedItem as any).uuid || (item as any).uuid;
-        if (itemUuid) {
-          const itemWithUuid = { ...updatedItem, uuid: itemUuid } as any;
-          dispatch(updatePlaygroundItem({ uuid: itemUuid, item: itemWithUuid }));
-        }
-      }, 500);
-    },
-    [dispatch, item]
-  );
+    }, 500);
+  }, [dispatch, item]);
 
   useEffect(() => {
     return () => {
@@ -82,7 +70,9 @@ const HttpRequestPlaygroundView: React.FC<RequestPlaygroundView> = ({
       // Check both root level and config level for environments
       // TODO: Remove this
       const envs = (collection as any).environments || collection?.config?.environments || [];
-      const environment = envs.find((env: any) => env.name === selectedEnvironment);
+      const environment = envs.find(
+        (env: any) => env.name === selectedEnvironment
+      );
       const result = await runner.runRequest({
         item: editableItem,
         collection,
@@ -92,14 +82,12 @@ const HttpRequestPlaygroundView: React.FC<RequestPlaygroundView> = ({
 
       dispatch(setPlaygroundResponse({ uuid: itemUuid, response: result }));
     } catch (error) {
-      dispatch(
-        setPlaygroundResponse({
-          uuid: itemUuid,
-          response: {
-            error: error instanceof Error ? error.message : 'Unknown error occurred'
-          }
-        })
-      );
+      dispatch(setPlaygroundResponse({ 
+        uuid: itemUuid, 
+        response: {
+          error: error instanceof Error ? error.message : 'Unknown error occurred'
+        }
+      }));
     } finally {
       setIsLoading(false);
     }
@@ -110,25 +98,22 @@ const HttpRequestPlaygroundView: React.FC<RequestPlaygroundView> = ({
     e.preventDefault();
   }, []);
 
-  const handleResizeMove = useCallback(
-    (e: MouseEvent) => {
-      if (!isResizing) return;
-      const row = rowRef.current;
-      if (!row) return;
+  const handleResizeMove = useCallback((e: MouseEvent) => {
+    if (!isResizing) return;
+    const row = rowRef.current;
+    if (!row) return;
 
-      const rect = row.getBoundingClientRect();
-      // Vertical layout drags along Y (pane height), horizontal along X (width).
-      const percent =
-        orientation === 'vertical'
-          ? ((e.clientY - rect.top) / rect.height) * 100
-          : ((e.clientX - rect.left) / rect.width) * 100;
+    const rect = row.getBoundingClientRect();
+    // Vertical layout drags along Y (pane height), horizontal along X (width).
+    const percent =
+      orientation === 'vertical'
+        ? ((e.clientY - rect.top) / rect.height) * 100
+        : ((e.clientX - rect.left) / rect.width) * 100;
 
-      if (percent < 20 || percent > 80) return;
-      if (orientation === 'vertical') setRequestPaneHeight(percent);
-      else setRequestPaneWidth(percent);
-    },
-    [isResizing, orientation]
-  );
+    if (percent < 20 || percent > 80) return;
+    if (orientation === 'vertical') setRequestPaneHeight(percent);
+    else setRequestPaneWidth(percent);
+  }, [isResizing, orientation]);
 
   const stopResize = useCallback(() => {
     setIsResizing(false);
@@ -145,25 +130,22 @@ const HttpRequestPlaygroundView: React.FC<RequestPlaygroundView> = ({
   }, [isResizing, handleResizeMove, stopResize]);
 
   return (
-    <div
-      className="request-runner-container h-full flex flex-col px-4"
-      style={{ backgroundColor: 'var(--bg-primary)' }}
-    >
-      <RequestHeader
-        item={editableItem}
+    <div className="request-runner-container h-full flex flex-col px-4" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <RequestHeader 
+        item={editableItem} 
         collection={collection}
         selectedEnvironment={selectedEnvironment}
         onEnvironmentChange={() => {}} // Environment is now managed by parent
         readOnlyEnvironment={true}
       />
-
-      <QueryBar
+      
+      <QueryBar 
         item={editableItem}
         onSendRequest={handleSendRequest}
         isLoading={isLoading}
         onItemChange={handleItemChange}
       />
-
+      
       <div
         ref={rowRef}
         className={`flex flex-1 overflow-hidden pt-2 ${orientation === 'vertical' ? 'flex-col' : 'flex-row'}`}
@@ -189,12 +171,8 @@ const HttpRequestPlaygroundView: React.FC<RequestPlaygroundView> = ({
               transition: 'background-color 0.2s'
             }}
             onMouseDown={startResize}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--oc-border-border2)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--border-color)';
-            }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--oc-border-border2)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--border-color)'; }}
           />
         )}
         {orientation === 'vertical' && (
@@ -207,12 +185,8 @@ const HttpRequestPlaygroundView: React.FC<RequestPlaygroundView> = ({
               transition: 'background-color 0.2s'
             }}
             onMouseDown={startResize}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--oc-border-border2)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--border-color)';
-            }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--oc-border-border2)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--border-color)'; }}
           />
         )}
 
@@ -224,7 +198,7 @@ const HttpRequestPlaygroundView: React.FC<RequestPlaygroundView> = ({
   );
 };
 
-const RequestPlaygroundView: React.FC<RequestPlaygroundView> = ({ item, ...otherProps }) => {
+const PlaygroundView: React.FC<RequestPlaygroundView> = ({ item, ...otherProps }) => {
   if (isUnsupportedRequest(item)) {
     return (
       <UnsupportedRequest
@@ -242,4 +216,4 @@ const RequestPlaygroundView: React.FC<RequestPlaygroundView> = ({ item, ...other
   return <HttpRequestPlaygroundView item={item} {...otherProps} />;
 };
 
-export default RequestPlaygroundView;
+export default PlaygroundView;
