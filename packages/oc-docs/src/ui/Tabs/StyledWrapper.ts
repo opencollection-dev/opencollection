@@ -23,7 +23,7 @@ export const StyledWrapper = styled.div`
     position: relative;
     border: none;
     border-bottom: 0.125rem solid transparent;
-    padding: 0 0 0.25rem;
+    padding: 0.25rem 0;
     background: none;
     color: var(--oc-colors-text-subtext1);
     font-family: var(--font-sans);
