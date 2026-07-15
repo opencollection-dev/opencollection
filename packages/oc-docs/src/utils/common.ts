@@ -13,6 +13,10 @@ export const uuid = () => {
   return customNanoId();
 };
 
+export function getValidClasses(...classes: (string | undefined)[]) {
+  return classes.filter(Boolean).join(' ')
+}
+
 /**
  * Derives the brand-avatar initials from a collection name.
  * - Two or more words → first letter of the first two words ("Hotel Booking API" → "HB").

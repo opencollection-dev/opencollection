@@ -39,7 +39,7 @@ import { Heading } from '../../components/Heading/Heading';
 import { Section } from '../../components/Section/Section';
 import { Breadcrumb, type BreadcrumbSegment } from '../../ui/Breadcrumb/Breadcrumb';
 import { EmptyState } from '../../ui/EmptyState/EmptyState';
-import { FileIcon, RefreshIcon } from '../../assets/icons';
+import { EyeOffIcon, FileIcon, RefreshIcon } from '../../assets/icons';
 import { RequestUrlBar } from '../../components/Request/RequestUrlBar/RequestUrlBar';
 import { RequestDescription } from '../../components/Request/RequestDescription/RequestDescription';
 import { AuthDetails } from '../../components/AuthDetails/AuthDetails';
@@ -84,10 +84,7 @@ const RequestContent: React.FC<RequestContentProps> = ({
   const body = getHttpBody(item);
   const examples = getRequestExamples(item);
 
-  const { path: pathParams, query: queryParams } = useMemo(
-    () => resolvePathAndQueryParams(params, url),
-    [params, url]
-  );
+  const { path: pathParams, query: queryParams } = useMemo(() => resolvePathAndQueryParams(params, url), [params, url]);
 
   const descHtml = useMemo(() => {
     const content = descriptionContent(item);
@@ -107,7 +104,10 @@ const RequestContent: React.FC<RequestContentProps> = ({
   const scriptChain = useMemo(() => buildScriptChain(collection, ancestry, item), [collection, ancestry, item]);
   const scriptFlow = useMemo(() => getScriptFlow(collection), [collection]);
   const assertions = useMemo(() => collectAssertions(item), [item]);
-  const tests = useMemo(() => collectTests(collection, ancestry, item, scriptFlow), [collection, ancestry, item, scriptFlow]);
+  const tests = useMemo(
+    () => collectTests(collection, ancestry, item, scriptFlow),
+    [collection, ancestry, item, scriptFlow]
+  );
   const testScripts = useMemo(
     () => collectRawTestScripts(collection, ancestry, item, scriptFlow),
     [collection, ancestry, item, scriptFlow]
@@ -137,7 +137,9 @@ const RequestContent: React.FC<RequestContentProps> = ({
       <StyledWrapper className="request" data-testid={testId}>
         <Breadcrumb segments={segments} current={name} onSegmentClick={onBreadcrumbClick} testId="request-breadcrumb" />
 
-        <Heading size="md" style={{ marginTop: '0.875rem' }} testId="request-title">{name}</Heading>
+        <Heading size="md" style={{ marginTop: '0.875rem' }} testId="request-title">
+          {name}
+        </Heading>
 
         <RequestUrlBar method={method} url={url} onTry={onTryClick} style={{ marginTop: '0.9375rem' }} />
 
@@ -197,7 +199,9 @@ const RequestContent: React.FC<RequestContentProps> = ({
           </div>
 
           <div className="request-col-right">
-            <Section label="Code Snippet" testId="request-section-code-snippet">{codeSnippet}</Section>
+            <Section label="Code Snippet" testId="request-section-code-snippet">
+              {codeSnippet}
+            </Section>
           </div>
         </div>
 
@@ -243,7 +247,24 @@ const RequestContent: React.FC<RequestContentProps> = ({
 
 export const Request: React.FC<RequestProps> = ({ item, ancestry = [], collection, onTryClick, onBreadcrumbClick }) => {
   if (isUnsupportedRequest(item)) {
-    return <UnsupportedRequest item={item} ancestry={ancestry} collection={collection} onBreadcrumbClick={onBreadcrumbClick} />;
+    return (
+      <PageWrapper>
+        <UnsupportedRequest
+          item={item}
+          breadcrumbs={{
+            collection,
+            ancestry,
+            onBreadcrumbClick}
+          }
+          showRequestDocs
+          emptyStateProps={{
+            icon: <EyeOffIcon />,
+            heading: 'Preview not available',
+            subheadingSuffix: "documentation isn't supported in this viewer."
+          }}
+        />
+      </PageWrapper>
+    );
   }
 
   return (

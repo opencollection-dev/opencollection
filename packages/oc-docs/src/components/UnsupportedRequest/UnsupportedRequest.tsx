@@ -1,57 +1,137 @@
-import React, { useMemo } from 'react';
+import React, { Key, useMemo } from 'react';
 import type { OpenCollection } from '@opencollection/types';
 import type { Item } from '@opencollection/types/collection/item';
 import type { GraphQLRequest } from '@opencollection/types/requests/graphql';
 import type { GrpcRequest } from '@opencollection/types/requests/grpc';
 import type { WebSocketRequest } from '@opencollection/types/requests/websocket';
-import { getItemName, getItemType } from '../../utils/schemaHelpers';
-import { buildBreadcrumbSegments } from '../../utils/common';
-import { PageWrapper } from '../PageWrapper/PageWrapper';
+import { getItemDescription, getItemDocs, getItemName, getItemType, getRequestUrl } from '../../utils/schemaHelpers';
+import { buildBreadcrumbSegments, getValidClasses } from '../../utils/common';
 import { Heading } from '../Heading/Heading';
 import { Breadcrumb, type BreadcrumbSegment } from '../../ui/Breadcrumb/Breadcrumb';
 import { EmptyState } from '../../ui/EmptyState/EmptyState';
-import { EyeOffIcon } from '../../assets/icons';
-import { StyledWrapper } from './StyledWrapper';
+import Description from '../Description/Description';
+import RequestUrlBar from '../Request/RequestUrlBar/RequestUrlBar';
+import RequestDescription from '../Request/RequestDescription/RequestDescription';
+
+const REQUEST_TYPE_LABELS: Record<string, { shortName: string; fullName: string }> = {
+  websocket: {
+    shortName: 'WS',
+    fullName: 'Websocket'
+  },
+  graphql: {
+    shortName: 'GQL',
+    fullName: 'GraphQL'
+  },
+  grpc: {
+    shortName: 'GRPC',
+    fullName: 'gRPC'
+  }
+};
+
+function getRequestTypeLabel(label: string | undefined) {
+  const fallback = {
+    shortName: 'RQ',
+    fullName: 'This request'
+  };
+
+  if (label == null) return fallback;
+  return REQUEST_TYPE_LABELS[label] ?? fallback;
+}
+
+interface BreadcrumbWrapperProps {
+  showBreadcrumbs: boolean;
+  item: Item;
+  customName?: string;
+  collection?: OpenCollection | null;
+  ancestry?: Item[];
+  onBreadcrumbClick?: (uuid: string) => void;
+}
+
+interface UnsupportedEmptyStateProps {
+  icon: React.ReactNode;
+  heading: string;
+  /**
+   * The final subheading will look like: `${requestTypeName} ${subheadingSuffix}`
+   *
+   * Do not add spaces in the start of suffix.
+   *
+   * Implemented as `[requestTypeName, subheadingSuffix].join(' ')` to handle
+   * empty suffix
+   */
+  subheadingSuffix: string;
+}
 
 interface UnsupportedRequestProps {
   item: WebSocketRequest | GraphQLRequest | GrpcRequest;
-  ancestry?: Item[];
-  collection?: OpenCollection | null;
-  onBreadcrumbClick?: (uuid: string) => void;
+  showRequestDocs: boolean;
+  emptyStateProps: UnsupportedEmptyStateProps;
+  className?: string;
+  breadcrumbs?: Omit<BreadcrumbWrapperProps, 'showBreadcrumbs' | 'item'>;
   testId?: string;
 }
 
-const REQUEST_TYPE_LABELS: Record<string, string> = {
-  websocket: 'Websocket',
-  graphql: 'GraphQL',
-  grpc: 'gRPC'
-};
-
-export const UnsupportedRequest: React.FC<UnsupportedRequestProps> = ({ item, ancestry = [], collection, onBreadcrumbClick, testId = 'unsupported-request' }) => {
-  const typeLabel = REQUEST_TYPE_LABELS[getItemType(item) ?? ''] ?? 'This request';
-  const name = getItemName(item) || typeLabel;
-
-  const segments = useMemo<BreadcrumbSegment[]>(
-    () => buildBreadcrumbSegments(collection, ancestry),
-    [collection, ancestry]
-  );
+export const UnsupportedRequest: React.FC<UnsupportedRequestProps> = ({
+  item,
+  emptyStateProps,
+  className,
+  showRequestDocs,
+  breadcrumbs,
+  testId = 'unsupported-request'
+}) => {
+  const { icon, heading, subheadingSuffix } = emptyStateProps;
+  const { shortName, fullName } = useMemo(() => getRequestTypeLabel(getItemType(item)), [item]);
+  const subheading = useMemo(() => [fullName, subheadingSuffix.trim()].join(' '), [subheadingSuffix]);
 
   return (
-    <PageWrapper>
-      <StyledWrapper className="unsupported-request" data-testid={testId}>
-        <Breadcrumb segments={segments} current={name} onSegmentClick={onBreadcrumbClick} testId="unsupported-request-breadcrumb" />
+    <div className={getValidClasses(className, 'w-full')} data-testid={testId}>
+      <BreadcrumbWrapper showBreadcrumbs={Boolean(breadcrumbs)} item={item} {...(breadcrumbs ?? {})} />
 
-        <Heading size="md" style={{ marginTop: '0.875rem' }} testId="unsupported-request-title">{typeLabel}</Heading>
+      <Heading size="md" style={{ marginTop: '0.875rem' }} testId="unsupported-request-title">
+        {fullName}
+      </Heading>
 
-        <EmptyState
-          className="unsupported-request-message"
-          testId="unsupported-request-empty"
-          icon={<EyeOffIcon />}
-          heading="Preview not available"
-          subheading={`${typeLabel} documentation isn't supported in this viewer.`}
-        />
-      </StyledWrapper>
-    </PageWrapper>
+      <Description text={getItemDescription(item)} />
+
+      <RequestUrlBar className="mt-2" method={shortName} url={getRequestUrl(item)} />
+
+      {showRequestDocs && <RequestDescription className="mt-5" html={getItemDocs(item) ?? ''} />}
+
+      <EmptyState
+        className="mt-4"
+        testId="unsupported-request-empty"
+        icon={icon}
+        heading={heading}
+        subheading={subheading}
+      />
+    </div>
+  );
+};
+
+const BreadcrumbWrapper: React.FC<BreadcrumbWrapperProps> = ({
+  showBreadcrumbs,
+  item,
+  collection,
+  ancestry = [],
+  customName,
+  onBreadcrumbClick
+}) => {
+  const name = getItemName(item) || customName;
+  const segments = useMemo<BreadcrumbSegment[]>(
+    () => (showBreadcrumbs ? buildBreadcrumbSegments(collection, ancestry) : []),
+    [collection, ancestry, showBreadcrumbs]
+  );
+
+  if (!showBreadcrumbs) {
+    return null;
+  }
+
+  return (
+    <Breadcrumb
+      segments={segments}
+      current={name}
+      onSegmentClick={onBreadcrumbClick}
+      testId="unsupported-request-breadcrumb"
+    />
   );
 };
 
