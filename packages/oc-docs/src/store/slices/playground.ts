@@ -158,9 +158,9 @@ const playgroundSlice = createSlice({
         (item as any).isCollapsed = !currentCollapsed;
       });
     },
-    // Expand-only: force the given folders open (used to reveal the active
-    // request's ancestors on deep-link / reload). Never collapses, so it does
-    // not fight a folder the user manually closed.
+    // Opens the given folders in the sidebar tree so the selected item shows up
+    // inside them. Only ever opens, never closes, so a folder the user collapsed
+    // by hand stays closed.
     expandFolders: (state: PlaygroundState, action: PayloadAction<string[]>) => {
       if (!state.hydratedCollection?.items || action.payload.length === 0) return;
       const targets = new Set(action.payload);

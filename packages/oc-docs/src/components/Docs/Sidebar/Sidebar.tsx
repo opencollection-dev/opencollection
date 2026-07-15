@@ -41,21 +41,20 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
     return map;
   }, [model]);
 
-  // Scrollbar thumb shows only while the list is active, then fades after 1s idle
-  // (paired with the .sidebar-items[.scrolling] CSS below). Shared with the
-  // playground sidebar so both behave identically.
+  // Show the scrollbar while the list is in use, then fade it out after 1s idle.
+  // Shared with the playground sidebar so both behave the same.
   const setItemsScrollRef = useAutoHideScrollbar<HTMLDivElement>();
 
-  // Slightly smaller nav text on real mobile/tablet OSes only. Gated on the
-  // device (not viewport) so a shrunk laptop window keeps the 13px desktop size.
+  // Smaller nav text on real phones/tablets only. Based on the device, not the
+  // window size, so a narrow laptop window keeps the normal 13px.
   const isMobileDevice = useIsMobileDevice();
 
   const autoRevealedSlug = useRef<string | null>(null);
   useEffect(() => {
-    // On reload the collection loads async, so `model` may not resolve the active
-    // slug on the first run. computeAutoReveal only "claims" the slug once it can,
-    // so this effect re-runs when the model hydrates and expands the ancestors,
-    // instead of the folder staying collapsed on the request page.
+    // Open the folders around the active item so it shows up in the tree. On
+    // reload the collection loads a moment later, so computeAutoReveal waits
+    // until it can resolve the slug; this effect runs again once it loads and
+    // opens the folders then, instead of leaving them closed.
     const { claim, uuids } = computeAutoReveal(autoRevealedSlug.current, activeSlug, model);
     if (claim) autoRevealedSlug.current = activeSlug;
     if (uuids.length) dispatch(expandFolders(uuids));

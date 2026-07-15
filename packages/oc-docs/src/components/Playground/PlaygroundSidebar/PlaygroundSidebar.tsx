@@ -35,10 +35,10 @@ const PlaygroundSidebar: React.FC<PlaygroundSidebarProps> = ({
   const [collectionCollapsed, setCollectionCollapsed] = useState(false);
   const name = collection?.info?.name || 'Collection';
 
-  // Fade the scrollbar after 1s idle, same behaviour as the docs sidebar.
+  // Show the scrollbar while the tree is in use, then fade it after 1s idle - same as the docs sidebar.
   const setTreeScrollRef = useAutoHideScrollbar<HTMLDivElement>();
 
-  // Smaller nav text on real mobile/tablet OSes only (not a width breakpoint).
+  // Smaller nav text on real phones/tablets only, not by window size.
   const isMobileDevice = useIsMobileDevice();
 
   return (
@@ -69,8 +69,8 @@ const PlaygroundSidebar: React.FC<PlaygroundSidebarProps> = ({
               collapsed: collectionCollapsed,
               active: collectionActive,
               onToggle: () => setCollectionCollapsed((v) => !v),
-              // Clicking the root opens collection settings and expands the tree,
-              // mirroring how opening a folder reveals its contents.
+              // Clicking the collection name opens its settings and reopens the
+              // tree, the same way clicking a folder shows its contents.
               onClick: () => {
                 setCollectionCollapsed(false);
                 onOpenCollection();

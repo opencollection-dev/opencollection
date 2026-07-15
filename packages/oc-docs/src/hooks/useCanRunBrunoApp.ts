@@ -25,10 +25,10 @@ export interface DeviceEnv {
  * Pure so it can be unit tested against a device matrix without a DOM.
  */
 /**
- * A genuine mobile/tablet OS (phones + touch iPads, including one masquerading as
- * `MacIntel` with a trackpad folio). Deliberately based on the OS/input, NOT the
- * viewport, so a narrow laptop window (or the docs shrunk beside the inline
- * playground) is never mistaken for mobile.
+ * True on a real phone or tablet (including a touch iPad that reports itself as a
+ * `MacIntel` desktop). Based on the OS and input, not the window size, so a
+ * narrow laptop window - or the docs shrunk next to the inline playground - is
+ * never treated as mobile.
  */
 export const computeIsMobileOS = ({ userAgent, platform, maxTouchPoints }: DeviceEnv): boolean =>
   /Android|iPhone|iPad|iPod/.test(userAgent) ||
@@ -71,10 +71,10 @@ export const useCanRunBrunoApp = (): boolean => {
 };
 
 /**
- * True on a genuine mobile/tablet OS, independent of viewport width. The OS does
- * not change during a session, so it is measured once (SSR/no-window safe →
- * `false`). Use this, not a width breakpoint, to gate mobile-only styling that
- * must NOT trigger on a shrunk laptop window.
+ * True on a real phone or tablet, whatever the window size. The device can't
+ * change mid-session, so it's checked once (safe to `false` with no window). Use
+ * this, not a width breakpoint, to switch on mobile-only styling, so a narrow
+ * laptop window doesn't trigger it.
  */
 export const useIsMobileDevice = (): boolean => {
   const [isMobile] = useState(() =>

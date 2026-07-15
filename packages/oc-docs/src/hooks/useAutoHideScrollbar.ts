@@ -1,15 +1,14 @@
 import { useCallback, useRef } from 'react';
 
 /**
- * Wire an element's scrollbar to show only while the user is active over it.
+ * Show a container's scrollbar only while the user is moving over or scrolling
+ * it, then fade it out `idleMs` after they stop.
  *
- * Adds a `scrolling` class on mousemove/scroll and removes it `idleMs` after the
- * last activity, so a `::-webkit-scrollbar-thumb` that is transparent by default
- * and coloured under `.scrolling` fades out when the pointer goes idle. The class
- * is toggled directly on the node (no React state) so pointer noise never
- * re-renders. Returns a cleanup that clears the timer and removes the listeners.
- *
- * Split out of the hook so it can be unit-tested without a DOM/renderer.
+ * Adds a `scrolling` class on move/scroll and removes it after the idle delay;
+ * pair with CSS that hides the thumb by default and shows it under `.scrolling`.
+ * The class is set straight on the element (no React state), so constant pointer
+ * movement never re-renders. Returns a cleanup that stops the timer and removes
+ * the listeners. Kept separate from the hook so it can be tested without a DOM.
  */
 export function attachAutoHideScrollbar(el: HTMLElement, idleMs = 1000): () => void {
   let timer: ReturnType<typeof setTimeout> | undefined;
@@ -28,14 +27,13 @@ export function attachAutoHideScrollbar(el: HTMLElement, idleMs = 1000): () => v
 }
 
 /**
- * React wrapper around {@link attachAutoHideScrollbar}. Returns a ref callback to
- * put on the scroll container; pair it with CSS that hides the thumb by default
+ * Hook form of {@link attachAutoHideScrollbar}. Put the returned callback on the
+ * scroll container's `ref`, and pair it with CSS that hides the thumb by default
  * and shows it under `.<container>.scrolling`.
  *
- * A ref callback (not a RefObject effect) so it (re)attaches whenever the node
- * actually mounts or changes, and detaches on unmount. This keeps it correct for
- * a container that only renders later (e.g. after a loading state), which a
- * mount-only effect over a RefObject would silently miss.
+ * It's a ref callback, so it re-wires whenever the container actually appears or
+ * changes and cleans up when it goes away - which also works when the container
+ * only shows up later (e.g. after a loading state).
  */
 export function useAutoHideScrollbar<T extends HTMLElement = HTMLElement>(
   idleMs = 1000

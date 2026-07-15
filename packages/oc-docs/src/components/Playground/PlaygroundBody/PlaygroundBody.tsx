@@ -75,20 +75,18 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
   const viewWidth = useElementWidth(viewRef);
   const orientation = viewWidth > 0 && viewWidth < ORIENTATION_BREAKPOINT ? 'vertical' : 'horizontal';
 
-  // Apply the URL's pgReq target once per value (deep-link / Try / reload). It
-  // carries the request/folder slug OR a ~environments / ~collection token, so
-  // the folder, environments and collection-settings views survive a refresh too
-  // (not just requests). Keyed on the slug (not selectedItemId), and only marked
-  // applied once resolvePlaygroundTarget returns non-null, so an item slug that
-  // arrives before the collection hydrates is retried when the model loads.
+  // Reopen whatever the URL says was last open. `pgReq` holds a request, a
+  // folder, or the environments / collection-settings view, so a deep link, a
+  // Try, or a reload all bring back the same thing. Runs once per URL value.
   useEffect(() => {
     if (!requestSlug || appliedSlugRef.current === requestSlug) return;
     const target = resolvePlaygroundTarget(requestSlug, model);
-    if (!target) return; // item not resolvable yet -> retry when `model` updates
-    // Item targets select from / expand against the playground's hydrated
-    // collection, which is a separate slice from `model`. If it has not landed
-    // yet, wait (don't claim) so expandFolders is not dropped and never retried;
-    // the ~environments / ~collection tokens (uuid null) need no collection.
+    if (!target) return; // sidebar list hasn't loaded this item yet - retry once it does
+    // A request or folder needs the playground's own copy of the collection to
+    // select it and open its parent folders. On reload that copy can arrive just
+    // after the sidebar list, so if it isn't ready we wait instead of marking
+    // this done - otherwise the folders would never open. The environments and
+    // collection views need no collection, so they open right away.
     if (target.uuid && !collection?.items) return;
     appliedSlugRef.current = requestSlug;
     dispatch(setSelectedItemId(target.uuid));
@@ -102,13 +100,13 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
     if (dock === 'inline') onCloseSidebar();
   }, [dock, onCloseSidebar]);
 
-  // These only record the pgReq slug (folders too, so a folder view survives
-  // reload); the apply effect above is the single place that turns a slug into
-  // selection + view + folder reveal, so a click and a reload take the same path.
+  // Clicking something in the sidebar just writes it to the URL (folders too, so
+  // a folder view comes back on reload). The effect above is what actually opens
+  // it, so a click and a reload go through the exact same path.
   const handleNavigate = useCallback(
     (slug: string) => {
       const entry = model.bySlug.get(slug);
-      if (!entry || !getItemUuid(entry.item)) return; // ignore rows that don't resolve
+      if (!entry || !getItemUuid(entry.item)) return; // not a real item, ignore the click
       setRequestSlug(slug);
       closeSidebarIfInline();
     },
@@ -118,12 +116,12 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
   const handleToggleFolder = useCallback((uuid: string) => dispatch(toggleFolderCollapse(uuid)), [dispatch]);
 
   const openEnvironments = useCallback(() => {
-    setRequestSlug(PLAYGROUND_ENVIRONMENTS_SLUG); // effect applies the view; persists for reload
+    setRequestSlug(PLAYGROUND_ENVIRONMENTS_SLUG); // effect opens the view; reload brings it back
     closeSidebarIfInline();
   }, [setRequestSlug, closeSidebarIfInline]);
 
   const openCollection = useCallback(() => {
-    setRequestSlug(PLAYGROUND_COLLECTION_SLUG); // effect applies the view; persists for reload
+    setRequestSlug(PLAYGROUND_COLLECTION_SLUG); // effect opens the view; reload brings it back
     closeSidebarIfInline();
   }, [setRequestSlug, closeSidebarIfInline]);
 

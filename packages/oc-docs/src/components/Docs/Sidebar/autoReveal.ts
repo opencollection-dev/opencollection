@@ -2,25 +2,24 @@ import type { NavModel } from '../../../routing/types';
 import { getItemUuid } from '../../../utils/itemUtils';
 
 export interface AutoRevealResult {
-  /** Whether the caller should record `activeSlug` as revealed. Only true once the
-   *  model can actually resolve the slug, so a not-ready model never consumes it. */
+  /** True once the slug can be resolved, telling the caller to remember it as
+   *  revealed. Stays false while the collection is still loading. */
   claim: boolean;
-  /** Folder UUIDs to expand so the active item's ancestors (and, when the active
-   *  item is itself a folder, that folder) become visible in the tree. */
+  /** Folders to open so the active item is visible: its parent folders, plus the
+   *  folder itself when the active item is a folder. */
   uuids: string[];
 }
 
 /**
- * Decide which folders to expand to reveal `activeSlug`, and whether to mark it
- * revealed, given the previously revealed slug and the current nav model.
+ * Work out which folders to open so `activeSlug` is visible in the tree, and
+ * whether to remember it as already revealed.
  *
- * Returns `{ claim: false, uuids: [] }` when:
- *  - the slug was already revealed (so we never re-expand a folder the user then
- *    manually collapsed), or
- *  - the model cannot resolve the slug yet (collection still loading on reload).
- *    NOT claiming in this case is the fix: the reveal effect re-runs when the
- *    model hydrates and then expands the ancestors, instead of the slug being
- *    marked revealed too early and the folder staying collapsed on the page.
+ * Returns nothing to do when:
+ *  - it was already revealed (so a folder the user then closed stays closed), or
+ *  - the collection is still loading, so the slug can't be resolved yet. Not
+ *    marking it revealed here is the point: the effect runs again once the
+ *    collection loads and opens the folders then, instead of giving up early and
+ *    leaving them closed.
  */
 export function computeAutoReveal(
   revealedSlug: string | null,
@@ -37,8 +36,8 @@ export function computeAutoReveal(
     const uuid = getItemUuid(model.bySlug.get(ancestor.slug)?.item);
     if (uuid) uuids.push(uuid);
   }
-  // Also expand the active folder itself, so navigating to a folder reveals its
-  // contents (folder rows navigate; the chevron toggles manually).
+  // Open the folder itself too, so going to a folder shows its contents. The
+  // chevron alone still just toggles it.
   if (entry.type === 'folder') {
     const uuid = getItemUuid(entry.item);
     if (uuid) uuids.push(uuid);

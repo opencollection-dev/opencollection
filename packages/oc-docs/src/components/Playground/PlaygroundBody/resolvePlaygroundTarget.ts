@@ -3,8 +3,9 @@ import { ENVIRONMENTS_SLUG } from '../../../routing/navModel';
 import { getItemUuid } from '../../../utils/itemUtils';
 
 /**
- * Reserved `pgReq` tokens for the playground's non-item views. Item slugs are
- * slugified names and never start with `~`, so these can't collide.
+ * The URL slot (`pgReq`) usually holds an item's slug. These two reserved values
+ * stand for the environments and collection-settings views instead. They start
+ * with `~`, which a real item slug never does, so they can't clash with one.
  */
 export const PLAYGROUND_ENVIRONMENTS_SLUG = ENVIRONMENTS_SLUG; // '~environments'
 export const PLAYGROUND_COLLECTION_SLUG = '~collection';
@@ -17,24 +18,22 @@ export type PlaygroundViewMode =
 
 export interface PlaygroundTarget {
   view: PlaygroundViewMode;
-  /** Selected item uuid for item views; null for the environments / collection views. */
+  /** The item to select for a request/folder; null for the environments/collection views. */
   uuid: string | null;
   /**
-   * Folder uuids to expand so the target is revealed in the tree: the target's
-   * ancestor folders, plus the target folder itself when it is a folder (so
-   * opening a folder reveals its children, matching the docs sidebar). Empty for
-   * the environments / collection views.
+   * Folders to open so the target shows up in the tree: its parent folders, and
+   * the folder itself when the target is a folder (opening a folder shows its
+   * contents, like the docs sidebar). Empty for the environments/collection views.
    */
   expandUuids: string[];
 }
 
 /**
- * Resolve a `pgReq` slug to the playground view it should restore on load.
+ * Work out which view the URL's `pgReq` value should reopen on load.
  *
- * Returns null when the slug is an item slug the model cannot resolve yet (the
- * collection is still hydrating on reload) so the caller does NOT mark it applied
- * and re-runs once the model is ready. The `~environments` / `~collection` tokens
- * resolve immediately (no model needed).
+ * Returns null when the value points at an item the sidebar list hasn't loaded
+ * yet (still loading after a reload); the caller then tries again once it has.
+ * The `~environments` / `~collection` values resolve straight away.
  */
 export function resolvePlaygroundTarget(slug: string, model: NavModel): PlaygroundTarget | null {
   if (slug === PLAYGROUND_ENVIRONMENTS_SLUG) return { view: 'environments', uuid: null, expandUuids: [] };
@@ -42,15 +41,15 @@ export function resolvePlaygroundTarget(slug: string, model: NavModel): Playgrou
 
   const entry = model.bySlug.get(slug);
   const uuid = entry ? getItemUuid(entry.item) : undefined;
-  if (!entry || !uuid) return null; // item not resolvable yet -> retry after hydrate
+  if (!entry || !uuid) return null; // not loaded yet - caller retries after the list loads
 
   const expandUuids: string[] = [];
   for (const ancestor of entry.ancestors) {
     const ancestorUuid = getItemUuid(model.bySlug.get(ancestor.slug)?.item);
     if (ancestorUuid) expandUuids.push(ancestorUuid);
   }
-  // Also expand the folder itself, so opening a folder reveals its contents in
-  // the tree (folder rows navigate; the chevron toggles manually), same as docs.
+  // Open the folder itself too, so clicking a folder shows its contents in the
+  // tree, like the docs sidebar. The chevron alone still just toggles it.
   if (entry.type === 'folder') expandUuids.push(uuid);
   return { view: entry.type === 'folder' ? 'folder-settings' : 'playground', uuid, expandUuids };
 }

@@ -52,11 +52,10 @@ const SidebarNavLink: React.FC<SidebarNavLinkProps> = ({
   return (
     <StyledWrapper
       className={classes}
-      // Indent via margin (outside the background) with a fixed 4px inner pad, so
-      // the highlight starts just 4px left of the chevron instead of filling the
-      // empty indent. margin-left + 4px keeps the leading glyph at the same
-      // level*19+8 offset (chevron 12px + gap 7px step), preserving alignment and
-      // guide lines. Right margin keeps the pill short of the edge: 8px root, 4px nested.
+      // Indent with margin (outside the highlight) plus a small 4px inner pad, so
+      // the highlight starts just left of the chevron instead of filling the empty
+      // indent, while each level's glyph still lines up under its parent. Right
+      // margin keeps the highlight short of the edge: 8px at root, 4px when nested.
       style={{
         marginLeft: `${level * 19 + 4}px`,
         paddingLeft: '4px',
