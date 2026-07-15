@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { Assertion } from '@opencollection/types/common/assertions';
 import Tabs from '../../../../../../ui/Tabs/Tabs';
-import { KeyValueRow } from '../../../../../../ui/KeyValueTable/KeyValueTable';
+import { KeyValueRow } from '../../../../../../components/KeyValueTable/KeyValueTable';
+import { rowToVariable } from '../../../../../../utils/variableDataType';
 import HeadersTab from '../../Common/HeadersTab/HeadersTab';
 import ParamsTab from '../../Common/ParamsTab';
 import BodyTab from '../../Common/BodyTab';
-import AuthTab from '../../Common/AuthTab';
+import AuthTab from '../../Common/AuthTab/AuthTab';
 import ScriptsTab from '../../Common/ScriptsTab/ScriptsTab';
 import TestsTab from '../../Common/TestsTab/TestsTab';
 import AssertsTab from '../../Common/AssertsTab';
@@ -34,7 +35,12 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
   const [activeTab, setActiveTab] = useState('params');
 
   const handleParamsChange = (params: KeyValueRow[]) => {
+    const originals = getHttpParams(item) as Array<{ name?: string }>;
+    const originalByName = new Map(
+      originals.filter((param) => param.name).map((param): [string, typeof param] => [param.name as string, param])
+    );
     const updatedParams = params.map(p => ({
+      ...(originalByName.get(p?.name) ?? {}),
       name: p?.name,
       value: p?.value,
       disabled: !p?.enabled,
@@ -52,11 +58,19 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
   };
 
   const handleHeadersChange = (headers: KeyValueRow[]) => {
-    const updatedHeaders = headers.map(h => ({
-      name: h.name,
-      value: h.value,
-      disabled: !h.enabled
-    }));
+    const originals = getHttpHeaders(item);
+    const originalByName = new Map(
+      originals.filter((header) => header.name).map((header): [string, typeof header] => [header.name as string, header])
+    );
+    const updatedHeaders = headers.map(h => {
+      const description = 'description' in h ? h.description : originalByName.get(h.name)?.description;
+      return {
+        name: h.name,
+        value: h.value,
+        disabled: !h.enabled,
+        ...(description !== undefined ? { description } : {})
+      };
+    });
     onItemChange({ 
       ...item, 
       http: { 
@@ -89,17 +103,12 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
   };
 
   const handleRequestVariablesChange = (variables: KeyValueRow[]) => {
-    const updatedVariables = variables.map(v => ({
-      name: v.name,
-      value: v.value,
-      disabled: !v.enabled
-    }));
-    onItemChange({ 
-      ...item, 
-      runtime: { 
-        ...item.runtime, 
-        variables: updatedVariables 
-      } 
+    onItemChange({
+      ...item,
+      runtime: {
+        ...item.runtime,
+        variables: variables.map(rowToVariable)
+      }
     });
   };
 

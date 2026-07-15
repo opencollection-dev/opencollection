@@ -2,7 +2,7 @@ import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import type { OpenCollection } from '@opencollection/types';
 import type { Environment } from '@opencollection/types/config/environments';
 import type { Variable } from '@opencollection/types/common/variables';
-import KeyValueTable, { KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
+import KeyValueTable, { KeyValueRow } from '../../../../../components/KeyValueTable/KeyValueTable';
 import { SidebarContainer, SidebarItems, SidebarItem } from '../../../EnvListStyles/StyledWrapper';
 import { useAppDispatch } from '../../../../../store/hooks';
 import { updateCollectionEnvironments } from '@slices/playground';
@@ -188,6 +188,7 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection }) => {
             
             <div style={{ flex: 1, minHeight: 0 }}>
               <KeyValueTable
+                key={selectedEnvironmentIndex}
                 data={variablesAsRows}
                 onChange={handleVariablesChange}
                 keyPlaceholder="Variable Name"

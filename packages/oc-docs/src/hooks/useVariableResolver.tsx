@@ -7,6 +7,7 @@ import { useAppSelector } from '../store/hooks';
 import { selectDocsCollection } from '../store/slices/docs';
 import { selectActiveEnvName, selectShowVars } from '../store/slices/env';
 import { getRequestVariables, isFolder } from '../utils/schemaHelpers';
+import { mockDataFunctions, timeBasedDynamicVars } from '../runner/utils/faker-functions';
 import {
   buildScopedVariableModel,
   resolveVariables,
@@ -20,13 +21,22 @@ import {
   type VariableSource
 } from '../utils/variableResolution';
 
+export type DynamicVariableKind = 'random' | 'time' | 'unknown';
+
 export interface VariableLookup {
   name: string;
   scope: VariableScope;
   value: string;
   secret: boolean;
   valid: boolean;
+  dynamicKind?: DynamicVariableKind;
 }
+
+const classifyDynamic = (name: string): DynamicVariableKind => {
+  const keyword = name.slice(1);
+  if (!Object.prototype.hasOwnProperty.call(mockDataFunctions, keyword)) return 'unknown';
+  return timeBasedDynamicVars.has(keyword) ? 'time' : 'random';
+};
 
 /**
  * Shared variable resolution hook, the contract redesigned doc sections
@@ -47,6 +57,8 @@ export interface VariableResolver {
   isSecret: (name: string) => boolean;
   secretRefName: (raw: string) => string | null;
   lookup: (name: string) => VariableLookup;
+  isFound: (name: string) => boolean;
+  names: string[];
 }
 
 const lookupVariable = (rawName: string, model: ScopedVariableModel): VariableLookup => {
@@ -54,6 +66,7 @@ const lookupVariable = (rawName: string, model: ScopedVariableModel): VariableLo
   const base = { name, value: '', secret: false };
 
   const special = detectSpecialScope(name);
+  if (special === 'dynamic') return { ...base, scope: 'dynamic', valid: true, dynamicKind: classifyDynamic(name) };
   if (special) return { ...base, scope: special, valid: true };
   if (!isValidVariableName(name)) return { ...base, scope: 'undefined', valid: false };
 
@@ -76,6 +89,8 @@ const makeResolver = (
     showVars,
     activeEnvName,
     isSecret,
+    isFound: (name: string) => Object.prototype.hasOwnProperty.call(model.entries, name),
+    names: Object.keys(model.entries),
     resolve: (raw: string) => (showVars ? resolveVariables(raw, model.values) : raw),
     secretRefName: (raw: string) => {
       const name = singleReferenceName(raw);
@@ -128,7 +143,9 @@ const PASSTHROUGH_RESOLVER: VariableResolver = {
   resolve: (raw) => raw,
   isSecret: () => false,
   secretRefName: () => null,
-  lookup: (name) => ({ name: (name ?? '').trim(), scope: 'undefined', value: '', secret: false, valid: true })
+  lookup: (name) => ({ name: (name ?? '').trim(), scope: 'undefined', value: '', secret: false, valid: true }),
+  isFound: () => false,
+  names: []
 };
 
 const VariableResolverContext = createContext<VariableResolver>(PASSTHROUGH_RESOLVER);

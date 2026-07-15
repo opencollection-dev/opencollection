@@ -11,6 +11,7 @@ import { ItemVariableResolverProvider } from '../../hooks';
 import type { Item } from '@opencollection/types/collection/item';
 import PrevNext from '../PrevNext/PrevNext';
 import { PageWrapper } from '../PageWrapper/PageWrapper';
+import { ErrorBoundary } from '../ErrorBoundary/ErrorBoundary';
 import { StyledWrapper } from './StyledWrapper';
 import { Overview } from '../../pages/Overview/Overview';
 import Request from '../../pages/Request/Request';
@@ -97,7 +98,9 @@ const PageRouter: React.FC<PageRouterProps> = ({ onOpenPlayground, testId = 'pag
 
   return (
     <StyledWrapper data-testid={testId} data-page-type={entry.type} data-page-slug={entry.slug}>
-      <div className="page-body">{renderBody()}</div>
+      <div className="page-body">
+        <ErrorBoundary key={entry.slug}>{renderBody()}</ErrorBoundary>
+      </div>
       <div className="page-footer">
         <PageWrapper>
           <PrevNext prev={prev} next={next} />
