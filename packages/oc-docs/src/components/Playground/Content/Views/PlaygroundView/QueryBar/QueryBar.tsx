@@ -3,7 +3,9 @@ import type { HttpRequest } from '@opencollection/types/requests/http';
 import { StyledWrapper } from './StyledWrapper';
 import { getHttpMethod, getRequestUrl, getHttpParams } from '../../../../../../utils/schemaHelpers';
 import { syncPathParams, syncQueryParams } from '../../../../../../utils/pathParams';
-import { methodColorVars, getMethodColorVar } from '../../../../../../theme/methodColors';
+import { methodColorVars } from '../../../../../../theme/methodColors';
+import { MethodBadge } from '../../../../../MethodBadge/MethodBadge';
+import { CopyButton } from '../../../../../../ui/CopyButton/CopyButton';
 
 interface QueryBarProps {
   item: HttpRequest;
@@ -50,41 +52,25 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
     onItemChange(updatedItem);
   };
 
-  const getMethodColor = getMethodColorVar;
-
   return (
-    <StyledWrapper 
-      className="flex items-stretch"
-      style={{ 
-        height: '36px'
-      }}
-    >
+    <StyledWrapper className="flex items-center">
       <div className="method-select-wrapper">
+        <span aria-hidden="true">
+          <MethodBadge method={method} />
+        </span>
         <select
-          className="method-select h-full"
+          className="method-select"
           value={method}
           onChange={(e) => handleMethodChange(e.target.value)}
-          style={{ color: getMethodColor(method) }}
+          aria-label="HTTP method"
+          data-testid="query-bar-method"
         >
           {Object.keys(methodColorVars).map((m) => (
-            <option key={m} value={m} style={{ color: getMethodColor(m) }}>
+            <option key={m} value={m}>
               {m}
             </option>
           ))}
         </select>
-        <svg
-          className="method-select-icon"
-          width="12"
-          height="12"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="var(--oc-colors-text-muted)"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <polyline points="6 9 12 15 18 9" />
-        </svg>
       </div>
 
       <input
@@ -92,7 +78,8 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
         value={url}
         onChange={(e) => handleUrlChange(e.target.value)}
         placeholder="Enter request URL"
-        className="flex-1 px-3 text-xs font-normal"
+        data-testid="query-bar-url"
+        className="flex-1 min-w-0 px-3 text-xs font-normal"
         style={{
           fontFamily: 'var(--font-mono)',
           fontSize: '12px',
@@ -105,16 +92,21 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
         }}
       />
 
-      <button
-        onClick={onSendRequest}
-        disabled={isLoading || !url.trim()}
-        className="send px-4 uppercase text-xs font-semibold text-white disabled:cursor-not-allowed flex items-center gap-2 transition-all"
-      >
-        {isLoading && (
-          <div className="w-2.5 h-2.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-        )}
-        {isLoading ? 'Sending' : 'Send'}
-      </button>
+      <div className="actions">
+        <CopyButton text={url} label="Copy URL" copiedLabel="Copied" testId="query-bar-copy-url" />
+        <button
+          type="button"
+          onClick={onSendRequest}
+          disabled={isLoading || !url.trim()}
+          className="send font-semibold text-white disabled:cursor-not-allowed flex items-center gap-2 transition-all"
+          data-testid="query-bar-send"
+        >
+          {isLoading && (
+            <div className="w-2.5 h-2.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          )}
+          {isLoading ? 'Sending' : 'Send'}
+        </button>
+      </div>
     </StyledWrapper>
   );
 };
