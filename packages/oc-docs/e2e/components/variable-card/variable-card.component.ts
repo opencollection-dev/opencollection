@@ -1,5 +1,5 @@
-import type { Locator } from '@playwright/test';
-import { BaseComponent } from './base.component';
+import type { Locator, Page } from '@playwright/test';
+import { BaseComponent } from '../base.component';
 
 export class VariableCardComponent extends BaseComponent {
   readonly card = this.page.getByTestId('variable-info-card');
@@ -10,16 +10,21 @@ export class VariableCardComponent extends BaseComponent {
   readonly revealToggle = this.card.getByTestId('variable-info-card-reveal');
   readonly note = this.card.getByTestId('variable-info-card-note');
   readonly warning = this.card.getByTestId('variable-info-card-warning');
+  readonly editors = this.card.locator('textarea, input, .CodeMirror');
 
-  token(name: string, within?: Locator): Locator {
-    return (within ?? this.page).getByTestId(`variable-token-${name}`).first();
+  constructor(page: Page, private readonly tokenScope: Page | Locator = page) {
+    super(page);
   }
 
-  async hoverToken(name: string, within?: Locator): Promise<void> {
-    await this.token(name, within).hover();
+  token(name: string): Locator {
+    return this.tokenScope.getByTestId(`variable-token-${name}`).first();
   }
 
-  async pinToken(name: string, within?: Locator): Promise<void> {
-    await this.token(name, within).click();
+  async hoverToken(name: string): Promise<void> {
+    await this.token(name).hover();
+  }
+
+  async pinToken(name: string): Promise<void> {
+    await this.token(name).click();
   }
 }
