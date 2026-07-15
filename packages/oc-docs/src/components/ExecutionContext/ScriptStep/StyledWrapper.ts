@@ -1,20 +1,6 @@
 import styled from '@emotion/styled';
 
 export const StyledWrapper = styled.div`
-  .script-line {
-    display: grid;
-    grid-template-columns: 1.25rem 0.875rem minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-  }
-
-  .step-num {
-    justify-self: end;
-    font-family: var(--font-mono);
-    font-size: 0.71875rem;
-    color: var(--text-muted);
-  }
 
   .script-step-head {
     cursor: pointer;
@@ -26,7 +12,7 @@ export const StyledWrapper = styled.div`
   }
 
   .script-chevron {
-    color: var(--text-muted);
+    color: var(--oc-colors-text-subtext0);
   }
 
   .script-step-main {
@@ -102,10 +88,6 @@ export const StyledWrapper = styled.div`
   }
 
   @container docs (max-width: 600px) {
-    .script-line {
-      gap: 0.5rem;
-      padding: 0.625rem 0.75rem;
-    }
     .script-step-label {
       white-space: normal;
       overflow-wrap: anywhere;

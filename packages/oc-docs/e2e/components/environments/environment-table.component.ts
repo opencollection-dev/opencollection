@@ -37,14 +37,6 @@ export class EnvironmentTableComponent extends BaseComponent {
     return this.secretVariableRow(name).getByTestId('table-cell-value');
   }
 
-  secretMaskOf(name: string): Locator {
-    return this.secretValueOf(name).getByTestId('environment-secret-value-text');
-  }
-
-  secretIconOf(name: string): Locator {
-    return this.secretValueOf(name).getByTestId('environment-secret-value-icon');
-  }
-
   secretRevealToggleOf(name: string): Locator {
     return this.secretValueOf(name).getByTestId('environment-secret-value-toggle');
   }

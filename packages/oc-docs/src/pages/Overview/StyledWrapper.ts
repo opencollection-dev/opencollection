@@ -23,8 +23,8 @@ export const StyledWrapper = styled.div`
 
   .overview-body {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 4.5rem;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
     margin-top: 2rem;
     padding-top: 2rem;
     border-top: 1px solid var(--border-color);
@@ -34,13 +34,6 @@ export const StyledWrapper = styled.div`
     gap: 1.5rem;
     display: flex;
     flex-direction: column;
-  }
-
-  @container docs (max-width: 1200px) {
-    .overview-body {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 2rem;
-    }
   }
 
   .overview-markdown {

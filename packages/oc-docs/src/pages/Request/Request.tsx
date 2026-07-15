@@ -41,7 +41,7 @@ import { Breadcrumb, type BreadcrumbSegment } from '../../ui/Breadcrumb/Breadcru
 import { EmptyState } from '../../ui/EmptyState/EmptyState';
 import { FileIcon, RefreshIcon } from '../../assets/icons';
 import { RequestUrlBar } from '../../components/Request/RequestUrlBar/RequestUrlBar';
-import { RequestDescription } from '../../components/Request/RequestDescription/RequestDescription';
+import { ViewMore } from '../../components/ViewMore/ViewMore';
 import { AuthDetails } from '../../components/AuthDetails/AuthDetails';
 import { RequestParams } from '../../components/Request/RequestParams/RequestParams';
 import { RequestBody } from '../../components/Request/RequestBody/RequestBody';
@@ -141,7 +141,11 @@ const RequestContent: React.FC<RequestContentProps> = ({
 
         <RequestUrlBar method={method} url={url} onTry={onTryClick} style={{ marginTop: '0.9375rem' }} />
 
-        {descHtml && <RequestDescription html={descHtml} style={{ marginTop: '0.9375rem' }} />}
+        {descHtml && (
+          <ViewMore collapsedHeight="4.5rem" style={{ marginTop: '0.9375rem' }} testId="request-description">
+            <div className="markdown-documentation" dangerouslySetInnerHTML={{ __html: descHtml }} />
+          </ViewMore>
+        )}
 
         <div className="request-columns">
           <div className="request-col-left">
