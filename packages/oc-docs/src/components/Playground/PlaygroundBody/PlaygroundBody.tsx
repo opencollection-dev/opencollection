@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import type { HttpRequest, HttpRequestExample } from '@opencollection/types/requests/http';
+import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { Folder } from '@opencollection/types/collection/item';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import {
