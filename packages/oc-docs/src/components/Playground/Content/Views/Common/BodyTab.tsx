@@ -1,7 +1,7 @@
 import React from 'react';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import CodeEditor from '../../../../../ui/CodeEditor/CodeEditor';
-import KeyValueTable, { type KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
+import KeyValueTable, { type KeyValueRow } from '../../../../../components/KeyValueTable/KeyValueTable';
 
 interface BodyTabProps {
   body: any;
@@ -23,12 +23,30 @@ export const BodyTab: React.FC<BodyTabProps> = ({
         disabled: !f.enabled
       }))
     };
-    onItemChange({ 
-      ...item, 
-      http: { 
-        ...item.http, 
-        body: updatedBody 
-      } 
+    onItemChange({
+      ...item,
+      http: {
+        ...item.http,
+        body: updatedBody
+      }
+    });
+  };
+
+  const handleMultipartChange = (rows: KeyValueRow[]) => {
+    // Rebuild the text fields from the table; preserve any file fields untouched.
+    const textEntries = rows.map(r => ({
+      name: r.name,
+      value: r.value,
+      type: 'text' as const,
+      disabled: !r.enabled
+    }));
+    const fileEntries = ((body?.data as any[]) || []).filter(e => e?.type === 'file');
+    onItemChange({
+      ...item,
+      http: {
+        ...item.http,
+        body: { type: 'multipart-form' as const, data: [...textEntries, ...fileEntries] }
+      }
     });
   };
 
@@ -40,6 +58,7 @@ export const BodyTab: React.FC<BodyTabProps> = ({
             Body Type:
           </span>
           <select
+            data-testid="body-type-select"
             value={
               !body ? 'none' :
               'type' in body ? body.type :
@@ -48,27 +67,35 @@ export const BodyTab: React.FC<BodyTabProps> = ({
             onChange={(e) => {
               const bodyType = e.target.value;
               if (bodyType === 'none') {
-                onItemChange({ 
-                  ...item, 
-                  http: { 
-                    ...item.http, 
-                    body: undefined 
-                  } 
+                onItemChange({
+                  ...item,
+                  http: {
+                    ...item.http,
+                    body: undefined
+                  }
                 });
               } else if (['json', 'text', 'xml', 'sparql'].includes(bodyType)) {
-                onItemChange({ 
-                  ...item, 
-                  http: { 
-                    ...item.http, 
-                    body: { type: bodyType as any, data: '' } 
+                onItemChange({
+                  ...item,
+                  http: {
+                    ...item.http,
+                    body: { type: bodyType as any, data: '' }
                   }
                 });
               } else if (bodyType === 'form-urlencoded') {
-                onItemChange({ 
-                  ...item, 
-                  http: { 
-                    ...item.http, 
-                    body: [] as any 
+                onItemChange({
+                  ...item,
+                  http: {
+                    ...item.http,
+                    body: [] as any
+                  }
+                });
+              } else if (bodyType === 'multipart-form' || bodyType === 'file') {
+                onItemChange({
+                  ...item,
+                  http: {
+                    ...item.http,
+                    body: { type: bodyType, data: [] } as any
                   }
                 });
               }
@@ -85,13 +112,15 @@ export const BodyTab: React.FC<BodyTabProps> = ({
             <option value="text">Text</option>
             <option value="xml">XML</option>
             <option value="form-urlencoded">Form URL Encoded</option>
+            <option value="multipart-form">Multipart Form</option>
+            <option value="file">File / Binary</option>
             <option value='sparql'>SPARQL</option>
           </select>
         </div>
       </div>
-      
+
       {!body ? (
-        <div className="text-center py-6 border-2 border-dashed rounded" style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}>
+        <div data-testid="body-empty" className="text-center py-6 border-2 border-dashed rounded" style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}>
           No body content. Select a body type to add content.
         </div>
       ) : 'data' in body && typeof body.data === 'string' ? (
@@ -143,6 +172,61 @@ export const BodyTab: React.FC<BodyTabProps> = ({
                 valuePlaceholder="Value"
                 showEnabled={true}
               />
+            </div>
+          );
+        })()
+        ) : body?.type === 'multipart-form' && Array.isArray(body?.data) ? (
+        (() => {
+          const entries = body.data as any[];
+          const textRows: KeyValueRow[] = entries
+            .filter(e => e?.type !== 'file')
+            .map((e, index) => ({
+              id: `mp-${index}`,
+              name: e.name || '',
+              value: e.value || '',
+              enabled: e.disabled !== true
+            }));
+          const fileEntries = entries.filter(e => e?.type === 'file');
+
+          return (
+            <div data-testid="body-multipart">
+              <div className="mb-4">
+                <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+                  Multipart Form
+                </span>
+              </div>
+              <KeyValueTable
+                data={textRows}
+                onChange={handleMultipartChange}
+                keyPlaceholder="Key"
+                valuePlaceholder="Value"
+                showEnabled={true}
+              />
+              {fileEntries.length > 0 && (
+                <div className="mt-4 text-sm" style={{ color: 'var(--text-secondary)' }}>
+                  <div className="mb-1 font-medium">File fields (shown for reference — not sent from the browser)</div>
+                  <ul className="list-disc pl-5">
+                    {fileEntries.map((e, index) => (
+                      <li key={index}>
+                        {e.name}: {Array.isArray(e.value) ? e.value.join(', ') : e.value || '(no path)'}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          );
+        })()
+        ) : body?.type === 'file' && Array.isArray(body?.data) ? (
+        (() => {
+          const variants = body.data as any[];
+          const selected = variants.find(v => v?.selected) || variants[0];
+
+          return (
+            <div data-testid="body-file" className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+              <div className="mb-1 font-medium" style={{ color: 'var(--text-primary)' }}>File / Binary</div>
+              <div>Path: {selected?.filePath || '(no file selected)'}</div>
+              <div className="mt-1">The file isn&apos;t read in the browser preview, so the request runs without the file body.</div>
             </div>
           );
         })()

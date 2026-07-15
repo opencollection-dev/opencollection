@@ -31,7 +31,7 @@ const ResponseBodyTab: React.FC<ResponseBodyTabProps> = ({ response }) => {
   }
   
   return (
-    <div className="h-full py-4" style={{ display: 'flex', flexDirection: 'column' }}>
+    <div className="h-full py-4">
       <CodeEditor
         value={responseText}
         onChange={() => {}} // Read-only

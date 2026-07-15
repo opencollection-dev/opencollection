@@ -2,11 +2,13 @@ import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import type { OpenCollection } from '@opencollection/types';
 import type { Environment } from '@opencollection/types/config/environments';
 import type { Variable } from '@opencollection/types/common/variables';
-import KeyValueTable, { KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
+import KeyValueTable, { KeyValueRow } from '../../../../../components/KeyValueTable/KeyValueTable';
 import { SidebarContainer, SidebarItems, SidebarItem } from '../../../EnvListStyles/StyledWrapper';
 import { useAppDispatch } from '../../../../../store/hooks';
 import { updateCollectionEnvironments } from '@slices/playground';
-import { getDescription } from '../../../../../utils/request';
+import { getDescription, getVariableTypeLabel } from '../../../../../utils/request';
+import { unwrapVariableValue } from '../../../../../utils/variableResolution';
+import { dataTypeColumn } from '../../../../../constants/dataTypeColumn';
 
 interface EnvironmentsViewProps {
   collection: OpenCollection | null;
@@ -28,32 +30,13 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection }) => {
   }, [environments, selectedEnvironmentIndex]);
   const selectedDescription = getDescription(selectedEnvironment);
 
-  const variableToRow = useCallback((variable: Variable, index: number): KeyValueRow => {
-    let value = '';
-    if (variable.value) {
-      if (typeof variable.value === 'string') {
-        value = variable.value;
-      } else if (typeof variable.value === 'object' && 'type' in variable.value) {
-        value = variable.value.data || '';
-      } else if (Array.isArray(variable.value)) {
-        const selected = variable.value.find(v => v.selected) || variable.value[0];
-        if (selected) {
-          if (typeof selected.value === 'string') {
-            value = selected.value;
-          } else if (typeof selected.value === 'object' && 'type' in selected.value) {
-            value = selected.value.data || '';
-          }
-        }
-      }
-    }
-    
-    return {
-      id: `var-${index}`,
-      name: variable.name || '',
-      value: value,
-      enabled: !variable.disabled
-    };
-  }, []);
+  const variableToRow = useCallback((variable: Variable, index: number): KeyValueRow => ({
+    id: `var-${index}`,
+    name: variable.name || '',
+    value: unwrapVariableValue(variable.value),
+    dataType: getVariableTypeLabel(variable),
+    enabled: !variable.disabled
+  }), []);
 
   const rowToVariable = useCallback((row: KeyValueRow): Variable => {
     return {
@@ -205,6 +188,7 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection }) => {
             
             <div style={{ flex: 1, minHeight: 0 }}>
               <KeyValueTable
+                key={selectedEnvironmentIndex}
                 data={variablesAsRows}
                 onChange={handleVariablesChange}
                 keyPlaceholder="Variable Name"
@@ -212,6 +196,7 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection }) => {
                 showEnabled={true}
                 disableNewRow={true}
                 disableDelete={true}
+                additionalColumns={[dataTypeColumn]}
               />
             </div>
           </div>

@@ -9,6 +9,7 @@ import React, {
   type ReactNode
 } from 'react';
 import { Portal } from '../Portal/Portal';
+import { GAP, VIEWPORT_MARGIN } from '../../constants/ui';
 import { StyledWrapper } from './StyledWrapper';
 
 interface TooltipProps {
@@ -25,9 +26,6 @@ interface Position {
   top: number;
   left: number;
 }
-
-const GAP = 8; // space between the anchor and the bubble
-const MARGIN = 8; // keep the bubble this far from the viewport edges
 
 const isEmptyContent = (content: ReactNode): boolean =>
   content === undefined ||
@@ -78,11 +76,11 @@ export const Tooltip: React.FC<TooltipProps> = ({
     if (bubbleHeight > roomAbove && (roomBelow >= bubbleHeight || roomBelow >= roomAbove)) {
       top = rect.bottom + GAP;
     }
-    top = Math.min(Math.max(top, MARGIN), Math.max(MARGIN, viewportHeight - MARGIN - bubbleHeight));
+    top = Math.min(Math.max(top, VIEWPORT_MARGIN), Math.max(VIEWPORT_MARGIN, viewportHeight - VIEWPORT_MARGIN - bubbleHeight));
 
     let left = rect.left + rect.width / 2 - bubbleWidth / 2;
-    const maxLeft = Math.max(MARGIN, window.innerWidth - MARGIN - bubbleWidth);
-    left = Math.min(Math.max(left, MARGIN), maxLeft);
+    const maxLeft = Math.max(VIEWPORT_MARGIN, window.innerWidth - VIEWPORT_MARGIN - bubbleWidth);
+    left = Math.min(Math.max(left, VIEWPORT_MARGIN), maxLeft);
 
     setPos({ top, left });
   }, []);

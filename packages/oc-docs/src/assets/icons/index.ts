@@ -1,4 +1,6 @@
 export * from './SearchIcon';
+export * from './WarningIcon';
+export * from './CaretIcon';
 export * from './CloseIcon';
 export * from './FolderIcon';
 export * from './ChevronDownIcon';

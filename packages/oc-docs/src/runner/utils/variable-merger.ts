@@ -3,6 +3,16 @@ import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { Variable } from '@opencollection/types/common/variables';
 import { getTreePathFromCollectionToItem } from './tree-utils';
 import { isFolder, getRequestVariables } from '../../utils/schemaHelpers';
+import { unwrapVariableTyped } from '../../utils/variableResolution';
+import { parseValueByDataType } from '../../utils/variableDataType';
+
+/** Coerce a variable's (possibly typed `{type,data}`) value to its send-time string form. */
+const resolveVarString = (rawValue: Variable['value']): string => {
+  const { value, dataType } = unwrapVariableTyped(rawValue);
+  const coerced = parseValueByDataType(value, dataType);
+  if (coerced === null || coerced === undefined) return '';
+  return typeof coerced === 'object' ? JSON.stringify(coerced) : String(coerced);
+};
 
 /**
  * Merge variables from collection and folder hierarchy into the request
@@ -23,7 +33,7 @@ export const getCollectionFolderRequestVariables = (collection: OpenCollection, 
   collectionVars.forEach((variable: any) => {
     if (!variable.disabled) {
       variables.set(variable.name, variable);
-      const value = typeof variable.value === 'string' ? variable.value : String(variable.value || '');
+      const value = resolveVarString(variable.value);
       collectionVariables[variable.name] = value;
     }
   });
@@ -35,7 +45,7 @@ export const getCollectionFolderRequestVariables = (collection: OpenCollection, 
       folderVars.forEach((variable: any) => {
         if (!variable.disabled) {
           variables.set(variable.name, variable);
-          const value = typeof variable.value === 'string' ? variable.value : String(variable.value || '');
+          const value = resolveVarString(variable.value);
           folderVariables[variable.name] = value;
         }
       });
@@ -48,7 +58,7 @@ export const getCollectionFolderRequestVariables = (collection: OpenCollection, 
   // Process request-level variables
   requestVars.forEach((variable: any) => {
     if (!variable.disabled) {
-      const value = typeof variable.value === 'string' ? variable.value : String(variable.value || '');
+      const value = resolveVarString(variable.value);
       requestVariablesResult[variable.name] = value;
     }
   });

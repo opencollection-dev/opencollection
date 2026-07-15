@@ -31,6 +31,23 @@ test.describe('Environments page', () => {
     });
   });
 
+  test('labels number, boolean and object variables with their data type', async ({ environmentsPage }) => {
+    const { table } = environmentsPage;
+
+    await test.step('a number variable shows its value and a Number data type', async () => {
+      await expect(table.valueOf('retryCount')).toContainText('3');
+      await expect(table.dataTypeOf('retryCount')).toHaveText('Number');
+    });
+
+    await test.step('a boolean variable shows a Boolean data type', async () => {
+      await expect(table.dataTypeOf('featureEnabled')).toHaveText('Boolean');
+    });
+
+    await test.step('an object variable shows an Object data type', async () => {
+      await expect(table.dataTypeOf('defaultUser')).toHaveText('Object');
+    });
+  });
+
   test('shows a secret variable as a masked, display-only value (never empty, no reveal toggle)', async ({
     environmentsPage
   }) => {

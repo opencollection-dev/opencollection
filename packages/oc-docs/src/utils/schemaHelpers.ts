@@ -11,6 +11,7 @@
  * Scripts are now an array of { type, code } instead of { preRequest, postResponse, tests, hooks }
  */
 
+import type { OpenCollection } from '@opencollection/types';
 import type { Item as OpenCollectionItem, Folder, ScriptFile } from '@opencollection/types/collection/item';
 import type { HttpRequest, HttpRequestHeader, HttpRequestExample } from '@opencollection/types/requests/http';
 import type { GraphQLRequest } from '@opencollection/types/requests/graphql';
@@ -472,7 +473,7 @@ export const countEnabled = <T extends { disabled?: boolean }>(items: T[] | unde
  * Get docs from an item (at root level in new schema)
  * Handles both string format and object format { content, type }
  */
-export const getItemDocs = (item: OpenCollectionItem | null | undefined): string | undefined => {
+export const getItemDocs = (item: OpenCollectionItem | OpenCollection | null | undefined): string | undefined => {
   if (!item) return undefined;
 
   if ('docs' in item) {

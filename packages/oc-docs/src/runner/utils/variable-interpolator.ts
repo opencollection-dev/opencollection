@@ -1,6 +1,6 @@
 import type { HttpRequest, HttpRequestHeader } from '@opencollection/types/requests/http';
 import { isPlainObject } from 'lodash-es';
-import { getRequestUrl, getHttpHeaders, getHttpBody, getHttpParams, getRequestAuth } from '../../utils/schemaHelpers';
+import { getRequestUrl, getHttpMethod, getHttpHeaders, getHttpBody, getHttpParams, getRequestAuth } from '../../utils/schemaHelpers';
 import { templateVariableGlobalRegex } from '../../utils/common';
 import { mockDataFunctions } from './faker-functions';
 
@@ -165,9 +165,10 @@ export const interpolateVars = (
     return interpolate(str, combinedVariables, options);
   };
 
-  // Ensure http block exists for mutations
+  // Ensure http block exists for mutations, carrying the real method/url so a
+  // flat-shape request's method isn't lost to a hardcoded default.
   if (!interpolatedRequest.http) {
-    interpolatedRequest.http = { method: 'GET', url: '' };
+    interpolatedRequest.http = { method: getHttpMethod(interpolatedRequest), url: getRequestUrl(interpolatedRequest) };
   }
 
   // Ensure runtime block exists for mutations
