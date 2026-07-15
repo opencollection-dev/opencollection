@@ -121,7 +121,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
             onNavigate={goTo}
             onToggleFolder={(uuid) => dispatch(toggleItem(uuid))}
             activeExample={activeExample}
-            onExampleClick={(requestUuid, index) => goToExample(requestUuid, index)}
+            onExampleClick={goToExample}
           />
         ) : null}
       </div>
