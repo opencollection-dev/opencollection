@@ -1,22 +1,30 @@
 import { test, expect } from '../../playwright';
 
 test.describe('Scripts editor autocomplete', () => {
-  test('offers Bruno API completions in the pre-request script editor', async ({ page, playground }) => {
+  test.beforeEach(async ({ page, playground }) => {
     await page.goto('/#/?pg=1&dock=bottom');
-    await playground.treeItems.filter({ hasText: 'get users' }).first().click();
+    await playground.openSidebarItem('get users');
     await expect(page).toHaveURL(/pgReq=/);
+    await playground.selectTab('scripts');
+  });
 
-    await page.getByTestId('tabs-tab-scripts').click();
-
-    const editor = page.getByTestId('scripts-editor-pre-request');
-    // Monaco is loaded lazily (from CDN) on first mount — allow extra time.
-    await expect(editor.locator('.monaco-editor')).toBeVisible({ timeout: 20000 });
-
-    await editor.locator('.view-lines').click();
+  test('offers req/bru completions in the pre-request script editor', async ({ page, playground }) => {
+    const editor = playground.preRequestScriptEditor;
+    await editor.focus();
     await page.keyboard.type('bru.getEnvVar');
 
-    const suggest = page.locator('.suggest-widget.visible');
-    await expect(suggest).toBeVisible();
-    await expect(suggest).toContainText('getEnvVar(key)');
+    await expect(editor.suggestions).toBeVisible();
+    await expect(editor.suggestions).toContainText('getEnvVar(key)');
+  });
+
+  test('offers res completions in the post-response script editor', async ({ page, playground }) => {
+    await playground.selectScriptTab('post-response');
+
+    const editor = playground.postResponseScriptEditor;
+    await editor.focus();
+    await page.keyboard.type('res.getBody');
+
+    await expect(editor.suggestions).toBeVisible();
+    await expect(editor.suggestions).toContainText('getBody()');
   });
 });

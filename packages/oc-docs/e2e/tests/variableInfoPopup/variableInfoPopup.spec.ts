@@ -96,7 +96,7 @@ test.describe('Variable hover card', () => {
   test('is read-only — no editor inside the card', async ({ variableCard }) => {
     await variableCard.pinToken('host');
     await expect(variableCard.card).toBeVisible();
-    await expect(variableCard.card.locator('textarea, input, .CodeMirror')).toHaveCount(0);
+    await expect(variableCard.editors).toHaveCount(0);
   });
 
   test('stays open while hovering the card, then closes after the pointer leaves', async ({ page, variableCard }) => {

@@ -1,14 +1,15 @@
 import { test, expect } from '../../playwright';
 
 test.describe('KeyValueTable — tooltips & mobile scroll', () => {
-  test.beforeEach(async ({ page, playground, keyValueTable }) => {
+  test.beforeEach(async ({ page, playground }) => {
     await page.goto('/#/?pg=1&dock=bottom');
-    await playground.treeItems.filter({ hasText: 'get users' }).first().click();
+    await playground.openSidebarItem('get users');
     await playground.selectTab('headers');
-    await expect(keyValueTable.root).toBeVisible();
+    await expect(playground.keyValueTable.root).toBeVisible();
   });
 
-  test('a typed cell carries a native title tooltip with its full value', async ({ page, keyValueTable }) => {
+  test('a typed cell carries a native title tooltip with its full value', async ({ page, playground }) => {
+    const { keyValueTable } = playground;
     const nameInput = keyValueTable.nameInputs.first();
     await nameInput.click();
     await page.keyboard.type('-A-Very-Long-Custom-Header-Name-That-Truncates');
@@ -18,7 +19,8 @@ test.describe('KeyValueTable — tooltips & mobile scroll', () => {
     await expect(nameInput).toHaveAttribute('title', value);
   });
 
-  test('the table has a min-width and a horizontally-scrollable container', async ({ page, keyValueTable }) => {
+  test('the table has a min-width and a horizontally-scrollable container', async ({ page, playground }) => {
+    const { keyValueTable } = playground;
     await expect(keyValueTable.container).toHaveCSS('overflow-x', 'auto');
     await expect(keyValueTable.table).toHaveCSS('min-width', '448px'); // 28rem @16px
 
@@ -28,7 +30,8 @@ test.describe('KeyValueTable — tooltips & mobile scroll', () => {
     expect(overflows).toBe(true);
   });
 
-  test('offers {{variable}} autocomplete in the value cell but not the name cell', async ({ page, keyValueTable }) => {
+  test('offers {{variable}} autocomplete in the value cell but not the name cell', async ({ page, playground }) => {
+    const { keyValueTable } = playground;
     // Value cell: a `{{` reference surfaces the collection's variables.
     await keyValueTable.valueInputs.last().click();
     await page.keyboard.type('{{coll');
@@ -45,7 +48,8 @@ test.describe('KeyValueTable — tooltips & mobile scroll', () => {
     await expect(keyValueTable.autocomplete).toHaveCount(0);
   });
 
-  test('flags a header name that contains a space with an inline error', async ({ page, keyValueTable }) => {
+  test('flags a header name that contains a space with an inline error', async ({ page, playground }) => {
+    const { keyValueTable } = playground;
     await keyValueTable.nameInputs.last().click();
     await page.keyboard.type('Bad Name');
     const error = keyValueTable.cellErrors.first();
