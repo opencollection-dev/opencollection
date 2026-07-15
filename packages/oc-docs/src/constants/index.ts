@@ -13,7 +13,8 @@ export {
   type BodyType,
   CONTENT_TYPES,
   type ContentType,
-  PROTOCOL_BADGE_LABELS
+  PROTOCOL_BADGE_LABELS,
+  REQUEST_TYPE_LABELS
 } from './request';
 
 export { TEMPLATE_VARIABLE_BODY_PATTERN, TEMPLATE_VARIABLE_SOURCE_PATTERN } from './regex';

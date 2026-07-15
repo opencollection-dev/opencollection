@@ -32,6 +32,6 @@ test.describe('Request page — unsupported request types', () => {
     await unsupportedRequestPage.open(['Realtime', 'Live Updates']);
 
     await expect(unsupportedRequestPage.docs).toBeVisible();
-    await expect(unsupportedRequestPage.docs).toContainText('Lorem ipsum');
+    await expect(unsupportedRequestPage.docs).toContainText('real-time order updates');
   });
 });

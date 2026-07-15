@@ -118,8 +118,10 @@ items:
     type: "folder"
     items:
       - name: "Live Updates"
+        description: "Streams live order updates over a WebSocket connection."
         type: "websocket"
         url: "{{host}}/ws/updates"
+        docs: "Connect to receive real-time order updates. Messages are JSON-encoded and pushed as events occur."
       - name: "GraphQL API"
         type: "graphql"
         url: "{{host}}/graphql"

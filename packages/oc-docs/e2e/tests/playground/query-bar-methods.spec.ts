@@ -9,7 +9,7 @@ const NON_HTTP_METHODS = ['GRAPHQL', 'GQL', 'GRPC', 'WEBSOCKET', 'WS'];
 test.describe('Playground — query bar method dropdown', () => {
   test.use({ viewport: DESKTOP });
 
-  test('offers only HTTP methods, not non-HTTP protocols (BRU-3833)', async ({ page, playground }) => {
+  test('offers only HTTP methods, not non-HTTP protocols', async ({ page, playground }) => {
     await page.goto(openAt('bottom'));
     await playground.openTreeItem(['get users']);
 

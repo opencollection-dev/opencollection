@@ -8,7 +8,7 @@ describe('availableMethods', () => {
     expect(availableMethods).toEqual(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS']);
   });
 
-  // BRU-3833: non-HTTP protocols are not offered (the dropdown maps over this list).
+  // non-HTTP protocols are not offered (the dropdown maps over this list).
   it.each(['GRAPHQL', 'GQL', 'GRPC', 'WEBSOCKET', 'WS'])('excludes the non-HTTP protocol %s', (protocol) => {
     expect(availableMethods).not.toContain(protocol);
   });

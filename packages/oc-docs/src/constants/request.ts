@@ -27,8 +27,23 @@ export type ContentType = (typeof CONTENT_TYPES)[keyof typeof CONTENT_TYPES];
 
 /** Short badge labels for non-HTTP protocols, keyed by uppercased item type
  *  (GraphQL, gRPC, WebSocket). HTTP requests use their method as the badge instead. */
-export const PROTOCOL_BADGE_LABELS: Record<string, string> = {
+export const PROTOCOL_BADGE_LABELS: Record<'GRAPHQL' | 'GRPC' | 'WEBSOCKET', string> = {
   GRAPHQL: 'GQL',
   GRPC: 'GRPC',
   WEBSOCKET: 'WS'
+};
+
+export const REQUEST_TYPE_LABELS: Record<string, { shortName: string; fullName: string }> = {
+  websocket: {
+    shortName: PROTOCOL_BADGE_LABELS['WEBSOCKET'],
+    fullName: 'Websocket'
+  },
+  graphql: {
+    shortName: PROTOCOL_BADGE_LABELS['GRAPHQL'],
+    fullName: 'GraphQL'
+  },
+  grpc: {
+    shortName: PROTOCOL_BADGE_LABELS['GRPC'],
+    fullName: 'gRPC'
+  }
 };

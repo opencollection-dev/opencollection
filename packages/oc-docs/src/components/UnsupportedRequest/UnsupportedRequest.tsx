@@ -10,21 +10,7 @@ import Description from '../Description/Description';
 import RequestUrlBar from '../Request/RequestUrlBar/RequestUrlBar';
 import RequestDescription from '../Request/RequestDescription/RequestDescription';
 import BreadcrumbWrapper, { type BreadcrumbWrapperProps } from './BreadcrumbsWrapper/BreadcrumbsWrapper';
-
-const REQUEST_TYPE_LABELS: Record<string, { shortName: string; fullName: string }> = {
-  websocket: {
-    shortName: 'WS',
-    fullName: 'Websocket'
-  },
-  graphql: {
-    shortName: 'GQL',
-    fullName: 'GraphQL'
-  },
-  grpc: {
-    shortName: 'GRPC',
-    fullName: 'gRPC'
-  }
-};
+import { REQUEST_TYPE_LABELS } from '../../constants';
 
 function getRequestTypeLabel(label: string | undefined) {
   const fallback = {
@@ -35,8 +21,6 @@ function getRequestTypeLabel(label: string | undefined) {
   if (label == null) return fallback;
   return REQUEST_TYPE_LABELS[label] ?? fallback;
 }
-
-
 
 interface UnsupportedEmptyStateProps {
   icon: React.ReactNode;
@@ -70,7 +54,6 @@ export const UnsupportedRequest: React.FC<UnsupportedRequestProps> = ({
   testId = 'unsupported-request'
 }) => {
   const { icon, heading, subheadingSuffix } = emptyStateProps;
-  console.log({item})
   const { shortName, fullName } = useMemo(() => getRequestTypeLabel(getItemType(item)), [item]);
   const subheading = useMemo(() => [fullName, subheadingSuffix.trim()].join(' '), [fullName, subheadingSuffix]);
 
@@ -98,6 +81,5 @@ export const UnsupportedRequest: React.FC<UnsupportedRequestProps> = ({
     </div>
   );
 };
-
 
 export default UnsupportedRequest;
