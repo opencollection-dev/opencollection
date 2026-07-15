@@ -57,7 +57,7 @@ describe('computeAutoReveal', () => {
     ).toEqual({ claim: false, uuids: [] });
   });
 
-  it('expands the active folder itself (plus none above it) when a folder is active', () => {
+  it('opens the folder itself when a folder is the active item (here top-level, so just itself)', () => {
     expect(computeAutoReveal(null, 'billing', loadedModel)).toEqual({
       claim: true,
       uuids: ['folder-billing'],
