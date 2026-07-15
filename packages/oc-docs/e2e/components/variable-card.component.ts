@@ -11,15 +11,15 @@ export class VariableCardComponent extends BaseComponent {
   readonly note = this.card.getByTestId('variable-info-card-note');
   readonly warning = this.card.getByTestId('variable-info-card-warning');
 
-  token(name: string): Locator {
-    return this.page.getByTestId(`variable-token-${name}`).first();
+  token(name: string, within?: Locator): Locator {
+    return (within ?? this.page).getByTestId(`variable-token-${name}`).first();
   }
 
-  async hoverToken(name: string): Promise<void> {
-    await this.token(name).hover();
+  async hoverToken(name: string, within?: Locator): Promise<void> {
+    await this.token(name, within).hover();
   }
 
-  async pinToken(name: string): Promise<void> {
-    await this.token(name).click();
+  async pinToken(name: string, within?: Locator): Promise<void> {
+    await this.token(name, within).click();
   }
 }

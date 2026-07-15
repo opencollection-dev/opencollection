@@ -1,16 +1,18 @@
 import { test, expect } from '../../playwright';
+import { SecretValueComponent } from '../../components/secret-value.component';
 
 const REQUEST = '/?fixture=vars#/customers/variables-demo';
 
 test.describe('Variable hover card', () => {
-  test.beforeEach(async ({ page, envSwitcher }) => {
+  test.beforeEach(async ({ page, requestPage, envSwitcher }) => {
     await page.goto(REQUEST);
-    await expect(page.getByTestId('request-page')).toBeVisible();
+    await expect(requestPage.root).toBeVisible();
     await envSwitcher.selectEnvironment('Dev');
   });
 
   test('resolves an environment variable with its scope badge and value', async ({ variableCard }) => {
     await variableCard.hoverToken('host');
+
     await expect(variableCard.card).toBeVisible();
     await expect(variableCard.name).toHaveText('host');
     await expect(variableCard.scopeBadge).toHaveText('Environment');
@@ -24,12 +26,14 @@ test.describe('Variable hover card', () => {
 
     await page.mouse.move(0, 0);
     await expect(variableCard.card).toHaveCount(0);
+
     await variableCard.hoverToken('folderScope');
     await expect(variableCard.scopeBadge).toHaveText('Folder');
     await expect(variableCard.value).toHaveText('from-folder');
 
     await page.mouse.move(0, 0);
     await expect(variableCard.card).toHaveCount(0);
+
     await variableCard.hoverToken('userId');
     await expect(variableCard.scopeBadge).toHaveText('Request');
     await expect(variableCard.value).toHaveText('req-42');
@@ -37,28 +41,30 @@ test.describe('Variable hover card', () => {
 
   test('resolves a value that references other variables', async ({ variableCard }) => {
     await variableCard.hoverToken('endpoint');
+
     await expect(variableCard.card).toBeVisible();
     await expect(variableCard.value).toHaveText('https://api.dev.example.com/v1');
   });
 
   test('shows the card for a variable used in an example request URL', async ({ variableCard }) => {
     await variableCard.hoverToken('exampleOnly');
+    
     await expect(variableCard.card).toBeVisible();
     await expect(variableCard.scopeBadge).toHaveText('Collection');
     await expect(variableCard.value).toHaveText('example-value');
   });
 
-  test('shows the card for a variable used in the request body', async ({ page, variableCard }) => {
-    const body = page.getByTestId('request-section-body');
-    await body.getByTestId('variable-token-host').hover();
+  test('shows the card for a variable used in the request body', async ({ requestPage, variableCard }) => {
+    await variableCard.hoverToken('host', requestPage.section('body'));
+
     await expect(variableCard.card).toBeVisible();
     await expect(variableCard.scopeBadge).toHaveText('Environment');
     await expect(variableCard.value).toHaveText('https://api.dev.example.com');
   });
 
-  test('shows a (Secret) placeholder for a secret referenced in the request body', async ({ page, variableCard }) => {
-    const body = page.getByTestId('request-section-body');
-    await body.getByTestId('variable-token-bearer_token').hover();
+  test('shows a (Secret) placeholder for a secret referenced in the request body', async ({ requestPage, variableCard }) => {
+    await variableCard.hoverToken('bearer_token', requestPage.section('body'));
+
     await expect(variableCard.card).toBeVisible();
     await expect(variableCard.scopeBadge).toHaveText('Environment');
     await expect(variableCard.value).toHaveText('(Secret)');
@@ -67,6 +73,7 @@ test.describe('Variable hover card', () => {
 
   test('shows an (empty) placeholder with no copy for a defined variable that has no value', async ({ variableCard }) => {
     await variableCard.hoverToken('emptyValue');
+
     await expect(variableCard.card).toBeVisible();
     await expect(variableCard.scopeBadge).toHaveText('Environment');
     await expect(variableCard.value).toHaveText('(empty)');
@@ -75,6 +82,7 @@ test.describe('Variable hover card', () => {
 
   test('pretty-prints an object-typed value', async ({ variableCard }) => {
     await variableCard.hoverToken('profile');
+
     await expect(variableCard.card).toBeVisible();
     await expect(variableCard.value).toContainText('NYC');
     await expect(variableCard.value).toContainText('zip');
@@ -82,18 +90,22 @@ test.describe('Variable hover card', () => {
 
   test('marks process.env and dynamic references read-only, without a value', async ({ variableCard, page }) => {
     await variableCard.hoverToken('process.env.HOME');
+
     await expect(variableCard.scopeBadge).toHaveText('Process Env');
     await expect(variableCard.note).toHaveText('read-only');
 
     await page.mouse.move(0, 0);
     await expect(variableCard.card).toHaveCount(0);
+
     await variableCard.hoverToken('$randomInt');
+
     await expect(variableCard.scopeBadge).toHaveText('Dynamic');
     await expect(variableCard.note).toContainText('random value');
   });
 
   test('shows a (Secret) placeholder with no reveal or copy, never exposing the value', async ({ variableCard }) => {
     await variableCard.pinToken('bearer_token');
+
     await expect(variableCard.card).toBeVisible();
     await expect(variableCard.scopeBadge).toHaveText('Environment');
     await expect(variableCard.value).toHaveText('(Secret)');
@@ -102,13 +114,15 @@ test.describe('Variable hover card', () => {
     await expect(variableCard.copyButton).toHaveCount(0);
   });
 
-  test('a revealed secret field shows the hover card for its variable token', async ({ page, variableCard }) => {
-    const auth = page.getByTestId('request-section-auth');
-    await expect(auth.getByTestId('variable-token-bearer_token')).toHaveCount(0);
+  test('a revealed secret field shows the hover card for its variable token', async ({ page, requestPage, variableCard }) => {
+    const auth = requestPage.section('auth');
+    const authSecret = new SecretValueComponent(page, 'auth-details-secret');
+    await expect(variableCard.token('bearer_token', auth)).toHaveCount(0);
 
-    await auth.getByTestId('auth-details-secret-toggle').click();
+    await authSecret.toggleReveal();
 
-    await auth.getByTestId('variable-token-bearer_token').hover();
+    await variableCard.hoverToken('bearer_token', auth);
+
     await expect(variableCard.card).toBeVisible();
     await expect(variableCard.scopeBadge).toHaveText('Environment');
     await expect(variableCard.value).toHaveText('(Secret)');
@@ -116,14 +130,17 @@ test.describe('Variable hover card', () => {
 
   test('copies the resolved value from the copy button', async ({ page, variableCard }) => {
     await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
+
     await variableCard.pinToken('apiVersion');
     await expect(variableCard.card).toBeVisible();
+
     await variableCard.copyButton.click();
     await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe('2024-01');
   });
 
   test('is read-only — no editor inside the card', async ({ variableCard }) => {
     await variableCard.pinToken('host');
+
     await expect(variableCard.card).toBeVisible();
     await expect(variableCard.card.locator('textarea, input, .CodeMirror')).toHaveCount(0);
   });
@@ -131,8 +148,10 @@ test.describe('Variable hover card', () => {
   test('stays open while hovering the card, then closes after the pointer leaves', async ({ page, variableCard }) => {
     await variableCard.hoverToken('host');
     await expect(variableCard.card).toBeVisible();
+
     await variableCard.card.hover();
     await expect(variableCard.card).toBeVisible();
+
     await page.mouse.move(0, 0);
     await expect(variableCard.card).toBeHidden();
   });
@@ -140,14 +159,17 @@ test.describe('Variable hover card', () => {
   test('pins on click; Escape and outside click dismiss it', async ({ page, variableCard }) => {
     await variableCard.pinToken('host');
     await expect(variableCard.card).toBeVisible();
+
     // Pinned: leaving does not close it.
     await page.mouse.move(0, 0);
     await expect(variableCard.card).toBeVisible();
+
     await page.keyboard.press('Escape');
     await expect(variableCard.card).toBeHidden();
 
     await variableCard.pinToken('host');
     await expect(variableCard.card).toBeVisible();
+
     await page.mouse.click(2, 2);
     await expect(variableCard.card).toBeHidden();
   });
@@ -157,6 +179,7 @@ test.describe('Variable hover card', () => {
 
     test('opens on tap', async ({ variableCard }) => {
       await variableCard.token('host').tap();
+
       await expect(variableCard.card).toBeVisible();
       await expect(variableCard.scopeBadge).toHaveText('Environment');
     });
@@ -168,8 +191,10 @@ test.describe('Variable hover card', () => {
     test('keeps the hover card within a narrow viewport instead of overflowing off-screen', async ({ variableCard }) => {
       await variableCard.hoverToken('endpoint');
       await expect(variableCard.card).toBeVisible();
+
       const box = await variableCard.card.boundingBox();
       if (!box) throw new Error('hover card has no bounding box');
+
       expect(box.x).toBeGreaterThanOrEqual(0);
       expect(box.x + box.width).toBeLessThanOrEqual(280);
     });
@@ -180,14 +205,15 @@ test.describe('Variable hover card', () => {
 // config sections render header values through VariableText), degrading to the
 // scopes those pages can see (no request scope on Overview/Folder).
 test.describe('Variable hover card — Overview page', () => {
-  test.beforeEach(async ({ page, envSwitcher }) => {
+  test.beforeEach(async ({ page, overviewPage, envSwitcher }) => {
     await page.goto('/?fixture=vars');
-    await expect(page.getByTestId('page')).toHaveAttribute('data-page-type', 'overview');
+    await expect(overviewPage.root).toBeVisible();
     await envSwitcher.selectEnvironment('Dev');
   });
 
   test('shows the card for a variable used in a collection header (Collection scope)', async ({ variableCard }) => {
     await variableCard.hoverToken('apiVersion');
+
     await expect(variableCard.card).toBeVisible();
     await expect(variableCard.scopeBadge).toHaveText('Collection');
     await expect(variableCard.value).toHaveText('2024-01');
@@ -195,6 +221,7 @@ test.describe('Variable hover card — Overview page', () => {
 
   test('shows a (Secret) placeholder for a secret referenced in a collection header', async ({ variableCard }) => {
     await variableCard.hoverToken('bearer_token');
+
     await expect(variableCard.card).toBeVisible();
     await expect(variableCard.scopeBadge).toHaveText('Environment');
     await expect(variableCard.value).toHaveText('(Secret)');
@@ -202,14 +229,15 @@ test.describe('Variable hover card — Overview page', () => {
 });
 
 test.describe('Variable hover card — Folder page', () => {
-  test.beforeEach(async ({ page, envSwitcher }) => {
+  test.beforeEach(async ({ page, folderPage, envSwitcher }) => {
     await page.goto('/?fixture=vars#/customers');
-    await expect(page.getByTestId('page')).toHaveAttribute('data-page-type', 'folder');
+    await expect(folderPage.root).toBeVisible();
     await envSwitcher.selectEnvironment('Dev');
   });
 
   test('shows the card for a variable used in a folder header (Folder scope)', async ({ variableCard }) => {
     await variableCard.hoverToken('folderScope');
+
     await expect(variableCard.card).toBeVisible();
     await expect(variableCard.scopeBadge).toHaveText('Folder');
     await expect(variableCard.value).toHaveText('from-folder');
@@ -217,14 +245,15 @@ test.describe('Variable hover card — Folder page', () => {
 });
 
 test.describe('Variable hover card — Code snippet', () => {
-  test.beforeEach(async ({ page, envSwitcher }) => {
+  test.beforeEach(async ({ page, requestPage, envSwitcher }) => {
     await page.goto(REQUEST);
-    await expect(page.getByTestId('request-page')).toBeVisible();
+    await expect(requestPage.root).toBeVisible();
     await envSwitcher.selectEnvironment('Dev');
   });
 
   test('shows the hover card for a variable inside the generated code', async ({ requestPage, variableCard }) => {
     await requestPage.codeSnippet.variableToken('host').hover();
+
     await expect(variableCard.card).toBeVisible();
     await expect(variableCard.scopeBadge).toHaveText('Environment');
     await expect(variableCard.value).toHaveText('https://api.dev.example.com');
@@ -233,6 +262,7 @@ test.describe('Variable hover card — Code snippet', () => {
   test('replaces a variable with its resolved value when show variables is on', async ({ requestPage, envSwitcher }) => {
     const host = requestPage.codeSnippet.variableToken('host');
     await expect(host).toHaveText('{{host}}');
+
     await envSwitcher.toggle();
     await expect(host).toHaveText('https://api.dev.example.com');
   });
@@ -246,9 +276,11 @@ test.describe('Variable hover card — Code snippet', () => {
     await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
     await envSwitcher.toggle();
     await requestPage.codeSnippet.copyButton.click();
+
     await expect
       .poll(() => page.evaluate(() => navigator.clipboard.readText()))
       .toContain('https://api.dev.example.com/customers/req-42?v=2024-01');
+
     const copied = await page.evaluate(() => navigator.clipboard.readText());
     expect(copied).not.toContain('{{host}}/customers');
     expect(copied).toContain('{{bearer_token}}');
