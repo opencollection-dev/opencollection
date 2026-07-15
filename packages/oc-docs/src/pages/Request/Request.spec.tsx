@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest';
 import type { OpenCollection } from '@opencollection/types';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { Item } from '@opencollection/types/collection/item';
+import { MemoryRouter } from 'react-router-dom';
 import { Request } from './Request';
 import { useRenderToDom } from '../../hooks/useRenderToDom';
 
@@ -50,7 +51,11 @@ const item: HttpRequest = {
 
 describe('Request page', () => {
   it('renders the breadcrumb, heading, url bar, description and all populated sections', () => {
-    const root = useRenderToDom(<Request item={item} ancestry={ancestry} collection={collection} onTryClick={() => {}} />);
+    const root = useRenderToDom(
+      <MemoryRouter>
+        <Request item={item} ancestry={ancestry} collection={collection} onTryClick={() => {}} />
+      </MemoryRouter>
+    );
 
     expect(root.querySelector('[data-testid="request-breadcrumb"]')?.text).toContain('Authentication');
     expect(root.querySelector('[data-testid="request-title"]')?.text).toContain('Login');
@@ -85,7 +90,11 @@ describe('Request page', () => {
       info: { name: 'Ping', type: 'http' },
       http: { method: 'get', url: '/ping' }
     };
-    const root = useRenderToDom(<Request item={bare} />);
+    const root = useRenderToDom(
+      <MemoryRouter>
+        <Request item={bare} />
+      </MemoryRouter>
+    );
 
     expect(root.querySelector('[data-testid="request-title"]')?.text).toContain('Ping');
     expect(root.querySelector('[data-testid="request-url"]')?.text).toContain('/ping');
@@ -107,7 +116,11 @@ describe('Request page', () => {
       info: { name: 'Get All Customers', type: 'http' },
       http: { method: 'GET', url: '{{baseUrl}}/billing/customers', auth: 'inherit' }
     };
-    const root = useRenderToDom(<Request item={inheritItem} collection={collection} ancestry={ancestry} />);
+    const root = useRenderToDom(
+      <MemoryRouter>
+        <Request item={inheritItem} collection={collection} ancestry={ancestry} />
+      </MemoryRouter>
+    );
 
     const auth = root.querySelector('[data-testid="request-section-auth"]');
     expect(auth).not.toBeNull();
@@ -121,7 +134,11 @@ describe('Request page', () => {
       http: { method: 'GET', url: '/x' },
       docs: 'Use -- dashes and (c) marks literally.'
     };
-    const root = useRenderToDom(<Request item={docsItem} />);
+    const root = useRenderToDom(
+      <MemoryRouter>
+        <Request item={docsItem} />
+      </MemoryRouter>
+    );
 
     const description = root.querySelector('[data-testid="request-description"]');
     expect(description?.text).toContain('Use -- dashes');
