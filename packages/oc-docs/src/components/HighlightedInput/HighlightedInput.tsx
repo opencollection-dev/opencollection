@@ -318,9 +318,9 @@ export const HighlightedInput: React.FC<HighlightedInputProps> = ({
     });
   };
 
-  const setFieldRef = (el: HTMLInputElement | HTMLTextAreaElement | null) => {
+  const setFieldRef = useCallback((el: HTMLInputElement | HTMLTextAreaElement | null) => {
     inputRef.current = el;
-  };
+  }, []);
 
   const closeAutocomplete = () => setAutocomplete(null);
 
