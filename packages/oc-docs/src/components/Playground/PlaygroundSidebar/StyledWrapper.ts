@@ -58,15 +58,10 @@ export const StyledWrapper = styled.div`
     padding: 4px 6px 12px;
   }
 
-  /* Real mobile/tablet OS only (class from useIsMobileDevice, not a width
-     breakpoint): drop the nav text 13px -> 12px, matching the docs sidebar. */
   &.mobile .navlink-main {
     font-size: 12px;
   }
 
-  /* Auto-hiding thumb (see useAutoHideScrollbar): transparent until the .scrolling
-     class is set on activity, fading out 1s after it stops. Scoped to .tree so it
-     out-specifies the always-on global .oc-playground scrollbar rule. */
   .tree::-webkit-scrollbar {
     width: 6px;
   }
