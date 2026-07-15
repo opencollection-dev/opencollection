@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import type { Item as OpenCollectionItem } from '@opencollection/types/collection/item';
-import { getItemDescription, getRequestBadgeLabel } from './schemaHelpers';
+import { getItemDescription, getRequestBadgeLabel, getRequestAuth } from './schemaHelpers';
 
 const item = (data: Record<string, unknown>): OpenCollectionItem => data as unknown as OpenCollectionItem;
 
@@ -39,5 +39,19 @@ describe('getRequestBadgeLabel', () => {
     expect(getRequestBadgeLabel(item({ type: 'folder' }))).toBeUndefined();
     expect(getRequestBadgeLabel(item({ type: 'script' }))).toBeUndefined();
     expect(getRequestBadgeLabel(null)).toBeUndefined();
+  });
+});
+
+describe('getRequestAuth', () => {
+  it('reads auth from the protocol block first', () => {
+    expect(getRequestAuth(item({ http: { auth: { type: 'bearer' } } }))).toEqual({ type: 'bearer' });
+  });
+
+  it('reads auth nested under a request block (flat-shape requests)', () => {
+    expect(getRequestAuth(item({ method: 'POST', request: { auth: { type: 'apikey' } } }))).toEqual({ type: 'apikey' });
+  });
+
+  it('treats a cleared request-block auth as no auth', () => {
+    expect(getRequestAuth(item({ method: 'POST', request: { auth: undefined } }))).toBeUndefined();
   });
 });
