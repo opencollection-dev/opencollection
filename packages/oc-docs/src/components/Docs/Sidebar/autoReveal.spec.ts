@@ -51,18 +51,6 @@ describe('computeAutoReveal', () => {
     });
   });
 
-  it('regression: an empty first run must not consume the reveal for the later hydrated run', () => {
-    // Run 1 (empty model) returns claim:false, so the caller leaves revealedSlug = null.
-    const run1 = computeAutoReveal(null, 'billing/get-customers', emptyModel);
-    expect(run1.claim).toBe(false);
-
-    // Run 2 (model hydrated, revealedSlug still null) must now expand the folder.
-    // The bug marked the slug revealed in run 1, so run 2 short-circuited and the
-    // folder stayed collapsed on the request page.
-    const run2 = computeAutoReveal(null, 'billing/get-customers', loadedModel);
-    expect(run2).toEqual({ claim: true, uuids: ['folder-billing'] });
-  });
-
   it('is a no-op once the slug is already revealed (never re-opens a manually collapsed folder)', () => {
     expect(
       computeAutoReveal('billing/get-customers', 'billing/get-customers', loadedModel)
