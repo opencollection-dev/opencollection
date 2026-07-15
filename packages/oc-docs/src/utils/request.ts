@@ -93,8 +93,6 @@ export const getVariableType = (variable?: Variable | SecretVariable): VariableV
 
 export const getVariableTypeLabel = (variable?: Variable | SecretVariable): string | undefined => {
   if (!variable) return undefined;
-  // A bare value carries no explicit type marker, but its type is String (Bruno's default). Label it
-  // like every other type — matching the environments view and the EE data-type selector.
   return TYPE_LABELS[getVariableType(variable) ?? 'string'];
 };
 
