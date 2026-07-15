@@ -311,7 +311,7 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                           {row.secret ? (
                             <SecretValue
                               value={row.value}
-                              placeholder={isLastEmptyRow ? valuePlaceholder : undefined}
+                              placeholder={valuePlaceholder}
                               onChange={(v) => handleFieldChange(index, 'value', v)}
                             />
                           ) : (
@@ -340,7 +340,7 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                     ) : row.secret ? (
                       <SecretValue
                         value={row.value}
-                        placeholder={isLastEmptyRow ? valuePlaceholder : undefined}
+                        placeholder={valuePlaceholder}
                         onChange={(v) => handleFieldChange(index, 'value', v)}
                       />
                     ) : (
