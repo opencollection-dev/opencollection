@@ -11,6 +11,18 @@ config:
       variables:
         - name: "host"
           value: "http://localhost:8081"
+        - name: "retryCount"
+          value:
+            type: "number"
+            data: "3"
+        - name: "featureEnabled"
+          value:
+            type: "boolean"
+            data: "true"
+        - name: "defaultUser"
+          value:
+            type: "object"
+            data: '{"role":"admin"}'
         - name: "bearer_auth_token"
           secret: true
           type: "string"
