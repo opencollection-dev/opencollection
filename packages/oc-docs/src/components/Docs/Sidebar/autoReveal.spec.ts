@@ -51,7 +51,7 @@ describe('computeAutoReveal', () => {
     });
   });
 
-  it('is a no-op once the slug is already revealed (never re-opens a manually collapsed folder)', () => {
+  it('does nothing when the item was already revealed, so a folder you collapsed by hand stays closed', () => {
     expect(
       computeAutoReveal('billing/get-customers', 'billing/get-customers', loadedModel)
     ).toEqual({ claim: false, uuids: [] });
