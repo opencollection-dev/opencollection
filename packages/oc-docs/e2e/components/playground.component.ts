@@ -5,6 +5,11 @@ import { CodeEditorComponent } from './code-editor/code-editor.component';
 import type { DockMode } from '../../src/utils/playgroundDock';
 
 export class PlaygroundComponent extends BaseComponent {
+  readonly keyValueTable = new KeyValueTableComponent(this.page);
+  readonly preRequestScriptEditor = new CodeEditorComponent(this.page, 'scripts-editor-pre-request');
+  readonly postResponseScriptEditor = new CodeEditorComponent(this.page, 'scripts-editor-post-response');
+
+
   readonly header = this.page.getByTestId('playground-header');
   readonly switcher = this.page.getByTestId('playground-dock-switcher');
   readonly content = this.page.getByTestId('playground-content');
@@ -22,10 +27,12 @@ export class PlaygroundComponent extends BaseComponent {
   readonly inlinePanel = this.page.getByTestId('playground-dock-inline-panel');
   readonly bottomPanel = this.page.getByTestId('playground-dock-bottom-panel');
   readonly modalPanel = this.page.getByTestId('playground-dock-modal-panel');
+  readonly methodSelect = this.view.getByTestId('query-bar-method-select');
+  readonly unsupported = this.view.getByTestId('unsupported-request');
+  readonly unsupportedTitle = this.view.getByTestId('unsupported-request-title');
+  readonly unsupportedMessage = this.view.getByTestId('unsupported-request-empty');
+  readonly unsupportedIcon = this.view.getByTestId('file-not-found-icon');
 
-  readonly keyValueTable = new KeyValueTableComponent(this.page);
-  readonly preRequestScriptEditor = new CodeEditorComponent(this.page, 'scripts-editor-pre-request');
-  readonly postResponseScriptEditor = new CodeEditorComponent(this.page, 'scripts-editor-post-response');
 
   sidebarItem(name: string): Locator {
     return this.treeItems.filter({ hasText: name }).first();
@@ -41,6 +48,23 @@ export class PlaygroundComponent extends BaseComponent {
 
   async selectScriptTab(id: string): Promise<void> {
     await this.scriptTab(id).click();
+  }
+
+  /** The option labels offered by the query-bar method dropdown. */
+  async methodOptions(): Promise<string[]> {
+    return this.methodSelect.locator('option').allInnerTexts();
+  }
+
+  /** Open a request in the playground: expand intermediate folders, click the leaf. */
+  async openTreeItem(names: string[]): Promise<void> {
+    for (let i = 0; i < names.length; i++) {
+      const item = this.treeItems.filter({ hasText: names[i] }).first();
+      if (i < names.length - 1) {
+        await item.locator('.navlink-chevron').click();
+      } else {
+        await item.click();
+      }
+    }
   }
 
   dockButton(mode: DockMode): Locator {

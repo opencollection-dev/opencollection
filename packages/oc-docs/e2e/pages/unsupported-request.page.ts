@@ -1,6 +1,7 @@
 import { BasePage } from './base.page';
 import { SidebarComponent } from '../components/sidebar.component';
 import { BreadcrumbComponent } from '../components/breadcrumb.component';
+import { RequestUrlBarComponent } from '../components/request/url-bar.component';
 
 export class UnsupportedRequestPage extends BasePage {
   readonly root = this.page.getByTestId('unsupported-request');
@@ -9,6 +10,8 @@ export class UnsupportedRequestPage extends BasePage {
   readonly breadcrumb = new BreadcrumbComponent(this.page, 'unsupported-request-breadcrumb');
   readonly title = this.page.getByTestId('unsupported-request-title');
   readonly message = this.page.getByTestId('unsupported-request-empty');
+  readonly urlBar = new RequestUrlBarComponent(this.page);
+  readonly docs = this.page.getByTestId('request-description');
 
   async open(path: string[]): Promise<void> {
     await this.navigate('/');

@@ -62,6 +62,7 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
       <div className="method-select-wrapper">
         <select
           className="method-select h-full"
+          data-testid="query-bar-method-select"
           value={method}
           onChange={(e) => handleMethodChange(e.target.value)}
           style={{ color: getMethodColor(method) }}

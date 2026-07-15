@@ -1,5 +1,22 @@
 import { describe, it, expect } from 'vitest';
-import { getInitials, statusToneColor, buildBreadcrumbSegments, COLLECTION_ROOT_CRUMB } from './common';
+import { getInitials, statusToneColor, buildBreadcrumbSegments, getValidClasses, COLLECTION_ROOT_CRUMB } from './common';
+
+describe('getValidClasses', () => {
+  it('joins the provided class names with a single space', () => {
+    expect(getValidClasses('a', 'b', 'c')).toBe('a b c');
+  });
+
+  it('drops undefined / empty entries so no stray spaces remain', () => {
+    expect(getValidClasses('px-4', undefined, 'w-full')).toBe('px-4 w-full');
+    expect(getValidClasses(undefined, 'only')).toBe('only');
+    expect(getValidClasses('', 'kept', '')).toBe('kept');
+  });
+
+  it('returns an empty string when every class is falsy', () => {
+    expect(getValidClasses()).toBe('');
+    expect(getValidClasses(undefined, undefined)).toBe('');
+  });
+});
 
 describe('getInitials', () => {
   it('uses the first letter of the first two words', () => {
