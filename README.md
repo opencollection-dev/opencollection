@@ -2,10 +2,6 @@
 
 An open specification for describing **executable API collections**: requests, environments, variables, authentication, scripts, and assertions, stored as plain YAML.
 
-- Specification: [spec.opencollection.com](https://spec.opencollection.com)
-- Schema explorer: [schema.opencollection.com](https://schema.opencollection.com)
-- Website: [opencollection.com](https://www.opencollection.com)
-
 ## What is OpenCollection?
 
 OpenCollection is a format for describing API collections in a way that tools can read, write, and run. A collection is a tree of HTTP, GraphQL, gRPC, and WebSocket requests, together with the environments, variables, auth, scripts, and assertions needed to actually send them.
@@ -23,6 +19,14 @@ The format is plain YAML with a published JSON Schema. It is an open specificati
 | **Execution** | **OpenCollection** | **Send this request, with these variables, and check this result.** |
 
 OpenAPI has no concept of "send this request now, with these variables, and assert this response." That executable working set is what teams keep in their API client, and until now it has lived in proprietary, tool-locked formats. OpenCollection is that artifact in an open, neutral YAML format.
+
+## The specification
+
+The current version is **1.0.0**. The schema is authored in [JSON Schema (draft-07)](http://json-schema.org/draft-07/schema#).
+
+- Read the human-readable spec at [spec.opencollection.com](https://spec.opencollection.com).
+- Browse the schema interactively at [schema.opencollection.com](https://schema.opencollection.com).
+- Read the schema source at [`packages/oc-schema/src/opencollection.schema.json`](./packages/oc-schema/src/opencollection.schema.json).
 
 ## Example
 
@@ -45,14 +49,6 @@ items:
 ```
 
 A collection can be a single bundled file or a tree of files and folders on disk.
-
-## The specification
-
-The current version is **1.0.0**. The schema is authored in [JSON Schema (draft-07)](http://json-schema.org/draft-07/schema#).
-
-- Read the human-readable spec at [spec.opencollection.com](https://spec.opencollection.com).
-- Browse the schema interactively at [schema.opencollection.com](https://schema.opencollection.com).
-- Read the schema source at [`packages/oc-schema/src/opencollection.schema.json`](./packages/oc-schema/src/opencollection.schema.json).
 
 ## Adoption
 
