@@ -33,6 +33,14 @@ export class PlaygroundComponent extends BaseComponent {
     await this.dockButton(mode).click();
   }
 
+  tab(id: string): Locator {
+    return this.page.getByTestId(`tabs-tab-${id}`);
+  }
+
+  async selectTab(id: string): Promise<void> {
+    await this.tab(id).click();
+  }
+
   async close(): Promise<void> {
     await this.closeButton.click();
   }

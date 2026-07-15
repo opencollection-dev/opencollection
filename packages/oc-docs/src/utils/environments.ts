@@ -1,12 +1,8 @@
 import type { Environment } from '@opencollection/types/config/environments';
-import type {
-  Variable,
-  SecretVariable,
-  VariableValueOrVariants,
-  VariableValueType
-} from '@opencollection/types/common/variables';
+import type { VariableValueOrVariants, VariableValueType } from '@opencollection/types/common/variables';
 import { MANAGER_LABELS, TYPE_LABELS } from '../constants';
-import { getDescription } from './request';
+import { getDescription, getVariableType } from './request';
+import { isSecretVariable, unwrapVariableValue } from './variableResolution';
 
 export const humanizeType = (type: VariableValueType | undefined): string => (type && TYPE_LABELS[type]) || 'String';
 
@@ -22,19 +18,6 @@ const humanizeManager = (type: string | undefined): string => {
   );
 };
 
-export const isSecretVariable = (variable: Variable | SecretVariable): variable is SecretVariable =>
-  (variable as SecretVariable).secret === true;
-
-export const resolveValue = (value: VariableValueOrVariants | undefined): { value: string; type: VariableValueType } => {
-  if (value == null) return { value: '', type: 'string' };
-  if (typeof value === 'string') return { value, type: 'string' };
-  if (Array.isArray(value)) {
-    const selected = value.find((variant) => variant.selected) ?? value[0];
-    return selected ? resolveValue(selected.value) : { value: '', type: 'string' };
-  }
-  return { value: typeof value.data === 'string' ? value.data : '', type: value.type ?? 'string' };
-};
-
 // keeps the value's original shape
 export const writeBackValue = (
   original: VariableValueOrVariants | undefined,
@@ -47,7 +30,6 @@ export const writeBackValue = (
   if (original && typeof original === 'object') return { ...original, data: edited };
   return edited;
 };
-
 interface ExternalSecretsConfig {
   type?: string;
   variables?: { name?: string; secretName?: string; enabled?: boolean; type?: VariableValueType }[];
@@ -110,11 +92,11 @@ export const getEnvironmentVariables = (environment: Environment | null | undefi
       });
       return;
     }
-    const resolved = resolveValue(variable.value);
+    const value = unwrapVariableValue(variable.value);
     variables.push({
       name: variable.name,
-      value: resolved.value,
-      dataType: resolved.value ? humanizeType(resolved.type) : '',
+      value,
+      dataType: value ? humanizeType(getVariableType(variable)) : '',
       description: getDescription(variable),
       disabled: variable.disabled === true
     });

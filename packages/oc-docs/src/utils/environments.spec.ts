@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { getEnvironmentVariables, resolveValue, writeBackValue } from './environments';
+import { getEnvironmentVariables, writeBackValue } from './environments';
+import { unwrapVariableValue } from './variableResolution';
 
 describe('getEnvironmentVariables', () => {
   it('splits regular and secret variables', () => {
@@ -173,16 +174,16 @@ describe('writeBackValue', () => {
     ]);
   });
 
-  it('edits the first variant when none is marked selected (matches resolveValue)', () => {
+  it('edits the first variant when none is marked selected', () => {
     const variants = [{ title: 'a', value: 'x' }, { title: 'b', value: 'y' }];
     expect(writeBackValue(variants, 'z')).toEqual([{ title: 'a', value: 'z' }, { title: 'b', value: 'y' }]);
   });
 
-  it('round-trips the shapes that resolveValue flattened', () => {
+  it('round-trips the shapes that get flattened for display', () => {
     const cases = ['plain', { type: 'number', data: '30' }, [{ title: 'dev', value: 'v', selected: true }]] as const;
     for (const original of cases) {
-      const flat = resolveValue(original).value;
-      // no edit → writing the resolved value back leaves the original shape intact
+      const flat = unwrapVariableValue(original);
+      // no edit → writing the flattened value back leaves the original shape intact
       expect(writeBackValue(original, flat)).toEqual(original);
     }
   });

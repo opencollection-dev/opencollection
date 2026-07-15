@@ -237,5 +237,84 @@ describe('RequestRunner', () => {
       global.fetch = originalFetch;
     });
 
+    it('sends multipart text fields, excludes disabled, and omits file fields', async () => {
+      let sentBody: FormData | undefined;
+      global.fetch = vi.fn().mockImplementation((_url: string, init: RequestInit) => {
+        sentBody = init.body as FormData;
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          url: 'https://example.com/upload',
+          headers: new Headers({ 'content-type': 'application/json' }),
+          text: async () => JSON.stringify({ success: true })
+        });
+      });
+
+      const { RequestExecutor } = await import('./RequestExecutor');
+      const executor = new RequestExecutor();
+
+      const multipartRequest: any = {
+        http: {
+          method: 'POST',
+          url: 'https://example.com/upload',
+          body: {
+            type: 'multipart-form',
+            data: [
+              { name: 'file', type: 'file', value: '/path/to/document.pdf' },
+              { name: 'description', type: 'text', value: 'Quarterly report' },
+              { name: 'tags', type: 'text', value: 'report,quarterly' },
+              { name: 'debug', type: 'text', value: 'true', disabled: true }
+            ]
+          }
+        }
+      };
+
+      await executor.executeRequest(multipartRequest, { timeout: 5000 });
+
+      expect(sentBody).toBeInstanceOf(FormData);
+      expect(sentBody!.get('description')).toBe('Quarterly report');
+      expect(sentBody!.get('tags')).toBe('report,quarterly');
+      expect(sentBody!.has('file')).toBe(false);   // file field omitted
+      expect(sentBody!.has('debug')).toBe(false);   // disabled field excluded
+
+      global.fetch = originalFetch;
+    });
+
+    it('sends no body for a file/binary request', async () => {
+      let sentBody: BodyInit | null | undefined;
+      global.fetch = vi.fn().mockImplementation((_url: string, init: RequestInit) => {
+        sentBody = init.body;
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          url: 'https://example.com/upload',
+          headers: new Headers({ 'content-type': 'application/json' }),
+          text: async () => JSON.stringify({ success: true })
+        });
+      });
+
+      const { RequestExecutor } = await import('./RequestExecutor');
+      const executor = new RequestExecutor();
+
+      const fileRequest: any = {
+        http: {
+          method: 'POST',
+          url: 'https://example.com/upload',
+          body: {
+            type: 'file',
+            data: [{ filePath: '/path/to/document.pdf', contentType: 'application/pdf', selected: true }]
+          }
+        }
+      };
+
+      await executor.executeRequest(fileRequest, { timeout: 5000 });
+
+      expect(sentBody == null).toBe(true);   // no body sent
+
+      global.fetch = originalFetch;
+    });
+
   });
 });

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import type { OpenCollection } from '@opencollection/types';
 import type { Environment } from '@opencollection/types/config/environments';
 import type { Variable, VariableValueType } from '@opencollection/types/common/variables';
-import KeyValueTable, { KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
+import KeyValueTable, { KeyValueRow } from '../../../../../components/KeyValueTable/KeyValueTable';
 import Tabs from '../../../../../ui/Tabs/Tabs';
 import { EmptyState } from '../../../../../ui/EmptyState/EmptyState';
 import { StyledWrapper } from './StyledWrapper';
@@ -10,7 +10,9 @@ import { EnvironmentLabel } from '../../../../EnvironmentLabel/EnvironmentLabel'
 import EnvVarCards from './EnvVarCards';
 import { GlobeIcon } from '../../../../../assets/icons';
 import { useAppDispatch } from '../../../../../store/hooks';
-import { isSecretVariable, resolveValue, humanizeType, writeBackValue } from '../../../../../utils/environments';
+import { humanizeType, writeBackValue } from '../../../../../utils/environments';
+import { isSecretVariable, unwrapVariableValue } from '../../../../../utils/variableResolution';
+import { getVariableTypeLabel } from '../../../../../utils/request';
 import { updateCollectionEnvironments } from '@slices/playground';
 
 const ENV_TABS = [
@@ -29,12 +31,11 @@ interface ExternalSecretRow {
 }
 
 export const variableToRow = (variable: Variable, index: number): KeyValueRow => {
-  const resolved = resolveValue(variable.value);
   return {
     id: `var-${index}`,
     name: variable.name || '',
-    value: resolved.value,
-    dataType: resolved.value ? humanizeType(resolved.type) : '',
+    value: unwrapVariableValue(variable.value),
+    dataType: getVariableTypeLabel(variable) || '',
     enabled: !variable.disabled,
     secret: isSecretVariable(variable),
     source: variable

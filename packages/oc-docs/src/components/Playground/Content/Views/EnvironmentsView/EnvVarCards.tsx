@@ -1,5 +1,5 @@
 import React from 'react';
-import { KeyValueRow } from '../../../../../ui/KeyValueTable/KeyValueTable';
+import { KeyValueRow } from '../../../../../components/KeyValueTable/KeyValueTable';
 import { SecretValue } from '../../../../../ui/SecretValue/SecretValue';
 import { TrashIcon } from '../../../../../assets/icons';
 

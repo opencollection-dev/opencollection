@@ -102,6 +102,13 @@ export class RequestExecutor {
       }
     }
 
+    // Let the browser set multipart/form-data with its boundary — drop any manual one.
+    if (body && 'type' in body && body.type === 'multipart-form') {
+      Object.keys(headers).forEach(key => {
+        if (key.toLowerCase() === 'content-type') delete headers[key];
+      });
+    }
+
     if (auth) {
       this.setAuthHeaders(headers, auth);
     }
@@ -151,6 +158,14 @@ export class RequestExecutor {
             return this.buildUrlEncodedBody(body.data);
           }
           return null;
+        case 'multipart-form':
+          if ('data' in body && Array.isArray(body.data)) {
+            return this.buildMultipartBody(body.data);
+          }
+          return null;
+        case 'file':
+          // Browser can't read a local file path — send no file body.
+          return null;
         default:
           return null;
       }
@@ -185,6 +200,17 @@ export class RequestExecutor {
           formData.append(item.name, item.value || '');
         }
       }
+    });
+    return formData;
+  }
+
+  private buildMultipartBody(entries: any[]): FormData {
+    const formData = new FormData();
+    entries.forEach(entry => {
+      // File fields only carry a local path the browser can't read — omit them.
+      if (entry.disabled === true || !entry.name || entry.type === 'file') return;
+      const values = Array.isArray(entry.value) ? entry.value : [entry.value];
+      values.forEach((value: any) => formData.append(entry.name, value ?? ''));
     });
     return formData;
   }
