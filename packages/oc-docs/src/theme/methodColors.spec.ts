@@ -1,22 +1,17 @@
 import { describe, it, expect } from 'vitest';
-import { methodColorVars, getMethodColorVar } from './methodColors';
+import { methodColorVars, availableMethods, getMethodColorVar } from './methodColors';
 
 const MUTED = 'var(--oc-colors-text-muted)';
 
-describe('methodColorVars', () => {
-  it('maps every supported HTTP method to a theme token', () => {
-    expect(Object.keys(methodColorVars).sort()).toEqual(
-      ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'PUT'].sort()
-    );
+describe('availableMethods', () => {
+  it('is the list of HTTP methods offered in the request dropdown', () => {
+    expect(availableMethods).toEqual(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS']);
   });
 
-  // BRU-3833: non-HTTP protocols are excluded (the dropdown is built from these keys).
-  it.each(['GRAPHQL', 'GQL', 'GRPC', 'WEBSOCKET', 'WS'])(
-    'does not expose the non-HTTP protocol %s',
-    (protocol) => {
-      expect(methodColorVars).not.toHaveProperty(protocol);
-    }
-  );
+  // BRU-3833: non-HTTP protocols are not offered (the dropdown maps over this list).
+  it.each(['GRAPHQL', 'GQL', 'GRPC', 'WEBSOCKET', 'WS'])('excludes the non-HTTP protocol %s', (protocol) => {
+    expect(availableMethods).not.toContain(protocol);
+  });
 });
 
 describe('getMethodColorVar', () => {
@@ -26,10 +21,9 @@ describe('getMethodColorVar', () => {
     expect(getMethodColorVar('Delete')).toBe('var(--oc-request-methods-delete)');
   });
 
-  it('falls back to the muted token for now-unsupported protocols', () => {
-    expect(getMethodColorVar('GRAPHQL')).toBe(MUTED);
-    expect(getMethodColorVar('grpc')).toBe(MUTED);
-    expect(getMethodColorVar('WS')).toBe(MUTED);
+  it('still resolves colours for non-HTTP protocols kept in the map', () => {
+    expect(getMethodColorVar('GRAPHQL')).toBe(methodColorVars.GRAPHQL);
+    expect(getMethodColorVar('ws')).toBe(methodColorVars.WS);
   });
 
   it('falls back to the muted token for unknown or missing methods', () => {

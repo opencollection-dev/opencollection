@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { getItemName } from 'src/utils/schemaHelpers';
+import { getItemName } from '../../../utils/schemaHelpers';
 import { Breadcrumb, type BreadcrumbSegment } from '../../../ui/Breadcrumb/Breadcrumb';
 import { Item } from '@opencollection/types/collection/item';
 import { OpenCollection } from '@opencollection/types';

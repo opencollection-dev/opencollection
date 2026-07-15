@@ -208,7 +208,7 @@ const PlaygroundView: React.FC<RequestPlaygroundView> = ({ item, ...otherProps }
         emptyStateProps={{
           icon: <FileNotFoundIcon />,
           heading: 'Request type not supported',
-          subheadingSuffix: "isn't currently supported in this playground"
+          subheadingSuffix: "isn't currently supported in this playground."
         }}
       />
     );

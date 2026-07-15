@@ -65,7 +65,7 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
           onChange={(e) => handleMethodChange(e.target.value)}
           style={{ color: getMethodColorVar(method) }}
         >
-          {Object.keys(availableMethods).map((m) => (
+          {availableMethods.map((m) => (
             <option key={m} value={m} style={{ color: getMethodColorVar(m) }}>
               {m}
             </option>
