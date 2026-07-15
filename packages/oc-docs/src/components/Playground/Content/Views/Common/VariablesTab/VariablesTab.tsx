@@ -128,7 +128,7 @@ export const VariablesTab: React.FC<VariablesTabProps> = ({
   return (
     <StyledWrapper className="space-y-3">
       {(Boolean(title) || Boolean(description)) && (
-        <div className="flex items-center justify-between mb-2">
+        <div className="variables-tab-header flex items-center justify-between mb-2">
           {Boolean(title) && <span className="title text-sm font-semibold">{title}</span>}
           {Boolean(description) && <span className="description text-xs leading-tight">{description}</span>}
         </div>

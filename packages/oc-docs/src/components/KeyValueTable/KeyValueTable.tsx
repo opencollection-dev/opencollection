@@ -202,7 +202,7 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
     if (!message) return null;
     return (
       <Tooltip content={message}>
-        <span className="cell-error" role="img" aria-label={message}>
+        <span className="cell-error" role="img" aria-label={message} data-testid={`${testId}-error`}>
           <WarningIcon />
         </span>
       </Tooltip>
@@ -211,8 +211,8 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
 
   return (
     <div className={`key-value-table-wrapper ${className}`} data-testid={testId}>
-      <div className="key-value-table-container">
-        <table className="key-value-table">
+      <div className="key-value-table-container" data-testid={`${testId}-container`}>
+        <table className="key-value-table" data-testid={`${testId}-table`}>
           <colgroup>
             <col className="col-key" />
             <col className="col-value" />
@@ -295,6 +295,7 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                           anywordHints={keyAutocomplete}
                           variablesAutocomplete={false}
                           title={row.name}
+                          testId={`${testId}-name-input`}
                         />
                       )}
                       {!isLastEmptyRow && cellError(row, index, 'name')}
@@ -312,6 +313,7 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                             names={names}
                             anywordHints={valueAutocomplete}
                             title={row.value}
+                            testId={`${testId}-value-input`}
                           />
                         </div>
                         {!isLastEmptyRow && cellError(row, index, 'value')}
@@ -333,6 +335,7 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                         names={names}
                         anywordHints={valueAutocomplete}
                         title={row.value}
+                        testId={`${testId}-value-input`}
                       />
                     )}
                   </td>

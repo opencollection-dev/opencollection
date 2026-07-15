@@ -84,20 +84,20 @@ const makeResolver = (
   showVars: boolean,
   activeEnvName: string | null
 ): VariableResolver => {
-    const isSecret = (name: string) => model.secretNames.has(name.trim());
-    return {
-      showVars,
-      activeEnvName,
-      isSecret,
-      isFound: (name: string) => Object.prototype.hasOwnProperty.call(model.entries, name),
-      names: Object.keys(model.entries),
-      resolve: (raw: string) => (showVars ? resolveVariables(raw, model.values) : raw),
-      secretRefName: (raw: string) => {
-        const name = singleReferenceName(raw);
-        return name && isSecret(name) ? name : null;
-      },
-      lookup: (name: string) => lookupVariable(name, model)
-    };
+  const isSecret = (name: string) => model.secretNames.has(name.trim());
+  return {
+    showVars,
+    activeEnvName,
+    isSecret,
+    isFound: (name: string) => Object.prototype.hasOwnProperty.call(model.entries, name),
+    names: Object.keys(model.entries),
+    resolve: (raw: string) => (showVars ? resolveVariables(raw, model.values) : raw),
+    secretRefName: (raw: string) => {
+      const name = singleReferenceName(raw);
+      return name && isSecret(name) ? name : null;
+    },
+    lookup: (name: string) => lookupVariable(name, model)
+  };
 };
 
 const collectionAndEnvSources = (collection: OpenCollection | null, activeEnvName: string | null): VariableSource[] => {

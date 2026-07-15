@@ -23,6 +23,7 @@ interface HighlightedInputProps {
   anywordHints?: string[];
   variablesAutocomplete?: boolean;
   title?: string;
+  testId?: string;
 }
 
 interface HoveredToken {
@@ -71,7 +72,8 @@ export const HighlightedInput: React.FC<HighlightedInputProps> = ({
   names,
   anywordHints,
   variablesAutocomplete = true,
-  title
+  title,
+  testId
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const mirrorRef = useRef<HTMLDivElement | null>(null);
@@ -316,6 +318,7 @@ export const HighlightedInput: React.FC<HighlightedInputProps> = ({
         ref={inputRef}
         type="text"
         className="text-input"
+        data-testid={testId}
         value={value}
         title={title}
         placeholder={placeholder}

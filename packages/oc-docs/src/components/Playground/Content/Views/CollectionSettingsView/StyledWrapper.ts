@@ -49,7 +49,7 @@ export const StyledWrapper = styled.div`
       color: var(--text-muted);
     }
 
-    .space-y-3 > .flex:first-child {
+    .variables-tab-header {
       margin-bottom: 0.75rem;
     }
   }
