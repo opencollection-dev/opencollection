@@ -2,7 +2,7 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect } from 'vitest';
 import EnvVarCards from './EnvVarCards';
-import type { KeyValueRow } from '../../../../../components/KeyValueTable/KeyValueTable';
+import type { KeyValueRow } from '../../../../../../components/KeyValueTable/KeyValueTable';
 
 const rows: KeyValueRow[] = [
   { id: '1', name: 'host', value: '', enabled: true },

@@ -1,8 +1,9 @@
 import React from 'react';
-import { KeyValueRow } from '../../../../../components/KeyValueTable/KeyValueTable';
-import { SecretValue } from '../../../../../ui/SecretValue/SecretValue';
-import { TrashIcon } from '../../../../../assets/icons';
-import { useEditableRows } from '../../../../../hooks/useEditableRows';
+import { KeyValueRow } from '../../../../../../components/KeyValueTable/KeyValueTable';
+import { SecretValue } from '../../../../../../ui/SecretValue/SecretValue';
+import { TrashIcon } from '../../../../../../assets/icons';
+import { useEditableRows } from '../../../../../../hooks/useEditableRows';
+import { StyledWrapper } from './StyledWrapper';
 
 interface EnvVarCardsProps {
   rows: KeyValueRow[];
@@ -22,7 +23,7 @@ const EnvVarCards: React.FC<EnvVarCardsProps> = ({
   const { rows, updateRow, removeRow } = useEditableRows(data, onChange, { makeNewRow, disableNewRow, addWhenComplete });
 
   return (
-    <div className="env-card-list" data-testid="env-var-cards">
+    <StyledWrapper className="env-card-list" data-testid="env-var-cards">
       {rows.map((row, index) => {
         const isBlankRow = index === rows.length - 1 && (!row.name || row.name.trim() === '');
         return (
@@ -73,7 +74,7 @@ const EnvVarCards: React.FC<EnvVarCardsProps> = ({
           </div>
         );
       })}
-    </div>
+    </StyledWrapper>
   );
 };
 

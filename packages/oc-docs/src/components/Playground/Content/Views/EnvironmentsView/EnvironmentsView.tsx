@@ -7,7 +7,7 @@ import Tabs from '../../../../../ui/Tabs/Tabs';
 import { EmptyState } from '../../../../../ui/EmptyState/EmptyState';
 import { StyledWrapper } from './StyledWrapper';
 import { EnvironmentLabel } from '../../../../EnvironmentLabel/EnvironmentLabel';
-import EnvVarCards from './EnvVarCards';
+import EnvVarCards from './EnvVarCards/EnvVarCards';
 import { GlobeIcon } from '../../../../../assets/icons';
 import { useAppDispatch } from '../../../../../store/hooks';
 import { humanizeType, writeBackValue } from '../../../../../utils/environments';
