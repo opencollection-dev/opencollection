@@ -56,7 +56,7 @@ export const StyledWrapper = styled.div`
     border: none;
     outline: none;
     cursor: pointer;
-    padding: 0 0.75rem;
+    padding: 0 0.5rem;
     font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.02em;
