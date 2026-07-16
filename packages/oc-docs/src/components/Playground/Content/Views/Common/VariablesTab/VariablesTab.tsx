@@ -48,7 +48,7 @@ const getVariableError = (row: KeyValueRow, _index: number, field: 'name' | 'val
 const typeColumn = {
   key: 'datatype',
   label: '',
-  render: (row: KeyValueRow, _index: number, updateField: (field: string, value: unknown) => void) => {
+  render: (row: KeyValueRow, index: number, updateField: (field: string, value: unknown) => void) => {
     const dataType = toDataType(row.dataType);
     const warning = validateDataTypeValue(parseValueByDataType(row.value, dataType), dataType);
     return (
@@ -63,6 +63,7 @@ const typeColumn = {
         <MenuDropdown
           selectedItemId={dataType}
           placement="bottom-end"
+          data-testid={`variable-data-type-${index}`}
           items={VARIABLE_DATA_TYPES.map((type) => ({
             id: type,
             label: type,

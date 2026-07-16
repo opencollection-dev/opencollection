@@ -4,6 +4,7 @@ import { parse } from 'node-html-parser';
 import { describe, it, expect } from 'vitest';
 import type { Assertion } from '@opencollection/types/common/assertions';
 import { AssertsTab } from './AssertsTab';
+import { getByTestId } from '../../../../../../test-utils/dom';
 
 const noop = () => {};
 
@@ -18,9 +19,7 @@ describe('AssertsTab', () => {
     const root = render(
       <AssertsTab assertions={[{ expression: 'res.status', value: '200' } as Assertion]} onAssertionsChange={noop} />
     );
-    const trigger = root.querySelector('.operator-trigger');
-    expect(trigger).toBeTruthy();
-    expect(trigger?.text).toContain('equals');
+    expect(getByTestId(root, 'assertion-operator-0').text).toContain('equals');
   });
 
   it('shows the stored operator label when one is set', () => {
@@ -30,6 +29,6 @@ describe('AssertsTab', () => {
         onAssertionsChange={noop}
       />
     );
-    expect(root.querySelector('.operator-trigger')?.text).toContain('greater than');
+    expect(getByTestId(root, 'assertion-operator-0').text).toContain('greater than');
   });
 });
