@@ -11,6 +11,18 @@ config:
       variables:
         - name: "host"
           value: "http://localhost:8081"
+        - name: "retryCount"
+          value:
+            type: "number"
+            data: "3"
+        - name: "featureEnabled"
+          value:
+            type: "boolean"
+            data: "true"
+        - name: "defaultUser"
+          value:
+            type: "object"
+            data: '{"role":"admin"}'
         - name: "bearer_auth_token"
           secret: true
           type: "string"
@@ -35,6 +47,7 @@ request:
   headers:
     - name: "collection-header"
       value: "collection-header-value"
+      type: "uuid"
   variables:
     - name: "collection_pre_var"
       value: "collection_pre_var_value"
@@ -281,6 +294,10 @@ items:
                   headers:
                     - name: Accept
                       value: application/json
+                      type: string
+                    - name: X-Request-Id
+                      value: '{{requestId}}'
+                      type: uuid
                   auth:
                     type: bearer
                     token: '{{bearer_token}}'
@@ -290,8 +307,10 @@ items:
                   headers:
                     - name: Content-Type
                       value: application/json
+                      type: string
                     - name: x-total-count
                       value: '42'
+                      type: integer
                   body:
                     type: json
                     data: |
@@ -1748,6 +1767,15 @@ items:
     examples:
       - name: "List Users"
         request:
+          method: "GET"
+          url: "{{host}}/api/users?page=1&limit=10"
+          params:
+            - name: "page"
+              value: "1"
+              type: query
+            - name: "limit"
+              value: "10"
+              type: query
           headers:
             - name: "Accept"
               value: "application/json"

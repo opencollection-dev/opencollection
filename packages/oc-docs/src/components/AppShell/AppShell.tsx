@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Topbar from '../Topbar/Topbar';
 import EnvSwitcher from '../EnvSwitcher/EnvSwitcher';
@@ -47,6 +47,7 @@ const AppShell: React.FC<AppShellProps> = ({ logo, testId = 'app-shell' }) => {
   // and the docs chrome (topbar + sidebar) should go tablet/mobile accordingly.
   // In the other docks the shell is a column, so this equals the window width.
   const bodyRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLElement>(null);
   const bodyWidth = useElementWidth(bodyRef);
   const mode = layoutModeForWidth(bodyWidth || (typeof window !== 'undefined' ? window.innerWidth : 1024));
   const isDesktop = mode === 'desktop';
@@ -58,6 +59,11 @@ const AppShell: React.FC<AppShellProps> = ({ logo, testId = 'app-shell' }) => {
 
   useEffect(() => {
     setDrawerOpen(false);
+  }, [pathname]);
+
+  useLayoutEffect(() => {
+    const content = contentRef.current;
+    if (content) content.scrollTop = 0;
   }, [pathname]);
 
   // Close the mobile drawer when moving to desktop, so it doesn't reappear on
@@ -130,7 +136,7 @@ const AppShell: React.FC<AppShellProps> = ({ logo, testId = 'app-shell' }) => {
                 <ChevronRightIcon />
               </IconButton>
             )}
-            <main className="appshell-content">
+            <main className="appshell-content" ref={contentRef}>
               <PageRouter onOpenPlayground={handleOpenPlayground} />
             </main>
           </div>

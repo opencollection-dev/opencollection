@@ -1,6 +1,10 @@
 import React from 'react';
-import Editor from '@monaco-editor/react';
+import Editor, { type Monaco, type OnMount } from '@monaco-editor/react';
 import { useAppSelector } from '../../store/hooks';
+import { CopyButton } from '../CopyButton/CopyButton';
+import { ensureScriptApiCompletions, setModelHints } from './scriptApiCompletions';
+import type { ScriptApiRoot } from '../../utils/scriptAutocomplete';
+import { StyledWrapper } from './StyledWrapper';
 
 interface CodeEditorProps {
   value: string;
@@ -8,9 +12,31 @@ interface CodeEditorProps {
   language?: string;
   readOnly?: boolean;
   height?: string;
-  /** Hint shown when the editor is empty. */
   placeholder?: string;
+  /** Bruno API roots to autocomplete in this editor (e.g. `['req', 'bru']`); enables scripting hints. */
+  hintsFor?: ScriptApiRoot[];
+  /** Show a copy-to-clipboard button (revealed on hover, top-right). Defaults to on. */
+  showCopy?: boolean;
+  testId?: string;
 }
+
+const LIGHT_THEME = 'oc-light';
+const DARK_THEME = 'oc-dark';
+
+const defineThemes = (monaco: Monaco) => {
+  monaco.editor.defineTheme(LIGHT_THEME, {
+    base: 'vs',
+    inherit: true,
+    rules: [],
+    colors: { 'editor.background': '#00000000', 'editorGutter.background': '#00000000' }
+  });
+  monaco.editor.defineTheme(DARK_THEME, {
+    base: 'vs-dark',
+    inherit: true,
+    rules: [],
+    colors: { 'editor.background': '#00000000', 'editorGutter.background': '#00000000' }
+  });
+};
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
   value,
@@ -18,45 +44,45 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   language = 'json',
   readOnly = false,
   height = '300px',
-  placeholder = '...'
+  placeholder = '...',
+  hintsFor,
+  showCopy = true,
+  testId
 }) => {
   const mode = useAppSelector((s) => s.theme.mode);
 
-  const handleChange = (newValue: string | undefined) => {
-    onChange(newValue || '');
+  const handleMount: OnMount = (editor, monaco) => {
+    if (!hintsFor?.length) return;
+    ensureScriptApiCompletions(monaco);
+    const model = editor.getModel();
+    if (model) setModelHints(model, hintsFor);
   };
 
   return (
-    <div
-      style={{
-        height,
-        width: '100%',
-        border: '1px solid var(--border-color)',
-        borderRadius: '4px',
-        overflow: 'hidden'
-      }}
-    >
+    <StyledWrapper data-testid={testId} style={{ height }}>
       <Editor
-        height={height}
+        height="100%"
         language={language}
         value={value}
-        onChange={handleChange}
-        theme={mode === 'dark' ? 'vs-dark' : 'vs'}
+        onChange={(next) => onChange(next || '')}
+        beforeMount={defineThemes}
+        onMount={handleMount}
+        theme={mode === 'dark' ? DARK_THEME : LIGHT_THEME}
         options={{
           readOnly,
           minimap: { enabled: false },
           scrollBeyondLastLine: false,
-          fontSize: 14,
+          fontSize: 12,
+          fontWeight: 'normal',
           lineNumbers: 'on',
           roundedSelection: false,
-          scrollbar: {
-            vertical: 'auto',
-            horizontal: 'auto'
-          },
+          scrollbar: { vertical: 'auto', horizontal: 'auto', verticalScrollbarSize: 5, horizontalScrollbarSize: 5 },
           wordWrap: 'on',
-          folding: true,
-          lineDecorationsWidth: 10,
-          lineNumbersMinChars: 3,
+          folding: false,
+          stickyScroll: { enabled: false },
+          glyphMargin: false,
+          lineDecorationsWidth: 12,
+          lineNumbersMinChars: 2,
           automaticLayout: true,
           placeholder,
           renderLineHighlight: 'none',
@@ -65,7 +91,15 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           hideCursorInOverviewRuler: true
         }}
       />
-    </div>
+      {showCopy && value ? (
+        <CopyButton
+          text={value}
+          label="Copy code"
+          className="code-editor-copy"
+          testId={testId ? `${testId}-copy` : undefined}
+        />
+      ) : null}
+    </StyledWrapper>
   );
 };
 

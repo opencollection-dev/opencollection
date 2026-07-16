@@ -7,6 +7,8 @@ import {
   isFolder, 
   getHttpHeaders, 
   getRequestAuth, 
+  getHttpMethod,
+  getRequestUrl,
   getRequestScripts,
   scriptsArrayToObject,
   scriptsObjectToArray,
@@ -45,9 +47,10 @@ export const mergeHeaders = (collection: OpenCollection, request: HttpRequest, r
   // Get current request headers
   const currentHeaders = getHttpHeaders(request);
   
-  // Initialize request http block if not present
+  // Initialize request http block if not present, carrying the real method/url
+  // so a flat-shape request's method isn't lost to a hardcoded default.
   if (!request.http) {
-    request.http = { method: 'GET', url: '' };
+    request.http = { method: getHttpMethod(request), url: getRequestUrl(request) };
   }
   if (!request.http.headers) {
     request.http.headers = [];

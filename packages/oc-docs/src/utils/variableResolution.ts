@@ -24,7 +24,7 @@ export interface VariableModel {
   secretNames: Set<string>;
 }
 
-const isSecretVariable = (variable: Variable | SecretVariable): variable is SecretVariable =>
+export const isSecretVariable = (variable: Variable | SecretVariable): variable is SecretVariable =>
   (variable as SecretVariable).secret === true;
 
 /** Flatten a `string | { type, data } | variants[]` value into a display string. */

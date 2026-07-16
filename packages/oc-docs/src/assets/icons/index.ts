@@ -1,4 +1,6 @@
 export * from './SearchIcon';
+export * from './WarningIcon';
+export * from './CaretIcon';
 export * from './CloseIcon';
 export * from './FolderIcon';
 export * from './ChevronDownIcon';
@@ -22,3 +24,4 @@ export * from './DockBottomIcon';
 export * from './DockModalIcon';
 export * from './SidebarToggleIcon';
 export * from './SettingsIcon';
+export * from './ExampleIcon';

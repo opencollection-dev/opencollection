@@ -1,13 +1,9 @@
 import React, { Fragment, useEffect, useId, useMemo, useRef, useState } from 'react';
-import type {
-  HttpRequestExample,
-  HttpRequestHeader,
-  HttpResponseHeader
-} from '@opencollection/types/requests/http';
+import type { HttpRequestExample } from '@opencollection/types/requests/http';
 import { MethodBadge } from '../../MethodBadge/MethodBadge';
 import { ChevronArrow } from '../../ChevronArrow/ChevronArrow';
 import { CopyButton } from '../../../ui/CopyButton/CopyButton';
-import { PropertyTable, type PropertyRow } from '../../PropertyTable/PropertyTable';
+import { PropertyTable } from '../../PropertyTable/PropertyTable';
 import { TruncatedText } from '../../TruncatedText/TruncatedText';
 import { VariableText } from '../../VariableText/VariableText';
 import { Description } from '../../Description/Description';
@@ -16,7 +12,7 @@ import { RequestBody } from '../../Request/RequestBody/RequestBody';
 import { Code } from '../../Code/Code';
 import { PlayIcon } from '../../../assets/icons';
 import { resolvePathAndQueryParams } from '../../../utils/pathParams';
-import { getBodyView, getDescription } from '../../../utils/request';
+import { getBodyView, getDescription, headerRows } from '../../../utils/request';
 import { computeBodySize, formatBytes, responseBodyLanguage, responseBodyContentType, statusCodePhrase } from '../../../utils/exampleResponse';
 import { statusToneColor } from '../../../utils/common';
 import { StyledWrapper } from './StyledWrapper';
@@ -27,6 +23,7 @@ interface ExampleCardProps {
   url: string;
   onTry?: () => void;
   defaultExpanded?: boolean;
+  active?: boolean;
   testId?: string;
 }
 
@@ -37,14 +34,6 @@ interface PaneTab {
   ctype: string;
   content: React.ReactNode;
 }
-
-const headerRows = (headers: (HttpRequestHeader | HttpResponseHeader)[]): PropertyRow[] =>
-  headers.map((h) => ({
-    label: h.name,
-    value: h.value,
-    disabled: 'disabled' in h ? h.disabled : undefined,
-    description: getDescription(h)
-  }));
 
 const headerCtype = (count: number): string => `${count} header${count === 1 ? '' : 's'}`;
 
@@ -176,11 +165,12 @@ const Pane: React.FC<{
   );
 };
 
-export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, onTry, defaultExpanded, testId = 'example-card' }) => {
+export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, onTry, defaultExpanded, active, testId = 'example-card' }) => {
   const [expanded, setExpanded] = useState(Boolean(defaultExpanded));
   const [mounted, setMounted] = useState(Boolean(defaultExpanded));
   const detailId = useId();
   const detailRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = detailRef.current;
@@ -188,6 +178,16 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
     if (expanded) el.removeAttribute('inert');
     else el.setAttribute('inert', '');
   }, [expanded, mounted]);
+
+  // When this card becomes the highlighted one (navigated to from the sidebar),
+  // open it and scroll it into view. Runs on the `active` flip too, so switching
+  // highlight between already-mounted cards reveals the newly active one.
+  useEffect(() => {
+    if (!active) return;
+    setMounted(true);
+    setExpanded(true);
+    rootRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [active]);
 
   const toggle = () => {
     if (!expanded) setMounted(true);
@@ -291,7 +291,12 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
   };
 
   return (
-    <StyledWrapper className="example-card" data-testid={testId}>
+    <StyledWrapper
+      ref={rootRef}
+      className={`example-card${active ? ' is-active' : ''}`}
+      data-testid={testId}
+      data-active={active ? 'true' : undefined}
+    >
       <div className="example-summary">
         <button
           type="button"

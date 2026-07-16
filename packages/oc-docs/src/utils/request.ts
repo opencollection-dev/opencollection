@@ -4,11 +4,14 @@ import type {
   HttpRequest,
   HttpRequestBody,
   HttpRequestBodyVariant,
-  FileBodyVariant
+  FileBodyVariant,
+  HttpRequestHeader,
+  HttpResponseHeader
 } from '@opencollection/types/requests/http';
+import type { PropertyRow } from '../components/PropertyTable/PropertyTable';
 import type { Auth } from '@opencollection/types/common/auth';
 import type { Scripts } from '@opencollection/types/common/scripts';
-import type { Variable } from '@opencollection/types/common/variables';
+import type { Variable, SecretVariable, VariableValue, VariableValueType } from '@opencollection/types/common/variables';
 import type { Action } from '@opencollection/types/common/actions';
 import {
   getRequestAuth,
@@ -18,7 +21,9 @@ import {
   getRequestVariables
 } from './schemaHelpers';
 import { getItemUuid } from './itemUtils';
+import { isSecretVariable } from './variableResolution';
 import { COLLECTION_ROOT_CRUMB } from './common';
+import { TYPE_LABELS } from '../constants';
 
 export const humanizeAuthMode = (auth: Auth | undefined, labels: Record<string, string>): string => {
   if (!auth) return 'No Auth';
@@ -68,6 +73,38 @@ export const getDescription = (item: unknown): string | undefined => {
     return typeof content === 'string' && content.trim() ? content : undefined;
   }
   return undefined;
+};
+
+export const headerRows = (headers: (HttpRequestHeader | HttpResponseHeader)[]): PropertyRow[] =>
+  headers.map((h) => ({
+    label: h.name,
+    value: h.value,
+    disabled: Boolean((h as HttpRequestHeader).disabled),
+    description: getDescription(h)
+  }));
+
+const typeOfVariableValue = (value: VariableValue | undefined): VariableValueType | undefined =>
+  typeof value === 'object' ? value.type : undefined;
+
+export const getVariableType = (variable?: Variable | SecretVariable): VariableValueType | undefined => {
+  if (!variable) return undefined;
+
+  if (isSecretVariable(variable)) return variable.type;
+
+  const { value } = variable;
+
+  if (Array.isArray(value)) {
+    if (value.length === 0) return undefined;
+    const activeVariant = value.find((variant) => variant.selected) ?? value[0];
+    return typeOfVariableValue(activeVariant.value);
+  }
+
+  return typeOfVariableValue(value);
+};
+
+export const getVariableTypeLabel = (variable?: Variable | SecretVariable): string | undefined => {
+  const type = getVariableType(variable);
+  return type ? TYPE_LABELS[type] : undefined;
 };
 
 export interface BodyTableRow {
@@ -360,6 +397,7 @@ export const buildScriptChain = (
 export interface PreRequestVarRow {
   name: string;
   value: string;
+  type?: string;
   description?: string;
   disabled?: boolean;
 }
@@ -387,6 +425,7 @@ const flattenValue = (value: Variable['value']): string => {
 const toPreRequestVarRow = (variable: Variable): PreRequestVarRow => ({
   name: variable.name,
   value: flattenValue(variable.value),
+  type: getVariableTypeLabel(variable),
   description: getDescription(variable),
   disabled: variable.disabled
 });

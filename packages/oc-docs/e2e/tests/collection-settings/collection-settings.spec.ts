@@ -39,6 +39,39 @@ test.describe('collection settings', () => {
     await collectionSettings.authMode.selectOption('basic');
     await expect(collectionSettings.authField('username')).toBeVisible();
     await expect(collectionSettings.authField('password')).toBeVisible();
+    await expect(collectionSettings.authField('password')).toHaveAttribute('type', 'password');
+  });
+
+  test('bearer, api key, and digest render their fields', async ({ collectionSettings }) => {
+    await collectionSettings.openTab('auth');
+
+    await collectionSettings.authMode.selectOption('bearer');
+    await expect(collectionSettings.authField('token')).toHaveAttribute('type', 'password');
+
+    await collectionSettings.authMode.selectOption('apikey');
+    await expect(collectionSettings.authField('key')).toBeVisible();
+    await expect(collectionSettings.authField('value')).toHaveAttribute('type', 'text');
+    await expect(collectionSettings.authField('placement')).toBeVisible();
+
+    await collectionSettings.authMode.selectOption('digest');
+    await expect(collectionSettings.authField('username')).toBeVisible();
+    await expect(collectionSettings.authField('password')).toHaveAttribute('type', 'password');
+  });
+
+  test('aws signature v4 shows all six fields and reveals only the secret access key', async ({ collectionSettings }) => {
+    await collectionSettings.openTab('auth');
+    await collectionSettings.authMode.selectOption('awsv4');
+
+    for (const field of ['accessKeyId', 'secretAccessKey', 'sessionToken', 'service', 'region', 'profileName']) {
+      await expect(collectionSettings.authField(field)).toBeVisible();
+    }
+
+    const secret = collectionSettings.authField('secretAccessKey');
+    await expect(secret).toHaveAttribute('type', 'password');
+    await collectionSettings.authField('secretAccessKey-toggle').click();
+    await expect(secret).toHaveAttribute('type', 'text');
+
+    await expect(collectionSettings.authField('accessKeyId')).toHaveAttribute('type', 'text');
   });
 
   test('scripts shows pre-request and post-response editors', async ({ collectionSettings }) => {

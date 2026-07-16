@@ -57,7 +57,7 @@ const CodeViewer: React.FC<CodeViewerProps> = ({
     .filter(Boolean)
     .join(' ');
   const codeEl = (
-    <pre ref={variableAware ? undefined : preRef} className="m-0">
+    <pre ref={variableAware ? undefined : preRef} className="m-0" translate="no">
       <code className={`language-${language} font-mono`}>
         {variableAware ? <HighlightedCode code={code} language={language} /> : code}
       </code>

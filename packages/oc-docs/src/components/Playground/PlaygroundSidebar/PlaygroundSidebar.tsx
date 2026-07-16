@@ -5,6 +5,7 @@ import SidebarTree from '../../Docs/Sidebar/SidebarTree/SidebarTree';
 import IconButton from '../../../ui/IconButton/IconButton';
 import { SettingsIcon } from '../../../assets/icons';
 import { useAutoHideScrollbar, useIsMobileDevice } from '../../../hooks';
+import type { ExampleHighlight } from '../../Docs/Sidebar/SidebarTree/SidebarTree';
 import { StyledWrapper } from './StyledWrapper';
 
 interface PlaygroundSidebarProps {
@@ -18,6 +19,8 @@ interface PlaygroundSidebarProps {
   onOpenCollection: () => void;
   collectionActive: boolean;
   testId?: string;
+  activeExample: ExampleHighlight | null;
+  onExampleClick?: (requestUuid: string, index: number) => void;
 }
 
 const PlaygroundSidebar: React.FC<PlaygroundSidebarProps> = ({
@@ -31,6 +34,8 @@ const PlaygroundSidebar: React.FC<PlaygroundSidebarProps> = ({
   onOpenCollection,
   collectionActive,
   testId = 'playground-sidebar',
+  activeExample,
+  onExampleClick,
 }) => {
   const [collectionCollapsed, setCollectionCollapsed] = useState(false);
   const name = collection?.info?.name || 'Collection';
@@ -65,6 +70,8 @@ const PlaygroundSidebar: React.FC<PlaygroundSidebarProps> = ({
             uuidToSlug={uuidToSlug}
             onNavigate={onNavigate}
             onToggleFolder={onToggleFolder}
+            activeExample={activeExample}
+            onExampleClick={onExampleClick}
             collectionRoot={{
               name,
               collapsed: collectionCollapsed,

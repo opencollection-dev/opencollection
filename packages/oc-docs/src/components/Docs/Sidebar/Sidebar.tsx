@@ -13,6 +13,7 @@ import { useNavModel } from '../../../routing/hooks';
 import { normalizeSlug } from '../../../routing/resolve';
 import { OVERVIEW_SLUG, ENVIRONMENTS_SLUG } from '../../../routing/navModel';
 import { useDocsNavigate, useAutoHideScrollbar, useIsMobileDevice } from '../../../hooks';
+import { useActiveExample } from './hooks/useActiveExample';
 
 interface SidebarProps {
   onNavigate?: () => void;
@@ -40,6 +41,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
     }
     return map;
   }, [model]);
+
+  const { activeExample, goToExample } = useActiveExample(model, activeSlug, uuidToSlug, onNavigate);
 
   // Show the scrollbar while the list is in use, then fade it out after 1s idle.
   // Shared with the playground sidebar so both behave the same.
@@ -88,10 +91,14 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
         {collection?.items?.length ? (
           <SidebarTree
             items={collection.items}
-            activeSlug={activeSlug}
+            // While an example is highlighted, only the example row is active,
+            // not its parent request row (even though we navigated to that page).
+            activeSlug={activeExample ? '' : activeSlug}
             uuidToSlug={uuidToSlug}
             onNavigate={goTo}
             onToggleFolder={(uuid) => dispatch(toggleItem(uuid))}
+            activeExample={activeExample}
+            onExampleClick={goToExample}
           />
         ) : null}
       </div>

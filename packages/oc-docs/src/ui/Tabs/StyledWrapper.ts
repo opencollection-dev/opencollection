@@ -43,8 +43,6 @@ export const StyledWrapper = styled.div`
     height: 0.125rem;
     background: var(--primary-color);
     transform: scaleX(0);
-    transform-origin: center;
-    transition: transform 0.16s var(--oc-tab-ease);
   }
   .tab:hover:not(.is-active):not(:disabled) {
     color: var(--text-primary);
@@ -68,7 +66,6 @@ export const StyledWrapper = styled.div`
   .tab-count {
     margin-left: 0.1875rem;
     font-size: 0.625rem;
-    font-weight: 500;
     line-height: 1;
     letter-spacing: 0;
     color: var(--text-secondary);
@@ -78,31 +75,34 @@ export const StyledWrapper = styled.div`
     gap: 0.5rem;
 
     .tab {
-      padding: 0.5rem 1rem;
-      margin-right: 0;
+      padding: 0.6rem 0.75rem;
       border: none;
       border-bottom: none;
       border-radius: var(--oc-radius);
       background: transparent;
-      color: var(--oc-tabs-color);
+      color: var(--text-muted);
+      font-size: 0.8125rem;
+      font-weight: 400;
+      line-height: 1;
 
-      /* No sliding underline in the button variant. */
       &::after {
         display: none;
       }
 
       &:hover:not(.is-active):not(.disabled) {
-        background: var(--oc-background-surface1);
         color: var(--text-primary);
       }
 
       &.is-active {
-        background: var(--oc-background-surface2);
+        background: var(--oc-background-surface0);
         color: var(--text-primary);
-        border-bottom-color: transparent;
         font-weight: 600;
       }
     }
+  }
+
+  &.tabs-variant-button .tab-panel {
+    margin-top: 0.75rem;
   }
 
   .tabs-right {
@@ -112,34 +112,13 @@ export const StyledWrapper = styled.div`
     flex-shrink: 0;
   }
 
-  @keyframes oc-tab-panel-in {
-    from {
-      opacity: 0;
-      transform: translateY(0.5rem);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
   .tab-panel {
     margin-top: 1rem;
     min-width: 0;
-    animation: oc-tab-panel-in 0.2s var(--oc-tab-ease) 0.04s backwards;
     flex: 1;
   }
   .tab-panel:focus {
     outline: none;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .tab-panel {
-      animation: none;
-    }
-    .tab::after {
-      transition: none;
-    }
   }
 
   @media (max-width: 640px) {

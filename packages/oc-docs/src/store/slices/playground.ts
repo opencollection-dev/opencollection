@@ -6,7 +6,7 @@ import type { RootState } from '../store';
 import { hydrateWithUUIDs, findAndUpdateItem } from '../../utils/fileUtils';
 import { isFolder } from '../../utils/schemaHelpers';
 
-export type ViewMode = 'playground' | 'environments' | 'folder-settings' | 'collection-settings';
+export type ViewMode = 'playground' | 'environments' | 'folder-settings' | 'collection-settings' | 'example';
 
 export interface PlaygroundState {
   collection: OpenCollectionCollection | null;
@@ -15,6 +15,7 @@ export interface PlaygroundState {
   // UI State
   viewMode: ViewMode;
   selectedItemId: string | null;
+  selectedExampleIndex: number | null;
 }
 
 const initialState: PlaygroundState = {
@@ -24,6 +25,7 @@ const initialState: PlaygroundState = {
   // UI State
   viewMode: 'playground',
   selectedItemId: null,
+  selectedExampleIndex: null,
 };
 
 const findAndUpdateItemInCollection = (
@@ -126,6 +128,7 @@ const playgroundSlice = createSlice({
       state.hydratedCollection = null;
       state.responses = {};
       state.selectedItemId = null;
+      state.selectedExampleIndex = null;
     },
     updatePlaygroundItem: (state: PlaygroundState, action: PayloadAction<{ uuid: string; item: HttpRequest }>) => {
       if (!state.collection || !state.collection.items) return;
@@ -147,6 +150,9 @@ const playgroundSlice = createSlice({
     },
     setSelectedItemId: (state: PlaygroundState, action: PayloadAction<string | null>) => {
       state.selectedItemId = action.payload;
+    },
+    setSelectedExampleIndex: (state: PlaygroundState, action: PayloadAction<number | null>) => {
+      state.selectedExampleIndex = action.payload;
     },
     // Collection Mutation Actions
     toggleFolderCollapse: (state: PlaygroundState, action: PayloadAction<string>) => {
@@ -204,6 +210,7 @@ export const {
   clearPlaygroundResponse,
   setViewMode,
   setSelectedItemId,
+  setSelectedExampleIndex,
   toggleFolderCollapse,
   expandFolders,
   updateCollectionSettings,
@@ -218,5 +225,6 @@ export const selectPlaygroundResponse = (state: RootState, uuid: string) => stat
 export const selectPlaygroundResponses = (state: RootState) => state.playground.responses;
 export const selectViewMode = (state: RootState) => state.playground.viewMode;
 export const selectSelectedItemId = (state: RootState) => state.playground.selectedItemId;
+export const selectSelectedExampleIndex = (state: RootState) => state.playground.selectedExampleIndex;
 
 export default playgroundSlice.reducer;

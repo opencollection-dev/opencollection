@@ -10,7 +10,7 @@ import { PageWrapper } from '../../components/PageWrapper/PageWrapper';
 import { Heading } from '../../components/Heading/Heading';
 import { Section } from '../../components/Section/Section';
 import { Breadcrumb, type BreadcrumbSegment } from '../../ui/Breadcrumb/Breadcrumb';
-import { RequestDescription } from '../../components/Request/RequestDescription/RequestDescription';
+import { ViewMore } from '../../components/ViewMore/ViewMore';
 import { EmptyState } from '../../ui/EmptyState/EmptyState';
 import { FolderConfiguration } from '../../components/FolderConfiguration/FolderConfiguration';
 import { FolderIcon } from '../../assets/icons';
@@ -62,7 +62,9 @@ export const Folder: React.FC<FolderProps> = ({ item, ancestry = [], collection,
 
         {docsHtml && (
           <Section label="Documentation" testId="folder-section-documentation" className="folder-fullwidth">
-            <RequestDescription html={docsHtml} testId="folder-docs" />
+            <ViewMore collapsedHeight="4.5rem" testId="folder-docs">
+              <div className="markdown-documentation" dangerouslySetInnerHTML={{ __html: docsHtml }} />
+            </ViewMore>
           </Section>
         )}
 

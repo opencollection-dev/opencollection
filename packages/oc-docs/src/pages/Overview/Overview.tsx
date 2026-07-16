@@ -12,6 +12,7 @@ import { EmptyState } from '../../ui/EmptyState/EmptyState';
 import { PageWrapper } from '../../components/PageWrapper/PageWrapper';
 import { Heading } from '../../components/Heading/Heading';
 import { Section } from '../../components/Section/Section';
+import { ViewMore } from '../../components/ViewMore/ViewMore';
 import { BookIcon } from '../../assets/icons';
 import { StyledWrapper } from './StyledWrapper';
 
@@ -38,7 +39,7 @@ export const Overview: React.FC<OverviewProps> = ({ collection, testId = 'overvi
     [counts]
   );
   const scripts = useMemo(() => scriptsArrayToObject(collection.request?.scripts), [collection.request]);
-  const { preVars, postVars } = useMemo(() => getCollectionVariables(collection), [collection.request]);
+  const { preVars, postVars } = useMemo(() => getCollectionVariables(collection), [collection]);
   const version = collection.info?.version;
   const name = collection.info?.name || 'Untitled Collection';
 
@@ -78,17 +79,19 @@ export const Overview: React.FC<OverviewProps> = ({ collection, testId = 'overvi
           <div className="overview-col-left">
             <Section label="Overview" testId="overview-section-label">
               {hasOverview ? (
-                <div
-                  className="overview-markdown markdown-documentation"
-                  data-testid="overview-markdown-documentation"
-                  dangerouslySetInnerHTML={{ __html: docsHtml }}
-                />
+                <ViewMore testId="overview-markdown-view-more">
+                  <div
+                    className="overview-markdown markdown-documentation"
+                    data-testid="overview-markdown-documentation"
+                    dangerouslySetInnerHTML={{ __html: docsHtml }}
+                  />
+                </ViewMore>
               ) : (
                 <EmptyState
                   testId="overview-empty"
                   icon={<BookIcon />}
                   heading="No overview content yet"
-                  subheading="This collection has no description or readme. Add one in Bruno to introduce your API to readers — what it does, who it's for, and how to authenticate."
+                  subheading="This collection has no description or readme. Add one in Bruno to introduce your API to readers: what it does, who it's for, and how to authenticate."
                 />
               )}
             </Section>
