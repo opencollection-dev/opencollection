@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { parse } from 'node-html-parser';
 import { describe, it, expect } from 'vitest';
 import { Input } from './Input';
-import { query } from '../../../test-utils/dom';
+import { query, getByTestId } from '../../../test-utils/dom';
 
 const noop = () => {};
 
@@ -32,8 +32,8 @@ describe('Input', () => {
   it('masks a secret value and exposes an accessible reveal toggle', () => {
     const root = render(<Input value="secret" onChange={noop} secret testId="my-secret" />);
     expect(query(root, '.oc-input-wrapper').classNames).toContain('oc-input-wrapper--secret');
-    expect(query(root, '[data-testid="my-secret"]').getAttribute('type')).toBe('password');
-    const toggle = query(root, '[data-testid="my-secret-toggle"]');
+    expect(getByTestId(root, 'my-secret').getAttribute('type')).toBe('password');
+    const toggle = getByTestId(root, 'my-secret-toggle');
     expect(toggle.getAttribute('aria-label')).toBe('Show value');
     expect(toggle.getAttribute('aria-pressed')).toBe('false');
   });

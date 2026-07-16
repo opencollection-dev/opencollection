@@ -12,6 +12,7 @@ import {
   setViewMode
 } from '../../../store/slices/playground';
 import { getItemUuid } from '../../../utils/itemUtils';
+import { queryByTestId } from '../../../test-utils/dom';
 
 const collection = {
   info: { name: 'C' },
@@ -49,6 +50,6 @@ describe('PlaygroundBody example view', () => {
         </MemoryRouter>
       </Provider>
     );
-    expect(root.querySelector('[data-testid="example-view"]')).not.toBeNull();
+    expect(queryByTestId(root, 'example-view')).not.toBeNull();
   });
 });

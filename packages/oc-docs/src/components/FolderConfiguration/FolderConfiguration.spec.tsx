@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest';
 import { useRenderToDom } from '../../hooks/useRenderToDom';
 import { FolderConfiguration } from './FolderConfiguration';
 import type { FolderConfig } from '../../utils/folder';
+import { queryByTestId } from '../../test-utils/dom';
 
 const baseConfig: FolderConfig = {
   headers: [],
@@ -24,13 +25,13 @@ describe('FolderConfiguration', () => {
     };
     const root = useRenderToDom(<FolderConfiguration config={config} />);
 
-    expect(root.querySelector('[data-testid="folder-config-headers"]')).toBeTruthy();
-    expect(root.querySelector('[data-testid="folder-config-script"]')).toBeTruthy();
+    expect(queryByTestId(root, 'folder-config-headers')).toBeTruthy();
+    expect(queryByTestId(root, 'folder-config-script')).toBeTruthy();
     expect(root.querySelector('[data-testid="folder-config-headers"] .property-key')?.text.trim()).toBe('Accept');
 
-    expect(root.querySelector('[data-testid="folder-config-auth"]')).toBeNull();
-    expect(root.querySelector('[data-testid="folder-config-vars"]')).toBeNull();
-    expect(root.querySelector('[data-testid="folder-config-tests"]')).toBeNull();
+    expect(queryByTestId(root, 'folder-config-auth')).toBeNull();
+    expect(queryByTestId(root, 'folder-config-vars')).toBeNull();
+    expect(queryByTestId(root, 'folder-config-tests')).toBeNull();
   });
 
   it('labels the Auth group with an "Inherited from collection" badge when auth is inherited', () => {
@@ -41,7 +42,7 @@ describe('FolderConfiguration', () => {
     };
     const root = useRenderToDom(<FolderConfiguration config={config} authModeLabels={{ bearer: 'Bearer Token' }} />);
 
-    const authGroup = root.querySelector('[data-testid="folder-config-auth"]');
+    const authGroup = queryByTestId(root, 'folder-config-auth');
     expect(authGroup).toBeTruthy();
     expect(authGroup?.querySelector('.config-group-head')?.text).toContain('Inherited from collection');
   });
@@ -59,7 +60,7 @@ describe('FolderConfiguration', () => {
       .querySelectorAll('[data-testid="folder-config-script"] .config-phase-label')
       .map((el) => el.text.trim());
     expect(phases).toEqual(['Pre-Request', 'Post-Response']);
-    expect(root.querySelector('[data-testid="folder-config-tests"]')).toBeTruthy();
+    expect(queryByTestId(root, 'folder-config-tests')).toBeTruthy();
   });
 
   it('renders disabled headers (dimmed) and their descriptions', () => {
@@ -69,7 +70,7 @@ describe('FolderConfiguration', () => {
     };
     const root = useRenderToDom(<FolderConfiguration config={config} />);
 
-    const headers = root.querySelector('[data-testid="folder-config-headers"]');
+    const headers = queryByTestId(root, 'folder-config-headers');
     expect(headers).toBeTruthy();
     expect(headers?.querySelector('.property-key')?.text.trim()).toBe('X-Debug');
     expect(headers?.querySelector('.property-row--disabled')).toBeTruthy();
@@ -84,7 +85,7 @@ describe('FolderConfiguration', () => {
     };
     const root = useRenderToDom(<FolderConfiguration config={config} />);
 
-    const vars = root.querySelector('[data-testid="folder-config-vars"]');
+    const vars = queryByTestId(root, 'folder-config-vars');
     expect(vars).toBeTruthy();
     const phases = vars?.querySelectorAll('.config-phase-label').map((el) => el.text.trim());
     expect(phases).toEqual(['Pre-Request', 'Post-Response']);
@@ -100,7 +101,7 @@ describe('FolderConfiguration', () => {
     };
     const root = useRenderToDom(<FolderConfiguration config={config} />);
 
-    const vars = root.querySelector('[data-testid="folder-config-vars"]');
+    const vars = queryByTestId(root, 'folder-config-vars');
     expect(vars).toBeTruthy();
     const phases = vars?.querySelectorAll('.config-phase-label').map((el) => el.text.trim());
     expect(phases).toEqual(['Post-Response']);

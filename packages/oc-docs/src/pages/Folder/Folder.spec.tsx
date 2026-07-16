@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest';
 import type { OpenCollection } from '@opencollection/types';
 import { useRenderToDom } from '../../hooks/useRenderToDom';
 import { Folder } from './Folder';
+import { queryByTestId } from '../../test-utils/dom';
 
 const collection = {
   info: { name: 'Hotel Booking API' },
@@ -19,15 +20,15 @@ describe('Folder', () => {
 
     const root = useRenderToDom(<Folder item={folder} collection={collection} />);
 
-    expect(root.querySelector('[data-testid="folder-title"]')?.text.trim()).toBe('Authentication');
-    expect(root.querySelector('[data-testid="folder-request-count"]')?.text.trim()).toBe('3 requests');
+    expect(queryByTestId(root, 'folder-title')?.text.trim()).toBe('Authentication');
+    expect(queryByTestId(root, 'folder-request-count')?.text.trim()).toBe('3 requests');
     expect(root.querySelector('[data-testid="folder-section-configuration"] h2')?.text.trim()).toBe('Folder Configuration');
 
-    const authGroup = root.querySelector('[data-testid="folder-config-auth"]');
+    const authGroup = queryByTestId(root, 'folder-config-auth');
     expect(authGroup).toBeTruthy();
     expect(authGroup?.text).toContain('Inherited from collection');
-    expect(root.querySelector('[data-testid="folder-config-script"]')).toBeTruthy();
-    expect(root.querySelector('[data-testid="folder-config-empty"]')).toBeNull();
+    expect(queryByTestId(root, 'folder-config-script')).toBeTruthy();
+    expect(queryByTestId(root, 'folder-config-empty')).toBeNull();
   });
 
   it('renders the documentation markdown in its own section', () => {
@@ -40,7 +41,7 @@ describe('Folder', () => {
     const root = useRenderToDom(<Folder item={folder} collection={collection} />);
 
     expect(root.querySelector('[data-testid="folder-section-documentation"] h2')?.text.trim()).toBe('Documentation');
-    const docs = root.querySelector('[data-testid="folder-docs"]');
+    const docs = queryByTestId(root, 'folder-docs');
     expect(docs).toBeTruthy();
     expect(docs?.querySelector('h1')?.text.trim()).toBe('Auth docs');
     expect(docs?.querySelector('strong')?.text.trim()).toBe('markdown');
@@ -51,8 +52,8 @@ describe('Folder', () => {
 
     const root = useRenderToDom(<Folder item={folder} collection={collection} />);
 
-    expect(root.querySelector('[data-testid="folder-docs"]')).toBeNull();
-    expect(root.querySelector('[data-testid="folder-section-documentation"]')).toBeNull();
+    expect(queryByTestId(root, 'folder-docs')).toBeNull();
+    expect(queryByTestId(root, 'folder-section-documentation')).toBeNull();
   });
 
   it('renders the empty state when the folder has no configuration', () => {
@@ -60,12 +61,12 @@ describe('Folder', () => {
 
     const root = useRenderToDom(<Folder item={folder} collection={collection} />);
 
-    expect(root.querySelector('[data-testid="folder-title"]')?.text.trim()).toBe('Realtime');
-    expect(root.querySelector('[data-testid="folder-request-count"]')?.text.trim()).toBe('1 request');
+    expect(queryByTestId(root, 'folder-title')?.text.trim()).toBe('Realtime');
+    expect(queryByTestId(root, 'folder-request-count')?.text.trim()).toBe('1 request');
 
-    const empty = root.querySelector('[data-testid="folder-config-empty"]');
+    const empty = queryByTestId(root, 'folder-config-empty');
     expect(empty).toBeTruthy();
     expect(empty?.querySelector('.empty-state-heading')?.text.trim()).toBe('No folder configuration');
-    expect(root.querySelector('[data-testid="folder-config-headers"]')).toBeNull();
+    expect(queryByTestId(root, 'folder-config-headers')).toBeNull();
   });
 });

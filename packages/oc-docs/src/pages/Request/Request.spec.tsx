@@ -6,6 +6,7 @@ import type { Item } from '@opencollection/types/collection/item';
 import { MemoryRouter } from 'react-router-dom';
 import { Request } from './Request';
 import { useRenderToDom } from '../../hooks/useRenderToDom';
+import { queryByTestId } from '../../test-utils/dom';
 
 const collection: OpenCollection = {
   info: { name: 'Auth API', version: '1.0.0' },
@@ -57,11 +58,11 @@ describe('Request page', () => {
       </MemoryRouter>
     );
 
-    expect(root.querySelector('[data-testid="request-breadcrumb"]')?.text).toContain('Authentication');
-    expect(root.querySelector('[data-testid="request-title"]')?.text).toContain('Login');
-    expect(root.querySelector('[data-testid="request-url"]')?.text).toContain('auth/login');
-    expect(root.querySelector('[data-testid="request-try-button"]')?.text).toContain('Try');
-    expect(root.querySelector('[data-testid="request-description"]')?.text).toContain('Authenticate a user');
+    expect(queryByTestId(root, 'request-breadcrumb')?.text).toContain('Authentication');
+    expect(queryByTestId(root, 'request-title')?.text).toContain('Login');
+    expect(queryByTestId(root, 'request-url')?.text).toContain('auth/login');
+    expect(queryByTestId(root, 'request-try-button')?.text).toContain('Try');
+    expect(queryByTestId(root, 'request-description')?.text).toContain('Authenticate a user');
     // {{baseUrl}} in the url renders as an inspectable variable token
     expect(root.querySelector('[data-var-name="baseUrl"]')).not.toBeNull();
 
@@ -69,20 +70,20 @@ describe('Request page', () => {
       expect(root.querySelector(`[data-testid="request-section-${slug}"]`)).not.toBeNull();
     }
 
-    const params = root.querySelector('[data-testid="request-section-params"]');
+    const params = queryByTestId(root, 'request-section-params');
     expect(params?.text).toContain('tenant');
     expect(params?.text).toContain('verbose');
 
-    const snippet = root.querySelector('[data-testid="request-section-code-snippet"]');
+    const snippet = queryByTestId(root, 'request-section-code-snippet');
     expect(snippet?.text).toContain('curl');
     expect(snippet?.text).toContain('/auth/login');
 
-    const exec = root.querySelector('[data-testid="execution-context"]');
+    const exec = queryByTestId(root, 'execution-context');
     expect(exec?.text).toContain('attempt');
     expect(exec?.text).toContain('authToken');
-    expect(root.querySelector('[data-testid="execution-context-tabs-tab-scripts"]')).not.toBeNull();
-    expect(root.querySelector('[data-testid="execution-context-tabs-tab-asserts"]')).not.toBeNull();
-    expect(root.querySelector('[data-testid="execution-context-tabs-tab-tests"]')).not.toBeNull();
+    expect(queryByTestId(root, 'execution-context-tabs-tab-scripts')).not.toBeNull();
+    expect(queryByTestId(root, 'execution-context-tabs-tab-asserts')).not.toBeNull();
+    expect(queryByTestId(root, 'execution-context-tabs-tab-tests')).not.toBeNull();
   });
 
   it('shows empty states (not bare sections) when nothing is configured, and always shows the code snippet', () => {
@@ -96,18 +97,18 @@ describe('Request page', () => {
       </MemoryRouter>
     );
 
-    expect(root.querySelector('[data-testid="request-title"]')?.text).toContain('Ping');
-    expect(root.querySelector('[data-testid="request-url"]')?.text).toContain('/ping');
+    expect(queryByTestId(root, 'request-title')?.text).toContain('Ping');
+    expect(queryByTestId(root, 'request-url')?.text).toContain('/ping');
     // No params/body/headers/auth -> a single "No request configuration" empty state, not the individual sections.
-    expect(root.querySelector('[data-testid="request-config-empty"]')).not.toBeNull();
-    expect(root.querySelector('[data-testid="request-section-params"]')).toBeNull();
+    expect(queryByTestId(root, 'request-config-empty')).not.toBeNull();
+    expect(queryByTestId(root, 'request-section-params')).toBeNull();
     // The code snippet is always shown (on the right).
-    expect(root.querySelector('[data-testid="request-section-code-snippet"]')).not.toBeNull();
+    expect(queryByTestId(root, 'request-section-code-snippet')).not.toBeNull();
     // No examples authored -> the Examples section is hidden entirely (no empty state).
-    expect(root.querySelector('[data-testid="request-section-examples"]')).toBeNull();
+    expect(queryByTestId(root, 'request-section-examples')).toBeNull();
     // No scripts/vars/asserts/tests -> the Execution Context section shows its own empty state.
-    expect(root.querySelector('[data-testid="request-section-execution-context"]')).not.toBeNull();
-    expect(root.querySelector('[data-testid="execution-context-empty"]')).not.toBeNull();
+    expect(queryByTestId(root, 'request-section-execution-context')).not.toBeNull();
+    expect(queryByTestId(root, 'execution-context-empty')).not.toBeNull();
   });
 
   it('renders the Auth section for auth declared in the http block (http.auth: inherit)', () => {
@@ -122,10 +123,10 @@ describe('Request page', () => {
       </MemoryRouter>
     );
 
-    const auth = root.querySelector('[data-testid="request-section-auth"]');
+    const auth = queryByTestId(root, 'request-section-auth');
     expect(auth).not.toBeNull();
     expect(auth?.text).toContain('Inherit');
-    expect(root.querySelector('[data-testid="request-section-code-snippet"]')).not.toBeNull();
+    expect(queryByTestId(root, 'request-section-code-snippet')).not.toBeNull();
   });
 
   it('does not apply smart typography to docs prose', () => {
@@ -140,7 +141,7 @@ describe('Request page', () => {
       </MemoryRouter>
     );
 
-    const description = root.querySelector('[data-testid="request-description"]');
+    const description = queryByTestId(root, 'request-description');
     expect(description?.text).toContain('Use -- dashes');
     expect(description?.text).toContain('(c)');
     expect(description?.text).not.toContain('–'); // en-dash

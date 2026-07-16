@@ -1,7 +1,7 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { useRenderToDom } from '../../../../../../hooks/useRenderToDom';
-import { query } from '../../../../../../test-utils/dom';
+import { query, getByTestId, queryByTestId } from '../../../../../../test-utils/dom';
 import { HeadersTab } from './HeadersTab';
 
 const noop = () => {};
@@ -30,12 +30,12 @@ describe('HeadersTab', () => {
     );
     expect(query(root, '.title').text.trim()).toBe('Headers');
     expect(query(root, '.description').text.trim()).toBe('Request headers sent with the call');
-    expect(root.querySelector('[data-testid="bulk-edit-toggle"]')).toBeTruthy();
+    expect(queryByTestId(root, 'bulk-edit-toggle')).toBeTruthy();
   });
 
   it('exposes the Bulk edit toggle button', () => {
     const root = useRenderToDom(<HeadersTab headers={[]} onHeadersChange={noop} />);
-    expect(query(root, '[data-testid="bulk-edit-toggle"]').text.trim()).toBe('Bulk edit');
+    expect(getByTestId(root, 'bulk-edit-toggle').text.trim()).toBe('Bulk edit');
   });
 
   it('flags a header name with spaces and a value with newlines', () => {

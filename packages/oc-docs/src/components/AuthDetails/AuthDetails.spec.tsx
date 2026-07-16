@@ -2,6 +2,7 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { parse } from 'node-html-parser';
 import { describe, it, expect } from 'vitest';
+import { getByTestId } from '../../test-utils/dom';
 import { AuthDetails } from './AuthDetails';
 import { AUTH_MODE_LABELS } from '../../constants';
 import { SECRET_MASK } from '../../constants';
@@ -11,62 +12,57 @@ const renderAuth = (ui: React.ReactElement) => {
   const root = parse(html);
   // Strip emotion's inline <style> blocks so their CSS text never counts as content.
   root.querySelectorAll('style').forEach((style) => style.remove());
-  const getByTestId = (testId: string) => {
-    const element = root.querySelector(`[data-testid="${testId}"]`);
-    if (!element) throw new Error(`No element with data-testid="${testId}"`);
-    return element;
-  };
-  return { html, getByTestId };
+  return { html, root };
 };
 
 describe('AuthDetails', () => {
   it('renders basic auth: mode + username, masks the password', () => {
-    const { getByTestId, html } = renderAuth(
+    const { root, html } = renderAuth(
       <AuthDetails
         auth={{ type: 'basic', username: 'user@example.com', password: 's3cr3t' }}
         authModeLabels={AUTH_MODE_LABELS}
         testId="auth"
       />
     );
-    expect(getByTestId('auth-mode').text.trim()).toBe('Basic Auth');
-    expect(getByTestId('auth-username').text.trim()).toBe('user@example.com');
-    expect(getByTestId('auth-password').text.trim()).toBe(SECRET_MASK);
+    expect(getByTestId(root, 'auth-mode').text.trim()).toBe('Basic Auth');
+    expect(getByTestId(root, 'auth-username').text.trim()).toBe('user@example.com');
+    expect(getByTestId(root, 'auth-password').text.trim()).toBe(SECRET_MASK);
     expect(html).not.toContain('s3cr3t');
   });
 
   it('masks the bearer token and falls back to the raw type without a label', () => {
-    const { getByTestId, html } = renderAuth(<AuthDetails auth={{ type: 'bearer', token: 'abc123' }} testId="auth" />);
-    expect(getByTestId('auth-mode').text.trim()).toBe('bearer');
-    expect(getByTestId('auth-token').text.trim()).toBe(SECRET_MASK);
+    const { root, html } = renderAuth(<AuthDetails auth={{ type: 'bearer', token: 'abc123' }} testId="auth" />);
+    expect(getByTestId(root, 'auth-mode').text.trim()).toBe('bearer');
+    expect(getByTestId(root, 'auth-token').text.trim()).toBe(SECRET_MASK);
     expect(html).not.toContain('abc123');
   });
 
   it('renders apikey fields and humanizes the placement', () => {
-    const { getByTestId } = renderAuth(
+    const { root } = renderAuth(
       <AuthDetails
         auth={{ type: 'apikey', key: 'X-Api-Key', value: 'k', placement: 'header' }}
         authModeLabels={AUTH_MODE_LABELS}
         testId="auth"
       />
     );
-    expect(getByTestId('auth-mode').text.trim()).toBe('API Key');
-    expect(getByTestId('auth-key').text.trim()).toBe('X-Api-Key');
-    expect(getByTestId('auth-add-to').text.trim()).toBe('Header');
+    expect(getByTestId(root, 'auth-mode').text.trim()).toBe('API Key');
+    expect(getByTestId(root, 'auth-key').text.trim()).toBe('X-Api-Key');
+    expect(getByTestId(root, 'auth-add-to').text.trim()).toBe('Header');
   });
 
   it('humanizes a query-params placement', () => {
-    const { getByTestId } = renderAuth(
+    const { root } = renderAuth(
       <AuthDetails
         auth={{ type: 'apikey', key: 'api_key', value: 'k', placement: 'query' }}
         authModeLabels={AUTH_MODE_LABELS}
         testId="auth"
       />
     );
-    expect(getByTestId('auth-add-to').text.trim()).toBe('Query Params');
+    expect(getByTestId(root, 'auth-add-to').text.trim()).toBe('Query Params');
   });
 
   it('renders AWS Signature v4 fields and masks the secret + session token', () => {
-    const { getByTestId, html } = renderAuth(
+    const { root, html } = renderAuth(
       <AuthDetails
         auth={{
           type: 'awsv4',
@@ -81,18 +77,18 @@ describe('AuthDetails', () => {
         testId="auth"
       />
     );
-    expect(getByTestId('auth-mode').text.trim()).toBe('AWS Signature v4');
-    expect(getByTestId('auth-access-key-id').text.trim()).toBe('AKIAEXAMPLE');
-    expect(getByTestId('auth-service').text.trim()).toBe('execute-api');
-    expect(getByTestId('auth-region').text.trim()).toBe('us-east-1');
-    expect(getByTestId('auth-secret-access-key').text.trim()).toBe(SECRET_MASK);
-    expect(getByTestId('auth-session-token').text.trim()).toBe(SECRET_MASK);
+    expect(getByTestId(root, 'auth-mode').text.trim()).toBe('AWS Signature v4');
+    expect(getByTestId(root, 'auth-access-key-id').text.trim()).toBe('AKIAEXAMPLE');
+    expect(getByTestId(root, 'auth-service').text.trim()).toBe('execute-api');
+    expect(getByTestId(root, 'auth-region').text.trim()).toBe('us-east-1');
+    expect(getByTestId(root, 'auth-secret-access-key').text.trim()).toBe(SECRET_MASK);
+    expect(getByTestId(root, 'auth-session-token').text.trim()).toBe(SECRET_MASK);
     expect(html).not.toContain('secretKeyValue');
     expect(html).not.toContain('sessionTokenValue');
   });
 
   it('renders the full oauth1 field set and masks the private key', () => {
-    const { getByTestId, html } = renderAuth(
+    const { root, html } = renderAuth(
       <AuthDetails
         auth={{
           type: 'oauth1',
@@ -110,17 +106,17 @@ describe('AuthDetails', () => {
         testId="auth"
       />
     );
-    expect(getByTestId('auth-verifier').text.trim()).toBe('v-code');
-    expect(getByTestId('auth-nonce').text.trim()).toBe('n-123');
-    expect(getByTestId('auth-realm').text.trim()).toBe('my-realm');
-    expect(getByTestId('auth-include-body-hash').text.trim()).toBe('Yes');
-    expect(getByTestId('auth-placement').text.trim()).toBe('Body');
-    expect(getByTestId('auth-private-key').text.trim()).toBe(SECRET_MASK);
+    expect(getByTestId(root, 'auth-verifier').text.trim()).toBe('v-code');
+    expect(getByTestId(root, 'auth-nonce').text.trim()).toBe('n-123');
+    expect(getByTestId(root, 'auth-realm').text.trim()).toBe('my-realm');
+    expect(getByTestId(root, 'auth-include-body-hash').text.trim()).toBe('Yes');
+    expect(getByTestId(root, 'auth-placement').text.trim()).toBe('Body');
+    expect(getByTestId(root, 'auth-private-key').text.trim()).toBe(SECRET_MASK);
     expect(html).not.toContain('pem-secret');
   });
 
   it('renders oauth2 authorization-code details: refresh url, state, pkce, token config, settings', () => {
-    const { getByTestId } = renderAuth(
+    const { root } = renderAuth(
       <AuthDetails
         auth={{
           type: 'oauth2',
@@ -139,19 +135,19 @@ describe('AuthDetails', () => {
         testId="auth"
       />
     );
-    expect(getByTestId('auth-flow').text.trim()).toBe('Authorization Code');
-    expect(getByTestId('auth-refresh-token-url').text.trim()).toBe('https://refresh');
-    expect(getByTestId('auth-state').text.trim()).toBe('xyz');
-    expect(getByTestId('auth-pkce').text.trim()).toBe('S256');
-    expect(getByTestId('auth-add-credentials-to').text.trim()).toBe('Basic Auth Header');
-    expect(getByTestId('auth-token-source').text.trim()).toBe('ID Token');
-    expect(getByTestId('auth-token-placement').text.trim()).toBe('Header (Authorization)');
-    expect(getByTestId('auth-auto-fetch-token').text.trim()).toBe('Yes');
-    expect(getByTestId('auth-auto-refresh-token').text.trim()).toBe('No');
+    expect(getByTestId(root, 'auth-flow').text.trim()).toBe('Authorization Code');
+    expect(getByTestId(root, 'auth-refresh-token-url').text.trim()).toBe('https://refresh');
+    expect(getByTestId(root, 'auth-state').text.trim()).toBe('xyz');
+    expect(getByTestId(root, 'auth-pkce').text.trim()).toBe('S256');
+    expect(getByTestId(root, 'auth-add-credentials-to').text.trim()).toBe('Basic Auth Header');
+    expect(getByTestId(root, 'auth-token-source').text.trim()).toBe('ID Token');
+    expect(getByTestId(root, 'auth-token-placement').text.trim()).toBe('Header (Authorization)');
+    expect(getByTestId(root, 'auth-auto-fetch-token').text.trim()).toBe('Yes');
+    expect(getByTestId(root, 'auth-auto-refresh-token').text.trim()).toBe('No');
   });
 
   it('renders oauth2 additional parameters grouped by request phase', () => {
-    const { getByTestId } = renderAuth(
+    const { root } = renderAuth(
       <AuthDetails
         auth={
           {
@@ -168,13 +164,13 @@ describe('AuthDetails', () => {
         testId="auth"
       />
     );
-    const audience = getByTestId('auth-additional-param-authorizationRequest-0');
+    const audience = getByTestId(root, 'auth-additional-param-authorizationRequest-0');
     const audienceRow = audience.parentNode;
     expect(audience.text.trim()).toBe('https://api');
     expect(audienceRow.querySelector('.property-key')?.text.trim()).toBe('audience');
     expect(audienceRow.querySelector('.description')?.text.trim()).toBe('Authorization Request · Query Params');
 
-    const resource = getByTestId('auth-additional-param-accessTokenRequest-0');
+    const resource = getByTestId(root, 'auth-additional-param-accessTokenRequest-0');
     const resourceRow = resource.parentNode;
     expect(resource.text.trim()).toBe('r1');
     expect(resourceRow.querySelector('.property-key')?.text.trim()).toBe('resource');
@@ -182,7 +178,7 @@ describe('AuthDetails', () => {
   });
 
   it('renders Akamai EdgeGrid auth and masks the secret credentials', () => {
-    const { getByTestId, html } = renderAuth(
+    const { root, html } = renderAuth(
       <AuthDetails
         auth={
           {
@@ -201,20 +197,20 @@ describe('AuthDetails', () => {
         testId="auth"
       />
     );
-    expect(getByTestId('auth-mode').text.trim()).toBe('Akamai EdgeGrid');
-    expect(getByTestId('auth-base-url').text.trim()).toBe('https://akaa-base.luna.akamaiapis.net');
-    expect(getByTestId('auth-headers-to-sign').text.trim()).toBe('X-Custom');
-    expect(getByTestId('auth-max-body-size').text.trim()).toBe('2048');
-    expect(getByTestId('auth-access-token').text.trim()).toBe(SECRET_MASK);
-    expect(getByTestId('auth-client-token').text.trim()).toBe(SECRET_MASK);
-    expect(getByTestId('auth-client-secret').text.trim()).toBe(SECRET_MASK);
+    expect(getByTestId(root, 'auth-mode').text.trim()).toBe('Akamai EdgeGrid');
+    expect(getByTestId(root, 'auth-base-url').text.trim()).toBe('https://akaa-base.luna.akamaiapis.net');
+    expect(getByTestId(root, 'auth-headers-to-sign').text.trim()).toBe('X-Custom');
+    expect(getByTestId(root, 'auth-max-body-size').text.trim()).toBe('2048');
+    expect(getByTestId(root, 'auth-access-token').text.trim()).toBe(SECRET_MASK);
+    expect(getByTestId(root, 'auth-client-token').text.trim()).toBe(SECRET_MASK);
+    expect(getByTestId(root, 'auth-client-secret').text.trim()).toBe(SECRET_MASK);
     expect(html).not.toContain('atValue');
     expect(html).not.toContain('ctValue');
     expect(html).not.toContain('csValue');
   });
 
   it('shows the empty message when there is no auth', () => {
-    const { getByTestId } = renderAuth(<AuthDetails emptyMessage="No authentication configured" testId="auth" />);
-    expect(getByTestId('auth-empty').text.trim()).toBe('No authentication configured');
+    const { root } = renderAuth(<AuthDetails emptyMessage="No authentication configured" testId="auth" />);
+    expect(getByTestId(root, 'auth-empty').text.trim()).toBe('No authentication configured');
   });
 });

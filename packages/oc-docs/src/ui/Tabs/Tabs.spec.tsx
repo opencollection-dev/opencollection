@@ -2,7 +2,7 @@ import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { Tabs, type Tab } from './Tabs';
 import { useRenderToDom } from '../../hooks/useRenderToDom';
-import { query } from '../../test-utils/dom';
+import { query, getByTestId, queryByTestId } from '../../test-utils/dom';
 
 const tabs: Tab[] = [
   { id: 'a', label: 'Alpha', count: 2, content: <p data-testid="alpha">alpha content</p> },
@@ -19,35 +19,35 @@ describe('Tabs', () => {
 
   it('shows the label and its count', () => {
     const root = useRenderToDom(<Tabs tabs={tabs} testId="t" />);
-    const tab = query(root, '[data-testid="t-tab-a"]');
+    const tab = getByTestId(root, 't-tab-a');
     expect(tab.text).toContain('Alpha');
     expect(query(tab, '.tab-count').text).toBe('2');
   });
 
   it('activates the first tab by default and mounts only its panel', () => {
     const root = useRenderToDom(<Tabs tabs={tabs} testId="t" />);
-    expect(query(root, '[data-testid="t-tab-a"]').getAttribute('aria-selected')).toBe('true');
-    expect(query(root, '[data-testid="t-tab-b"]').getAttribute('aria-selected')).toBe('false');
-    expect(root.querySelector('[data-testid="alpha"]')).not.toBeNull();
-    expect(root.querySelector('[data-testid="beta"]')).toBeNull();
+    expect(getByTestId(root, 't-tab-a').getAttribute('aria-selected')).toBe('true');
+    expect(getByTestId(root, 't-tab-b').getAttribute('aria-selected')).toBe('false');
+    expect(queryByTestId(root, 'alpha')).not.toBeNull();
+    expect(queryByTestId(root, 'beta')).toBeNull();
   });
 
   it('honours a controlled activeTab', () => {
     const root = useRenderToDom(<Tabs tabs={tabs} activeTab="c" testId="t" />);
-    expect(query(root, '[data-testid="t-tab-c"]').getAttribute('aria-selected')).toBe('true');
-    expect(root.querySelector('[data-testid="gamma"]')).not.toBeNull();
-    expect(root.querySelector('[data-testid="alpha"]')).toBeNull();
+    expect(getByTestId(root, 't-tab-c').getAttribute('aria-selected')).toBe('true');
+    expect(queryByTestId(root, 'gamma')).not.toBeNull();
+    expect(queryByTestId(root, 'alpha')).toBeNull();
   });
 
   it('honours defaultActiveTab', () => {
     const root = useRenderToDom(<Tabs tabs={tabs} defaultActiveTab="b" testId="t" />);
-    expect(root.querySelector('[data-testid="beta"]')).not.toBeNull();
+    expect(queryByTestId(root, 'beta')).not.toBeNull();
   });
 
   it('applies roving tabindex (only the active tab is tabbable)', () => {
     const root = useRenderToDom(<Tabs tabs={tabs} testId="t" />);
-    expect(query(root, '[data-testid="t-tab-a"]').getAttribute('tabindex')).toBe('0');
-    expect(query(root, '[data-testid="t-tab-b"]').getAttribute('tabindex')).toBe('-1');
+    expect(getByTestId(root, 't-tab-a').getAttribute('tabindex')).toBe('0');
+    expect(getByTestId(root, 't-tab-b').getAttribute('tabindex')).toBe('-1');
   });
 
   it('renders the active tab’s rightElement, falling back to the shared one', () => {
@@ -64,7 +64,7 @@ describe('Tabs', () => {
 
   it('wires each tab to its panel via aria-controls / aria-labelledby', () => {
     const root = useRenderToDom(<Tabs tabs={tabs} testId="t" />);
-    const tab = query(root, '[data-testid="t-tab-a"]');
+    const tab = getByTestId(root, 't-tab-a');
     const panel = query(root, '[role="tabpanel"]');
     expect(tab.getAttribute('aria-controls')).toBe(panel.getAttribute('id'));
     expect(panel.getAttribute('aria-labelledby')).toBe(tab.getAttribute('id'));
@@ -72,14 +72,14 @@ describe('Tabs', () => {
 
   it('defaults to the underline variant', () => {
     const root = useRenderToDom(<Tabs tabs={tabs} testId="t" />);
-    const wrapper = query(root, '[data-testid="t"]');
+    const wrapper = getByTestId(root, 't');
     expect(wrapper.classList.contains('tabs-variant-underline')).toBe(true);
     expect(wrapper.classList.contains('tabs-variant-button')).toBe(false);
   });
 
   it('applies the button variant class when variant="button"', () => {
     const root = useRenderToDom(<Tabs tabs={tabs} variant="button" testId="t" />);
-    const wrapper = query(root, '[data-testid="t"]');
+    const wrapper = getByTestId(root, 't');
     expect(wrapper.classList.contains('tabs-variant-button')).toBe(true);
     expect(wrapper.classList.contains('tabs-variant-underline')).toBe(false);
   });

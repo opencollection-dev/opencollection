@@ -1,7 +1,7 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { useRenderToDom } from '../../hooks/useRenderToDom';
-import { query } from '../../test-utils/dom';
+import { query, getByTestId } from '../../test-utils/dom';
 import { PropertyTable } from './PropertyTable';
 
 describe('PropertyTable', () => {
@@ -21,7 +21,7 @@ describe('PropertyTable', () => {
 
   it('shows the empty message when there are no rows', () => {
     const root = useRenderToDom(<PropertyTable rows={[]} emptyMessage="Nothing here yet" />);
-    expect(query(root, '[data-testid="property-table-empty"]').text).toBe('Nothing here yet');
+    expect(getByTestId(root, 'property-table-empty').text).toBe('Nothing here yet');
   });
 
   it('renders custom node cells', () => {

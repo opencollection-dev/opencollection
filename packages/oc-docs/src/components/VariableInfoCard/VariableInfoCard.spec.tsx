@@ -6,7 +6,7 @@ import { setDocsCollection } from '../../store/slices/docs';
 import { setActiveEnv } from '../../store/slices/env';
 import { VariableResolverProvider } from '../../hooks';
 import { useRenderToDom } from '../../hooks/useRenderToDom';
-import { query } from '../../test-utils/dom';
+import { getByTestId, queryByTestId } from '../../test-utils/dom';
 import { VariableInfoCard } from './VariableInfoCard';
 
 const collection: any = {
@@ -44,10 +44,10 @@ const cardTree = (name: string) => {
   );
 };
 
-const selector = (suffix: string) => `[data-testid="variable-info-card-${suffix}"]`;
+const testId = (suffix: string) => `variable-info-card-${suffix}`;
 
 const part = (root: ReturnType<typeof useRenderToDom>, suffix: string) =>
-  query(root, selector(suffix));
+  getByTestId(root, testId(suffix));
 
 describe('VariableInfoCard', () => {
   it('shows name + scope badge + resolved value for an environment variable', () => {
@@ -66,15 +66,15 @@ describe('VariableInfoCard', () => {
     const root = useRenderToDom(cardTree('bearer_token'));
     expect(part(root, 'value').text).toBe('(Secret)');
     expect(root.toString()).not.toContain('super-secret');
-    expect(root.querySelector(selector('reveal'))).toBeNull();
-    expect(root.querySelector(selector('copy'))).toBeNull();
+    expect(queryByTestId(root, testId('reveal'))).toBeNull();
+    expect(queryByTestId(root, testId('copy'))).toBeNull();
   });
 
   it('shows an (empty) placeholder with no copy control when the value is blank', () => {
     const root = useRenderToDom(cardTree('emptyValue'));
     expect(part(root, 'scope').text).toBe('Environment');
     expect(part(root, 'value').text).toBe('(empty)');
-    expect(root.querySelector(selector('copy'))).toBeNull();
+    expect(queryByTestId(root, testId('copy'))).toBeNull();
   });
 
   it('pretty-prints an object-typed value', () => {
@@ -85,8 +85,8 @@ describe('VariableInfoCard', () => {
 
   it('warns on an invalid variable name and shows no value', () => {
     const root = useRenderToDom(cardTree('bad name'));
-    expect(root.querySelector(selector('warning'))).not.toBeNull();
-    expect(root.querySelector(selector('value'))).toBeNull();
+    expect(queryByTestId(root, testId('warning'))).not.toBeNull();
+    expect(queryByTestId(root, testId('value'))).toBeNull();
   });
 
   it('marks process.env as read-only', () => {
@@ -99,7 +99,7 @@ describe('VariableInfoCard', () => {
     const root = useRenderToDom(cardTree('$randomInt'));
     expect(part(root, 'scope').text).toBe('Dynamic');
     expect(part(root, 'note').text).toContain('random value');
-    expect(root.querySelector(selector('value'))).toBeNull();
+    expect(queryByTestId(root, testId('value'))).toBeNull();
   });
 
   it('notes a time-based dynamic variable with the timestamp wording', () => {
@@ -112,7 +112,7 @@ describe('VariableInfoCard', () => {
     const root = useRenderToDom(cardTree('$notAFunc'));
     expect(part(root, 'scope').text).toBe('Dynamic');
     expect(part(root, 'warning').text).toContain('Unknown dynamic variable');
-    expect(root.querySelector(selector('note'))).toBeNull();
+    expect(queryByTestId(root, testId('note'))).toBeNull();
   });
 
   it('reports an undefined variable with a note', () => {

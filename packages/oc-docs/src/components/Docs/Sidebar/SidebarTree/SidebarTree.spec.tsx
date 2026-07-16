@@ -4,6 +4,7 @@ import { describe, it, expect, vi } from 'vitest';
 import type { Item as OpenCollectionItem } from '@opencollection/types/collection/item';
 import SidebarTree from './SidebarTree';
 import { useRenderToDom } from '../../../../hooks/useRenderToDom';
+import { queryByTestId } from '../../../../test-utils/dom';
 
 const req = (uuid: string, name: string, method: string): OpenCollectionItem =>
   ({ type: 'http', uuid, name, method }) as unknown as OpenCollectionItem;
@@ -172,7 +173,7 @@ const tree = (props: Partial<React.ComponentProps<typeof SidebarTree>> = {}) => 
 describe('SidebarTree examples', () => {
   it('shows an example toggle for a request with examples but keeps rows collapsed by default', () => {
     const root = useRenderToDom(tree());
-    expect(root.querySelector('[data-testid="sidebar-example-toggle"]')).not.toBeNull();
+    expect(queryByTestId(root, 'sidebar-example-toggle')).not.toBeNull();
     expect(root.querySelectorAll('[data-testid="sidebar-example"]')).toHaveLength(0);
   });
 
@@ -196,6 +197,6 @@ describe('SidebarTree examples', () => {
         activeExample={null}
       />
     );
-    expect(root.querySelector('[data-testid="sidebar-example-toggle"]')).toBeNull();
+    expect(queryByTestId(root, 'sidebar-example-toggle')).toBeNull();
   });
 });

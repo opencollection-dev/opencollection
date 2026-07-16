@@ -1,7 +1,7 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { useRenderToDom } from '../../../../../../hooks/useRenderToDom';
-import { query } from '../../../../../../test-utils/dom';
+import { query, queryByTestId } from '../../../../../../test-utils/dom';
 import { VariablesTab } from './VariablesTab';
 
 const noop = () => {};
@@ -78,7 +78,7 @@ describe('VariablesTab', () => {
     );
     expect(sectionTitles(root)).toContain('Post Response');
     expect(inputValues(root)).toContain('res.body.token');
-    expect(root.querySelector('[data-testid="post-response-expr-help"]')).toBeTruthy();
+    expect(queryByTestId(root, 'post-response-expr-help')).toBeTruthy();
   });
 
   it('renders a typed variable value and reflects its type in the type dropdown', () => {

@@ -2,12 +2,13 @@ import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { RequestBody } from './RequestBody';
 import { useRenderToDom } from '../../../hooks/useRenderToDom';
+import { queryByTestId } from '../../../test-utils/dom';
 
 describe('RequestBody', () => {
   it('renders a JSON body as a labelled code block', () => {
     const root = useRenderToDom(<RequestBody body={{ type: 'json', data: '{"email":"a@b.com"}' }} />);
     expect(root.querySelector('.content-type-badge')?.text.trim()).toBe('application/json');
-    const code = root.querySelector('[data-testid="code"]');
+    const code = queryByTestId(root, 'code');
     expect(code).not.toBeNull();
     expect(code?.text).toContain('a@b.com');
   });
