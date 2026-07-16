@@ -97,6 +97,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
             uuidToSlug={uuidToSlug}
             onNavigate={goTo}
             onToggleFolder={(uuid) => dispatch(toggleItem(uuid))}
+            onExpandFolder={(uuid) => dispatch(expandFolders([uuid]))}
             activeExample={activeExample}
             onExampleClick={goToExample}
           />
