@@ -118,12 +118,19 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
     if (dock === 'inline') onCloseSidebar();
   };
 
-  // Clicking something in the sidebar just writes it to the URL (folders too, so
-  // a folder view comes back on reload). The effect above is what actually opens
-  // it, so a click and a reload go through the exact same path.
+  // A sidebar click applies the target right away, then writes the slug so a
+  // reload restores it. Applying directly (not only through the reopen effect) is
+  // what makes leaving an example work: an example keeps the slug on its parent
+  // request, so clicking that request is a no-op slug write and the effect would
+  // never fire. appliedSlugRef is synced so the effect treats it as already done.
   const handleNavigate = (slug: string) => {
-    const entry = model.bySlug.get(slug);
-    if (!entry || !getItemUuid(entry.item)) return; // not a real item, ignore the click
+    const target = resolvePlaygroundTarget(slug, model);
+    if (!target || !target.uuid) return; // not a resolvable item, ignore the click
+    dispatch(setSelectedItemId(target.uuid));
+    dispatch(setSelectedExampleIndex(null));
+    dispatch(setViewMode(target.view));
+    if (target.expandUuids.length) dispatch(expandFolders(target.expandUuids));
+    appliedSlugRef.current = slug;
     setRequestSlug(slug);
     closeSidebarIfInline();
   };
@@ -146,12 +153,20 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
   };
 
   const openEnvironments = () => {
-    setRequestSlug(PLAYGROUND_ENVIRONMENTS_SLUG); // effect opens the view; reload brings it back
+    dispatch(setViewMode('environments'));
+    dispatch(setSelectedItemId(null));
+    dispatch(setSelectedExampleIndex(null));
+    appliedSlugRef.current = PLAYGROUND_ENVIRONMENTS_SLUG;
+    setRequestSlug(PLAYGROUND_ENVIRONMENTS_SLUG); // persist so a reload restores it
     closeSidebarIfInline();
   };
 
   const openCollection = () => {
-    setRequestSlug(PLAYGROUND_COLLECTION_SLUG); // effect opens the view; reload brings it back
+    dispatch(setViewMode('collection-settings'));
+    dispatch(setSelectedItemId(null));
+    dispatch(setSelectedExampleIndex(null));
+    appliedSlugRef.current = PLAYGROUND_COLLECTION_SLUG;
+    setRequestSlug(PLAYGROUND_COLLECTION_SLUG); // persist so a reload restores it
     closeSidebarIfInline();
   };
 

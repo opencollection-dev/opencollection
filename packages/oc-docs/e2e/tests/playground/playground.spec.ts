@@ -154,6 +154,22 @@ test.describe('playground docks (desktop)', () => {
     await expect(playground.view).toContainText(/Overview|Headers|Vars|Auth|Scripts|Tests/);
   });
 
+  // Regression: an example keeps the URL slug on its parent request, so clicking
+  // that request row must still leave the example and show the request view.
+  test('clicking a request while its example is open returns to the request view', async ({ page, playground }) => {
+    await page.goto(openAt('bottom', 'billing/customers/get-all-customers'));
+    await expect(playground.sidebarPanel).toBeVisible();
+    // Open the request's examples and select one -> example view.
+    await playground.exampleToggle('Get All Customers').click();
+    await playground.exampleRow('200 OK - first page').click();
+    await expect(playground.exampleView).toBeVisible();
+    // Clicking the parent request row leaves the example for the request view,
+    // even though the URL slug stays on that same request.
+    await playground.treeItems.filter({ hasText: 'Get All Customers' }).first().click();
+    await expect(playground.exampleView).toHaveCount(0);
+    await expect(playground.view).toContainText('Get All Customers');
+  });
+
   test('inline dock: sidebar is closed by default and overlays the view when opened', async ({ page, playground }) => {
     await page.goto(openAt('inline'));
     await expect(playground.sidebarPanel).toHaveCount(0);   // closed by default in inline
