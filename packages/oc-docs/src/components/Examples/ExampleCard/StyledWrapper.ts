@@ -6,6 +6,19 @@ export const StyledWrapper = styled.div`
   overflow: hidden;
   background: var(--oc-background-base);
 
+  &.is-active {
+    animation: exampleFlash 1.6s ease forwards;
+  }
+  @keyframes exampleFlash {
+    0%,
+    55% {
+      border-color: var(--primary-color);
+    }
+    100% {
+      border-color: var(--border-color);
+    }
+  }
+
   &:not(:first-child) {
     margin-top: 12px;
   }

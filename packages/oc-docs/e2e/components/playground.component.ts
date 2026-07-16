@@ -22,6 +22,18 @@ export class PlaygroundComponent extends BaseComponent {
   readonly inlinePanel = this.page.getByTestId('playground-dock-inline-panel');
   readonly bottomPanel = this.page.getByTestId('playground-dock-bottom-panel');
   readonly modalPanel = this.page.getByTestId('playground-dock-modal-panel');
+  readonly exampleView = this.page.getByTestId('example-view');
+  readonly exampleViewRequest = this.page.getByTestId('example-view-request');
+  readonly exampleViewResponse = this.page.getByTestId('example-view-response');
+  readonly exampleViewControls = this.exampleView.locator('input, textarea');
+
+  exampleToggle(requestName: string): Locator {
+    return this.treeItems.filter({ hasText: requestName }).getByTestId('sidebar-example-toggle');
+  }
+
+  exampleRow(exampleName: string): Locator {
+    return this.sidebarPanel.getByTestId('sidebar-example').filter({ hasText: exampleName });
+  }
 
   readonly keyValueTable = new KeyValueTableComponent(this.page);
   readonly preRequestScriptEditor = new CodeEditorComponent(this.page, 'scripts-editor-pre-request');

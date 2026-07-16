@@ -6,6 +6,7 @@ import type { Auth } from '@opencollection/types/common/auth';
 import type { GraphQLRequest } from '@opencollection/types/requests/graphql';
 import type { GrpcRequest } from '@opencollection/types/requests/grpc';
 import type { WebSocketRequest } from '@opencollection/types/requests/websocket';
+import { useLocation } from 'react-router-dom';
 import { useMarkdownRenderer } from '../../hooks';
 import { AUTH_MODE_LABELS } from '../../constants';
 import {
@@ -52,6 +53,7 @@ import { Examples } from '../../components/Examples/Examples';
 import { ExecutionContext } from '../../components/ExecutionContext/ExecutionContext';
 import { UnsupportedRequest } from '../../components/UnsupportedRequest/UnsupportedRequest';
 import { StyledWrapper } from './StyledWrapper';
+import type { NavigationState } from '../../hooks/useDocsNavigate';
 
 interface RequestProps {
   item: HttpRequest | WebSocketRequest | GraphQLRequest | GrpcRequest;
@@ -83,6 +85,11 @@ const RequestContent: React.FC<RequestContentProps> = ({
   const params = getHttpParams(item) as HttpRequestParam[];
   const body = getHttpBody(item);
   const examples = getRequestExamples(item);
+
+  // The example to flash/scroll to is carried on the navigation entry's state
+  // and always belongs to the request being shown, so no request match is needed.
+  const { state } = useLocation();
+  const highlightedExampleIndex = (state as NavigationState)?.exampleIndex;
 
   const { path: pathParams, query: queryParams } = useMemo(
     () => resolvePathAndQueryParams(params, url),
@@ -207,7 +214,13 @@ const RequestContent: React.FC<RequestContentProps> = ({
 
         {hasExamples && (
           <Section label="Examples" testId="request-section-examples" className="request-fullwidth">
-            <Examples examples={examples} method={method} url={url} onTry={onTryClick} />
+            <Examples
+              examples={examples}
+              method={method}
+              url={url}
+              onTry={onTryClick}
+              highlightedIndex={highlightedExampleIndex}
+            />
           </Section>
         )}
 

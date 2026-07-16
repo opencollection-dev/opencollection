@@ -87,6 +87,11 @@ export const StyledWrapper = styled.div`
     text-align: left;
   }
 
+  .navlink-spacer {
+    flex-shrink: 0;
+    width: 12px;
+  }
+
   .navlink-chevron {
     flex-shrink: 0;
     display: inline-flex;
