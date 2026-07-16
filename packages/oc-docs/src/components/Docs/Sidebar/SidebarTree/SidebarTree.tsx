@@ -145,10 +145,14 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
                       <SidebarNavLink
                         key={`${uuid}-example-${i}`}
                         label={example.name || `Example ${i + 1}`}
-                        level={itemLevel}
+                        // One level deeper than the parent request (no chevron), so
+                        // the highlight insets to the example's own icon rather than
+                        // reaching back to the request's indent. The extra level's
+                        // margin offsets the dropped chevron slot, so the icon holds
+                        // its position.
+                        level={itemLevel + 1}
                         active={isActive}
                         icon={<ExampleIcon />}
-                        chevron={<span className="navlink-spacer" aria-hidden="true" />}
                         muted
                         testId="sidebar-example"
                         onClick={() => onExampleClick?.(uuid, i)}
