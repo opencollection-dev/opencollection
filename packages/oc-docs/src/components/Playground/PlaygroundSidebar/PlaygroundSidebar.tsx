@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import type { OpenCollection as OpenCollectionCollection } from '@opencollection/types';
 import EnvSwitcher from '../../EnvSwitcher/EnvSwitcher';
 import SidebarTree from '../../Docs/Sidebar/SidebarTree/SidebarTree';
 import IconButton from '../../../ui/IconButton/IconButton';
 import { SettingsIcon } from '../../../assets/icons';
+import { useAutoHideScrollbar, useIsMobileDevice } from '../../../hooks';
 import type { ExampleHighlight } from '../../Docs/Sidebar/SidebarTree/SidebarTree';
 import { StyledWrapper } from './StyledWrapper';
 
@@ -39,8 +40,15 @@ const PlaygroundSidebar: React.FC<PlaygroundSidebarProps> = ({
   const [collectionCollapsed, setCollectionCollapsed] = useState(false);
   const name = collection?.info?.name || 'Collection';
 
+  // Show the scrollbar while the tree is in use, then fade it after 1s idle - same as the docs sidebar.
+  const treeRef = useRef<HTMLDivElement>(null);
+  useAutoHideScrollbar(treeRef);
+
+  // Smaller nav text on real phones/tablets only, not by window size.
+  const isMobileDevice = useIsMobileDevice();
+
   return (
-    <StyledWrapper data-testid={testId}>
+    <StyledWrapper className={isMobileDevice ? 'mobile' : undefined} data-testid={testId}>
       <div className="controls">
         <EnvSwitcher testId="playground-env-switcher" />
         <IconButton
@@ -54,7 +62,7 @@ const PlaygroundSidebar: React.FC<PlaygroundSidebarProps> = ({
         </IconButton>
       </div>
 
-      <div className="tree">
+      <div className="tree" ref={treeRef}>
         {collection?.items ? (
           <SidebarTree
             items={collection.items}
@@ -69,7 +77,12 @@ const PlaygroundSidebar: React.FC<PlaygroundSidebarProps> = ({
               collapsed: collectionCollapsed,
               active: collectionActive,
               onToggle: () => setCollectionCollapsed((v) => !v),
-              onClick: onOpenCollection,
+              // Clicking the collection name opens its settings and reopens the
+              // tree, the same way clicking a folder shows its contents.
+              onClick: () => {
+                setCollectionCollapsed(false);
+                onOpenCollection();
+              },
               testId: 'sidebar-collection-root',
             }}
           />

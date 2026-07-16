@@ -8,9 +8,6 @@ export const StyledWrapper = styled.div`
   background-color: var(--oc-background-base);
   color: var(--oc-sidebar-color);
 
-  /* Clean thin scrollbar: transparent track (no background column) and no border
-     (no divider line beside it). The thumb is hidden by default and shown while
-     the list is active (.scrolling class, cleared 1s after activity stops). */
   .sidebar-items::-webkit-scrollbar {
     width: 6px;
   }
@@ -43,10 +40,14 @@ export const StyledWrapper = styled.div`
     background-color: var(--oc-border-border0);
   }
 
+  &.mobile .navlink-main {
+    font-size: 0.75rem;
+  }
+
   .sidebar-items {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    padding: 0 6px;
+    padding: 0 0 0 0.375rem;
   }
 `;

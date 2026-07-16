@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { computeCanRunBrunoApp, type DeviceEnv } from './useCanRunBrunoApp';
+import { computeCanRunBrunoApp, computeIsMobileOS, type DeviceEnv } from './useCanRunBrunoApp';
 
 const base: DeviceEnv = {
   anyHoverFine: true,
@@ -64,5 +64,42 @@ describe('computeCanRunBrunoApp', () => {
 
   it('keeps a real Mac (MacIntel, zero touch points)', () => {
     expect(computeCanRunBrunoApp({ ...base, maxTouchPoints: 0 })).toBe(true);
+  });
+});
+
+describe('computeIsMobileOS', () => {
+  it('is false for a real desktop Mac (no touch)', () => {
+    expect(computeIsMobileOS(base)).toBe(false);
+  });
+
+  it('is false for a touchscreen Windows laptop (not a mobile OS)', () => {
+    expect(
+      computeIsMobileOS({
+        anyHoverFine: true,
+        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120',
+        platform: 'Win32',
+        maxTouchPoints: 10,
+      })
+    ).toBe(false);
+  });
+
+  it('is true for an iPad masquerading as MacIntel with touch points', () => {
+    expect(computeIsMobileOS({ ...base, maxTouchPoints: 5 })).toBe(true);
+  });
+
+  it('is true for an iPad that still reports iPad in the UA', () => {
+    expect(
+      computeIsMobileOS({ ...base, userAgent: 'Mozilla/5.0 (iPad; CPU OS 16_0) Safari/604', platform: 'iPad', maxTouchPoints: 5 })
+    ).toBe(true);
+  });
+
+  it('is true for Android / iPhone', () => {
+    expect(computeIsMobileOS({ ...base, userAgent: 'Android 13', platform: 'Linux armv8l', maxTouchPoints: 5 })).toBe(true);
+    expect(computeIsMobileOS({ ...base, userAgent: 'iPhone OS 16', platform: 'iPhone', maxTouchPoints: 5 })).toBe(true);
+  });
+
+  it('does not depend on viewport width (a narrow desktop window is still not mobile)', () => {
+    // Same desktop env regardless of window size -> always false.
+    expect(computeIsMobileOS(base)).toBe(false);
   });
 });

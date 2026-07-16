@@ -175,12 +175,24 @@ const playgroundSlice = createSlice({
     // Collection Mutation Actions
     toggleFolderCollapse: (state: PlaygroundState, action: PayloadAction<string>) => {
       if (!state.hydratedCollection?.items) return;
-      
+
       const uuid = action.payload;
       findAndUpdateItem(state.hydratedCollection.items, uuid, (item) => {
         const currentCollapsed = (item as any).isCollapsed ?? true;
         (item as any).isCollapsed = !currentCollapsed;
       });
+    },
+    // Opens the given folders in the sidebar tree so the selected item shows up
+    // inside them. Only ever opens, never closes, so a folder the user collapsed
+    // by hand stays closed.
+    expandFolders: (state: PlaygroundState, action: PayloadAction<string[]>) => {
+      if (!state.hydratedCollection?.items || action.payload.length === 0) return;
+      const targets = new Set(action.payload);
+      for (const uuid of targets) {
+        findAndUpdateItem(state.hydratedCollection.items, uuid, (item) => {
+          (item as { isCollapsed?: boolean }).isCollapsed = false;
+        });
+      }
     },
     updateCollectionSettings: (state: PlaygroundState, action: PayloadAction<OpenCollectionCollection>) => {
       state.collection = action.payload;
@@ -223,6 +235,7 @@ export const {
   setSelectedItemId,
   setSelectedExampleIndex,
   toggleFolderCollapse,
+  expandFolders,
   updateCollectionSettings,
   updateCollectionEnvironments,
   updateFolderInCollection,
