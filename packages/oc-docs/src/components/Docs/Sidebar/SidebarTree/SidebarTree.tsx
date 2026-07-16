@@ -34,7 +34,7 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
   uuidToSlug,
   onNavigate,
   onToggleFolder,
-  collectionRoot,
+  collectionRoot
 }) => {
   const renderItems = (itemList: OpenCollectionItem[], itemLevel: number): React.ReactNode => (
     <>
@@ -54,6 +54,7 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
             <button
               type="button"
               className={`navlink-chevron${expanded ? ' expanded' : ''}`}
+              data-testid="sidebar-item-chevron"
               aria-label={expanded ? 'Collapse folder' : 'Expand folder'}
               aria-expanded={expanded}
               onClick={(e) => {

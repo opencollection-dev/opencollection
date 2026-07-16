@@ -9,7 +9,6 @@ export class PlaygroundComponent extends BaseComponent {
   readonly preRequestScriptEditor = new CodeEditorComponent(this.page, 'scripts-editor-pre-request');
   readonly postResponseScriptEditor = new CodeEditorComponent(this.page, 'scripts-editor-post-response');
 
-
   readonly header = this.page.getByTestId('playground-header');
   readonly switcher = this.page.getByTestId('playground-dock-switcher');
   readonly content = this.page.getByTestId('playground-content');
@@ -33,6 +32,10 @@ export class PlaygroundComponent extends BaseComponent {
   readonly unsupportedMessage = this.view.getByTestId('unsupported-request-empty');
   readonly unsupportedIcon = this.view.getByTestId('file-not-found-icon');
 
+  /** Navigate to the playground with the given dock mode. */
+  async open(dock: DockMode = 'bottom'): Promise<void> {
+    await this.page.goto(`/#/?pg=1&dock=${dock}`);
+  }
 
   sidebarItem(name: string): Locator {
     return this.treeItems.filter({ hasText: name }).first();
@@ -60,7 +63,7 @@ export class PlaygroundComponent extends BaseComponent {
     for (let i = 0; i < names.length; i++) {
       const item = this.treeItems.filter({ hasText: names[i] }).first();
       if (i < names.length - 1) {
-        await item.locator('.navlink-chevron').click();
+        await item.getByTestId('sidebar-item-chevron').click();
       } else {
         await item.click();
       }
