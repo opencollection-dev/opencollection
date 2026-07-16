@@ -10,9 +10,8 @@ import { EnvironmentLabel } from '../../../../EnvironmentLabel/EnvironmentLabel'
 import EnvVarCards from './EnvVarCards/EnvVarCards';
 import { GlobeIcon } from '../../../../../assets/icons';
 import { useAppDispatch } from '../../../../../store/hooks';
-import { humanizeType, writeBackValue } from '../../../../../utils/environments';
-import { isSecretVariable, unwrapVariableValue } from '../../../../../utils/variableResolution';
-import { getVariableType } from '../../../../../utils/request';
+import { envVariableToRow, envRowToVariable } from '../../../../../utils/environments';
+import { isSecretVariable } from '../../../../../utils/variableResolution';
 import { updateCollectionEnvironments } from '@slices/playground';
 
 const ENV_TABS = [
@@ -31,29 +30,6 @@ const SECRET_POINTER_FIELD: Record<SecretProviderType, 'path' | 'secretName' | '
   'hashicorp-vault-server': 'path',
   'aws-secrets-manager': 'secretName',
   'azure-key-vault': 'vaultName'
-};
-
-export const variableToRow = (variable: Variable, index: number): KeyValueRow => {
-  return {
-    id: `var-${index}`,
-    name: variable.name || '',
-    value: unwrapVariableValue(variable.value),
-    dataType: humanizeType(getVariableType(variable)),
-    enabled: !variable.disabled,
-    secret: isSecretVariable(variable),
-    source: variable
-  };
-};
-
-export const rowToVariable = (row: KeyValueRow): Variable => {
-  const source = (row.source as Variable | undefined) ?? ({} as Variable);
-  if (row.secret) {
-    const secret = { ...source, name: row.name, disabled: !row.enabled, secret: true } as Variable & { value?: unknown };
-    if (row.value) secret.value = row.value;
-    else delete secret.value;
-    return secret;
-  }
-  return { ...source, name: row.name, value: writeBackValue(source.value, row.value), disabled: !row.enabled };
 };
 
 interface TabPanelProps {
@@ -80,8 +56,8 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection, compact
     selectedEnvironmentIndex !== null ? environments[selectedEnvironmentIndex] ?? null : null;
 
   const allVariables: Variable[] = selectedEnvironment?.variables ?? [];
-  const plainRows = allVariables.filter((v) => !isSecretVariable(v)).map(variableToRow);
-  const secretRows = allVariables.filter((v) => isSecretVariable(v)).map(variableToRow);
+  const plainRows = allVariables.filter((v) => !isSecretVariable(v)).map(envVariableToRow);
+  const secretRows = allVariables.filter((v) => isSecretVariable(v)).map(envVariableToRow);
 
   const secretProviderType = selectedEnvironment?.externalSecrets?.type as SecretProviderType | undefined;
   const secretPointerField = (secretProviderType && SECRET_POINTER_FIELD[secretProviderType]) || 'secretName';
@@ -115,7 +91,7 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection, compact
   };
 
   const commit = (plain: KeyValueRow[], secrets: KeyValueRow[]) =>
-    applyToSelectedEnv({ variables: [...plain, ...secrets].map(rowToVariable) });
+    applyToSelectedEnv({ variables: [...plain, ...secrets].map(envRowToVariable) });
 
   const commitExternal = (rows: KeyValueRow[]) =>
     applyToSelectedEnv({
