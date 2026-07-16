@@ -124,7 +124,7 @@ test.describe('playground docks (desktop)', () => {
 
   test('clicking the collection root opens the collection view', async ({ page, playground }) => {
     await page.goto(openAt('bottom'));
-    await playground.collectionNode.getByRole('button', { name: /Bruno Testbench|Collection/ }).click();
+    await playground.collectionRootLink.click();
     await expect(playground.view).toContainText(/Overview|Headers|Vars|Auth|Scripts|Tests/);
   });
 
@@ -149,7 +149,7 @@ test.describe('playground docks (desktop)', () => {
     await playground.collectionCollapseToggle.click();
     await expect(playground.treeItems.filter({ hasText: /^billing$/ })).toHaveCount(0);
     // Clicking the root row brings the tree back and shows the collection view.
-    await playground.collectionNode.getByRole('button', { name: /Bruno Testbench|Collection/ }).click();
+    await playground.collectionRootLink.click();
     await expect(playground.treeItems.filter({ hasText: /^billing$/ }).first()).toBeVisible();
     await expect(playground.view).toContainText(/Overview|Headers|Vars|Auth|Scripts|Tests/);
   });

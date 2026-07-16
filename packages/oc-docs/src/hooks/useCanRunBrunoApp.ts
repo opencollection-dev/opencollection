@@ -10,30 +10,24 @@ export interface DeviceEnv {
 }
 
 /**
- * Whether this device can plausibly run the Bruno desktop app — the gate for
- * showing the Open-in-Bruno CTA. Viewport width is the wrong signal (iPad Pro
- * is 1024–1366px wide), so we look at input capability instead:
- *
- * 1. Require any fine, hovering pointer (`any-*` catches touchscreen laptops /
- *    2-in-1s where the touch digitizer is the primary pointer but a trackpad
- *    exists). A pure touch tablet has neither → excluded.
- * 2. Hard-exclude mobile/tablet OSes that can't run Bruno. iPadOS 13+ reports
- *    as `MacIntel`, so a real Mac (maxTouchPoints === 0) is kept while a touch
- *    iPad (maxTouchPoints > 1) is excluded. This exclusion — not the media
- *    query — is what reliably catches an iPad with a trackpad folio.
- *
- * Pure so it can be unit tested against a device matrix without a DOM.
- */
-/**
  * True on a real phone or tablet (including a touch iPad that reports itself as a
- * `MacIntel` desktop). Based on the OS and input, not the window size, so a
- * narrow laptop window - or the docs shrunk next to the inline playground - is
- * never treated as mobile.
+ * `MacIntel` desktop, kept apart from a real Mac by maxTouchPoints). Based on the
+ * OS and input, not the window size, so a narrow laptop window (or the docs
+ * shrunk next to the inline playground) is never treated as mobile.
  */
 export const computeIsMobileOS = ({ userAgent, platform, maxTouchPoints }: DeviceEnv): boolean =>
   /Android|iPhone|iPad|iPod/.test(userAgent) ||
   (platform === 'MacIntel' && maxTouchPoints > 1);
 
+/**
+ * Whether this device can plausibly run the Bruno desktop app, the gate for
+ * showing the Open-in-Bruno CTA. Viewport width is the wrong signal (iPad Pro is
+ * 1024-1366px wide), so we look at input capability instead: require a fine,
+ * hovering pointer (`any-*` catches touchscreen laptops / 2-in-1s where a
+ * trackpad exists alongside touch), and exclude genuine mobile/tablet OSes via
+ * computeIsMobileOS. Pure so it can be unit tested against a device matrix
+ * without a DOM.
+ */
 export const computeCanRunBrunoApp = (env: DeviceEnv): boolean =>
   env.anyHoverFine && !computeIsMobileOS(env);
 
