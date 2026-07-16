@@ -56,6 +56,9 @@ const AppShell: React.FC<AppShellProps> = ({ logo, testId = 'app-shell' }) => {
   const { pathname } = useLocation();
 
   const { open: playgroundOpen, dock: playgroundDock, openPlayground } = usePlaygroundUrlState();
+  // Bumped on every Try click so the bottom sheet re-expands from collapsed even
+  // when the requested slug is unchanged (a slug change alone wouldn't signal it).
+  const [playgroundOpenNonce, setPlaygroundOpenNonce] = useState(0);
 
   useEffect(() => {
     setDrawerOpen(false);
@@ -80,6 +83,7 @@ const AppShell: React.FC<AppShellProps> = ({ logo, testId = 'app-shell' }) => {
 
   const handleOpenPlayground = useCallback(() => {
     openPlayground(resolution?.entry.slug);
+    setPlaygroundOpenNonce((nonce) => nonce + 1);
   }, [openPlayground, resolution]);
 
   return (
@@ -143,7 +147,7 @@ const AppShell: React.FC<AppShellProps> = ({ logo, testId = 'app-shell' }) => {
         </div>
       </div>
 
-      {playgroundOpen && <Playground />}
+      {playgroundOpen && <Playground openNonce={playgroundOpenNonce} />}
 
       {!isDesktop && (
         <SidebarDrawer open={drawerOpen} onClose={closeDrawer}>

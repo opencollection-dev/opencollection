@@ -28,7 +28,12 @@ const playgroundLoadError = (
   </div>
 );
 
-const Playground: React.FC = () => {
+interface PlaygroundProps {
+  /** Bumped on each Try click, so the bottom sheet can re-expand from collapsed. */
+  openNonce?: number;
+}
+
+const Playground: React.FC<PlaygroundProps> = ({ openNonce }) => {
   const dispatch = useAppDispatch();
   const { open, dock, requestSlug, setDock, closePlayground } = usePlaygroundUrlState();
 
@@ -76,7 +81,7 @@ const Playground: React.FC = () => {
 
   if (dock === 'inline') return <InlineDock {...shared}>{body}</InlineDock>;
   if (dock === 'modal') return <ModalDock {...shared}>{body}</ModalDock>;
-  return <BottomSheetDock {...shared}>{body}</BottomSheetDock>;
+  return <BottomSheetDock {...shared} openNonce={openNonce}>{body}</BottomSheetDock>;
 };
 
 export default Playground;

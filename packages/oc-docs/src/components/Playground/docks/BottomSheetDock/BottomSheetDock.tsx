@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import PlaygroundHeader from '../../PlaygroundHeader/PlaygroundHeader';
 import { useDockResize } from '../../../../hooks/useDockResize';
 import type { DockMode } from '../../../../utils/playgroundDock';
@@ -14,6 +14,8 @@ interface BottomSheetDockProps {
   onDockChange: (dock: DockMode) => void;
   onToggleSidebar: () => void;
   onClose: () => void;
+  /** Bumped on each Try click; re-expands the sheet when it is collapsed. */
+  openNonce?: number;
   children: React.ReactNode;
 }
 
@@ -22,11 +24,12 @@ const BottomSheetDock: React.FC<BottomSheetDockProps> = ({
   onDockChange,
   onToggleSidebar,
   onClose,
+  openNonce,
   children,
 }) => {
-  // Opens to full screen height by default (covering the docs topbar), and can be
-  // dragged down to collapse.
-  const defaultHeight = window.innerHeight;
+  // Opens to 75% of the viewport by default (and re-expands to it from collapsed),
+  // and can be dragged up to full screen or down to collapse.
+  const defaultHeight = Math.round(window.innerHeight * 0.75);
   const { size, dragging, startDrag, setSize } = useDockResize({
     axis: 'y',
     initial: defaultHeight,
@@ -37,6 +40,18 @@ const BottomSheetDock: React.FC<BottomSheetDockProps> = ({
   // collapse button just snaps between the header height and the last size.
   const lastExpanded = useRef<number>(defaultHeight);
   const collapsed = size <= HEADER_HEIGHT + COLLAPSE_EPSILON;
+
+  // A Try click re-opens the playground; if the sheet is currently collapsed,
+  // expand it back to the default height. Read size/target through refs so this
+  // fires only on the Try signal, not when the user collapses it themselves.
+  const sizeRef = useRef(size);
+  sizeRef.current = size;
+  const defaultHeightRef = useRef(defaultHeight);
+  defaultHeightRef.current = defaultHeight;
+  useEffect(() => {
+    if (openNonce === undefined) return;
+    if (sizeRef.current <= HEADER_HEIGHT + COLLAPSE_EPSILON) setSize(defaultHeightRef.current);
+  }, [openNonce, setSize]);
 
   const toggleCollapse = () => {
     if (collapsed) {
