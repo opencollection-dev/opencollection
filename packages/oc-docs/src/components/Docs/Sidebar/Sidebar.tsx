@@ -43,7 +43,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
 
   // Show the scrollbar while the list is in use, then fade it out after 1s idle.
   // Shared with the playground sidebar so both behave the same.
-  const setItemsScrollRef = useAutoHideScrollbar<HTMLDivElement>();
+  const itemsRef = useRef<HTMLDivElement>(null);
+  useAutoHideScrollbar(itemsRef);
 
   // Smaller nav text on real phones/tablets only. Based on the device, not the
   // window size, so a narrow laptop window keeps the normal 13px.
@@ -83,7 +84,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
 
       <div className="sidebar-divider" />
 
-      <div className="sidebar-items" ref={setItemsScrollRef}>
+      <div className="sidebar-items" ref={itemsRef}>
         {collection?.items?.length ? (
           <SidebarTree
             items={collection.items}

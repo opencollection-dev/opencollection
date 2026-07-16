@@ -28,4 +28,4 @@ export {
 export { usePlaygroundUrlState, type PlaygroundUrlApi } from './usePlaygroundUrlState';
 export { useDocsNavigate } from './useDocsNavigate';
 export { useElementWidth } from './useElementWidth';
-export { useAutoHideScrollbar, attachAutoHideScrollbar } from './useAutoHideScrollbar';
+export { useAutoHideScrollbar } from './useAutoHideScrollbar';
