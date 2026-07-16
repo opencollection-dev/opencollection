@@ -38,6 +38,7 @@ interface KeyValueTableProps {
   getRowError?: (row: KeyValueRow, index: number, field: 'name' | 'value') => string | null;
   valueHeader?: React.ReactNode;
   inlineActions?: boolean;
+  multilineValues?: boolean;
   testId?: string;
 }
 
@@ -60,6 +61,7 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
   getRowError,
   valueHeader,
   inlineActions = false,
+  multilineValues = false,
   testId = 'key-value-table'
 }) => {
   const { isFound, names } = useResolvedVariables();
@@ -312,6 +314,7 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                             isFound={isFound}
                             names={names}
                             anywordHints={valueAutocomplete}
+                            multiline={multilineValues}
                             title={row.value}
                             testId={`${testId}-value-input`}
                           />
@@ -334,6 +337,7 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                         isFound={isFound}
                         names={names}
                         anywordHints={valueAutocomplete}
+                        multiline={multilineValues}
                         title={row.value}
                         testId={`${testId}-value-input`}
                       />

@@ -8,12 +8,18 @@ interface ExamplesProps {
   method: string;
   url: string;
   onTry?: () => void;
+  highlightedIndex?: number;
   className?: string;
   testId?: string;
 }
 
-export const Examples: React.FC<ExamplesProps> = ({ examples, method, url, onTry, className, testId = 'request-examples' }) => {
+export const Examples: React.FC<ExamplesProps> = ({ examples, method, url, onTry, highlightedIndex, className, testId = 'request-examples' }) => {
   if (!examples || examples.length === 0) return null;
+
+  // A highlight that no longer resolves (out of range) falls back to the
+  // default of opening the first card, never leaving every card collapsed.
+  const validHighlight =
+    highlightedIndex != null && highlightedIndex >= 0 && highlightedIndex < examples.length;
 
   return (
     <StyledWrapper className={['examples', className].filter(Boolean).join(' ')} data-testid={testId}>
@@ -24,7 +30,8 @@ export const Examples: React.FC<ExamplesProps> = ({ examples, method, url, onTry
           method={method}
           url={url}
           onTry={onTry}
-          defaultExpanded={index === 0}
+          defaultExpanded={validHighlight ? highlightedIndex === index : index === 0}
+          active={validHighlight && highlightedIndex === index}
         />
       ))}
     </StyledWrapper>

@@ -5,17 +5,15 @@ test.describe('Monaco editor copy button', () => {
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
 
     await page.goto('/#/?pg=1&dock=bottom');
-    await playground.treeItems.filter({ hasText: 'get users' }).first().click();
-    await page.getByTestId('tabs-tab-scripts').click();
+    await playground.openSidebarItem('get users');
+    await playground.selectTab('scripts');
 
-    const editor = page.getByTestId('scripts-editor-pre-request');
-    await expect(editor.locator('.monaco-editor')).toBeVisible({ timeout: 20000 });
-
-    await editor.locator('.view-lines').click();
+    const editor = playground.preRequestScriptEditor;
+    await editor.focus();
     await page.keyboard.type('const answer = 42;');
     await page.keyboard.press('Escape');
 
-    const copyBtn = editor.getByTestId('scripts-editor-pre-request-copy');
+    const copyBtn = editor.copyButton;
 
     await test.step('hidden until the editor is hovered', async () => {
       await page.mouse.move(0, 0); // move off the editor (clicking it left the pointer over it)
@@ -23,7 +21,7 @@ test.describe('Monaco editor copy button', () => {
     });
 
     await test.step('revealed on hover (top-right)', async () => {
-      await editor.hover();
+      await editor.root.hover();
       await expect(copyBtn).toHaveCSS('opacity', '1');
     });
 

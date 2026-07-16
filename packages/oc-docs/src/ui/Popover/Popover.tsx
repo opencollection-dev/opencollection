@@ -96,6 +96,14 @@ export const Popover: React.FC<PopoverProps> = ({
     setPosition(computeAnchoredPosition(anchorEl.getBoundingClientRect(), panelWidth, panelHeight));
   }, []);
 
+  const setPanelRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      panelRef.current = node;
+      if (node) updatePosition();
+    },
+    [updatePosition]
+  );
+
   useEffect(() => {
     if (!open) {
       setPosition(null);
@@ -167,7 +175,7 @@ export const Popover: React.FC<PopoverProps> = ({
       {open && !disabled && (
         <Portal>
           <StyledWrapper
-            ref={panelRef}
+            ref={setPanelRef}
             role="dialog"
             data-testid={testId}
             className={['oc-popover', className].filter(Boolean).join(' ')}

@@ -21,7 +21,7 @@ export const StyledWrapper = styled.nav`
     gap: 0.375rem;
   }
   .breadcrumb-sep {
-    font-size: 0.6875rem;
+    font-size: 0.75rem;
     color: var(--oc-breadcrumb-color-segments, var(--text-muted));
   }
   .breadcrumb-link {

@@ -24,6 +24,7 @@ interface HighlightedInputProps {
   variablesAutocomplete?: boolean;
   title?: string;
   testId?: string;
+  multiline?: boolean;
 }
 
 interface HoveredToken {
@@ -73,9 +74,10 @@ export const HighlightedInput: React.FC<HighlightedInputProps> = ({
   anywordHints,
   variablesAutocomplete = true,
   title,
-  testId
+  testId,
+  multiline = false
 }) => {
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
   const mirrorRef = useRef<HTMLDivElement | null>(null);
   const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -172,6 +174,13 @@ export const HighlightedInput: React.FC<HighlightedInputProps> = ({
   }, [value]);
 
   useLayoutEffect(() => {
+    const el = inputRef.current;
+    if (!multiline || !el) return;
+    el.style.height = 'auto';
+    el.style.height = `${el.scrollHeight}px`;
+  }, [value, multiline]);
+
+  useLayoutEffect(() => {
     if (!hovered || !cardEl) {
       setHoverPos(null);
       return;
@@ -221,7 +230,7 @@ export const HighlightedInput: React.FC<HighlightedInputProps> = ({
     setAutocomplete(null);
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const nextValue = event.target.value;
     const caret = event.target.selectionStart ?? nextValue.length;
     justTypedRef.current = true;
@@ -243,7 +252,7 @@ export const HighlightedInput: React.FC<HighlightedInputProps> = ({
     return true;
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     if (!autocomplete) return;
     const { items, active } = autocomplete;
     switch (event.key) {
@@ -309,31 +318,48 @@ export const HighlightedInput: React.FC<HighlightedInputProps> = ({
     });
   };
 
+  const setFieldRef = useCallback((el: HTMLInputElement | HTMLTextAreaElement | null) => {
+    inputRef.current = el;
+  }, []);
+
+  const closeAutocomplete = () => setAutocomplete(null);
+
+  const syncMirrorScroll = (event: React.UIEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const mirror = mirrorRef.current;
+    if (!mirror) return;
+    const field = event.currentTarget;
+    mirror.scrollTop = field.scrollTop;
+    mirror.scrollLeft = field.scrollLeft;
+  };
+
+  const fieldProps = {
+    ref: setFieldRef,
+    className: 'text-input',
+    'data-testid': testId,
+    value,
+    title,
+    placeholder,
+    onChange: handleChange,
+    onKeyDown: handleKeyDown,
+    onClick: closeAutocomplete,
+    onBlur: closeAutocomplete,
+    onScroll: syncMirrorScroll,
+    autoComplete: 'off',
+    autoCorrect: 'off',
+    autoCapitalize: 'off',
+    spellCheck: false
+  };
+
   return (
-    <StyledWrapper className="highlight-input" onMouseMove={handleMouseMove} onMouseLeave={scheduleClose}>
+    <StyledWrapper
+      className={`highlight-input${multiline ? ' highlight-input--multiline' : ''}`}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={scheduleClose}
+    >
       <div className="highlight-input-mirror" aria-hidden="true" ref={mirrorRef}>
         {renderTokens(value, isFound)}
       </div>
-      <input
-        ref={inputRef}
-        type="text"
-        className="text-input"
-        data-testid={testId}
-        value={value}
-        title={title}
-        placeholder={placeholder}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        onClick={() => setAutocomplete(null)}
-        onBlur={() => setAutocomplete(null)}
-        onScroll={(event) => {
-          if (mirrorRef.current) mirrorRef.current.scrollLeft = event.currentTarget.scrollLeft;
-        }}
-        autoComplete="off"
-        autoCorrect="off"
-        autoCapitalize="off"
-        spellCheck={false}
-      />
+      {multiline ? <textarea {...fieldProps} rows={1} /> : <input {...fieldProps} type="text" />}
       {hovered && (
         <Portal>
           <HoverCard

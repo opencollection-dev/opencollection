@@ -55,6 +55,7 @@ export const ScriptsTab: React.FC<ScriptsTabProps> = ({
           language="javascript"
           height="300px"
           hintsFor={['req', 'res', 'bru']}
+          testId="scripts-editor-post-response"
         />
       )
     }

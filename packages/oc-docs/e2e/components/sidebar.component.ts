@@ -25,6 +25,18 @@ export class SidebarComponent extends BaseComponent {
     await this.folderChevron(name).click();
   }
 
+  exampleToggle(requestName: string): Locator {
+    return this.item(requestName).first().getByTestId('sidebar-example-toggle');
+  }
+
+  exampleRow(exampleName: string): Locator {
+    return this.page.getByTestId('sidebar-example').filter({ hasText: exampleName });
+  }
+
+  async toggleExamples(requestName: string): Promise<void> {
+    await this.exampleToggle(requestName).click();
+  }
+
   async open(paths: string[]): Promise<void> {
     for (const name of paths) {
       await this.item(name).first().click();

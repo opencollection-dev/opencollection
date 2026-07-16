@@ -26,7 +26,8 @@ interface PropertyTableProps {
 
 const ValueCell: React.FC<{ row: PropertyRow; testId?: string }> = ({ row, testId }) => {
   if (row.node !== undefined) return <>{row.node}</>;
-  if (row.secret) return <SecretValue value={row.value ?? ''} testId={testId ? `${testId}-secret` : undefined} />;
+  if (row.secret)
+    return <SecretValue value={<VariableText value={row.value ?? ''} />} testId={testId && `${testId}-secret`} />;
   return (
     <TruncatedText text={row.value ?? ''}>
       <VariableText value={row.value ?? ''} />

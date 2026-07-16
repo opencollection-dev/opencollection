@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { BaseComponent } from './base.component';
+import { BaseComponent } from '../base.component';
 
 /** A KeyValueTable instance (headers, params, variables …). Pass the table's testId to target a specific one. */
 export class KeyValueTableComponent extends BaseComponent {

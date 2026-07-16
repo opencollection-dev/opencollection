@@ -33,7 +33,7 @@ export const RequestBody: React.FC<RequestBodyProps> = ({ body, showContentType 
   return (
     <StyledWrapper className={['request-body', className].filter(Boolean).join(' ')}>
       {showContentType && <ContentTypeBadge label={view.contentTypeLabel} />}
-      {view.render === 'code' && <Code code={view.code} language={view.language} showLineNumbers />}
+      {view.render === 'code' && <Code code={view.code} language={view.language} showLineNumbers variableAware />}
       {view.render === 'table' && (
         <PropertyTable
           hideRowBorders={hideRowBorders}

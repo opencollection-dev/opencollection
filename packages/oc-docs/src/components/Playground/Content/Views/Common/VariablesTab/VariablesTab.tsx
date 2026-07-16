@@ -144,6 +144,7 @@ export const VariablesTab: React.FC<VariablesTabProps> = ({
           valuePlaceholder="Value"
           showEnabled={true}
           inlineActions={true}
+          multilineValues={true}
           additionalColumns={dataTypeColumns}
           getRowError={getVariableError}
         />

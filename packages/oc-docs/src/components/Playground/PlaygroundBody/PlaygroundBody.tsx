@@ -6,11 +6,14 @@ import {
   selectHydratedCollection,
   selectViewMode,
   selectSelectedItemId,
+  selectSelectedExampleIndex,
   setViewMode,
   setSelectedItemId,
+  setSelectedExampleIndex,
   toggleFolderCollapse,
 } from '@slices/playground';
 import { selectActiveEnvName } from '../../../store/slices/env';
+import type { ExampleHighlight } from '../../Docs/Sidebar/SidebarTree/SidebarTree';
 import { useNavModel } from '../../../routing/hooks';
 import { usePlaygroundUrlState, useElementWidth } from '../../../hooks';
 import { getItemUuid, findItemByUuid } from '../../../utils/itemUtils';
@@ -19,6 +22,7 @@ import PlaygroundView from '../Content/Views/PlaygroundView/PlaygroundView';
 import FolderSettingsView from '../Content/Views/FolderSettingsView/FolderSettingsView';
 import EnvironmentsView from '../Content/Views/EnvironmentsView/EnvironmentsView';
 import CollectionSettingsView from '../Content/Views/CollectionSettingsView/CollectionSettingsView';
+import ExampleView from '../Content/Views/ExampleView/ExampleView';
 import PlaygroundSidebar from '../PlaygroundSidebar/PlaygroundSidebar';
 import type { DockMode } from '../../../utils/playgroundDock';
 import { StyledWrapper } from './StyledWrapper';
@@ -48,6 +52,7 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
   const collection = useAppSelector(selectHydratedCollection);
   const viewMode = useAppSelector(selectViewMode);
   const selectedItemId = useAppSelector(selectSelectedItemId);
+  const selectedExampleIndex = useAppSelector(selectSelectedExampleIndex);
   const activeEnvName = useAppSelector(selectActiveEnvName);
 
   const uuidToSlug = useMemo<Map<string, string>>(() => {
@@ -63,7 +68,19 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
     () => findItemByUuid(collection?.items, selectedItemId),
     [collection, selectedItemId]
   );
-  const activeSlug = selectedItemId ? uuidToSlug.get(selectedItemId) ?? '' : '';
+  // In example mode only the example row is active; do not also light up its
+  // parent request row (selectedItemId still points at the parent request).
+  const activeSlug = viewMode !== 'example' && selectedItemId ? uuidToSlug.get(selectedItemId) ?? '' : '';
+
+  const exampleCount =
+    selectedItem && !isFolder(selectedItem) ? ((selectedItem as HttpRequest).examples?.length ?? 0) : 0;
+  const activeExample: ExampleHighlight | null =
+    viewMode === 'example' &&
+    selectedItemId != null &&
+    selectedExampleIndex != null &&
+    selectedExampleIndex < exampleCount
+      ? { requestUuid: selectedItemId, index: selectedExampleIndex }
+      : null;
 
   const viewRef = useRef<HTMLDivElement>(null);
   const viewWidth = useElementWidth(viewRef);
@@ -82,6 +99,7 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
     if (uuid) {
       appliedSlugRef.current = requestSlug;
       dispatch(setSelectedItemId(uuid));
+      dispatch(setSelectedExampleIndex(null));
       dispatch(setViewMode('playground'));
     }
   }, [requestSlug, model, dispatch, appliedSlugRef]);
@@ -98,6 +116,7 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
       if (!entry) return;
       const uuid = getItemUuid(entry.item);
       if (!uuid) return;
+      dispatch(setSelectedExampleIndex(null));
       dispatch(setSelectedItemId(uuid));
       if (isFolder(entry.item)) {
         dispatch(setViewMode('folder-settings'));
@@ -112,15 +131,36 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
 
   const handleToggleFolder = useCallback((uuid: string) => dispatch(toggleFolderCollapse(uuid)), [dispatch]);
 
+  const handleExampleClick = useCallback(
+    (requestUuid: string, index: number) => {
+      dispatch(setSelectedItemId(requestUuid));
+      dispatch(setSelectedExampleIndex(index));
+      // Keep the deep-link slug pointing at the example's parent request, so a
+      // reload lands on that request (examples themselves are not deep-linked).
+      // Mark it applied first, otherwise the deep-link effect sees a new slug
+      // and reverts the view back to 'playground'.
+      const slug = uuidToSlug.get(requestUuid);
+      if (slug) {
+        appliedSlugRef.current = slug;
+        setRequestSlug(slug);
+      }
+      dispatch(setViewMode('example'));
+      closeSidebarIfInline();
+    },
+    [dispatch, uuidToSlug, setRequestSlug, appliedSlugRef, closeSidebarIfInline]
+  );
+
   const openEnvironments = useCallback(() => {
     dispatch(setViewMode('environments'));
     dispatch(setSelectedItemId(null));
+    dispatch(setSelectedExampleIndex(null));
     closeSidebarIfInline();
   }, [dispatch, closeSidebarIfInline]);
 
   const openCollection = useCallback(() => {
     dispatch(setViewMode('collection-settings'));
     dispatch(setSelectedItemId(null));
+    dispatch(setSelectedExampleIndex(null));
     closeSidebarIfInline();
   }, [dispatch, closeSidebarIfInline]);
 
@@ -132,7 +172,20 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
         <FolderSettingsView folder={selectedItem as Folder} collection={collection} onFolderChange={() => undefined} />
       );
     }
-    if (viewMode === 'playground' && selectedItem && !isFolder(selectedItem) && collection) {
+    if (
+      viewMode === 'example' &&
+      selectedItem &&
+      !isFolder(selectedItem) &&
+      selectedExampleIndex != null
+    ) {
+      const example = ((selectedItem as HttpRequest).examples ?? [])[selectedExampleIndex];
+      if (example) {
+        return <ExampleView request={selectedItem as HttpRequest} example={example} orientation={orientation} />;
+      }
+    }
+    // Also render the live request when an example index no longer resolves (e.g.
+    // the examples array shrank), so we never land on the empty prompt instead.
+    if ((viewMode === 'playground' || viewMode === 'example') && selectedItem && !isFolder(selectedItem) && collection) {
       return (
         <PlaygroundView
           item={selectedItem as HttpRequest}
@@ -159,6 +212,8 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
             environmentsActive={viewMode === 'environments'}
             onOpenCollection={openCollection}
             collectionActive={viewMode === 'collection-settings'}
+            activeExample={activeExample}
+            onExampleClick={handleExampleClick}
           />
         </aside>
       )}

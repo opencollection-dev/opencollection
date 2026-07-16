@@ -6,6 +6,9 @@ export class ExamplesComponent extends BaseComponent {
 
   readonly items = this.root.getByTestId('example-card');
 
+  // The card the sidebar navigated to (data-active set by ExampleCard).
+  readonly activeCard = this.root.locator('[data-testid="example-card"][data-active="true"]');
+
   example(name: string): Locator {
     return this.items.filter({ hasText: name });
   }
