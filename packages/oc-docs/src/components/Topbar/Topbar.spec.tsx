@@ -55,9 +55,17 @@ describe('Topbar', () => {
     expect(html).toContain('<span>Open in Bruno</span>');
   });
 
-  it('condenses Open-in-Bruno to the glyph (no label) below the desktop layout', () => {
+  it('keeps the full Open-in-Bruno CTA (with label) on the tablet layout', () => {
     const html = renderToStaticMarkup(
       <Topbar collectionName="Docs" layoutMode="tablet" openInBrunoHref="https://fetch.usebruno.com?url=x" />
+    );
+    expect(html).toContain('data-testid="open-in-bruno"');
+    expect(html).toContain('<span>Open in Bruno</span>'); // tablet has room for the label
+  });
+
+  it('condenses Open-in-Bruno to the glyph (no label) on the mobile layout', () => {
+    const html = renderToStaticMarkup(
+      <Topbar collectionName="Docs" layoutMode="mobile" openInBrunoHref="https://fetch.usebruno.com?url=x" />
     );
     expect(html).toContain('data-testid="open-in-bruno"');   // still shown on a Bruno-capable device
     expect(html).not.toContain('<span>Open in Bruno</span>'); // label hidden, glyph only

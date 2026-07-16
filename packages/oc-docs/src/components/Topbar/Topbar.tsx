@@ -136,10 +136,10 @@ const Topbar: React.FC<TopbarProps> = ({
 
         {/* Open-in-Bruno: shown on any device that can run the Bruno desktop app
             (capability check, hidden on large touch tablets like iPad Pro). It
-            condenses to the Bruno glyph below the desktop layout, e.g. when the
-            inline playground has shrunk the docs area on a desktop. */}
+            condenses to the Bruno glyph only on mobile; tablet and up show the
+            full icon + label since there is room for it. */}
         {canRunBrunoApp && hasCta && (
-          <OpenInBrunoButton href={openInBrunoHref} onClick={onOpenInBruno} iconOnly={!isDesktop} />
+          <OpenInBrunoButton href={openInBrunoHref} onClick={onOpenInBruno} iconOnly={isMobile} />
         )}
       </div>
 

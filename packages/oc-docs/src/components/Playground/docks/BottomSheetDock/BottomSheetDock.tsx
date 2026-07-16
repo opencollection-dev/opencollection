@@ -8,10 +8,6 @@ const HEADER_HEIGHT = 52;
 // Treat a drag-down to (roughly) the header height as collapsed, so dragging the
 // sheet down to the header behaves like the collapse button.
 const COLLAPSE_EPSILON = 8;
-// The docs topbar height. The sheet opens up to the topbar's bottom line so the
-// topbar stays visible; the topbar's own border is hidden while it is open
-// (see AppShell) so the seam reads as a single line.
-const TOPBAR_OFFSET = 52;
 
 interface BottomSheetDockProps {
   dock: DockMode;
@@ -28,9 +24,9 @@ const BottomSheetDock: React.FC<BottomSheetDockProps> = ({
   onClose,
   children,
 }) => {
-  // Opens below the topbar by default (topbar stays visible), but can be dragged
-  // up to full screen or down to collapse.
-  const defaultHeight = window.innerHeight - TOPBAR_OFFSET;
+  // Opens to full screen height by default (covering the docs topbar), and can be
+  // dragged down to collapse.
+  const defaultHeight = window.innerHeight;
   const { size, dragging, startDrag, setSize } = useDockResize({
     axis: 'y',
     initial: defaultHeight,

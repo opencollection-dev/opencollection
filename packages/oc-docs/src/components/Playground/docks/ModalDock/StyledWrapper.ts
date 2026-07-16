@@ -11,7 +11,8 @@ export const StyledWrapper = styled.div`
   .modal-backdrop {
     position: absolute;
     inset: 0;
-    background-color: color-mix(in srgb, var(--oc-text) 45%, transparent);
+    background-color: rgba(0, 0, 0, var(--oc-modal-backdrop-opacity));
+    backdrop-filter: blur(2px);
   }
 
   .modal-window {
@@ -24,7 +25,7 @@ export const StyledWrapper = styled.div`
     border-radius: var(--oc-radius);
     overflow: hidden;
     background-color: var(--oc-background-base);
-    box-shadow: 0 24px 60px color-mix(in srgb, var(--oc-text) 22%, transparent);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
   }
 
   .modal-content {
