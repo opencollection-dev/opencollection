@@ -1,87 +1,110 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { OpenCollection } from '@opencollection/types';
 import type { Environment } from '@opencollection/types/config/environments';
 import type { Variable } from '@opencollection/types/common/variables';
 import KeyValueTable, { KeyValueRow } from '../../../../../components/KeyValueTable/KeyValueTable';
-import { SidebarContainer, SidebarItems, SidebarItem } from '../../../EnvListStyles/StyledWrapper';
+import Tabs from '../../../../../ui/Tabs/Tabs';
+import { EmptyState } from '../../../../../ui/EmptyState/EmptyState';
+import { StyledWrapper } from './StyledWrapper';
+import { EnvironmentLabel } from '../../../../EnvironmentLabel/EnvironmentLabel';
+import EnvVarCards from './EnvVarCards/EnvVarCards';
+import { GlobeIcon } from '../../../../../assets/icons';
 import { useAppDispatch } from '../../../../../store/hooks';
+import { cx } from '../../../../../utils/cx';
+import { envVariableToRow, envRowToVariable } from '../../../../../utils/environments';
+import { isSecretVariable } from '../../../../../utils/variableResolution';
 import { updateCollectionEnvironments } from '@slices/playground';
-import { getDescription, getVariableTypeLabel } from '../../../../../utils/request';
-import { unwrapVariableValue } from '../../../../../utils/variableResolution';
-import { dataTypeColumn } from '../../../../../constants/dataTypeColumn';
+
+const ENV_TABS = [
+  { id: 'variables', label: 'Variables' },
+  { id: 'secrets', label: 'Secrets' },
+  { id: 'external', label: 'External' }
+] as const;
+
+type EnvTabId = (typeof ENV_TABS)[number]['id'];
+
+// Local mirror: @opencollection/types@0.9.2 dist doesn't export SecretProviderType (importing it fails tsc).
+type SecretProviderType = 'hashicorp-vault-cloud' | 'hashicorp-vault-server' | 'aws-secrets-manager' | 'azure-key-vault';
+
+const SECRET_POINTER_FIELD: Record<SecretProviderType, 'path' | 'secretName' | 'vaultName'> = {
+  'hashicorp-vault-cloud': 'path',
+  'hashicorp-vault-server': 'path',
+  'aws-secrets-manager': 'secretName',
+  'azure-key-vault': 'vaultName'
+};
+
+interface TabPanelProps {
+  isEmpty: boolean;
+  heading: string;
+  subheading: string;
+  children: React.ReactNode;
+}
+
+const TabPanel: React.FC<TabPanelProps> = ({ isEmpty, heading, subheading, children }) =>
+  isEmpty ? <EmptyState icon={<GlobeIcon />} heading={heading} subheading={subheading} /> : <>{children}</>;
 
 interface EnvironmentsViewProps {
   collection: OpenCollection | null;
+  compact?: boolean;
 }
 
-const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection }) => {
+const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection, compact = false }) => {
   const dispatch = useAppDispatch();
   const [selectedEnvironmentIndex, setSelectedEnvironmentIndex] = useState<number | null>(null);
 
-  const environments = useMemo(() => {
-    // TODO: Remove this
-    const envs = (collection as any).environments || collection?.config?.environments || [];
-    return [...envs];
-  }, [collection]);
+  const environments = (collection as any)?.environments || collection?.config?.environments || [];
+  const selectedEnvironment =
+    selectedEnvironmentIndex !== null ? environments[selectedEnvironmentIndex] ?? null : null;
 
-  const selectedEnvironment = useMemo(() => {
-    if (selectedEnvironmentIndex === null || !environments[selectedEnvironmentIndex]) return null;
-    return { ...environments[selectedEnvironmentIndex] };
-  }, [environments, selectedEnvironmentIndex]);
-  const selectedDescription = getDescription(selectedEnvironment);
+  const allVariables: Variable[] = selectedEnvironment?.variables ?? [];
+  const plainRows = allVariables.filter((v) => !isSecretVariable(v)).map(envVariableToRow);
+  const secretRows = allVariables.filter((v) => isSecretVariable(v)).map(envVariableToRow);
 
-  const variableToRow = useCallback((variable: Variable, index: number): KeyValueRow => ({
-    id: `var-${index}`,
-    name: variable.name || '',
-    value: unwrapVariableValue(variable.value),
-    dataType: getVariableTypeLabel(variable),
-    enabled: !variable.disabled
-  }), []);
+  const secretProviderType = selectedEnvironment?.externalSecrets?.type as SecretProviderType | undefined;
+  const secretPointerField = (secretProviderType && SECRET_POINTER_FIELD[secretProviderType]) || 'secretName';
 
-  const rowToVariable = useCallback((row: KeyValueRow): Variable => {
-    return {
-      name: row.name,
-      value: row.value,
-      disabled: !row.enabled
-    };
-  }, []);
+  const externalRows: KeyValueRow[] = (selectedEnvironment?.externalSecrets?.variables ?? []).map(
+    (variable: { name?: string; disabled?: boolean }, index: number) => ({
+      id: `ext-${index}`,
+      name: variable.name ?? '',
+      value: (variable as Record<string, string | undefined>)[secretPointerField] ?? '',
+      enabled: variable.disabled !== true
+    })
+  );
 
-  const variablesAsRows = useMemo(() => {
-    if (!selectedEnvironment?.variables) return [];
-    return selectedEnvironment.variables.map((variable: Variable, index: number) => variableToRow(variable, index));
-  }, [selectedEnvironment, variableToRow]);
+  const applyToSelectedEnv = (patch: Record<string, unknown>) => {
+    if (!collection || selectedEnvironmentIndex === null) return;
 
-  const handleVariablesChange = useCallback((rows: KeyValueRow[]) => {
-    if (!selectedEnvironment || !collection || selectedEnvironmentIndex === null) return;
-
-    const updatedVariables: Variable[] = rows.map(rowToVariable);
-    
-    const updatedEnvironments = environments.map((env, index) => {
-      if (index === selectedEnvironmentIndex) {
-        return {
-          ...env,
-          variables: updatedVariables
-        };
-      }
-      return env;
-    });
-
+    const updatedEnvironments = environments.map((env: Environment, index: number) =>
+      index === selectedEnvironmentIndex ? { ...env, ...patch } : env
+    );
     const updatedCollection: OpenCollection = {
       ...collection,
-      config: collection.config ? {
-        ...collection.config,
-        environments: updatedEnvironments
-      } : {
-        environments: updatedEnvironments
-      }
+      config: collection.config
+        ? { ...collection.config, environments: updatedEnvironments }
+        : { environments: updatedEnvironments }
     };
-    
     if ((collection as any).environments) {
       (updatedCollection as any).environments = updatedEnvironments;
     }
 
     dispatch(updateCollectionEnvironments(updatedCollection));
-  }, [selectedEnvironment, selectedEnvironmentIndex, collection, environments, rowToVariable, dispatch]);
+  };
+
+  const commit = (plain: KeyValueRow[], secrets: KeyValueRow[]) =>
+    applyToSelectedEnv({ variables: [...plain, ...secrets].map(envRowToVariable) });
+
+  const commitExternal = (rows: KeyValueRow[]) =>
+    applyToSelectedEnv({
+      externalSecrets: {
+        ...(selectedEnvironment?.externalSecrets ?? {}),
+        variables: rows.map((row) => ({
+          name: row.name,
+          [secretPointerField]: row.value,
+          disabled: !row.enabled
+        }))
+      }
+    });
 
   useEffect(() => {
     if (selectedEnvironmentIndex === null && environments.length > 0) {
@@ -97,124 +120,98 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection }) => {
 
   if (environments.length === 0) {
     return (
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100%',
-        color: 'var(--oc-colors-text-muted)',
-        backgroundColor: 'var(--oc-background-base)',
-        flexDirection: 'column',
-        gap: '16px'
-      }}>
-        <p>No environments found in this collection</p>
-      </div>
+      <StyledWrapper>
+        <div className="env-message">
+          <p>No environments found in this collection</p>
+        </div>
+      </StyledWrapper>
     );
   }
 
-  return (
-    <div style={{ display: 'flex', height: '100%', overflow: 'hidden', width: '100%' }}>
-      <div
-        style={{
-          width: 'var(--sidebar-width)',
-          minWidth: 'var(--sidebar-width)',
-          borderRight: '1px solid var(--border-color)',
-          backgroundColor: 'var(--bg-secondary)',
-          flexShrink: 0,
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column'
-        }}
-      >
-        <SidebarContainer className="h-full flex flex-col" style={{ width: 'var(--sidebar-width)' }}>
-          <div className="p-4" style={{ borderBottom: '1px solid var(--border-color)' }}>
-            <h2 className="font-semibold" style={{ color: 'var(--text-primary)', fontSize: '16px' }}>
-              Environments
-            </h2>
-          </div>
+  interface RenderVarsOptions {
+    makeNewRow?: () => Partial<KeyValueRow>;
+    disableNewRow?: boolean;
+  }
 
-          <SidebarItems>
-            {environments.map((env: Environment, index: number) => (
-              <SidebarItem
-                key={index}
-                className={`
-                  flex items-center select-none text-sm cursor-pointer
-                  ${selectedEnvironmentIndex === index ? 'active' : ''}
-                  transition-all duration-200
-                `}
-                style={{ paddingLeft: '12px' }}
-                onClick={() => setSelectedEnvironmentIndex(index)}
-              >
-                {env.color && (
-                  <div
-                    style={{
-                      width: '12px',
-                      height: '12px',
-                      borderRadius: '50%',
-                      backgroundColor: env.color,
-                      marginRight: '8px',
-                      flexShrink: 0
-                    }}
-                  />
-                )}
-                <div className="truncate flex-1">
-                  {env.name || `Environment ${index + 1}`}
-                </div>
-              </SidebarItem>
-            ))}
-          </SidebarItems>
-        </SidebarContainer>
+  const renderVars = (
+    rows: KeyValueRow[],
+    onChange: (rows: KeyValueRow[]) => void,
+    { makeNewRow, disableNewRow = false }: RenderVarsOptions = {}
+  ): React.ReactNode =>
+    compact ? (
+      <EnvVarCards rows={rows} onChange={onChange} makeNewRow={makeNewRow} disableNewRow={disableNewRow} addWhenComplete testId="env-var-cards" />
+    ) : (
+      <KeyValueTable
+        data={rows}
+        onChange={onChange}
+        keyPlaceholder="Name"
+        valuePlaceholder="Value"
+        showEnabled={true}
+        disableNewRow={disableNewRow}
+        makeNewRow={makeNewRow}
+        addWhenComplete
+        disableDelete={false}
+        additionalColumns={[{ key: 'dataType', label: 'Data Type', render: (row) => <span className="text-readonly">{row.dataType || ''}</span> }]}
+      />
+    );
+
+  const panels: Record<EnvTabId, { contentIndicator: number; content: React.ReactNode }> = {
+    variables: {
+      contentIndicator: plainRows.length,
+      content: renderVars(plainRows, (rows) => commit(rows, secretRows))
+    },
+    secrets: {
+      contentIndicator: secretRows.length,
+      content: renderVars(secretRows, (rows) => commit(plainRows, rows), { makeNewRow: () => ({ secret: true }) })
+    },
+    external: {
+      contentIndicator: externalRows.length,
+      content: (
+        <TabPanel isEmpty={!externalRows.length} heading="No external secrets" subheading="This environment has no external secrets configured.">
+          {renderVars(externalRows, commitExternal, { disableNewRow: true })}
+        </TabPanel>
+      )
+    }
+  };
+
+  const tabs = ENV_TABS.map(({ id, label }) => ({
+    id,
+    label,
+    contentIndicator: panels[id].contentIndicator,
+    content: panels[id].content
+  }));
+
+  return (
+    <StyledWrapper>
+      <div className="env-header">
+        <h2 className="env-title">Environments</h2>
       </div>
 
-      <div style={{
-        flex: 1,
-        overflow: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
-        backgroundColor: 'var(--oc-background-base)',
-        minHeight: 0,
-        padding: '24px'
-      }}>
+      <div className="env-pills">
+        {environments.map((env: Environment, index: number) => (
+          <button
+            key={index}
+            type="button"
+            className={cx('env-pill', { active: selectedEnvironmentIndex === index })}
+            data-testid={`env-pill-${env.name || index}`}
+            onClick={() => setSelectedEnvironmentIndex(index)}
+          >
+            <EnvironmentLabel name={env.name || `Environment ${index + 1}`} color={env.color} />
+          </button>
+        ))}
+      </div>
+
+      <div className="env-tabs-area">
         {selectedEnvironment ? (
-          <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-            <div style={{ marginBottom: '16px' }}>
-              <h2 style={{ fontSize: '20px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>
-                {selectedEnvironment.name || `Environment ${(selectedEnvironmentIndex || 0) + 1}`}
-              </h2>
-              {selectedDescription && (
-                <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>{selectedDescription}</p>
-              )}
-            </div>
-            
-            <div style={{ flex: 1, minHeight: 0 }}>
-              <KeyValueTable
-                key={selectedEnvironmentIndex}
-                data={variablesAsRows}
-                onChange={handleVariablesChange}
-                keyPlaceholder="Variable Name"
-                valuePlaceholder="Variable Value"
-                showEnabled={true}
-                disableNewRow={true}
-                disableDelete={true}
-                additionalColumns={[dataTypeColumn]}
-              />
-            </div>
-          </div>
+          <Tabs defaultActiveTab="variables" tabs={tabs} />
         ) : (
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '100%',
-            color: 'var(--oc-colors-text-muted)'
-          }}>
+          <div className="env-message">
             <p>Select an environment to view its variables</p>
           </div>
         )}
       </div>
-    </div>
+    </StyledWrapper>
   );
 };
 
 export default EnvironmentsView;
-

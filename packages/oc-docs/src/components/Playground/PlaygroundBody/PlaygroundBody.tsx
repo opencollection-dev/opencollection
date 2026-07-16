@@ -166,7 +166,7 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
 
   const view = (() => {
     if (viewMode === 'collection-settings' && collection) return <CollectionSettingsView collection={collection} />;
-    if (viewMode === 'environments' && collection) return <EnvironmentsView collection={collection} />;
+    if (viewMode === 'environments' && collection) return <EnvironmentsView collection={collection} compact={dock === 'inline'} />;
     if (viewMode === 'folder-settings' && selectedItem && isFolder(selectedItem) && collection) {
       return (
         <FolderSettingsView folder={selectedItem as Folder} collection={collection} onFolderChange={() => undefined} />

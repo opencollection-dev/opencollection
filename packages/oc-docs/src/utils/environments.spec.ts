@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { getEnvironmentVariables } from './environments';
+import { getEnvironmentVariables, writeBackValue, envVariableToRow, envRowToVariable } from './environments';
+import { unwrapVariableValue } from './variableResolution';
 
 describe('getEnvironmentVariables', () => {
   it('splits regular and secret variables', () => {
@@ -149,5 +150,89 @@ describe('getEnvironmentVariables', () => {
       'AWS Secrets Manager'
     );
     expect(getEnvironmentVariables(withType('azure-key-vault')).externalSecrets?.typeLabel).toBe('Azure Key Vault');
+  });
+});
+
+describe('writeBackValue', () => {
+  it('keeps a plain string a string', () => {
+    expect(writeBackValue('old', 'new')).toBe('new');
+    expect(writeBackValue(undefined, 'new')).toBe('new');
+  });
+
+  it('preserves a typed value wrapper and only swaps the data', () => {
+    expect(writeBackValue({ type: 'number', data: '30' }, '42')).toEqual({ type: 'number', data: '42' });
+  });
+
+  it('preserves the variant array and edits only the selected variant', () => {
+    const variants = [
+      { title: 'dev', value: 'https://dev.api.local', selected: true },
+      { title: 'prod', value: 'https://prod.api.local' }
+    ];
+    expect(writeBackValue(variants, 'https://edited.local')).toEqual([
+      { title: 'dev', value: 'https://edited.local', selected: true },
+      { title: 'prod', value: 'https://prod.api.local' }
+    ]);
+  });
+
+  it('edits the first variant when none is marked selected', () => {
+    const variants = [{ title: 'a', value: 'x' }, { title: 'b', value: 'y' }];
+    expect(writeBackValue(variants, 'z')).toEqual([{ title: 'a', value: 'z' }, { title: 'b', value: 'y' }]);
+  });
+
+  it('round-trips the shapes that get flattened for display', () => {
+    const cases = ['plain', { type: 'number', data: '30' }, [{ title: 'dev', value: 'v', selected: true }]] as const;
+    for (const original of cases) {
+      const flat = unwrapVariableValue(original);
+      // no edit → writing the flattened value back leaves the original shape intact
+      expect(writeBackValue(original, flat)).toEqual(original);
+    }
+  });
+});
+
+describe('envVariableToRow / envRowToVariable round-trip', () => {
+  const roundTrip = (variable: any, index = 0) => envRowToVariable(envVariableToRow(variable, index)) as any;
+
+  it('keeps a plain string variable', () => {
+    const out = roundTrip({ name: 'host', value: 'http://localhost:8081' });
+    expect(out.name).toBe('host');
+    expect(out.value).toBe('http://localhost:8081');
+  });
+
+  it('preserves a variant array instead of flattening it to the selected value', () => {
+    const apiBase = {
+      name: 'api_base',
+      value: [
+        { title: 'dev', value: 'https://dev.api.local', selected: true },
+        { title: 'prod', value: 'https://prod.api.local' }
+      ]
+    };
+    const out = roundTrip(apiBase);
+    expect(Array.isArray(out.value)).toBe(true);
+    expect(out.value).toEqual(apiBase.value);
+  });
+
+  it('preserves a typed value wrapper instead of flattening to a bare string', () => {
+    const out = roundTrip({ name: 'timeout', value: { type: 'number', data: '30' } });
+    expect(out.value).toEqual({ type: 'number', data: '30' });
+  });
+
+  it('never writes a value onto a secret with no value and keeps its type', () => {
+    const out = roundTrip({ name: 'bearer_auth_token', secret: true, type: 'string' });
+    expect(out.secret).toBe(true);
+    expect(out.type).toBe('string');
+    expect('value' in out).toBe(false);
+  });
+
+  it('keeps an entered secret value so the request can resolve it on send', () => {
+    const out = envRowToVariable({
+      id: 'var-0',
+      name: 'bearer_auth_token',
+      value: 'real-token',
+      enabled: true,
+      secret: true,
+      source: { name: 'bearer_auth_token', secret: true, type: 'string' } as any
+    }) as any;
+    expect(out.secret).toBe(true);
+    expect(out.value).toBe('real-token');
   });
 });

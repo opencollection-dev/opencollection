@@ -63,6 +63,22 @@ export class PlaygroundComponent extends BaseComponent {
     return this.page.getByTestId(`playground-dock-${mode}-panel`);
   }
 
+  async open(mode: DockMode): Promise<void> {
+    await this.page.goto(`/#/?pg=1&dock=${mode}`);
+    await this.runner.waitFor({ state: 'visible' });
+  }
+
+  async openRequest(name: string): Promise<void> {
+    await this.treeItems.filter({ hasText: name }).first().click();
+  }
+
+  async openEnvironments(): Promise<void> {
+    if (!(await this.gear.isVisible())) {
+      await this.sidebarToggle.click();
+    }
+    await this.gear.click();
+  }
+
   async selectDock(mode: DockMode): Promise<void> {
     await this.dockButton(mode).click();
   }

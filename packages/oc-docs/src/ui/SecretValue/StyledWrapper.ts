@@ -17,6 +17,21 @@ export const StyledWrapper = styled.span`
     word-break: break-all;
   }
 
+  .secret-value-input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text-primary);
+    font: inherit;
+    font-family: var(--font-mono);
+    padding: 0;
+  }
+  .secret-value-input::placeholder {
+    color: var(--text-tertiary);
+  }
+
   &.secret-value--readonly .secret-value-text {
     color: var(--text-tertiary);
   }
