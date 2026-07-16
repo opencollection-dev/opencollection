@@ -43,8 +43,6 @@ export const StyledWrapper = styled.div`
     height: 0.125rem;
     background: var(--primary-color);
     transform: scaleX(0);
-    transform-origin: center;
-    transition: transform 0.16s var(--oc-tab-ease);
   }
   .tab:hover:not(.is-active):not(:disabled) {
     color: var(--text-primary);
@@ -114,34 +112,13 @@ export const StyledWrapper = styled.div`
     flex-shrink: 0;
   }
 
-  @keyframes oc-tab-panel-in {
-    from {
-      opacity: 0;
-      transform: translateY(0.5rem);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
   .tab-panel {
     margin-top: 1rem;
     min-width: 0;
-    animation: oc-tab-panel-in 0.2s var(--oc-tab-ease) 0.04s backwards;
     flex: 1;
   }
   .tab-panel:focus {
     outline: none;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .tab-panel {
-      animation: none;
-    }
-    .tab::after {
-      transition: none;
-    }
   }
 
   @media (max-width: 640px) {

@@ -8,8 +8,7 @@ import { EnvironmentLabel } from '../../components/EnvironmentLabel/EnvironmentL
 import { VariableText } from '../../components/VariableText/VariableText';
 import { TruncatedText } from '../../components/TruncatedText/TruncatedText';
 import { Description } from '../../components/Description/Description';
-import { RequestDescription } from '../../components/Request/RequestDescription/RequestDescription';
-import { SecretValue } from '../../ui/SecretValue/SecretValue';
+import { ViewMore } from '../../components/ViewMore/ViewMore';
 import { EmptyState } from '../../ui/EmptyState/EmptyState';
 import { PageWrapper } from '../../components/PageWrapper/PageWrapper';
 import { Heading } from '../../components/Heading/Heading';
@@ -36,7 +35,9 @@ const valueCell = (value: string): React.ReactNode =>
   );
 
 const secretCell = (): React.ReactNode => (
-  <SecretValue align="start" readOnly testId="environment-secret-value" />
+  <span className="environment-empty" data-testid="environment-secret-value">
+    (Secret)
+  </span>
 );
 
 const typeCell = (dataType: string): React.ReactNode =>
@@ -180,7 +181,11 @@ export const Environments: React.FC<EnvironmentsProps> = ({ collection }) => {
               aria-labelledby={`${tablistId}-${activeTab}`}
               className="environment-panel"
             >
-              <RequestDescription html={descriptionHtml} className="environment-description" testId="environment-description" />
+              {descriptionHtml && (
+                <ViewMore collapsedHeight="4.5rem" className="environment-description" testId="environment-description">
+                  <div className="markdown-documentation" dangerouslySetInnerHTML={{ __html: descriptionHtml }} />
+                </ViewMore>
+              )}
               <Table
                 columns={COLUMNS}
                 groups={groups}

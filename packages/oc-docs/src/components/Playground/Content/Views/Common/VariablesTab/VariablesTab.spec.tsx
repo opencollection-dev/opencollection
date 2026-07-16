@@ -6,8 +6,10 @@ import { VariablesTab } from './VariablesTab';
 
 const noop = () => {};
 
-const inputValues = (root: ReturnType<typeof useRenderToDom>) =>
-  root.querySelectorAll('input.text-input').map((input) => input.getAttribute('value'));
+const inputValues = (root: ReturnType<typeof useRenderToDom>) => [
+  ...root.querySelectorAll('input.text-input').map((el) => el.getAttribute('value')),
+  ...root.querySelectorAll('textarea.text-input').map((el) => el.text)
+];
 
 const sectionTitles = (root: ReturnType<typeof useRenderToDom>) =>
   root.querySelectorAll('.vars-section-title').map((el) => el.text.trim());
@@ -79,19 +81,19 @@ describe('VariablesTab', () => {
     expect(root.querySelector('[data-testid="post-response-expr-help"]')).toBeTruthy();
   });
 
-  it('renders a typed variable value and its humanized data type', () => {
+  it('renders a typed variable value and reflects its type in the type dropdown', () => {
     const root = useRenderToDom(
       <VariablesTab variables={[{ name: 'count', value: { type: 'number', data: '42' } }]} onVariablesChange={noop} />
     );
-    expect(query(root, 'td.col-value input').getAttribute('value')).toBe('42');
-    expect(query(root, 'td.col-type').text.trim()).toBe('Number');
+    expect(query(root, 'td.col-value textarea').text).toBe('42');
+    expect(query(root, '.var-type-label').text.trim()).toBe('number');
   });
 
-  it('leaves an untyped variable without a data-type label', () => {
+  it('defaults an untyped variable to the string type', () => {
     const root = useRenderToDom(
       <VariablesTab variables={[{ name: 'host', value: 'localhost' }]} onVariablesChange={noop} />
     );
-    expect(query(root, 'td.col-value input').getAttribute('value')).toBe('localhost');
-    expect(query(root, 'td.col-type').text.trim()).toBe('');
+    expect(query(root, 'td.col-value textarea').text).toBe('localhost');
+    expect(query(root, '.var-type-label').text.trim()).toBe('string');
   });
 });

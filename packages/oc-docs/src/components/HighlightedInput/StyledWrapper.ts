@@ -2,18 +2,21 @@ import styled from '@emotion/styled';
 
 export const StyledWrapper = styled.div`
   position: relative;
+  box-sizing: border-box;
   width: 100%;
+  padding: 0 0.625rem;
 
   &.highlight-input .text-input {
     display: block;
     position: relative;
+    box-sizing: border-box;
     width: 100%;
     border: 0.0625rem solid transparent;
     outline: none;
     background-color: transparent;
     color: transparent;
     caret-color: var(--oc-table-input-color);
-    padding: 0.625rem;
+    padding: 0.625rem 0;
     font-size: 0.8125rem;
     font-weight: 400;
     line-height: 1;
@@ -35,11 +38,15 @@ export const StyledWrapper = styled.div`
 
   .highlight-input-mirror {
     position: absolute;
-    inset: 0;
+    top: 0;
+    right: 0.625rem;
+    bottom: 0;
+    left: 0.625rem;
+    box-sizing: border-box;
     pointer-events: none;
     overflow: hidden;
     white-space: pre;
-    padding: 0.625rem;
+    padding: 0.625rem 0;
     border: 0.0625rem solid transparent;
     border-radius: 0.25rem;
     font-family: inherit;
@@ -60,6 +67,28 @@ export const StyledWrapper = styled.div`
 
   .highlight-input-mirror .variable-prompt {
     color: var(--oc-codemirror-variable-prompt);
+  }
+
+  &.highlight-input--multiline .text-input {
+    resize: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 12.5rem;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    scrollbar-width: none;
+  }
+
+  &.highlight-input--multiline .text-input::-webkit-scrollbar {
+    display: none;
+  }
+
+  &.highlight-input--multiline .highlight-input-mirror {
+    overflow: hidden;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
   }
 `;
 

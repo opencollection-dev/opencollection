@@ -1,11 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { createOpenCollectionStore } from '../store';
-import {
+import reducer, {
   setPlaygroundCollection,
   updateCollectionEnvironments,
   resetPlaygroundEnvironments,
-  selectHydratedCollection
+  selectHydratedCollection,
+  setViewMode,
+  setSelectedExampleIndex,
+  clearPlaygroundCollection
 } from './playground';
+import { createOpenCollectionStore } from '../store';
 
 const makeCollection = () =>
   ({
@@ -46,5 +49,19 @@ describe('resetPlaygroundEnvironments', () => {
 
     store.dispatch(resetPlaygroundEnvironments());
     expect(envVariables(store)).toHaveLength(2);
+  });
+});
+
+describe('playground example view', () => {
+  it('accepts the example view mode', () => {
+    const s = reducer(undefined, setViewMode('example'));
+    expect(s.viewMode).toBe('example');
+  });
+
+  it('sets and resets the selected example index', () => {
+    const set = reducer(undefined, setSelectedExampleIndex(3));
+    expect(set.selectedExampleIndex).toBe(3);
+    const cleared = reducer(set, clearPlaygroundCollection());
+    expect(cleared.selectedExampleIndex).toBeNull();
   });
 });

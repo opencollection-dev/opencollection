@@ -1,11 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { Item as OpenCollectionItem, Folder } from '@opencollection/types/collection/item';
+import type { HttpRequest, HttpRequestExample } from '@opencollection/types/requests/http';
 import SidebarNavLink from '../SidebarNavLink/SidebarNavLink';
-import { ChevronRightIcon } from '../../../../assets/icons';
+import { ExampleIcon } from '../../../../assets/icons';
 import { StyledWrapper } from './StyledWrapper';
 import { getItemName, isFolder, isScriptFile, getRequestBadgeLabel } from '../../../../utils/schemaHelpers';
 import { getItemUuid } from '../../../../utils/itemUtils';
 import { orderSiblings } from '../../../../routing/navModel';
+import { ChevronButton } from './ChevronButton/ChevronButton';
+
+// The example a user jumped to from the sidebar: which request, and which of its
+// examples. Held transiently (navigation state), never persisted or routed.
+export interface ExampleHighlight {
+  requestUuid: string;
+  index: number;
+}
 
 export interface CollectionRoot {
   name: string;
@@ -25,6 +34,8 @@ interface SidebarTreeProps {
   onNavigate: (slug: string) => void;
   onToggleFolder: (uuid: string) => void;
   collectionRoot?: CollectionRoot;
+  activeExample: ExampleHighlight | null;
+  onExampleClick?: (requestUuid: string, index: number) => void;
 }
 
 const SidebarTree: React.FC<SidebarTreeProps> = ({
@@ -35,7 +46,23 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
   onNavigate,
   onToggleFolder,
   collectionRoot,
+  activeExample,
+  onExampleClick
 }) => {
+  // Explicit expand/collapse intent per request uuid. When a request has no
+  // entry it follows the active example (auto-expand); once the user clicks the
+  // chevron, their choice wins, so the active request can be collapsed.
+  const [expandedOverride, setExpandedOverride] = useState<Map<string, boolean>>(new Map());
+  const expandedFrom = (overrides: Map<string, boolean>, uuid: string): boolean =>
+    overrides.has(uuid) ? Boolean(overrides.get(uuid)) : activeExample?.requestUuid === uuid;
+  const isExpanded = (uuid: string): boolean => expandedFrom(expandedOverride, uuid);
+  const toggleRequest = (uuid: string) =>
+    setExpandedOverride((prev) => {
+      const next = new Map(prev);
+      next.set(uuid, !expandedFrom(prev, uuid));
+      return next;
+    });
+
   const renderItems = (itemList: OpenCollectionItem[], itemLevel: number): React.ReactNode => (
     <>
       {orderSiblings(itemList).map((item: OpenCollectionItem) => {
@@ -50,28 +77,21 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
           const expanded = !collapsed;
           const children = (item as Folder).items || [];
 
-          const chevron = (
-            <button
-              type="button"
-              className={`navlink-chevron${expanded ? ' expanded' : ''}`}
-              aria-label={expanded ? 'Collapse folder' : 'Expand folder'}
-              aria-expanded={expanded}
-              onClick={(e) => {
-                e.stopPropagation();
-                if (uuid) onToggleFolder(uuid);
-              }}
-            >
-              <ChevronRightIcon />
-            </button>
-          );
-
           return (
             <div key={key}>
               <SidebarNavLink
                 label={name}
                 level={itemLevel}
                 active={active}
-                chevron={chevron}
+                chevron={
+                  <ChevronButton
+                    expanded={expanded}
+                    ariaLabel={expanded ? 'Collapse folder' : 'Expand folder'}
+                    onClick={() => {
+                      if (uuid) onToggleFolder(uuid);
+                    }}
+                  />
+                }
                 testId="sidebar-item"
                 slug={slug}
                 onClick={() => slug !== undefined && onNavigate(slug)}
@@ -88,6 +108,58 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
         const script = isScriptFile(item);
         const displayName = script && !/\.[jt]s$/i.test(name) ? `${name}.js` : name;
         const method = getRequestBadgeLabel(item);
+
+        const examples: HttpRequestExample[] =
+          !script && uuid !== undefined ? ((item as HttpRequest).examples ?? []) : [];
+
+        if (examples.length > 0 && uuid !== undefined) {
+          // Auto-expand when this request owns the active example, so navigating
+          // to an example reveals it (and so static render can show it).
+          const expanded = isExpanded(uuid);
+
+          return (
+            <div key={key}>
+              <SidebarNavLink
+                label={displayName}
+                level={itemLevel}
+                active={active}
+                method={method}
+                muted
+                chevron={
+                  <ChevronButton
+                    expanded={expanded}
+                    ariaLabel={expanded ? 'Collapse examples' : 'Expand examples'}
+                    testId="sidebar-example-toggle"
+                    onClick={() => toggleRequest(uuid)}
+                  />
+                }
+                testId="sidebar-item"
+                slug={slug}
+                onClick={() => slug !== undefined && onNavigate(slug)}
+              />
+              {expanded && (
+                <StyledWrapper style={{ '--guide-left': `${itemLevel * 19 + 14}px` } as React.CSSProperties}>
+                  {examples.map((example, i) => {
+                    const isActive = activeExample?.requestUuid === uuid && activeExample.index === i;
+                    return (
+                      <SidebarNavLink
+                        key={`${uuid}-example-${i}`}
+                        label={example.name || `Example ${i + 1}`}
+                        level={itemLevel}
+                        active={isActive}
+                        icon={<ExampleIcon />}
+                        chevron={<span className="navlink-spacer" aria-hidden="true" />}
+                        muted
+                        testId="sidebar-example"
+                        onClick={() => onExampleClick?.(uuid, i)}
+                      />
+                    );
+                  })}
+                </StyledWrapper>
+              )}
+            </div>
+          );
+        }
 
         return (
           <SidebarNavLink
@@ -108,21 +180,6 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
   );
 
   if (collectionRoot) {
-    const chevron = (
-      <button
-        type="button"
-        className={`navlink-chevron${collectionRoot.collapsed ? '' : ' expanded'}`}
-        aria-label={collectionRoot.collapsed ? 'Expand collection' : 'Collapse collection'}
-        aria-expanded={!collectionRoot.collapsed}
-        onClick={(e) => {
-          e.stopPropagation();
-          collectionRoot.onToggle();
-        }}
-      >
-        <ChevronRightIcon />
-      </button>
-    );
-
     return (
       <>
         <SidebarNavLink
@@ -130,7 +187,13 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
           level={0}
           active={collectionRoot.active}
           icon={collectionRoot.icon}
-          chevron={chevron}
+          chevron={
+            <ChevronButton
+              expanded={!collectionRoot.collapsed}
+              ariaLabel={collectionRoot.collapsed ? 'Expand collection' : 'Collapse collection'}
+              onClick={collectionRoot.onToggle}
+            />
+          }
           testId={collectionRoot.testId ?? 'sidebar-collection-root'}
           onClick={collectionRoot.onClick}
         />
