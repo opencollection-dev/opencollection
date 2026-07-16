@@ -12,14 +12,14 @@ import { isUnsupportedRequest } from '../../../../../utils/schemaHelpers';
 import UnsupportedRequest from '../../../../UnsupportedRequest/UnsupportedRequest';
 import { FileNotFoundIcon } from '../../../../../assets/icons';
 
-interface RequestPlaygroundView {
+interface PlaygroundViewProps {
   item: HttpRequest;
   collection: OpenCollectionCollection;
   selectedEnvironment?: string;
   orientation?: 'horizontal' | 'vertical';
 }
 
-const HttpRequestPlaygroundView: React.FC<RequestPlaygroundView> = ({ item, collection, selectedEnvironment = '', orientation = 'horizontal' }) => {
+const HttpRequestPlaygroundView: React.FC<PlaygroundViewProps> = ({ item, collection, selectedEnvironment = '', orientation = 'horizontal' }) => {
   const dispatch = useAppDispatch();
   const [editableItem, setEditableItem] = useState<HttpRequest>(item);
   const itemUuid = (item as any).uuid;
@@ -198,7 +198,7 @@ const HttpRequestPlaygroundView: React.FC<RequestPlaygroundView> = ({ item, coll
   );
 };
 
-const PlaygroundView: React.FC<RequestPlaygroundView> = ({ item, ...otherProps }) => {
+const PlaygroundView: React.FC<PlaygroundViewProps> = ({ item, ...otherProps }) => {
   if (isUnsupportedRequest(item)) {
     return (
       <UnsupportedRequest

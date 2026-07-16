@@ -9,7 +9,7 @@ import { EmptyState } from '../../ui/EmptyState/EmptyState';
 import Description from '../Description/Description';
 import RequestUrlBar from '../Request/RequestUrlBar/RequestUrlBar';
 import RequestDescription from '../Request/RequestDescription/RequestDescription';
-import BreadcrumbWrapper, { type BreadcrumbWrapperProps } from './BreadcrumbsWrapper/BreadcrumbsWrapper';
+import BreadcrumbWrapper, { type BreadcrumbWrapperProps } from './BreadcrumbWrapper/BreadcrumbWrapper';
 import { REQUEST_TYPE_LABELS } from '../../constants';
 
 function getRequestTypeLabel(label: string | undefined) {
