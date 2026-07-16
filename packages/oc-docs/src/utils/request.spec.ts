@@ -8,6 +8,8 @@ import {
   getScriptFlow,
   getPreRequestVars,
   getPostResponseVars,
+  actionsToPostResponseVars,
+  postResponseVarsToActions,
   getCollectionVariables,
   getShortMethod,
   getVariableType
@@ -267,6 +269,83 @@ describe('requestVars', () => {
     };
     expect(getPreRequestVars(item)[0].description).toBe('Unique session identifier');
     expect(getPostResponseVars(item)[0].description).toBe('JWT access token from the login response');
+  });
+});
+
+describe('post-response variable mappers', () => {
+  it('maps after-response set-variable actions to editable rows, treating a missing phase as after-response', () => {
+    const actions: any = [
+      {
+        type: 'set-variable',
+        phase: 'after-response',
+        selector: { expression: 'res.body.id', method: 'jsonq' },
+        variable: { name: 'userId', scope: 'runtime' },
+        disabled: true
+      },
+      { type: 'set-variable', selector: { expression: 'res.body.tok' }, variable: { name: 'legacy' } }
+    ];
+    expect(actionsToPostResponseVars(actions)).toEqual([
+      { name: 'userId', expr: 'res.body.id', scope: 'runtime', disabled: true, description: undefined },
+      { name: 'legacy', expr: 'res.body.tok', scope: undefined, disabled: undefined, description: undefined }
+    ]);
+  });
+
+  it('ignores actions that are not after-response captures', () => {
+    const actions: any = [
+      { type: 'set-variable', phase: 'before-request', selector: { expression: 'x' }, variable: { name: 'pre' } },
+      { type: 'set-header', name: 'X', value: 'Y' }
+    ];
+    expect(actionsToPostResponseVars(actions)).toEqual([]);
+    expect(actionsToPostResponseVars()).toEqual([]);
+  });
+
+  it('serializes rows to after-response set-variable actions, defaulting the scope to runtime', () => {
+    expect(postResponseVarsToActions([{ name: 'userId', value: 'res.body.id', enabled: true }])).toEqual([
+      {
+        type: 'set-variable',
+        phase: 'after-response',
+        selector: { expression: 'res.body.id', method: 'jsonq' },
+        variable: { name: 'userId', scope: 'runtime' },
+        disabled: false
+      }
+    ]);
+  });
+
+  it('keeps non-after-response actions and replaces stale captures on write', () => {
+    const existing: any = [
+      { type: 'set-header', name: 'X', value: 'Y' },
+      { type: 'set-variable', phase: 'after-response', selector: { expression: 'old' }, variable: { name: 'stale' } }
+    ];
+    const result = postResponseVarsToActions(
+      [{ name: 'fresh', value: 'res.body.id', enabled: true, scope: 'environment' }],
+      existing
+    );
+    expect(result).toEqual([
+      { type: 'set-header', name: 'X', value: 'Y' },
+      {
+        type: 'set-variable',
+        phase: 'after-response',
+        selector: { expression: 'res.body.id', method: 'jsonq' },
+        variable: { name: 'fresh', scope: 'environment' },
+        disabled: false
+      }
+    ]);
+  });
+
+  it('includes a description only when the row carries one', () => {
+    expect(postResponseVarsToActions([{ name: 'a', value: 'x', enabled: true, description: 'note' }])[0]).toMatchObject({
+      description: 'note'
+    });
+    expect('description' in postResponseVarsToActions([{ name: 'a', value: 'x', enabled: true }])[0]).toBe(false);
+  });
+
+  it('round-trips an edited row through the actions model', () => {
+    const actions = postResponseVarsToActions([
+      { name: 'token', value: 'res.body.token', enabled: false, scope: 'environment' }
+    ]);
+    expect(actionsToPostResponseVars(actions)).toEqual([
+      { name: 'token', expr: 'res.body.token', scope: 'environment', disabled: true, description: undefined }
+    ]);
   });
 });
 
