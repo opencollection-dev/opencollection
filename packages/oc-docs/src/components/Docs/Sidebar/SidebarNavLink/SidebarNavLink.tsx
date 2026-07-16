@@ -59,7 +59,7 @@ const SidebarNavLink: React.FC<SidebarNavLinkProps> = ({
       style={{
         marginLeft: `${(level * 19 + 4) / 16}rem`,
         paddingLeft: '0.25rem',
-        marginRight: level === 0 ? '0.5rem' : '0.25rem',
+        marginRight: level === 0 ? '0.5rem' : '0.25rem'
       }}
       data-testid={testId}
       data-slug={slug}
