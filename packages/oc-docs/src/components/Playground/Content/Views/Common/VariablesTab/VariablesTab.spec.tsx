@@ -79,19 +79,19 @@ describe('VariablesTab', () => {
     expect(root.querySelector('[data-testid="post-response-expr-help"]')).toBeTruthy();
   });
 
-  it('renders a typed variable value and its humanized data type', () => {
+  it('renders a typed variable value and its data type in lowercase', () => {
     const root = useRenderToDom(
       <VariablesTab variables={[{ name: 'count', value: { type: 'number', data: '42' } }]} onVariablesChange={noop} />
     );
     expect(query(root, 'td.col-value input').getAttribute('value')).toBe('42');
-    expect(query(root, 'td.col-type').text.trim()).toBe('Number');
+    expect(query(root, '.var-type-label').text.trim()).toBe('number');
   });
 
-  it('leaves an untyped variable without a data-type label', () => {
+  it('defaults an untyped variable to the string data type', () => {
     const root = useRenderToDom(
       <VariablesTab variables={[{ name: 'host', value: 'localhost' }]} onVariablesChange={noop} />
     );
     expect(query(root, 'td.col-value input').getAttribute('value')).toBe('localhost');
-    expect(query(root, 'td.col-type').text.trim()).toBe('');
+    expect(query(root, '.var-type-label').text.trim()).toBe('string');
   });
 });

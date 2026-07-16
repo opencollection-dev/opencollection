@@ -1,10 +1,10 @@
 import type { Environment } from '@opencollection/types/config/environments';
 import type { VariableValueType } from '@opencollection/types/common/variables';
-import { MANAGER_LABELS, TYPE_LABELS } from '../constants';
+import { MANAGER_LABELS } from '../constants';
 import { getDescription, getVariableType } from './request';
 import { isSecretVariable, unwrapVariableValue } from './variableResolution';
 
-const humanizeType = (type: VariableValueType | undefined): string => (type && TYPE_LABELS[type]) || TYPE_LABELS.string;
+const humanizeType = (type: VariableValueType | undefined): string => type || 'string';
 
 const humanizeManager = (type: string | undefined): string => {
   if (!type) return 'External';

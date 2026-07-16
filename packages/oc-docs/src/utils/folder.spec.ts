@@ -58,7 +58,7 @@ describe('getFolderConfig', () => {
     expect(config.postResponse).toBe('post');
     expect(config.tests).toBe('test()');
     expect(config.variables).toEqual([
-      { name: 'sessionId', value: '{{$randomUUID}}', type: 'String', disabled: undefined }
+      { name: 'sessionId', value: '{{$randomUUID}}', type: 'string', disabled: undefined }
     ]);
     expect(config.postVariables).toEqual([]);
   });
@@ -84,7 +84,7 @@ describe('getFolderConfig', () => {
     expect(config.headers).toEqual([
       { name: 'Accept', value: 'json', disabled: true, description: 'content negotiation' }
     ]);
-    expect(config.variables).toEqual([{ name: 'pre', value: '1', type: 'String', disabled: undefined }]);
+    expect(config.variables).toEqual([{ name: 'pre', value: '1', type: 'string', disabled: undefined }]);
     expect(config.postVariables).toEqual([
       { name: 'token', expression: 'res.body.token', scope: 'runtime', disabled: undefined }
     ]);

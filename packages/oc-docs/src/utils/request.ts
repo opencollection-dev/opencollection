@@ -20,7 +20,6 @@ import {
 import { getItemUuid } from './itemUtils';
 import { isSecretVariable } from './variableResolution';
 import { COLLECTION_ROOT_CRUMB } from './common';
-import { TYPE_LABELS } from '../constants';
 
 export const humanizeAuthMode = (auth: Auth | undefined, labels: Record<string, string>): string => {
   if (!auth) return 'No Auth';
@@ -93,7 +92,7 @@ export const getVariableType = (variable?: Variable | SecretVariable): VariableV
 
 export const getVariableTypeLabel = (variable?: Variable | SecretVariable): string | undefined => {
   if (!variable) return undefined;
-  return TYPE_LABELS[getVariableType(variable) ?? 'string'];
+  return getVariableType(variable) ?? 'string';
 };
 
 export interface BodyTableRow {

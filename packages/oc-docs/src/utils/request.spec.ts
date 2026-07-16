@@ -227,8 +227,8 @@ describe('requestVars', () => {
       runtime: { variables: [{ name: 'x', value: '1' }, { name: 'y', value: { type: 'number', data: '42' } }] }
     };
     expect(getPreRequestVars(item)).toEqual([
-      { name: 'x', value: '1', type: 'String', disabled: undefined },
-      { name: 'y', value: '42', type: 'Number', disabled: undefined }
+      { name: 'x', value: '1', type: 'string', disabled: undefined },
+      { name: 'y', value: '42', type: 'number', disabled: undefined }
     ]);
   });
 
@@ -290,8 +290,8 @@ describe('getCollectionVariables', () => {
     };
     const { preVars, postVars } = getCollectionVariables(collection);
     expect(preVars).toEqual([
-      { name: 'baseUrl', value: 'https://api.example.com', type: 'String', disabled: undefined },
-      { name: 'legacy', value: 'x', type: 'String', disabled: true }
+      { name: 'baseUrl', value: 'https://api.example.com', type: 'string', disabled: undefined },
+      { name: 'legacy', value: 'x', type: 'string', disabled: true }
     ]);
     expect(postVars).toEqual([
       { name: 'token', expression: 'res.body.token', scope: 'collection', disabled: undefined }
