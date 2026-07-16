@@ -31,8 +31,20 @@ export class PlaygroundComponent extends BaseComponent {
   readonly unsupportedTitle = this.view.getByTestId('unsupported-request-title');
   readonly unsupportedMessage = this.view.getByTestId('unsupported-request-empty');
   readonly unsupportedIcon = this.view.getByTestId('file-not-found-icon');
+  readonly exampleView = this.page.getByTestId('example-view');
+  readonly exampleViewRequest = this.page.getByTestId('example-view-request');
+  readonly exampleViewResponse = this.page.getByTestId('example-view-response');
 
-  /** Navigate to the playground with the given dock mode. */
+  readonly exampleViewControls = this.exampleView.locator('input, textarea');
+
+  exampleToggle(requestName: string): Locator {
+    return this.treeItems.filter({ hasText: requestName }).getByTestId('sidebar-example-toggle');
+  }
+
+  exampleRow(exampleName: string): Locator {
+    return this.sidebarPanel.getByTestId('sidebar-example').filter({ hasText: exampleName });
+  }
+
   async open(dock: DockMode = 'bottom'): Promise<void> {
     await this.page.goto(`/#/?pg=1&dock=${dock}`);
   }
@@ -53,12 +65,10 @@ export class PlaygroundComponent extends BaseComponent {
     await this.scriptTab(id).click();
   }
 
-  /** The option labels offered by the query-bar method dropdown. */
   async methodOptions(): Promise<string[]> {
     return this.methodSelect.locator('option').allInnerTexts();
   }
 
-  /** Open a request in the playground: expand intermediate folders, click the leaf. */
   async openTreeItem(names: string[]): Promise<void> {
     for (let i = 0; i < names.length; i++) {
       const item = this.treeItems.filter({ hasText: names[i] }).first();

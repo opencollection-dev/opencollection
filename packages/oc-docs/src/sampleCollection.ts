@@ -1769,6 +1769,15 @@ items:
     examples:
       - name: "List Users"
         request:
+          method: "GET"
+          url: "{{host}}/api/users?page=1&limit=10"
+          params:
+            - name: "page"
+              value: "1"
+              type: query
+            - name: "limit"
+              value: "10"
+              type: query
           headers:
             - name: "Accept"
               value: "application/json"

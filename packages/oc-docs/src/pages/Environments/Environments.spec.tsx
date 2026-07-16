@@ -2,6 +2,7 @@ import React from 'react';
 import { describe, it, expect } from 'vitest';
 import type { OpenCollection } from '@opencollection/types';
 import { useRenderToDom } from '../../hooks/useRenderToDom';
+import { query } from '../../test-utils/dom';
 import { Environments } from './Environments';
 
 const groupLabels = (root: ReturnType<typeof useRenderToDom>) =>
@@ -43,7 +44,7 @@ describe('Environments', () => {
     expect(root.querySelector('[data-testid="environment-secret-value"]')).toBeTruthy();
   });
 
-  it('always shows a secret as a masked, display-only value (no value in the yml, no reveal toggle)', () => {
+  it('shows a "(Secret)" placeholder for a secret — display-only, no reveal toggle', () => {
     const collection = {
       info: { name: 'API', version: '1.0.0' },
       config: {
@@ -53,11 +54,8 @@ describe('Environments', () => {
 
     const root = useRenderToDom(<Environments collection={collection} />);
 
-    const secret = root.querySelector('[data-testid="environment-secret-value"]');
-    expect(secret).toBeTruthy();
-    expect(secret?.text).toContain('*');
-    expect(secret?.querySelector('[data-testid="environment-secret-value-toggle"]')).toBeNull();
-    expect(root.querySelector('[data-testid="environment-secret-value"].secret-value--readonly')).toBeTruthy();
+    expect(query(root, '[data-testid="environment-secret-value"]').text).toBe('(Secret)');
+    expect(root.querySelector('[data-testid="environment-secret-value-toggle"]')).toBeNull();
   });
 
   it('renders an external secret variables section with the manager label', () => {

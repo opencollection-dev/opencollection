@@ -11,6 +11,8 @@ import { updatePlaygroundItem, setPlaygroundResponse, selectPlaygroundResponse }
 import { isUnsupportedRequest } from '../../../../../utils/schemaHelpers';
 import UnsupportedRequest from '../../../../UnsupportedRequest/UnsupportedRequest';
 import { FileNotFoundIcon } from '../../../../../assets/icons';
+import { useSplitPane } from '../../../../../hooks/useSplitPane';
+import { SplitDivider } from '../../../../SplitDivider/SplitDivider';
 
 interface PlaygroundViewProps {
   item: HttpRequest;
@@ -27,10 +29,7 @@ const HttpRequestPlaygroundView: React.FC<PlaygroundViewProps> = ({ item, collec
   const [isLoading, setIsLoading] = useState(false);
   // The request/response split is one draggable divider whose axis follows the
   // orientation: horizontal layout resizes width, vertical layout resizes height.
-  const [requestPaneWidth, setRequestPaneWidth] = useState(50);
-  const [requestPaneHeight, setRequestPaneHeight] = useState(50);
-  const [isResizing, setIsResizing] = useState(false);
-  const rowRef = useRef<HTMLDivElement>(null);
+  const { size: paneSize, isResizing, containerRef, startResize } = useSplitPane(orientation);
   const runner = useMemo(() => requestRunner, []);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -93,42 +92,6 @@ const HttpRequestPlaygroundView: React.FC<PlaygroundViewProps> = ({ item, collec
     }
   }, [collection, editableItem, runner, selectedEnvironment, itemUuid]);
 
-  const startResize = useCallback((e: React.MouseEvent) => {
-    setIsResizing(true);
-    e.preventDefault();
-  }, []);
-
-  const handleResizeMove = useCallback((e: MouseEvent) => {
-    if (!isResizing) return;
-    const row = rowRef.current;
-    if (!row) return;
-
-    const rect = row.getBoundingClientRect();
-    // Vertical layout drags along Y (pane height), horizontal along X (width).
-    const percent =
-      orientation === 'vertical'
-        ? ((e.clientY - rect.top) / rect.height) * 100
-        : ((e.clientX - rect.left) / rect.width) * 100;
-
-    if (percent < 20 || percent > 80) return;
-    if (orientation === 'vertical') setRequestPaneHeight(percent);
-    else setRequestPaneWidth(percent);
-  }, [isResizing, orientation]);
-
-  const stopResize = useCallback(() => {
-    setIsResizing(false);
-  }, []);
-
-  useEffect(() => {
-    if (!isResizing) return;
-    document.addEventListener('mousemove', handleResizeMove);
-    document.addEventListener('mouseup', stopResize);
-    return () => {
-      document.removeEventListener('mousemove', handleResizeMove);
-      document.removeEventListener('mouseup', stopResize);
-    };
-  }, [isResizing, handleResizeMove, stopResize]);
-
   return (
     <div className="request-runner-container h-full flex flex-col px-4" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <RequestHeader 
@@ -147,48 +110,22 @@ const HttpRequestPlaygroundView: React.FC<PlaygroundViewProps> = ({ item, collec
       />
       
       <div
-        ref={rowRef}
+        ref={containerRef}
         className={`flex flex-1 overflow-hidden pt-2 ${orientation === 'vertical' ? 'flex-col' : 'flex-row'}`}
+        style={{ userSelect: isResizing ? 'none' : undefined }}
       >
         <div
           className={orientation === 'vertical' ? 'shrink-0 overflow-hidden min-h-0' : 'shrink-0 overflow-hidden'}
           style={
             orientation === 'vertical'
-              ? { height: `${requestPaneHeight}%` }
-              : { width: `${requestPaneWidth}%`, borderColor: 'var(--border-color)' }
+              ? { height: `${paneSize}%` }
+              : { width: `${paneSize}%`, borderColor: 'var(--border-color)' }
           }
         >
           <RequestPane item={editableItem} onItemChange={handleItemChange} />
         </div>
 
-        {orientation === 'horizontal' && (
-          <div
-            className="cursor-col-resize shrink-0 relative hover:bg-opacity-10"
-            style={{
-              width: '1px',
-              backgroundColor: 'var(--border-color)',
-              margin: '0 16px',
-              transition: 'background-color 0.2s'
-            }}
-            onMouseDown={startResize}
-            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--oc-border-border2)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--border-color)'; }}
-          />
-        )}
-        {orientation === 'vertical' && (
-          <div
-            className="cursor-row-resize shrink-0 relative"
-            style={{
-              height: '1px',
-              backgroundColor: 'var(--border-color)',
-              margin: '12px 0',
-              transition: 'background-color 0.2s'
-            }}
-            onMouseDown={startResize}
-            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--oc-border-border2)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--border-color)'; }}
-          />
-        )}
+        <SplitDivider orientation={orientation} onPointerDown={startResize} testId="playground-divider" />
 
         <div className="flex-1 overflow-hidden min-h-0">
           <ResponsePane response={response} isLoading={isLoading} />
