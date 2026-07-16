@@ -4,7 +4,7 @@ import { MANAGER_LABELS, TYPE_LABELS } from '../constants';
 import { getDescription, getVariableType } from './request';
 import { isSecretVariable, unwrapVariableValue } from './variableResolution';
 
-const humanizeType = (type: VariableValueType | undefined): string => (type && TYPE_LABELS[type]) || 'String';
+const humanizeType = (type: VariableValueType | undefined): string => (type && TYPE_LABELS[type]) || TYPE_LABELS.string;
 
 const humanizeManager = (type: string | undefined): string => {
   if (!type) return 'External';
