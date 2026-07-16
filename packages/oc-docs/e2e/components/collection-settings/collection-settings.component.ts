@@ -30,8 +30,6 @@ export class CollectionSettingsComponent extends BaseComponent {
     await this.tab(id).click();
   }
 
-  // The auth mode is a MenuDropdown: open the trigger, then click the option.
-  // Options are portaled to document.body, so locate them from the page root.
   async selectAuthMode(value: string): Promise<void> {
     await this.authMode.click();
     await this.page.getByTestId(`auth-mode-select-${value}`).click();
