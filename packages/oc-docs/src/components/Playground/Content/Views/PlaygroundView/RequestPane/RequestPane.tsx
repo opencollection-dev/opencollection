@@ -7,17 +7,18 @@ import { rowToVariable } from '../../../../../../utils/variableDataType';
 import HeadersTab from '../../Common/HeadersTab/HeadersTab';
 import ParamsTab from '../../Common/ParamsTab';
 import BodyTab from '../../Common/BodyTab';
+import BodyModeSelector from '../../Common/BodyModeSelector';
 import AuthTab from '../../Common/AuthTab/AuthTab';
 import ScriptsTab from '../../Common/ScriptsTab/ScriptsTab';
 import TestsTab from '../../Common/TestsTab/TestsTab';
 import AssertsTab from '../../Common/AssertsTab';
 import VariablesTab from '../../Common/VariablesTab/VariablesTab';
-import { 
-  getHttpParams, 
-  getHttpHeaders, 
-  getHttpBody, 
-  getRequestAuth, 
-  getRequestVariables, 
+import {
+  getHttpParams,
+  getHttpHeaders,
+  getHttpBody,
+  getRequestAuth,
+  getRequestVariables,
   getRequestAssertions,
   getRequestScripts,
   scriptsArrayToObject,
@@ -39,7 +40,7 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
     const originalByName = new Map(
       originals.filter((param) => param.name).map((param): [string, typeof param] => [param.name as string, param])
     );
-    const updatedParams = params.map(p => ({
+    const updatedParams = params.map((p) => ({
       ...(originalByName.get(p?.name) ?? {}),
       name: p?.name,
       value: p?.value,
@@ -48,9 +49,9 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
     }));
     const url = setUrlQueryParams(getRequestUrl(item), updatedParams);
     onItemChange({
-      ...item, 
-      http: { 
-        ...item.http, 
+      ...item,
+      http: {
+        ...item.http,
         params: updatedParams,
         url
       }
@@ -60,9 +61,11 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
   const handleHeadersChange = (headers: KeyValueRow[]) => {
     const originals = getHttpHeaders(item);
     const originalByName = new Map(
-      originals.filter((header) => header.name).map((header): [string, typeof header] => [header.name as string, header])
+      originals
+        .filter((header) => header.name)
+        .map((header): [string, typeof header] => [header.name, header])
     );
-    const updatedHeaders = headers.map(h => {
+    const updatedHeaders = headers.map((h) => {
       const description = 'description' in h ? h.description : originalByName.get(h.name)?.description;
       return {
         name: h.name,
@@ -71,12 +74,12 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
         ...(description !== undefined ? { description } : {})
       };
     });
-    onItemChange({ 
-      ...item, 
-      http: { 
-        ...item.http, 
-        headers: updatedHeaders 
-      } 
+    onItemChange({
+      ...item,
+      http: {
+        ...item.http,
+        headers: updatedHeaders
+      }
     });
   };
 
@@ -85,20 +88,20 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
     const updatedScriptsObj = { ...scriptsObj, [scriptType]: value };
     onItemChange({
       ...item,
-      runtime: { 
-        ...item.runtime, 
-        scripts: scriptsObjectToArray(updatedScriptsObj) 
+      runtime: {
+        ...item.runtime,
+        scripts: scriptsObjectToArray(updatedScriptsObj)
       }
     });
   };
 
   const handleAssertionsChange = (assertions: Assertion[]) => {
-    onItemChange({ 
-      ...item, 
-      runtime: { 
-        ...item.runtime, 
-        assertions 
-      } 
+    onItemChange({
+      ...item,
+      runtime: {
+        ...item.runtime,
+        assertions
+      }
     });
   };
 
@@ -121,12 +124,7 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
   const assertions = getRequestAssertions(item);
   const scriptsObj = scriptsArrayToObject(getRequestScripts(item));
 
-  const renderParams = () => (
-    <ParamsTab
-      params={params}
-      onParamsChange={handleParamsChange}
-    />
-  );
+  const renderParams = () => <ParamsTab params={params} onParamsChange={handleParamsChange} />;
 
   const renderVariables = () => (
     <VariablesTab
@@ -137,21 +135,9 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
     />
   );
 
-  const renderHeaders = () => (
-    <HeadersTab
-      headers={headers}
-      onHeadersChange={handleHeadersChange}
-      title="Headers"
-    />
-  );
+  const renderHeaders = () => <HeadersTab headers={headers} onHeadersChange={handleHeadersChange} title="Headers" />;
 
-  const renderBody = () => (
-    <BodyTab
-      body={body}
-      onItemChange={onItemChange}
-      item={item}
-    />
-  );
+  const renderBody = () => <BodyTab body={body} onItemChange={onItemChange} item={item} />;
 
   const renderAuth = () => (
     <AuthTab
@@ -165,99 +151,75 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
   );
 
   const renderScripts = () => (
-    <ScriptsTab
-      scripts={scriptsObj}
-      onScriptChange={handleScriptChange}
-      title="Scripts"
-      showTests={false}
-    />
+    <ScriptsTab scripts={scriptsObj} onScriptChange={handleScriptChange} title="Scripts" showTests={false} />
   );
 
-  const renderAssertions = () => (
-    <AssertsTab
-      assertions={assertions}
-      onAssertionsChange={handleAssertionsChange}
-    />
-  );
+  const renderAssertions = () => <AssertsTab assertions={assertions} onAssertionsChange={handleAssertionsChange} />;
 
-  const renderTests = () => (
-    <TestsTab
-      scripts={scriptsObj}
-      onScriptChange={handleScriptChange}
-    />
-  );
+  const renderTests = () => <TestsTab scripts={scriptsObj} onScriptChange={handleScriptChange} />;
 
   // Calculate content indicators
-  const hasBody = body && (
-    (body as any).data || 
-    (Array.isArray(body) && body.length > 0)
-  );
-  const hasScripts = scriptsObj && (
-    scriptsObj.preRequest || 
-    scriptsObj.postResponse
-  );
+  const hasBody = body && ((body as any).data || (Array.isArray(body) && body.length > 0));
+  const hasScripts = scriptsObj && (scriptsObj.preRequest || scriptsObj.postResponse);
   const hasTests = scriptsObj?.tests;
 
   const tabs = [
-    { 
-      id: 'params', 
-      label: 'Params', 
-      contentIndicator: params?.length || undefined, 
-      content: <div className="py-3">{renderParams()}</div> 
+    {
+      id: 'params',
+      label: 'Params',
+      contentIndicator: params?.length || undefined,
+      content: <div className="py-3">{renderParams()}</div>
     },
-    { 
-      id: 'variables', 
-      label: 'Variables', 
+    {
+      id: 'variables',
+      label: 'Variables',
       contentIndicator: variables?.length || undefined,
       content: <div className="py-3">{renderVariables()}</div>
     },
-    { 
-      id: 'headers', 
-      label: 'Headers', 
-      contentIndicator: headers?.length || undefined, 
-      content: <div className="py-3">{renderHeaders()}</div> 
+    {
+      id: 'headers',
+      label: 'Headers',
+      contentIndicator: headers?.length || undefined,
+      content: <div className="py-3">{renderHeaders()}</div>
     },
-    { 
-      id: 'body', 
+    {
+      id: 'body',
       label: 'Body',
       contentIndicator: hasBody ? '•' : undefined,
-      content: <div className="py-3">{renderBody()}</div> 
+      rightElement: <BodyModeSelector body={body} onItemChange={onItemChange} item={item} />,
+      content: <div className="py-3">{renderBody()}</div>
     },
-    { 
-      id: 'auth', 
+    {
+      id: 'auth',
       label: 'Auth',
       contentIndicator: auth ? '•' : undefined,
-      content: <div className="py-3">{renderAuth()}</div> 
+      content: <div className="py-3">{renderAuth()}</div>
     },
-    { 
-      id: 'scripts', 
+    {
+      id: 'scripts',
       label: 'Scripts',
       contentIndicator: hasScripts ? '•' : undefined,
-      content: <div className="py-3">{renderScripts()}</div> 
+      content: <div className="py-3">{renderScripts()}</div>
     },
-    { 
-      id: 'assertions', 
-      label: 'Assertions', 
-      contentIndicator: assertions?.length || undefined, 
-      content: <div className="py-3">{renderAssertions()}</div> 
+    {
+      id: 'assertions',
+      label: 'Assertions',
+      contentIndicator: assertions?.length || undefined,
+      content: <div className="py-3">{renderAssertions()}</div>
     },
-    { 
-      id: 'tests', 
+    {
+      id: 'tests',
       label: 'Tests',
       contentIndicator: hasTests ? '•' : undefined,
-      content: <div className="py-3">{renderTests()}</div> 
+      content: <div className="py-3">{renderTests()}</div>
     }
   ];
 
   return (
     <div className="h-full" style={{ backgroundColor: 'var(--bg-primary)' }}>
-      <Tabs
-        tabs={tabs}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-      />
+      <Tabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
     </div>
   );
 };
 
-export default RequestPane; 
+export default RequestPane;
