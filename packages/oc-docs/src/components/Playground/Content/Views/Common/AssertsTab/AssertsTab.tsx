@@ -5,6 +5,47 @@ import KeyValueTable, { type KeyValueRow } from '../../../../../../components/Ke
 import MenuDropdown from '../../../../../../ui/MenuDropdown';
 import { StyledWrapper } from './StyledWrapper';
 
+/**
+ * Assertion operators based on Bruno's implementation
+ * 
+ * Comparison operators:
+ * - eq: equal to
+ * - neq: not equal to
+ * - gt: greater than
+ * - gte: greater than or equal to
+ * - lt: less than
+ * - lte: less than or equal to
+ * 
+ * Collection operators:
+ * - in: in
+ * - notIn: not in
+ * - contains: contains
+ * - notContains: not contains
+ * 
+ * String operators:
+ * - matches: matches (regex)
+ * - notMatches: not matches (regex)
+ * - startsWith: starts with
+ * - endsWith: ends with
+ * 
+ * Type checking operators (unary):
+ * - isEmpty: is empty
+ * - isNotEmpty: is not empty
+ * - isNull: is null
+ * - isUndefined: is undefined
+ * - isDefined: is defined
+ * - isTruthy: is truthy
+ * - isFalsy: is falsy
+ * - isJson: is json
+ * - isNumber: is number
+ * - isString: is string
+ * - isBoolean: is boolean
+ * - isArray: is array
+ * 
+ * Other operators:
+ * - length: length
+ * - between: between
+ */
 const ASSERTION_OPERATORS = [
   { value: 'eq', label: 'equals' },
   { value: 'neq', label: 'not equals' },
@@ -99,10 +140,10 @@ export const AssertsTab: React.FC<AssertsTabProps> = ({
   };
 
   return (
-    <StyledWrapper>
-      <div className="asserts-header">
-        <span className="asserts-title">{title}</span>
-        {description && <span className="asserts-description">{description}</span>}
+    <StyledWrapper className="space-y-3">
+      <div className="flex items-center justify-between mb-2">
+        <span className="asserts-title text-sm font-semibold">{title}</span>
+        {description && <span className="asserts-description text-xs leading-tight">{description}</span>}
       </div>
       <KeyValueTable
         data={assertionsData}
@@ -115,7 +156,6 @@ export const AssertsTab: React.FC<AssertsTabProps> = ({
             key: 'operator',
             label: 'Operator',
             render: (row, index) => {
-              // currentOperator always resolves to a real entry, so its id matches a menu item.
               const currentOperator =
                 ASSERTION_OPERATORS.find((op) => op.value === row.operator) ?? ASSERTION_OPERATORS[0];
               return (
@@ -129,7 +169,11 @@ export const AssertsTab: React.FC<AssertsTabProps> = ({
                     onClick: () => handleOperatorChange(index, op.value)
                   }))}
                 >
-                  <button type="button" aria-label="Operator" className="operator-trigger">
+                  <button
+                    type="button"
+                    aria-label="Operator"
+                    className="operator-trigger inline-flex items-center justify-between"
+                  >
                     <span>{currentOperator.label}</span>
                     <IconCaretDown className="operator-caret" size={14} strokeWidth={2} aria-hidden />
                   </button>
@@ -139,7 +183,7 @@ export const AssertsTab: React.FC<AssertsTabProps> = ({
           }
         ]}
       />
-      <div className="asserts-hint">
+      <div className="asserts-hint text-xs mt-2">
         Use expressions like <code>res.status</code>, <code>res.body.id</code>, or{' '}
         <code>res.headers['content-type']</code>
       </div>
