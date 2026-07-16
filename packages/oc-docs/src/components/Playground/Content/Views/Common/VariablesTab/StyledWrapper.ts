@@ -67,25 +67,4 @@ export const StyledWrapper = styled.div`
     width: 0.625rem;
     height: 0.625rem;
   }
-
-  .var-type-select {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    border: none;
-    appearance: none;
-    -webkit-appearance: none;
-    background: transparent;
-    color: transparent;
-    opacity: 0;
-    cursor: pointer;
-  }
-
-  .var-type-select:focus,
-  .var-type-select:focus-visible {
-    outline: none;
-  }
 `;

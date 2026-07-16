@@ -37,15 +37,11 @@ export interface MenuDropdownItem {
   label?: ReactNode;
   /** Accessibility label; falls back to `label`/`title` when omitted. */
   ariaLabel?: string;
-  /** Handler invoked when the item is clicked. Items only. */
   onClick?: () => void;
   /** Tooltip text; falls back to `label`/`ariaLabel` when omitted. */
   title?: string;
-  /** Optional test id. Items only. */
   testId?: string;
-  /** Disables interaction with the item. Items only. */
   disabled?: boolean;
-  /** Additional CSS classes applied to the row. */
   className?: string;
   /** Nested submenu items; the submenu opens on hover. */
   submenu?: MenuDropdownItem[];

@@ -74,9 +74,7 @@ const SubMenuItem: React.FC<SubMenuItemProps> = ({
         appendTo={() => document.body}
         offset={[0, 0]}
       >
-        <div {...(itemProps as React.HTMLAttributes<HTMLDivElement>)}>
-          {renderMenuItemContent(item, arrowElement)}
-        </div>
+        <div {...(itemProps as React.HTMLAttributes<HTMLDivElement>)}>{renderMenuItemContent(item, arrowElement)}</div>
       </MenuDropdownComponent>
     </div>
   );

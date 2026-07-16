@@ -85,8 +85,7 @@ const RequestHeader: React.FC<RequestHeaderProps> = ({
               }}
               onFocus={(e) => {
                 e.currentTarget.style.borderColor = 'var(--primary-color)';
-                e.currentTarget.style.boxShadow =
-                  '0 0 0 0.1875rem color-mix(in srgb, var(--oc-brand) 12%, transparent)';
+                e.currentTarget.style.boxShadow = '0 0 0 3px color-mix(in srgb, var(--oc-brand) 12%, transparent)';
                 e.currentTarget.style.backgroundColor = 'var(--bg-secondary)';
               }}
               onBlur={(e) => {

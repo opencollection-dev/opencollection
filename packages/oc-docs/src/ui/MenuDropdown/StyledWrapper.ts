@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
  * `theme.dropdown.*` values mapped onto oc-docs `--oc-*` CSS variables.
  */
 export const StyledWrapper = styled.div`
-  min-width: 160px;
+  min-width: 10rem;
   font-size: 0.8125rem;
   color: var(--oc-dropdown-color);
   background-color: var(--oc-dropdown-bg);
@@ -49,8 +49,8 @@ export const StyledWrapper = styled.div`
     gap: 0.5rem;
     padding: 0.275rem 0.625rem;
     cursor: pointer;
-    border-radius: 6px;
-    margin: 0.0625rem 0;
+    border-radius: 0.375rem;
+    margin: 1px 0;
     font-size: 0.8125rem;
 
     &.active {
@@ -66,8 +66,8 @@ export const StyledWrapper = styled.div`
 
     .dropdown-icon {
       flex-shrink: 0;
-      width: 16px;
-      height: 16px;
+      width: 1rem;
+      height: 1rem;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -85,12 +85,12 @@ export const StyledWrapper = styled.div`
 
     .dropdown-tab-count {
       margin-left: auto;
-      font-size: 11px;
+      font-size: 0.6875rem;
       font-weight: 500;
-      padding: 1px 6px;
-      border-radius: 10px;
+      padding: 1px 0.375rem;
+      border-radius: 0.625rem;
       background: var(--oc-dropdown-hover-bg);
-      min-width: 18px;
+      min-width: 1.125rem;
       text-align: center;
     }
 
@@ -171,7 +171,7 @@ export const StyledWrapper = styled.div`
   }
 
   .breadcrumb-collapsed-dropdown {
-    max-width: 250px;
+    max-width: 15.625rem;
   }
 
   .breadcrumb-collapsed-item {
@@ -219,19 +219,19 @@ export const StyledWrapper = styled.div`
 export const TriggerButton = styled.button`
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  height: 23px;
-  padding: 0 8px;
+  gap: 0.375rem;
+  height: 1.4375rem;
+  padding: 0 0.5rem;
   box-sizing: border-box;
   font-family: inherit;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 500;
   line-height: 1;
   cursor: pointer;
   color: var(--oc-dropdown-color);
   background: transparent;
   border: 1px solid var(--oc-border-border2);
-  border-radius: 6px;
+  border-radius: 0.375rem;
   transition:
     border-color 0.12s ease,
     color 0.12s ease;

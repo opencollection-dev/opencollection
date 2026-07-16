@@ -16,11 +16,9 @@ import type {
   MenuItemExtraProps
 } from './types';
 
-// Constants
 const NAVIGATION_KEYS = ['ArrowDown', 'ArrowUp', 'Home', 'End', 'Escape'];
 const ACTION_KEYS = ['Enter', ' '];
 
-// Calculate next index for keyboard navigation
 const getNextIndex = (currentIndex: number, total: number, key: string, noFocus: boolean): number => {
   if (key === 'Home') return 0;
   if (key === 'End') return total - 1;
@@ -51,7 +49,7 @@ export interface MenuDropdownProps extends Omit<
   /** Optional className for the dropdown surface. */
   className?: string;
   /** ID of the selected/active item to focus on open and mark active. */
-  selectedItemId: MenuItemId | null;
+  selectedItemId?: MenuItemId | null;
   /** Controlled open state. When provided, the component is controlled. */
   opened?: boolean;
   /** Called when the dropdown open state changes. */
@@ -114,7 +112,6 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
     const autoFocusFirstOptionRef = useRef<boolean>(autoFocusFirstOption);
     const [internalIsOpen, setInternalIsOpen] = useState(false);
 
-    // Keep refs in sync
     useEffect(() => {
       selectedItemIdRef.current = selectedItemId;
     }, [selectedItemId]);
@@ -123,13 +120,10 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
       autoFocusFirstOptionRef.current = autoFocusFirstOption;
     }, [autoFocusFirstOption]);
 
-    // Determine if component is controlled
     const isControlled = opened !== undefined;
 
-    // Use controlled state if provided, otherwise use internal state
     const isOpen = isControlled ? opened : internalIsOpen;
 
-    // Get all focusable menu items from the menu dropdown
     const getMenuItems = useCallback((): HTMLElement[] => {
       const popper = tippyRef.current?.popper;
       if (!popper) return [];
@@ -140,7 +134,6 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
       return Array.from(menuContainer.querySelectorAll<HTMLElement>('[role="menuitem"]:not([aria-disabled="true"])'));
     }, []);
 
-    // Update state (respects controlled vs uncontrolled mode)
     const updateOpenState = useCallback(
       (newState: boolean) => {
         if (isControlled) {
@@ -152,7 +145,6 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
       [isControlled, onChange]
     );
 
-    // Handle item click and close dropdown
     const handleItemClick = useCallback(
       (item: MenuDropdownItem) => {
         if (item.disabled) return;
@@ -162,7 +154,6 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
       [updateOpenState]
     );
 
-    // Convert legacy formats (grouped or flat) to standard MenuDropdown items format
     const normalizeItems = useCallback(
       (itemsToNormalize: MenuDropdownItems): MenuDropdownItem[] => {
         if (!Array.isArray(itemsToNormalize) || itemsToNormalize.length === 0) {
@@ -172,12 +163,10 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
         if (isGroupedItems(itemsToNormalize)) {
           const result: MenuDropdownItem[] = [];
           itemsToNormalize.forEach((group, groupIndex) => {
-            // Add divider before each group except the first (if showGroupDividers is true)
             if (groupIndex > 0 && showGroupDividers) {
               result.push({ type: 'divider', id: `divider-${groupIndex}` });
             }
 
-            // Add group name as label
             if (group.name) {
               const normalizeGroupNameForId = group.name.toLowerCase().replace(/ /g, '-');
               result.push({
@@ -188,7 +177,6 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
               });
             }
 
-            // Convert group options to menu items
             group.options.forEach((option) => {
               result.push({
                 id: option.id,
@@ -209,23 +197,19 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
           return result;
         }
 
-        // Already in standard format, return as-is
         return itemsToNormalize;
       },
       [showGroupDividers, groupStyle]
     );
 
-    // Normalize items to standard format
     const normalizedItems = useMemo(() => normalizeItems(items), [items, normalizeItems]);
 
-    // Enhance items with tick mark for selected item if showTickMark is enabled
     const enhancedItems = useMemo(() => {
       if (!showTickMark || selectedItemId == null) {
         return normalizedItems;
       }
 
       return normalizedItems.map((item) => {
-        // Skip non-item types (dividers, labels)
         if (item.type && item.type !== 'item') {
           return item;
         }
@@ -262,7 +246,6 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
       return item.label ?? null;
     };
 
-    // Clear focused class from all items
     const clearFocusedClass = (menuContainer: Element | null) => {
       if (menuContainer) {
         menuContainer.querySelectorAll('.dropdown-item-focused').forEach((el) => {
@@ -271,10 +254,8 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
       }
     };
 
-    // Focus a menu item
     const focusMenuItem = (item: HTMLElement | undefined, addFocusedClass = true) => {
       if (item) {
-        // Remove focused class from all items first
         const menuContainer = item.closest('[role="menu"]');
         clearFocusedClass(menuContainer);
 
@@ -289,7 +270,6 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
       }
     };
 
-    // Keyboard navigation handler (handles all keyboard events at menu level)
     const handleMenuKeyDown = useCallback(
       (e: React.KeyboardEvent<HTMLDivElement>) => {
         const itemsToNavigate = getMenuItems();
@@ -298,7 +278,6 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
         const currentIndex = itemsToNavigate.findIndex((el) => el === document.activeElement);
         const isNoMenuItemFocused = currentIndex === -1;
 
-        // Handle Escape
         if (e.key === 'Escape') {
           e.preventDefault();
           e.stopPropagation();
@@ -306,13 +285,11 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
           return;
         }
 
-        // Handle action keys (Enter, Space)
         if (ACTION_KEYS.includes(e.key) && !isNoMenuItemFocused) {
           e.preventDefault();
           e.stopPropagation();
           const currentItem = itemsToNavigate[currentIndex];
           const itemId = currentItem?.getAttribute('data-item-id');
-          // Use enhancedItems for finding the item
           const item = enhancedItems.find((i) => String(i.id) === itemId);
           if (item && !item.disabled) {
             handleItemClick(item);
@@ -320,7 +297,6 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
           return;
         }
 
-        // Handle navigation keys
         if (NAVIGATION_KEYS.includes(e.key)) {
           e.preventDefault();
           e.stopPropagation();
@@ -333,12 +309,10 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
       [getMenuItems, enhancedItems, handleItemClick, updateOpenState]
     );
 
-    // Toggle dropdown visibility
     const handleTriggerClick = useCallback(() => {
       updateOpenState(!isOpen);
     }, [isOpen, updateOpenState]);
 
-    // Close dropdown when clicking outside
     const handleClickOutside = useCallback(
       (_instance: Instance, event: Event) => {
         // Don't close if clicking inside a submenu (another tippy popper)
@@ -351,7 +325,6 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
       [updateOpenState]
     );
 
-    // Expose imperative methods via ref
     useImperativeHandle(
       ref,
       () => ({
@@ -368,13 +341,11 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
       [updateOpenState, isOpen]
     );
 
-    // Setup Tippy instance
     const onDropdownCreate = useCallback((instance: Instance | null) => {
       tippyRef.current = instance;
       if (instance) {
         instance.setProps({
           onShow: () => {
-            // Focus selected item if available, otherwise focus menu container
             // Use requestAnimationFrame to ensure DOM is ready
             requestAnimationFrame(() => {
               const menuContainer = instance.popper?.querySelector('[role="menu"]');
@@ -384,7 +355,6 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
                 menuContainer.querySelectorAll<HTMLElement>('[role="menuitem"]:not([aria-disabled="true"])')
               );
 
-              // If selectedItemId is provided, find and focus that item
               // Use ref to get the latest value
               const currentSelectedItemId = selectedItemIdRef.current;
               if (currentSelectedItemId != null) {
@@ -398,7 +368,6 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
                 }
               }
 
-              // If autoFocusFirstOption is true, focus the first item
               if (autoFocusFirstOptionRef.current && menuItems.length > 0) {
                 focusMenuItem(menuItems[0], true);
                 return;
@@ -409,7 +378,6 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
             });
           },
           onHide: () => {
-            // Clear focused class when dropdown closes
             const menuContainer = instance.popper?.querySelector('[role="menu"]');
             clearFocusedClass(menuContainer);
           }
@@ -418,21 +386,17 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // Render section (left or right)
     const renderSection = (section?: MenuItemSection): React.ReactNode => {
       if (!section) return null;
 
-      // If it's a React component (function), render it with default icon props
       if (typeof section === 'function') {
         const SectionComponent = section as React.ComponentType<MenuItemIconProps>;
         return <SectionComponent size={16} stroke={1.5} className="dropdown-icon" aria-hidden />;
       }
 
-      // If it's already a React element/node, render it as-is
       return section as React.ReactNode;
     };
 
-    // Get common props for menu items (shared between regular items and submenu triggers)
     const getMenuItemProps = (item: MenuDropdownItem, extraProps: MenuItemExtraProps = {}): Record<string, unknown> => {
       const selectIndentClass = item.groupStyle === 'select' ? 'dropdown-item-select' : '';
       const isActive = item.id === selectedItemId;
@@ -457,7 +421,6 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
       };
     };
 
-    // Render the content inside a menu item (leftSection, label, and rightSection/arrow)
     const renderMenuItemContent = (
       item: MenuDropdownItem,
       rightContent: React.ReactNode = null
@@ -469,14 +432,13 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
       </>
     );
 
-    // Render menu item
     const renderMenuItem = (item: MenuDropdownItem): React.ReactNode => {
       if (item.submenu) {
         return (
           <SubMenuItem
             key={item.id}
             item={item}
-            selectedItemId={selectedItemId}
+            selectedItemId={selectedItemId ?? null}
             showTickMark={showTickMark}
             onRootClose={() => updateOpenState(false)}
             submenuPlacement={submenuPlacement}
@@ -512,7 +474,6 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
       );
     };
 
-    // Render label item
     const renderLabel = (item: MenuDropdownItem): React.ReactNode => {
       const labelText = typeof item.label === 'string' ? item.label : '';
       return (
@@ -527,12 +488,10 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
       );
     };
 
-    // Render divider item
     const renderDivider = (item: MenuDropdownItem, index: number): React.ReactNode => (
       <div key={item.id ?? `divider-${index}`} className="dropdown-separator" role="separator" />
     );
 
-    // Render menu content
     const renderMenuContent = (): React.ReactNode => {
       let dividerIndex = 0;
 
@@ -551,7 +510,6 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
       });
     };
 
-    // Clone children to attach click handler and aria-expanded
     let triggerElement: React.ReactElement;
     if (React.isValidElement(children)) {
       const child = children as React.ReactElement<React.HTMLAttributes<HTMLElement>>;

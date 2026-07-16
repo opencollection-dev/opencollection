@@ -1,5 +1,20 @@
 @import './theme.generated.css';
-@import 'tailwindcss';
+@import "tailwindcss";
+
+/* ----------------------------------------------------------------
+   Native control color scheme. `data-theme` lives on <html>, so
+   scoping color-scheme here cascades to the whole document and makes
+   native UI (select dropdowns, scrollbars, checkboxes, date pickers)
+   render light/dark in sync with the active theme.
+   ---------------------------------------------------------------- */
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+}
 
 :root {
   /* ----------------------------------------------------------------
@@ -79,14 +94,12 @@
   --z-popover: 1000;
 
   /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -1px rgba(0,0,0,0.04);
 
   /* Fonts */
-  --font-mono: 'JetBrains Mono', 'SF Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  --font-sans:
-    'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-    'Noto Sans', sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
   --font-size-base: var(--oc-font-size-base);
 }
 
@@ -98,8 +111,7 @@ html {
   font-size: 1rem;
 }
 
-html,
-body {
+html, body {
   font-kerning: normal;
   text-rendering: optimizeLegibility;
   letter-spacing: -0.011em;
@@ -190,9 +202,7 @@ body {
     backdrop-filter: saturate(180%) blur(20px);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
     background-color: var(--background-color);
-    transition:
-      width 0.3s ease,
-      opacity 0.3s ease;
+    transition: width 0.3s ease, opacity 0.3s ease;
     border-left: 1px solid var(--border-color);
   }
 
@@ -421,78 +431,49 @@ body {
   font-style: italic;
 }
 
-.token.punctuation {
-  color: var(--oc-codemirror-tokens-operator);
-}
-.token.property {
-  color: var(--oc-codemirror-tokens-property);
-}
+.token.punctuation { color: var(--oc-codemirror-tokens-operator); }
+.token.property { color: var(--oc-codemirror-tokens-property); }
 
 .token.tag,
 .token.boolean,
 .token.number,
 .token.constant,
-.token.symbol {
-  color: var(--oc-codemirror-tokens-number);
-}
+.token.symbol { color: var(--oc-codemirror-tokens-number); }
 
 .token.selector,
 .token.attr-name,
 .token.string,
 .token.char,
-.token.builtin {
-  color: var(--oc-codemirror-tokens-string);
-}
+.token.builtin { color: var(--oc-codemirror-tokens-string); }
 
 .token.operator,
 .token.entity,
 .token.url,
 .language-css .token.string,
-.style .token.string {
-  color: var(--oc-codemirror-tokens-operator);
-}
+.style .token.string { color: var(--oc-codemirror-tokens-operator); }
 
-.token.variable {
-  color: var(--oc-codemirror-tokens-variable);
-}
+.token.variable { color: var(--oc-codemirror-tokens-variable); }
 
 .token.atrule,
 .token.attr-value,
-.token.keyword {
-  color: var(--oc-codemirror-tokens-keyword);
-}
+.token.keyword { color: var(--oc-codemirror-tokens-keyword); }
 
 .token.function,
-.token.class-name {
-  color: var(--oc-codemirror-tokens-definition);
-}
+.token.class-name { color: var(--oc-codemirror-tokens-definition); }
 
 .token.regex,
-.token.important {
-  color: var(--oc-codemirror-tokens-variable);
-}
+.token.important { color: var(--oc-codemirror-tokens-variable); }
 
-.token.parameter {
-  color: var(--oc-codemirror-tokens-operator);
-}
+.token.parameter { color: var(--oc-codemirror-tokens-operator); }
 
 .token.important,
-.token.bold {
-  font-weight: bold;
-}
+.token.bold { font-weight: bold; }
 
-.token.italic {
-  font-style: italic;
-}
-.token.entity {
-  cursor: help;
-}
-.token.deleted {
-  color: var(--oc-codemirror-tokens-keyword);
-}
-.token.inserted {
-  color: var(--oc-codemirror-tokens-string);
-}
+.token.italic { font-style: italic; }
+.token.entity { cursor: help; }
+.token.deleted { color: var(--oc-codemirror-tokens-keyword); }
+.token.inserted { color: var(--oc-codemirror-tokens-string); }
+
 
 /* ================================================================
    TABLES
@@ -672,12 +653,8 @@ tr.themed-row:nth-child(even) {
   }
 }
 
-.icon-button-small {
-  @apply p-1;
-}
-.icon-button-large {
-  @apply p-3;
-}
+.icon-button-small { @apply p-1; }
+.icon-button-large { @apply p-3; }
 
 /* ================================================================
    TABS
@@ -985,8 +962,7 @@ tr.themed-row:nth-child(even) {
   }
 }
 
-.param-name,
-.param-value {
+.param-name, .param-value {
   font-family: var(--font-mono);
   word-break: break-all;
   font-size: 0.8125rem;
@@ -1007,12 +983,8 @@ tr.themed-row:nth-child(even) {
    ================================================================ */
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .fade-in {
@@ -1020,12 +992,8 @@ tr.themed-row:nth-child(even) {
 }
 
 @keyframes skeleton {
-  0% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0 50%;
-  }
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
 }
 
 .skeleton {
@@ -1040,12 +1008,8 @@ tr.themed-row:nth-child(even) {
 }
 
 @keyframes sectionHighlight {
-  0% {
-    background-color: color-mix(in srgb, var(--oc-brand) 4%, transparent);
-  }
-  100% {
-    background-color: transparent;
-  }
+  0% { background-color: color-mix(in srgb, var(--oc-brand) 4%, transparent); }
+  100% { background-color: transparent; }
 }
 
 .section-highlight {
@@ -1053,14 +1017,8 @@ tr.themed-row:nth-child(even) {
 }
 
 @keyframes codeFlash {
-  0% {
-    background-color: var(--primary-color);
-    opacity: 0.2;
-  }
-  100% {
-    background-color: transparent;
-    opacity: 1;
-  }
+  0% { background-color: var(--primary-color); opacity: 0.2; }
+  100% { background-color: transparent; opacity: 1; }
 }
 
 .code-updated {
@@ -1072,9 +1030,7 @@ tr.themed-row:nth-child(even) {
    ================================================================ */
 
 .hover-lift {
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .hover-lift:hover {
@@ -1086,39 +1042,24 @@ tr.themed-row:nth-child(even) {
    UTILITY
    ================================================================ */
 
-.rounded-apple {
-  border-radius: 10px;
-}
-.shadow-apple-sm {
-  box-shadow: var(--shadow-sm);
-}
-.shadow-apple-md {
-  box-shadow: var(--shadow-md);
-}
+.rounded-apple { border-radius: 10px; }
+.shadow-apple-sm { box-shadow: var(--shadow-sm); }
+.shadow-apple-md { box-shadow: var(--shadow-md); }
 
 :focus-visible {
   outline: 2px solid var(--primary-color);
   outline-offset: 2px;
 }
 
-.hide-scrollbar::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-  display: none;
-}
-.hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+.hide-scrollbar::-webkit-scrollbar { width: 0; height: 0; display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* ================================================================
    CONSOLE
    ================================================================ */
 
 .console-container {
-  transition:
-    opacity 0.2s ease-in-out,
-    transform 0.2s ease-in-out;
+  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
   will-change: opacity, transform;
   min-height: 300px;
   display: flex;
@@ -1126,13 +1067,8 @@ tr.themed-row:nth-child(even) {
   height: 100%;
 }
 
-.console-container.fade-in {
-  animation: fadeIn 0.3s ease forwards;
-}
-.console-container.fade-out {
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
+.console-container.fade-in { animation: fadeIn 0.3s ease forwards; }
+.console-container.fade-out { opacity: 0; transition: opacity 0.2s ease; }
 
 .playground-console .sticky {
   position: sticky;
@@ -1145,10 +1081,7 @@ tr.themed-row:nth-child(even) {
 .console-view.is-loading .code-block::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
   background: color-mix(in srgb, var(--oc-text) 10%, transparent);
   display: flex;
   justify-content: center;
