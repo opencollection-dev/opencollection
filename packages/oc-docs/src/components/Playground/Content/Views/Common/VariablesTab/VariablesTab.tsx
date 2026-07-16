@@ -12,6 +12,7 @@ import {
 } from '../../../../../../utils/variableDataType';
 import { VARIABLE_NAME_REGEX } from '../../../../../../constants/regex';
 import { CaretIcon, WarningIcon } from '../../../../../../assets/icons';
+import MenuDropdown from '../../../../../../ui/MenuDropdown';
 import { StyledWrapper } from './StyledWrapper';
 
 export interface PostResponseVar {
@@ -59,26 +60,26 @@ const typeColumn = {
             </span>
           </Tooltip>
         )}
-        <span className="var-type-control">
-          <span className="var-type-label" aria-hidden="true">
-            {dataType}
+        <MenuDropdown
+          selectedItemId={dataType}
+          placement="bottom-end"
+          items={VARIABLE_DATA_TYPES.map((type) => ({
+            id: type,
+            label: type,
+            onClick: () => updateField('dataType', type)
+          }))}
+        >
+          {/* Trigger keeps the previous native-select visual (label + caret);
+              only the option list is now the themed MenuDropdown. */}
+          <span className="var-type-control" role="button" tabIndex={0} aria-label="Variable data type">
+            <span className="var-type-label" aria-hidden="true">
+              {dataType}
+            </span>
+            <span className="var-type-caret" aria-hidden="true">
+              <CaretIcon />
+            </span>
           </span>
-          <span className="var-type-caret" aria-hidden="true">
-            <CaretIcon />
-          </span>
-          <select
-            className="var-type-select"
-            value={dataType}
-            aria-label="Variable data type"
-            onChange={(event) => updateField('dataType', event.target.value)}
-          >
-            {VARIABLE_DATA_TYPES.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
-        </span>
+        </MenuDropdown>
       </div>
     );
   }

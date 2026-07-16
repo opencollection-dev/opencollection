@@ -41,7 +41,7 @@ describe('Field', () => {
         />
       </Field>
     );
-    expect(query(root, '.oc-field .oc-select-native').getAttribute('data-testid')).toBe('placement');
+    expect(query(root, '.oc-field .oc-select').getAttribute('data-testid')).toBe('placement');
   });
 
   it('renders without a label when none is given', () => {

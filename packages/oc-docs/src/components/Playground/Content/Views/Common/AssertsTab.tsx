@@ -1,10 +1,12 @@
 import React from 'react';
+import { IconCaretDown } from '@tabler/icons';
 import type { Assertion } from '@opencollection/types/common/assertions';
 import KeyValueTable, { type KeyValueRow } from '../../../../../components/KeyValueTable/KeyValueTable';
+import MenuDropdown from '../../../../../ui/MenuDropdown';
 
 /**
  * Assertion operators based on Bruno's implementation
- * 
+ *
  * Comparison operators:
  * - eq: equal to
  * - neq: not equal to
@@ -12,19 +14,19 @@ import KeyValueTable, { type KeyValueRow } from '../../../../../components/KeyVa
  * - gte: greater than or equal to
  * - lt: less than
  * - lte: less than or equal to
- * 
+ *
  * Collection operators:
  * - in: in
  * - notIn: not in
  * - contains: contains
  * - notContains: not contains
- * 
+ *
  * String operators:
  * - matches: matches (regex)
  * - notMatches: not matches (regex)
  * - startsWith: starts with
  * - endsWith: ends with
- * 
+ *
  * Type checking operators (unary):
  * - isEmpty: is empty
  * - isNotEmpty: is not empty
@@ -38,7 +40,7 @@ import KeyValueTable, { type KeyValueRow } from '../../../../../components/KeyVa
  * - isString: is string
  * - isBoolean: is boolean
  * - isArray: is array
- * 
+ *
  * Other operators:
  * - length: length
  * - between: between
@@ -100,7 +102,7 @@ interface AssertsTabProps {
 export const AssertsTab: React.FC<AssertsTabProps> = ({
   assertions,
   onAssertionsChange,
-  title = "Assertions",
+  title = 'Assertions',
   description
 }) => {
   // Convert assertions to KeyValueRow format with operator column
@@ -115,9 +117,9 @@ export const AssertsTab: React.FC<AssertsTabProps> = ({
   });
 
   const handleAssertionsChange = (rows: KeyValueRow[]) => {
-    const updatedAssertions: Assertion[] = rows.map(row => {
+    const updatedAssertions: Assertion[] = rows.map((row) => {
       const isUnary = UNARY_OPERATORS.includes(row.operator);
-      
+
       return {
         expression: row.name, // Required field
         operator: row.operator, // Required field
@@ -131,12 +133,12 @@ export const AssertsTab: React.FC<AssertsTabProps> = ({
   const handleOperatorChange = (index: number, newOperator: string) => {
     const updatedRows = [...assertionsData];
     updatedRows[index] = { ...updatedRows[index], operator: newOperator };
-    
+
     // If switching to unary operator, clear the value
     if (UNARY_OPERATORS.includes(newOperator)) {
       updatedRows[index].value = '';
     }
-    
+
     handleAssertionsChange(updatedRows);
   };
 
@@ -163,38 +165,57 @@ export const AssertsTab: React.FC<AssertsTabProps> = ({
             key: 'operator',
             label: 'Operator',
             render: (row, index) => {
+              // Default to the first operator when a row has none selected yet.
+              const currentOperator = row.operator || ASSERTION_OPERATORS[0].value;
+              const currentLabel =
+                ASSERTION_OPERATORS.find((op) => op.value === currentOperator)?.label ?? ASSERTION_OPERATORS[0].label;
               return (
-                <select
-                  value={row.operator}
-                  onChange={(e) => handleOperatorChange(index, e.target.value)}
-                  className="text-input"
-                  style={{
-                    padding: '4px 8px',
-                    fontSize: '13px',
-                    border: '1px solid var(--border-color)',
-                    borderRadius: '4px',
-                    backgroundColor: 'var(--bg-secondary)',
-                    color: 'var(--text-primary)',
-                    cursor: 'pointer'
-                  }}
+                <MenuDropdown
+                  selectedItemId={currentOperator}
+                  placement="bottom-start"
+                  items={ASSERTION_OPERATORS.map((op) => ({
+                    id: op.value,
+                    label: op.label,
+                    onClick: () => handleOperatorChange(index, op.value)
+                  }))}
                 >
-                  {ASSERTION_OPERATORS.map(op => (
-                    <option key={op.value} value={op.value}>
-                      {op.label}
-                    </option>
-                  ))}
-                </select>
+                  <button
+                    type="button"
+                    aria-label="Operator"
+                    data-testid="assertion-operator-select"
+                    className="inline-flex items-center justify-between"
+                    style={{
+                      width: '100%',
+                      gap: '0.5rem',
+                      padding: '0.25rem 0.5rem',
+                      fontSize: '0.8125rem',
+                      background: 'transparent',
+                      border: 'none',
+                      color: 'var(--text-primary)',
+                      fontFamily: 'inherit',
+                      textAlign: 'left',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <span>{currentLabel}</span>
+                    <IconCaretDown
+                      size={14}
+                      strokeWidth={2}
+                      style={{ color: 'var(--oc-colors-text-muted)', flexShrink: 0 }}
+                    />
+                  </button>
+                </MenuDropdown>
               );
             }
           }
         ]}
       />
       <div className="text-xs mt-2" style={{ color: 'var(--text-secondary)' }}>
-        Use expressions like <code>res.status</code>, <code>res.body.id</code>, or <code>res.headers['content-type']</code>
+        Use expressions like <code>res.status</code>, <code>res.body.id</code>, or{' '}
+        <code>res.headers['content-type']</code>
       </div>
     </div>
   );
 };
 
 export default AssertsTab;
-
