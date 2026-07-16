@@ -76,7 +76,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           fontWeight: 'normal',
           lineNumbers: 'on',
           roundedSelection: false,
-          scrollbar: { vertical: 'auto', horizontal: 'auto' },
+          scrollbar: { vertical: 'auto', horizontal: 'auto', verticalScrollbarSize: 5, horizontalScrollbarSize: 5 },
           wordWrap: 'on',
           folding: false,
           glyphMargin: false,
