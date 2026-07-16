@@ -23,7 +23,7 @@ describe('VariablesTab', () => {
     const values = inputValues(root);
     expect(values).toContain('baseUrl');
     expect(values).toContain('https://api.example.com');
-    expect(root.querySelector('.var-type-select')).toBeTruthy();
+    expect(root.querySelector('.var-type-control')).toBeTruthy();
   });
 
   it('surfaces a typed value as its data string', () => {

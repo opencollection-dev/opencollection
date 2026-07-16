@@ -17,9 +17,7 @@ const RequestHeader: React.FC<RequestHeaderProps> = ({
   item,
   collection,
   selectedEnvironment,
-  onEnvironmentChange,
-  toggleRunnerMode,
-  readOnlyEnvironment
+  onEnvironmentChange
 }) => {
   const itemName = getItemName(item) || 'Untitled Request';
 
