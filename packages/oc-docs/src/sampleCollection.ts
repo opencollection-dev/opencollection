@@ -53,6 +53,7 @@ request:
       value: "collection_pre_var_value"
     - name: "collection-var"
       value: "collection-var-value"
+      disabled: true
   auth:
     type: "bearer"
     token: "{{bearer_auth_token}}"
