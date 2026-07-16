@@ -3,6 +3,7 @@ import { KeyValueRow } from '../../../../../../components/KeyValueTable/KeyValue
 import { SecretValue } from '../../../../../../ui/SecretValue/SecretValue';
 import { TrashIcon } from '../../../../../../assets/icons';
 import { useEditableRows } from '../../../../../../hooks/useEditableRows';
+import { cx } from '../../../../../../utils/cx';
 import { StyledWrapper } from './StyledWrapper';
 
 interface EnvVarCardsProps {
@@ -11,6 +12,7 @@ interface EnvVarCardsProps {
   makeNewRow?: () => Partial<KeyValueRow>;
   disableNewRow?: boolean;
   addWhenComplete?: boolean;
+  testId?: string;
 }
 
 const EnvVarCards: React.FC<EnvVarCardsProps> = ({
@@ -18,16 +20,17 @@ const EnvVarCards: React.FC<EnvVarCardsProps> = ({
   onChange,
   makeNewRow,
   disableNewRow = false,
-  addWhenComplete = false
+  addWhenComplete = false,
+  testId
 }) => {
   const { rows, updateRow, removeRow } = useEditableRows(data, onChange, { makeNewRow, disableNewRow, addWhenComplete });
 
   return (
-    <StyledWrapper className="env-card-list" data-testid="env-var-cards">
+    <StyledWrapper className="env-card-list" data-testid={testId}>
       {rows.map((row, index) => {
         const isBlankRow = index === rows.length - 1 && (!row.name || row.name.trim() === '');
         return (
-          <div key={row.id} className={`env-card${row.enabled ? '' : ' disabled'}`}>
+          <div key={row.id} className={cx('env-card', { disabled: !row.enabled })}>
             {!isBlankRow && (
               <input
                 type="checkbox"
@@ -40,7 +43,7 @@ const EnvVarCards: React.FC<EnvVarCardsProps> = ({
             <div className="body">
               <input
                 className="name"
-                data-testid={`env-var-name-${index}`}
+                data-testid={testId ? `${testId}-name-${index}` : undefined}
                 placeholder="Name"
                 value={row.name}
                 onChange={(e) => updateRow(index, { name: e.target.value })}
@@ -51,7 +54,7 @@ const EnvVarCards: React.FC<EnvVarCardsProps> = ({
                 ) : (
                   <input
                     className="value-input"
-                    data-testid={`env-var-value-${index}`}
+                    data-testid={testId ? `${testId}-value-${index}` : undefined}
                     placeholder="Value"
                     value={row.value}
                     onChange={(e) => updateRow(index, { value: e.target.value })}

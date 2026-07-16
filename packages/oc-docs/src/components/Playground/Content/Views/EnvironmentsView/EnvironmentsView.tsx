@@ -10,6 +10,7 @@ import { EnvironmentLabel } from '../../../../EnvironmentLabel/EnvironmentLabel'
 import EnvVarCards from './EnvVarCards/EnvVarCards';
 import { GlobeIcon } from '../../../../../assets/icons';
 import { useAppDispatch } from '../../../../../store/hooks';
+import { cx } from '../../../../../utils/cx';
 import { envVariableToRow, envRowToVariable } from '../../../../../utils/environments';
 import { isSecretVariable } from '../../../../../utils/variableResolution';
 import { updateCollectionEnvironments } from '@slices/playground';
@@ -138,7 +139,7 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection, compact
     { makeNewRow, disableNewRow = false }: RenderVarsOptions = {}
   ): React.ReactNode =>
     compact ? (
-      <EnvVarCards rows={rows} onChange={onChange} makeNewRow={makeNewRow} disableNewRow={disableNewRow} addWhenComplete />
+      <EnvVarCards rows={rows} onChange={onChange} makeNewRow={makeNewRow} disableNewRow={disableNewRow} addWhenComplete testId="env-var-cards" />
     ) : (
       <KeyValueTable
         data={rows}
@@ -191,7 +192,7 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection, compact
           <button
             key={index}
             type="button"
-            className={`env-pill${selectedEnvironmentIndex === index ? ' active' : ''}`}
+            className={cx('env-pill', { active: selectedEnvironmentIndex === index })}
             data-testid={`env-pill-${env.name || index}`}
             onClick={() => setSelectedEnvironmentIndex(index)}
           >

@@ -10,12 +10,18 @@ const rows: KeyValueRow[] = [
 ];
 
 describe('EnvVarCards', () => {
-  it('renders name/value test ids and placeholders for editable rows', () => {
-    const html = renderToStaticMarkup(<EnvVarCards rows={rows} onChange={() => undefined} />);
-    expect(html).toContain('data-testid="env-var-name-0"');
-    expect(html).toContain('data-testid="env-var-value-0"');
+  it('derives child test ids from the testId prop and renders placeholders', () => {
+    const html = renderToStaticMarkup(<EnvVarCards rows={rows} onChange={() => undefined} testId="env-var-cards" />);
+    expect(html).toContain('data-testid="env-var-cards"');
+    expect(html).toContain('data-testid="env-var-cards-name-0"');
+    expect(html).toContain('data-testid="env-var-cards-value-0"');
     expect(html).toContain('placeholder="Name"');
     expect(html).toContain('placeholder="Value"');
+  });
+
+  it('omits its test ids when no testId is given', () => {
+    const html = renderToStaticMarkup(<EnvVarCards rows={rows} onChange={() => undefined} />);
+    expect(html).not.toContain('env-var-cards');
   });
 
   it('renders a secret row as a masked input with a Value placeholder', () => {
