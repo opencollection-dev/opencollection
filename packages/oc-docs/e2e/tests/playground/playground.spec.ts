@@ -1,7 +1,8 @@
 import { test, expect } from '../../playwright';
 
 const DESKTOP = { width: 1280, height: 900 };
-const openAt = (dock: string): string => `/#/?pg=1&dock=${dock}`;
+const openAt = (dock: string, pgReq?: string): string =>
+  `/#/?pg=1&dock=${dock}${pgReq ? `&pgReq=${pgReq}` : ''}`;
 
 test.describe('playground docks (desktop)', () => {
   test.use({ viewport: DESKTOP });
@@ -136,7 +137,7 @@ test.describe('playground docks (desktop)', () => {
     await expect(playground.treeItems.filter({ hasText: /^customers$/ })).toHaveCount(0);
     await playground.treeItems.filter({ hasText: /^billing$/ }).first().click();
     // billing expands: its child folder is revealed and the URL carries the folder.
-    await expect(playground.treeItems.filter({ hasText: /^customers$/ })).toBeVisible();
+    await expect(playground.treeItems.filter({ hasText: /^customers$/ }).first()).toBeVisible();
     await expect(page).toHaveURL(/pgReq=billing(?!%2F)/);
   });
 
@@ -145,11 +146,11 @@ test.describe('playground docks (desktop)', () => {
     await page.goto(openAt('bottom'));
     await expect(playground.sidebarPanel).toBeVisible();
     // Collapse the collection from its chevron -> top-level items disappear.
-    await playground.collectionNode.getByRole('button', { name: /Collapse collection|Expand collection/ }).click();
+    await playground.collectionCollapseToggle.click();
     await expect(playground.treeItems.filter({ hasText: /^billing$/ })).toHaveCount(0);
     // Clicking the root row brings the tree back and shows the collection view.
     await playground.collectionNode.getByRole('button', { name: /Bruno Testbench|Collection/ }).click();
-    await expect(playground.treeItems.filter({ hasText: /^billing$/ })).toBeVisible();
+    await expect(playground.treeItems.filter({ hasText: /^billing$/ }).first()).toBeVisible();
     await expect(playground.view).toContainText(/Overview|Headers|Vars|Auth|Scripts|Tests/);
   });
 
@@ -202,19 +203,19 @@ test.describe('playground docks (desktop)', () => {
   });
 
   test('deep-link / reload to a nested request reveals its ancestor folders', async ({ page, playground }) => {
-    await page.goto('/#/?pg=1&dock=bottom&pgReq=billing/customers/get-all-customers');
+    await page.goto(openAt('bottom', 'billing/customers/get-all-customers'));
     await expect(playground.sidebarPanel).toBeVisible();
     // billing + customers auto-expand, so the request row is rendered in the tree.
-    await expect(playground.treeItems.filter({ hasText: 'Get All Customers' })).toBeVisible();
+    await expect(playground.treeItems.filter({ hasText: 'Get All Customers' }).first()).toBeVisible();
     // Still revealed after a full reload while sitting on the request.
     await page.reload();
-    await expect(playground.treeItems.filter({ hasText: 'Get All Customers' })).toBeVisible();
+    await expect(playground.treeItems.filter({ hasText: 'Get All Customers' }).first()).toBeVisible();
   });
 
   // Opening a folder / environments / collection-settings must persist in the URL
   // (pgReq) so a reload restores that view instead of snapping back to the request.
   test('opening a folder persists in the url and survives reload', async ({ page, playground }) => {
-    await page.goto('/#/?pg=1&dock=bottom&pgReq=billing/customers/get-all-customers');
+    await page.goto(openAt('bottom', 'billing/customers/get-all-customers'));
     await expect(playground.sidebarPanel).toBeVisible();
     await playground.treeItems.filter({ hasText: /^billing$/ }).first().click();
     // pgReq switches to the folder slug (billing), no longer the request path.
@@ -225,7 +226,7 @@ test.describe('playground docks (desktop)', () => {
   });
 
   test('opening environments persists in the url and survives reload', async ({ page, playground }) => {
-    await page.goto('/#/?pg=1&dock=bottom&pgReq=billing/customers/get-all-customers');
+    await page.goto(openAt('bottom', 'billing/customers/get-all-customers'));
     await playground.gear.click();
     await expect(page).toHaveURL(/pgReq=(~|%7E)environments/);
     await page.reload();
@@ -234,7 +235,7 @@ test.describe('playground docks (desktop)', () => {
   });
 
   test('opening collection settings persists in the url and survives reload', async ({ page, playground }) => {
-    await page.goto('/#/?pg=1&dock=bottom&pgReq=billing/customers/get-all-customers');
+    await page.goto(openAt('bottom', 'billing/customers/get-all-customers'));
     await playground.collectionNode.click();
     await expect(page).toHaveURL(/pgReq=(~|%7E)collection/);
     await page.reload();

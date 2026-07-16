@@ -74,7 +74,7 @@ describe('resolvePlaygroundTarget', () => {
     expect(resolvePlaygroundTarget('does/not/exist', model)).toBeNull();
   });
 
-  it('uses reserved ~-prefixed tokens that cannot collide with slugified item slugs', () => {
+  it('uses reserved ~-prefixed tokens, matching the sidebar env-slug convention', () => {
     expect(PLAYGROUND_ENVIRONMENTS_SLUG.startsWith('~')).toBe(true);
     expect(PLAYGROUND_COLLECTION_SLUG.startsWith('~')).toBe(true);
   });

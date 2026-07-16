@@ -34,7 +34,6 @@ export const StyledWrapper = styled.div`
     height: 4px;
     border-radius: 999px;
     background-color: var(--oc-border-border2);
-    transition: background-color 0.15s ease;
   }
 
   .dock-content {

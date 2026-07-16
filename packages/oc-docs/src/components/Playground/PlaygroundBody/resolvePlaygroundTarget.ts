@@ -4,8 +4,11 @@ import { getItemUuid } from '../../../utils/itemUtils';
 
 /**
  * The URL slot (`pgReq`) usually holds an item's slug. These two reserved values
- * stand for the environments and collection-settings views instead. They start
- * with `~`, which a real item slug never does, so they can't clash with one.
+ * stand for the environments and collection-settings views instead. They follow
+ * the existing `~` sentinel convention (see ENVIRONMENTS_SLUG): real collections
+ * don't name items with a leading `~`, so in practice they don't clash with an
+ * item slug. The one exception would be an item literally named `~collection` /
+ * `~environments` (slugifySegment keeps the `~`), which would then be shadowed.
  */
 export const PLAYGROUND_ENVIRONMENTS_SLUG = ENVIRONMENTS_SLUG; // '~environments'
 export const PLAYGROUND_COLLECTION_SLUG = '~collection';
