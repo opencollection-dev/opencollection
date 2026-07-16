@@ -59,11 +59,11 @@ export const StyledWrapper = styled.div`
   }
 
   &.mobile .navlink-main {
-    font-size: 12px;
+    font-size: 0.75rem;
   }
 
   .tree::-webkit-scrollbar {
-    width: 6px;
+    width: 0.375rem;
   }
   .tree::-webkit-scrollbar-track {
     background: transparent;
@@ -72,7 +72,7 @@ export const StyledWrapper = styled.div`
   .tree::-webkit-scrollbar-thumb {
     background-color: transparent;
     border: none;
-    border-radius: 20px;
+    border-radius: 1.25rem;
     transition: background-color 0.4s ease;
   }
   .tree.scrolling::-webkit-scrollbar-thumb {

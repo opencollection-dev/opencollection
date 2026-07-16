@@ -41,13 +41,13 @@ export const StyledWrapper = styled.div`
   }
 
   &.mobile .navlink-main {
-    font-size: 12px;
+    font-size: 0.75rem;
   }
 
   .sidebar-items {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    padding: 0 0 0 6px;
+    padding: 0 0 0 0.375rem;
   }
 `;

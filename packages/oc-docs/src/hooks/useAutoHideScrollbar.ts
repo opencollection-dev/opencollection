@@ -12,7 +12,7 @@ import { useCallback, useRef } from 'react';
  */
 export function attachAutoHideScrollbar(el: HTMLElement, idleMs = 1000): () => void {
   let timer: ReturnType<typeof setTimeout> | undefined;
-  const show = (): void => {
+  const show = () => {
     el.classList.add('scrolling');
     if (timer) clearTimeout(timer);
     timer = setTimeout(() => el.classList.remove('scrolling'), idleMs);

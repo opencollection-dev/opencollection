@@ -57,9 +57,9 @@ const SidebarNavLink: React.FC<SidebarNavLinkProps> = ({
       // indent, while each level's glyph still lines up under its parent. Right
       // margin keeps the highlight short of the edge: 8px at root, 4px when nested.
       style={{
-        marginLeft: `${level * 19 + 4}px`,
-        paddingLeft: '4px',
-        marginRight: level === 0 ? '8px' : '4px',
+        marginLeft: `${(level * 19 + 4) / 16}rem`,
+        paddingLeft: '0.25rem',
+        marginRight: level === 0 ? '0.5rem' : '0.25rem',
       }}
       data-testid={testId}
       data-slug={slug}
