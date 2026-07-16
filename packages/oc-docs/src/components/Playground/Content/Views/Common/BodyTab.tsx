@@ -2,9 +2,10 @@ import React from 'react';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import CodeEditor from '../../../../../ui/CodeEditor/CodeEditor';
 import KeyValueTable, { type KeyValueRow } from '../../../../../components/KeyValueTable/KeyValueTable';
+import type { RequestBody } from '../../../../../utils/schemaHelpers';
 
 interface BodyTabProps {
-  body: any;
+  body: RequestBody;
   onItemChange: (item: HttpRequest) => void;
   item: HttpRequest;
 }
@@ -36,7 +37,7 @@ export const BodyTab: React.FC<BodyTabProps> = ({ body, onItemChange, item }) =>
       type: 'text' as const,
       disabled: !r.enabled
     }));
-    const fileEntries = ((body?.data as any[]) || []).filter((e) => e?.type === 'file');
+    const fileEntries = (((body as { data?: any[] })?.data as any[]) || []).filter((e) => e?.type === 'file');
     onItemChange({
       ...item,
       http: {

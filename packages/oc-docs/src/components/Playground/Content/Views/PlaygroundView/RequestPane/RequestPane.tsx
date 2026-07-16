@@ -7,11 +7,11 @@ import { rowToVariable } from '../../../../../../utils/variableDataType';
 import HeadersTab from '../../Common/HeadersTab/HeadersTab';
 import ParamsTab from '../../Common/ParamsTab';
 import BodyTab from '../../Common/BodyTab';
-import BodyModeSelector from '../../Common/BodyModeSelector';
+import BodyModeSelector from '../../Common/BodyModeSelector/BodyModeSelector';
 import AuthTab from '../../Common/AuthTab/AuthTab';
 import ScriptsTab from '../../Common/ScriptsTab/ScriptsTab';
 import TestsTab from '../../Common/TestsTab/TestsTab';
-import AssertsTab from '../../Common/AssertsTab';
+import AssertsTab from '../../Common/AssertsTab/AssertsTab';
 import VariablesTab from '../../Common/VariablesTab/VariablesTab';
 import {
   getHttpParams,
