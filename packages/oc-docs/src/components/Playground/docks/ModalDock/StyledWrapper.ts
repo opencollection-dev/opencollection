@@ -25,7 +25,7 @@ export const StyledWrapper = styled.div`
     border-radius: var(--oc-radius);
     overflow: hidden;
     background-color: var(--oc-background-base);
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+    box-shadow: var(--shadow-md);
   }
 
   .modal-content {

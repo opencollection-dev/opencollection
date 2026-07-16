@@ -8,7 +8,7 @@ import reducer, {
   setSelectedExampleIndex,
   clearPlaygroundCollection,
   toggleFolderCollapse,
-  expandFolders,
+  expandFolders
 } from './playground';
 import { createOpenCollectionStore } from '../store';
 import type { OpenCollection as OpenCollectionCollection } from '@opencollection/types';
