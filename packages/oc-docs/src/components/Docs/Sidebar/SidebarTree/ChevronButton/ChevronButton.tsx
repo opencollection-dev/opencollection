@@ -1,3 +1,4 @@
+import React from 'react';
 import { ChevronRightIcon } from '../../../../../assets/icons';
 
 interface ChevronButtonProps {
@@ -17,10 +18,12 @@ export const ChevronButton: React.FC<ChevronButtonProps> = ({ expanded, ariaLabe
       data-testid={testId}
       onClick={(e) => {
         e.stopPropagation();
-        onClick?.();
+        onClick();
       }}
     >
       <ChevronRightIcon />
     </button>
   );
 };
+
+export default ChevronButton;

@@ -178,7 +178,7 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
       !isFolder(selectedItem) &&
       selectedExampleIndex != null
     ) {
-      const example = ((selectedItem as HttpRequest).examples ?? [])[selectedExampleIndex]
+      const example = ((selectedItem as HttpRequest).examples ?? [])[selectedExampleIndex];
       if (example) {
         return <ExampleView request={selectedItem as HttpRequest} example={example} orientation={orientation} />;
       }

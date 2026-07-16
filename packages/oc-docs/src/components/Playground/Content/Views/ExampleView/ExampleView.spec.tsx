@@ -10,13 +10,13 @@ const example = {
   description: 'Valid credentials.',
   request: {
     headers: [{ name: 'Content-Type', value: 'application/json' }],
-    body: { type: 'json', data: '{ "email": "u@example.com" }' },
+    body: { type: 'json', data: '{ "email": "u@example.com" }' }
   },
   response: {
     status: 200,
     statusText: 'OK',
-    body: { type: 'json', data: '{ "token": "abc" }' },
-  },
+    body: { type: 'json', data: '{ "token": "abc" }' }
+  }
 } as any;
 
 describe('ExampleView', () => {

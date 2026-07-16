@@ -122,7 +122,7 @@ export const ExampleView: React.FC<ExampleViewProps> = ({ request, example, orie
           {hasResBody && (
             <div className="example-view-section">
               <div className="example-view-section-label">BODY</div>
-              <Code code={resBody!.data} language={responseBodyLanguage(resBody?.type)} showLineNumbers />
+              <Code code={resBody!.data} language={responseBodyLanguage(resBody!.type)} showLineNumbers />
             </div>
           )}
         </div>

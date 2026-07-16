@@ -9,7 +9,7 @@ import {
   setPlaygroundCollection,
   setSelectedItemId,
   setSelectedExampleIndex,
-  setViewMode,
+  setViewMode
 } from '../../../store/slices/playground';
 import { getItemUuid } from '../../../utils/itemUtils';
 
@@ -21,9 +21,9 @@ const collection = {
       name: 'Login',
       method: 'POST',
       url: '/login',
-      examples: [{ name: 'OK', response: { status: 200, body: { type: 'json', data: '{}' } } }],
-    },
-  ],
+      examples: [{ name: 'OK', response: { status: 200, body: { type: 'json', data: '{}' } } }]
+    }
+  ]
 } as any;
 
 describe('PlaygroundBody example view', () => {

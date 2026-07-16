@@ -35,7 +35,7 @@ interface SidebarTreeProps {
   onToggleFolder: (uuid: string) => void;
   collectionRoot?: CollectionRoot;
   activeExample: ExampleHighlight | null;
-  onExampleClick?: (requestUuid: string, index: number, request: HttpRequest) => void;
+  onExampleClick?: (requestUuid: string, index: number) => void;
 }
 
 const SidebarTree: React.FC<SidebarTreeProps> = ({
@@ -53,13 +53,13 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
   // entry it follows the active example (auto-expand); once the user clicks the
   // chevron, their choice wins, so the active request can be collapsed.
   const [expandedOverride, setExpandedOverride] = useState<Map<string, boolean>>(new Map());
-  const isExpanded = (uuid: string): boolean =>
-    expandedOverride.has(uuid) ? Boolean(expandedOverride.get(uuid)) : activeExample?.requestUuid === uuid;
+  const expandedFrom = (overrides: Map<string, boolean>, uuid: string): boolean =>
+    overrides.has(uuid) ? Boolean(overrides.get(uuid)) : activeExample?.requestUuid === uuid;
+  const isExpanded = (uuid: string): boolean => expandedFrom(expandedOverride, uuid);
   const toggleRequest = (uuid: string) =>
     setExpandedOverride((prev) => {
-      const current = prev.has(uuid) ? Boolean(prev.get(uuid)) : activeExample?.requestUuid === uuid;
       const next = new Map(prev);
-      next.set(uuid, !current);
+      next.set(uuid, !expandedFrom(prev, uuid));
       return next;
     });
 
@@ -151,7 +151,7 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
                         chevron={<span className="navlink-spacer" aria-hidden="true" />}
                         muted
                         testId="sidebar-example"
-                        onClick={() => onExampleClick?.(uuid, i, item as HttpRequest)}
+                        onClick={() => onExampleClick?.(uuid, i)}
                       />
                     );
                   })}
@@ -191,7 +191,7 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
             <ChevronButton
               expanded={!collectionRoot.collapsed}
               ariaLabel={collectionRoot.collapsed ? 'Expand collection' : 'Collapse collection'}
-              onClick={collectionRoot.onClick}
+              onClick={collectionRoot.onToggle}
             />
           }
           testId={collectionRoot.testId ?? 'sidebar-collection-root'}

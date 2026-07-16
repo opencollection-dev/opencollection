@@ -35,7 +35,7 @@ test.describe('Playground - Examples', () => {
     await expect(playground.exampleViewResponse).toBeVisible();
 
     // Read-only: no editable form controls anywhere in the example view.
-    await expect(exampleView.locator('input, textarea')).toHaveCount(0);
+    await expect(playground.exampleViewControls).toHaveCount(0);
   });
 
   test('switching to another example updates the view to its own status and stays read-only', async ({ playground }) => {
@@ -45,6 +45,6 @@ test.describe('Playground - Examples', () => {
     const exampleView = playground.exampleView;
     await expect(exampleView).toContainText('401');
     await expect(exampleView).toContainText('Unauthorized');
-    await expect(exampleView.locator('input, textarea')).toHaveCount(0);
+    await expect(playground.exampleViewControls).toHaveCount(0);
   });
 });

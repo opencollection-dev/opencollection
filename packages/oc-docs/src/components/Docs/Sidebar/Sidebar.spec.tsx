@@ -11,8 +11,8 @@ import { query } from '../../../test-utils/dom';
 const collection = {
   info: { name: 'C' },
   items: [
-    { type: 'http', name: 'Login', method: 'POST', examples: [{ name: 'OK', response: { status: 200 } }] },
-  ],
+    { type: 'http', name: 'Login', method: 'POST', examples: [{ name: 'OK', response: { status: 200 } }] }
+  ]
 } as any;
 
 // The highlight rides on the navigation entry's state, so render at the request

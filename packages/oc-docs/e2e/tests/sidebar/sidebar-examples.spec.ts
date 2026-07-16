@@ -21,7 +21,7 @@ test.describe('Sidebar - Examples (docs)', () => {
   test('clicking an example navigates to the parent request page and highlights the matching example card', async ({
     sidebar,
     requestPage,
-    page,
+    page
   }) => {
     await sidebar.toggleExamples('Get All Customers');
     await sidebar.exampleRow(OK_EXAMPLE).click();

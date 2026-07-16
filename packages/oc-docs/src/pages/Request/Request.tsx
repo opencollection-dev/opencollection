@@ -53,7 +53,7 @@ import { Examples } from '../../components/Examples/Examples';
 import { ExecutionContext } from '../../components/ExecutionContext/ExecutionContext';
 import { UnsupportedRequest } from '../../components/UnsupportedRequest/UnsupportedRequest';
 import { StyledWrapper } from './StyledWrapper';
-import { NavigationState } from '../../hooks/useDocsNavigate';
+import type { NavigationState } from '../../hooks/useDocsNavigate';
 
 interface RequestProps {
   item: HttpRequest | WebSocketRequest | GraphQLRequest | GrpcRequest;

@@ -23,6 +23,7 @@ export class PlaygroundComponent extends BaseComponent {
   readonly exampleView = this.page.getByTestId('example-view');
   readonly exampleViewRequest = this.page.getByTestId('example-view-request');
   readonly exampleViewResponse = this.page.getByTestId('example-view-response');
+  readonly exampleViewControls = this.exampleView.locator('input, textarea');
 
   exampleToggle(requestName: string): Locator {
     return this.treeItems.filter({ hasText: requestName }).getByTestId('sidebar-example-toggle');

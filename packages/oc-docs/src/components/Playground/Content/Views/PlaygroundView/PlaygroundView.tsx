@@ -89,7 +89,6 @@ const Playground: React.FC<PlaygroundProps> = ({ item, collection, selectedEnvir
     }
   }, [collection, editableItem, runner, selectedEnvironment, itemUuid]);
 
-
   return (
     <div className="request-runner-container h-full flex flex-col px-4" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <RequestHeader 

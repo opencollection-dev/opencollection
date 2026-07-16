@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import type { OpenCollection as OpenCollectionCollection } from '@opencollection/types';
-import type { HttpRequest } from '@opencollection/types/requests/http';
 import EnvSwitcher from '../../EnvSwitcher/EnvSwitcher';
 import SidebarTree from '../../Docs/Sidebar/SidebarTree/SidebarTree';
 import IconButton from '../../../ui/IconButton/IconButton';
@@ -20,7 +19,7 @@ interface PlaygroundSidebarProps {
   collectionActive: boolean;
   testId?: string;
   activeExample: ExampleHighlight | null;
-  onExampleClick?: (requestUuid: string, index: number, request: HttpRequest) => void;
+  onExampleClick?: (requestUuid: string, index: number) => void;
 }
 
 const PlaygroundSidebar: React.FC<PlaygroundSidebarProps> = ({

@@ -1,8 +1,9 @@
 import { useLocation } from 'react-router-dom';
 import { getItemUuid } from '../../../../utils/itemUtils';
 import { useDocsNavigate } from '../../../../hooks';
-import { NavigationState } from '../../../../hooks/useDocsNavigate';
-import { NavModel } from '../../../../routing';
+import type { NavigationState } from '../../../../hooks/useDocsNavigate';
+import type { NavModel } from '../../../../routing';
+import type { HttpRequest } from '@opencollection/types/requests/http';
 
 export function useActiveExample(
   model: NavModel,
@@ -17,9 +18,13 @@ export function useActiveExample(
   const { state } = useLocation();
   const docsNavigate = useDocsNavigate();
   const exampleIndex = (state as NavigationState)?.exampleIndex;
-  const activeRequestUuid = getItemUuid(model.bySlug.get(activeSlug)?.item);
+  const activeItem = model.bySlug.get(activeSlug)?.item;
+  const activeRequestUuid = getItemUuid(activeItem);
+  // Bound the highlight to the request's own example count, mirroring the sibling
+  // paths (PlaygroundBody, Examples) so a stale index never lights up a row.
+  const exampleCount = (activeItem as HttpRequest | undefined)?.examples?.length ?? 0;
   const activeExample =
-    exampleIndex != null && activeRequestUuid !== undefined
+    exampleIndex != null && activeRequestUuid !== undefined && exampleIndex < exampleCount
       ? { requestUuid: activeRequestUuid, index: exampleIndex }
       : null;
 

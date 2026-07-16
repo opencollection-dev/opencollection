@@ -12,7 +12,7 @@ import { useNavModel } from '../../../routing/hooks';
 import { normalizeSlug } from '../../../routing/resolve';
 import { OVERVIEW_SLUG, ENVIRONMENTS_SLUG } from '../../../routing/navModel';
 import { useDocsNavigate } from '../../../hooks';
-import { useActiveExample } from './hook/useActiveExample';
+import { useActiveExample } from './hooks/useActiveExample';
 
 interface SidebarProps {
   onNavigate?: () => void;
