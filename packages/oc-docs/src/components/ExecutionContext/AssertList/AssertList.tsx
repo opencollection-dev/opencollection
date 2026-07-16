@@ -1,5 +1,6 @@
 import React from 'react';
 import { ScopeTag } from '../ScopeTag/ScopeTag';
+import { DisabledBadge } from '../../DisabledBadge/DisabledBadge';
 import { VariableText } from '../../VariableText/VariableText';
 import { TruncatedText } from '../../TruncatedText/TruncatedText';
 import { Description } from '../../Description/Description';
@@ -25,7 +26,7 @@ export const AssertList: React.FC<AssertListProps> = ({ assertions }) => {
       {assertions.map((assert, index) => {
         const text = assertionText(assert);
         return (
-          <div key={`${assert.expression}-${index}`} className={`assert-item ${assert.disabled ? 'is-disabled' : ''}`}>
+          <div key={`${assert.expression}-${index}`} className="assert-item">
             <div className="assert-row">
               <ScopeTag scope={assert.level} />
               <code className="assert-expr">
@@ -33,6 +34,7 @@ export const AssertList: React.FC<AssertListProps> = ({ assertions }) => {
                   <VariableText value={text} />
                 </TruncatedText>
               </code>
+              {assert.disabled ? <DisabledBadge /> : null}
             </div>
             <Description text={assert.description} />
           </div>

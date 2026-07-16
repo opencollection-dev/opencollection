@@ -134,9 +134,6 @@ export const StyledWrapper = styled.div`
   .table-description-cell {
     padding: 0 0.875rem 0.5rem;
   }
-  .table-row--disabled {
-    opacity: 0.55;
-  }
 
   .table-cell {
     padding: 0.5rem 0.875rem; /* 8px 14px */

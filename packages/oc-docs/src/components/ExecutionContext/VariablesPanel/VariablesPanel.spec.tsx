@@ -44,12 +44,12 @@ describe('VariablesPanel', () => {
     expect(html).toContain('JWT access token');
   });
 
-  it('marks a disabled variable so it can be visually dimmed', () => {
+  it('marks a disabled variable with the Disabled chip', () => {
     const html = renderToStaticMarkup(
       <VariablesPanel preVars={[{ name: 'legacy', value: 'v1', disabled: true }]} postVars={[]} />
     );
     expect(html).toContain('legacy');
-    expect(html).toContain('property-row--disabled'); // PropertyTable's disabled-row class
+    expect(html).toContain('disabled-badge');
   });
 
   describe('stacked variant (overview)', () => {

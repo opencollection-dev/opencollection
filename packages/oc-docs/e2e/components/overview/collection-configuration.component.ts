@@ -9,6 +9,12 @@ export class ConfigurationSection extends BaseComponent {
 
   readonly secret = new SecretValueComponent(this.page, 'collection-config-auth-secret');
 
+  readonly disabledBadge = this.root.getByTestId('disabled-badge').first();
+
+  disabledRowValue(): Locator {
+    return this.disabledBadge.locator('..').getByTestId('property-value');
+  }
+
   subHeading(name: string): Locator {
     return this.root.getByTestId('collection-config-subheading').filter({ hasText: name });
   }

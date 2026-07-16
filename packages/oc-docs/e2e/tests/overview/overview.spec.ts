@@ -1,4 +1,11 @@
 import { test, expect } from '../../playwright';
+import type { Locator } from '@playwright/test';
+
+const boundingBoxOf = async (locator: Locator) => {
+  const box = await locator.boundingBox();
+  if (box === null) throw new Error('expected the element to have a bounding box');
+  return box;
+};
 
 test.describe('Collection Overview', () => {
   test.beforeEach(async ({ overviewPage }) => {
@@ -77,6 +84,33 @@ test.describe('Collection Overview', () => {
         await configuration.copyToClipboard();
         await expect(configuration.copyButton).toHaveAttribute('aria-label', 'Copied');
       });
+    });
+  });
+
+  test('mobile: the Disabled chip stays pinned at the row end without overflowing', async ({ overviewPage, page }) => {
+    await page.setViewportSize({ width: 360, height: 800 });
+    const { configuration } = overviewPage;
+
+    await expect(configuration.disabledBadge).toBeVisible();
+
+    const chip = await boundingBoxOf(configuration.disabledBadge);
+    const value = await boundingBoxOf(configuration.disabledRowValue());
+    const card = await boundingBoxOf(configuration.root);
+
+    await test.step('the chip sits at the end — to the right of the value', () => {
+      expect(chip.x).toBeGreaterThanOrEqual(value.x + value.width);
+    });
+
+    await test.step('the chip stays within the config card, never clipped or overflowing', () => {
+      expect(chip.x + chip.width).toBeLessThanOrEqual(card.x + card.width);
+    });
+
+    await test.step('the value keeps its truncation styling, so a long value ellipsizes rather than pushing the chip off', async () => {
+      const style = await configuration.disabledRowValue().evaluate((el) => {
+        const cs = getComputedStyle(el);
+        return { overflow: cs.overflow, textOverflow: cs.textOverflow, whiteSpace: cs.whiteSpace };
+      });
+      expect(style).toEqual({ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' });
     });
   });
 });
