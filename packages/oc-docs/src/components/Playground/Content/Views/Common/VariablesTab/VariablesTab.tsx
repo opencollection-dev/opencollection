@@ -70,8 +70,6 @@ const typeColumn = {
             onClick: () => updateField('dataType', type)
           }))}
         >
-          {/* Trigger keeps the previous native-select visual (label + caret);
-              only the option list is now the themed MenuDropdown. */}
           <span className="var-type-control" role="button" tabIndex={0} aria-label="Variable data type">
             <span className="var-type-label" aria-hidden="true">
               {dataType}

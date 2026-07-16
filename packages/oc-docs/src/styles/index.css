@@ -1,21 +1,6 @@
 @import './theme.generated.css';
 @import "tailwindcss";
 
-/* ----------------------------------------------------------------
-   Native control color scheme. `data-theme` lives on <html>, so
-   scoping color-scheme here cascades to the whole document and makes
-   native UI (select dropdowns, scrollbars, checkboxes, date pickers)
-   render light/dark in sync with the active theme.
-   ---------------------------------------------------------------- */
-:root,
-[data-theme="light"] {
-  color-scheme: light;
-}
-
-[data-theme="dark"] {
-  color-scheme: dark;
-}
-
 :root {
   /* ----------------------------------------------------------------
      Legacy abstract color vars — now aliased to theme tokens.

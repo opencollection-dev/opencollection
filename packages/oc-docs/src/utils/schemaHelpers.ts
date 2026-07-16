@@ -1,25 +1,19 @@
 /**
  * Helper utilities for working with the new OpenCollection schema structure.
- *
+ * 
  * The new schema groups request properties into:
  * - info: name, type, seq, description, tags
  * - http/graphql/grpc/websocket: protocol-specific details (method, url, headers, body, params, auth)
  * - runtime: variables, assertions, scripts, actions
  * - settings: timeout, followRedirects, etc.
  * - docs: documentation at root level
- *
+ * 
  * Scripts are now an array of { type, code } instead of { preRequest, postResponse, tests, hooks }
  */
 
 import type { OpenCollection } from '@opencollection/types';
 import type { Item as OpenCollectionItem, Folder, ScriptFile } from '@opencollection/types/collection/item';
-import type {
-  HttpRequest,
-  HttpRequestHeader,
-  HttpRequestExample,
-  HttpRequestBody,
-  HttpRequestBodyVariant
-} from '@opencollection/types/requests/http';
+import type { HttpRequest, HttpRequestHeader, HttpRequestExample, HttpRequestBody, HttpRequestBodyVariant } from '@opencollection/types/requests/http';
 import type { GraphQLRequest } from '@opencollection/types/requests/graphql';
 import type { GrpcRequest } from '@opencollection/types/requests/grpc';
 import type { WebSocketRequest } from '@opencollection/types/requests/websocket';
@@ -36,17 +30,17 @@ export type RequestBody = HttpRequestBody | HttpRequestBodyVariant[] | undefined
  */
 export const getItemType = (item: OpenCollectionItem | null | undefined): string | undefined => {
   if (!item) return undefined;
-
+  
   // New schema: type is in info block
   if ('info' in item && item.info?.type) {
     return item.info.type;
   }
-
+  
   // Backwards compatibility: type at root level
   if ('type' in item) {
     return (item as any).type;
   }
-
+  
   return undefined;
 };
 
@@ -55,17 +49,17 @@ export const getItemType = (item: OpenCollectionItem | null | undefined): string
  */
 export const getItemName = (item: OpenCollectionItem | null | undefined): string | undefined => {
   if (!item) return undefined;
-
+  
   // New schema: name is in info block
   if ('info' in item && (item as any).info?.name) {
     return (item as any).info.name;
   }
-
+  
   // Backwards compatibility: name at root level
   if ('name' in item) {
     return (item as any).name;
   }
-
+  
   return undefined;
 };
 
@@ -137,12 +131,12 @@ export const isUnsupportedRequest = (
  */
 export const getHttpMethod = (item: HttpRequest | null | undefined): string => {
   if (!item) return 'GET';
-
+  
   // New schema: method in http block
   if (item.http?.method) {
     return item.http.method;
   }
-
+  
   // Backwards compatibility: method at root level
   if ('method' in item && (item as any).method) {
     return (item as any).method;
@@ -169,7 +163,7 @@ export const getRequestBadgeLabel = (item: OpenCollectionItem | null | undefined
  */
 export const getRequestUrl = (item: RequestItem | null | undefined): string => {
   if (!item) return '';
-
+  
   // New schema: url in protocol block
   if ('http' in item && item.http?.url) {
     return item.http.url;
@@ -183,12 +177,12 @@ export const getRequestUrl = (item: RequestItem | null | undefined): string => {
   if ('websocket' in item && (item as WebSocketRequest).websocket?.url) {
     return (item as WebSocketRequest).websocket!.url!;
   }
-
+  
   // Backwards compatibility: url at root level
   if ('url' in item) {
     return (item as any).url || '';
   }
-
+  
   return '';
 };
 
@@ -197,17 +191,17 @@ export const getRequestUrl = (item: RequestItem | null | undefined): string => {
  */
 export const getHttpHeaders = (item: HttpRequest | null | undefined): HttpRequestHeader[] => {
   if (!item) return [];
-
+  
   // New schema: headers in http block
   if (item.http?.headers) {
     return item.http.headers;
   }
-
+  
   // Backwards compatibility: headers at root level
   if ('headers' in item && Array.isArray((item as any).headers)) {
     return (item as any).headers;
   }
-
+  
   return [];
 };
 
@@ -216,38 +210,36 @@ export const getHttpHeaders = (item: HttpRequest | null | undefined): HttpReques
  */
 export const getHttpBody = (item: HttpRequest | null | undefined): RequestBody => {
   if (!item) return undefined;
-
+  
   // New schema: body in http block
   if (item.http?.body) {
-    return item.http.body as RequestBody;
+    return item.http.body;
   }
-
+  
   // Backwards compatibility: body at root level
   if ('body' in item) {
-    return (item as { body?: RequestBody }).body;
+    return (item as any).body;
   }
-
+  
   return undefined;
 };
 
 /**
  * Get params from an HTTP request (from http block or root)
  */
-export const getHttpParams = (
-  item: HttpRequest | null | undefined
-): HttpRequest['http'] extends { params?: infer P } ? P : any => {
+export const getHttpParams = (item: HttpRequest | null | undefined): HttpRequest['http'] extends { params?: infer P } ? P : any => {
   if (!item) return [];
-
+  
   // New schema: params in http block
   if (item.http?.params) {
     return item.http.params;
   }
-
+  
   // Backwards compatibility: params at root level
   if ('params' in item && Array.isArray((item as any).params)) {
     return (item as any).params;
   }
-
+  
   return [];
 };
 
@@ -284,17 +276,17 @@ export const getRequestAuth = (item: RequestItem | null | undefined): any => {
  */
 export const getRequestVariables = (item: RequestItem | null | undefined): any[] => {
   if (!item) return [];
-
+  
   // New schema: variables in runtime block
   if ('runtime' in item && (item as any).runtime?.variables) {
     return (item as any).runtime.variables;
   }
-
+  
   // Backwards compatibility: variables at root level
   if ('variables' in item && Array.isArray((item as any).variables)) {
     return (item as any).variables;
   }
-
+  
   return [];
 };
 
@@ -303,17 +295,17 @@ export const getRequestVariables = (item: RequestItem | null | undefined): any[]
  */
 export const getRequestAssertions = (item: RequestItem | null | undefined): any[] => {
   if (!item) return [];
-
+  
   // New schema: assertions in runtime block
   if ('runtime' in item && (item as any).runtime?.assertions) {
     return (item as any).runtime.assertions;
   }
-
+  
   // Backwards compatibility: assertions at root level
   if ('assertions' in item && Array.isArray((item as any).assertions)) {
     return (item as any).assertions;
   }
-
+  
   return [];
 };
 
@@ -323,7 +315,7 @@ export const getRequestAssertions = (item: RequestItem | null | undefined): any[
  */
 export const getRequestScripts = (item: RequestItem | null | undefined): Scripts => {
   if (!item) return [];
-
+  
   // New schema: scripts in runtime block
   if ('runtime' in item && (item as any).runtime?.scripts) {
     const scripts = (item as any).runtime.scripts;
@@ -334,7 +326,7 @@ export const getRequestScripts = (item: RequestItem | null | undefined): Scripts
     // Convert old format to new array format
     return scriptsObjectToArray(scripts);
   }
-
+  
   // Backwards compatibility: scripts at root level
   if ('scripts' in item) {
     const scripts = (item as any).scripts;
@@ -343,20 +335,18 @@ export const getRequestScripts = (item: RequestItem | null | undefined): Scripts
     }
     return scriptsObjectToArray(scripts);
   }
-
+  
   return [];
 };
 
 /**
  * Convert old scripts object format to new array format
  */
-export const scriptsObjectToArray = (
-  scripts: ScriptsObject | Record<string, string | undefined> | null | undefined
-): Script[] => {
+export const scriptsObjectToArray = (scripts: ScriptsObject | Record<string, string | undefined> | null | undefined): Script[] => {
   if (!scripts) return [];
-
+  
   const result: Script[] = [];
-
+  
   // Map old property names to new type names
   const typeMap: Record<string, ScriptType> = {
     preRequest: 'before-request',
@@ -364,14 +354,14 @@ export const scriptsObjectToArray = (
     tests: 'tests',
     hooks: 'hooks'
   };
-
+  
   for (const [key, code] of Object.entries(scripts)) {
     if (code && typeof code === 'string') {
       const type = typeMap[key] || (key as ScriptType);
       result.push({ type, code });
     }
   }
-
+  
   return result;
 };
 
@@ -397,24 +387,24 @@ export const scriptsArrayToObject = (scripts: Scripts | null | undefined): Scrip
     }
     return {};
   }
-
+  
   const result: ScriptsObject = {};
-
+  
   // Map new type names to old property names for UI compatibility
   const typeMap: Record<ScriptType, keyof ScriptsObject> = {
     'before-request': 'preRequest',
     'after-response': 'postResponse',
-    tests: 'tests',
-    hooks: 'hooks'
+    'tests': 'tests',
+    'hooks': 'hooks'
   };
-
+  
   for (const script of scripts) {
     if (script.type && script.code) {
       const key = typeMap[script.type] || script.type;
       result[key as keyof ScriptsObject] = script.code;
     }
   }
-
+  
   return result;
 };
 
@@ -423,50 +413,46 @@ export const scriptsArrayToObject = (scripts: Scripts | null | undefined): Scrip
  */
 export const getScriptByType = (scripts: Scripts | null | undefined, type: ScriptType): string | undefined => {
   if (!scripts) return undefined;
-
+  
   if (Array.isArray(scripts)) {
-    const script = scripts.find((s) => s.type === type);
+    const script = scripts.find(s => s.type === type);
     return script?.code;
   }
-
+  
   // Handle old object format
   const typeMap: Record<ScriptType, string> = {
     'before-request': 'preRequest',
     'after-response': 'postResponse',
-    tests: 'tests',
-    hooks: 'hooks'
+    'tests': 'tests',
+    'hooks': 'hooks'
   };
-
+  
   return (scripts as any)[typeMap[type]];
 };
 
 /**
  * Get pre-request script from scripts (handles both array and object format)
  */
-export const getPreRequestScript = (
-  scripts: Scripts | Record<string, string> | null | undefined
-): string | undefined => {
+export const getPreRequestScript = (scripts: Scripts | Record<string, string> | null | undefined): string | undefined => {
   if (!scripts) return undefined;
-
+  
   if (Array.isArray(scripts)) {
     return getScriptByType(scripts, 'before-request');
   }
-
+  
   return (scripts as any).preRequest;
 };
 
 /**
  * Get post-response script from scripts (handles both array and object format)
  */
-export const getPostResponseScript = (
-  scripts: Scripts | Record<string, string> | null | undefined
-): string | undefined => {
+export const getPostResponseScript = (scripts: Scripts | Record<string, string> | null | undefined): string | undefined => {
   if (!scripts) return undefined;
-
+  
   if (Array.isArray(scripts)) {
     return getScriptByType(scripts, 'after-response');
   }
-
+  
   return (scripts as any).postResponse;
 };
 
@@ -475,11 +461,11 @@ export const getPostResponseScript = (
  */
 export const getTestsScript = (scripts: Scripts | Record<string, string> | null | undefined): string | undefined => {
   if (!scripts) return undefined;
-
+  
   if (Array.isArray(scripts)) {
     return getScriptByType(scripts, 'tests');
   }
-
+  
   return (scripts as any).tests;
 };
 
@@ -554,3 +540,4 @@ export const getRequestExamples = (item: HttpRequest | null | undefined): HttpRe
   if (!item?.examples) return [];
   return item.examples;
 };
+

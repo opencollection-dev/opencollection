@@ -7,7 +7,7 @@ import { StyledWrapper } from './StyledWrapper';
 
 /**
  * Assertion operators based on Bruno's implementation
- * 
+ *
  * Comparison operators:
  * - eq: equal to
  * - neq: not equal to
@@ -15,19 +15,19 @@ import { StyledWrapper } from './StyledWrapper';
  * - gte: greater than or equal to
  * - lt: less than
  * - lte: less than or equal to
- * 
+ *
  * Collection operators:
  * - in: in
  * - notIn: not in
  * - contains: contains
  * - notContains: not contains
- * 
+ *
  * String operators:
  * - matches: matches (regex)
  * - notMatches: not matches (regex)
  * - startsWith: starts with
  * - endsWith: ends with
- * 
+ *
  * Type checking operators (unary):
  * - isEmpty: is empty
  * - isNotEmpty: is not empty
@@ -41,7 +41,7 @@ import { StyledWrapper } from './StyledWrapper';
  * - isString: is string
  * - isBoolean: is boolean
  * - isArray: is array
- * 
+ *
  * Other operators:
  * - length: length
  * - between: between
@@ -79,8 +79,7 @@ const ASSERTION_OPERATORS = [
 
 const DEFAULT_OPERATOR = ASSERTION_OPERATORS[0].value;
 
-// Operators that assert on the expression alone; their value input is cleared.
-const UNARY_OPERATORS = [
+const UNARY_OPERATORS = new Set([
   'isEmpty',
   'isNotEmpty',
   'isNull',
@@ -93,7 +92,7 @@ const UNARY_OPERATORS = [
   'isString',
   'isBoolean',
   'isArray'
-];
+]);
 
 interface AssertsTabProps {
   assertions: Assertion[];
@@ -119,7 +118,7 @@ export const AssertsTab: React.FC<AssertsTabProps> = ({
   const handleAssertionsChange = (rows: KeyValueRow[]) => {
     const updatedAssertions: Assertion[] = rows.map((row) => {
       const operator = row.operator || DEFAULT_OPERATOR;
-      const isUnary = UNARY_OPERATORS.includes(operator);
+      const isUnary = UNARY_OPERATORS.has(operator);
       return {
         expression: row.name,
         operator,
@@ -133,7 +132,7 @@ export const AssertsTab: React.FC<AssertsTabProps> = ({
   const handleOperatorChange = (index: number, newOperator: string) => {
     const updatedRows = [...assertionsData];
     updatedRows[index] = { ...updatedRows[index], operator: newOperator };
-    if (UNARY_OPERATORS.includes(newOperator)) {
+    if (UNARY_OPERATORS.has(newOperator)) {
       updatedRows[index].value = '';
     }
     handleAssertionsChange(updatedRows);

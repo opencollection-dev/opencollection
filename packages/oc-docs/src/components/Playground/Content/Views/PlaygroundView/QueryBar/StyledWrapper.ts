@@ -4,16 +4,14 @@ export const StyledWrapper = styled.div`
   border: 1px solid var(--border-color);
   border-radius: var(--oc-radius);
   overflow: hidden;
-  transition:
-    border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   background-color: var(--bg-primary);
 
   &:focus-within {
     border-color: var(--primary-color);
-    box-shadow:
-      0 0 0 3px color-mix(in srgb, var(--oc-brand) 10%, transparent),
-      0 1px 2px color-mix(in srgb, var(--oc-text) 5%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--oc-brand) 10%, transparent),
+                0 1px 2px color-mix(in srgb, var(--oc-text) 5%, transparent);
   }
 
   input {
@@ -23,17 +21,17 @@ export const StyledWrapper = styled.div`
     border-radius: 0;
     border: none;
     transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-
+    
     &::placeholder {
       color: var(--text-secondary);
       opacity: 0.6;
       transition: opacity 0.2s ease;
     }
-
+    
     &:focus::placeholder {
       opacity: 0.45;
     }
-
+    
     &:focus {
       background-color: color-mix(in srgb, var(--oc-text) 1%, transparent);
     }
@@ -69,7 +67,7 @@ export const StyledWrapper = styled.div`
     letter-spacing: 0.01em;
     transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
-
+    
     &::before {
       content: '';
       position: absolute;
@@ -83,7 +81,7 @@ export const StyledWrapper = styled.div`
     &:hover:not(:disabled) {
       background-color: color-mix(in srgb, var(--oc-brand) 85%, black);
     }
-
+    
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;

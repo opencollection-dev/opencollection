@@ -10,11 +10,15 @@ interface BodyTabProps {
   item: HttpRequest;
 }
 
-export const BodyTab: React.FC<BodyTabProps> = ({ body, onItemChange, item }) => {
+export const BodyTab: React.FC<BodyTabProps> = ({
+  body,
+  onItemChange,
+  item
+}) => {
   const handleFormBodyChange = (formData: KeyValueRow[]) => {
     const updatedBody = {
       type: 'form-urlencoded' as const,
-      data: formData.map((f) => ({
+      data: formData.map(f => ({
         name: f.name,
         value: f.value,
         disabled: !f.enabled
@@ -31,13 +35,13 @@ export const BodyTab: React.FC<BodyTabProps> = ({ body, onItemChange, item }) =>
 
   const handleMultipartChange = (rows: KeyValueRow[]) => {
     // Rebuild the text fields from the table; preserve any file fields untouched.
-    const textEntries = rows.map((r) => ({
+    const textEntries = rows.map(r => ({
       name: r.name,
       value: r.value,
       type: 'text' as const,
       disabled: !r.enabled
     }));
-    const fileEntries = (((body as { data?: any[] })?.data as any[]) || []).filter((e) => e?.type === 'file');
+    const fileEntries = (((body as { data?: any[] })?.data as any[]) || []).filter(e => e?.type === 'file');
     onItemChange({
       ...item,
       http: {
@@ -50,11 +54,7 @@ export const BodyTab: React.FC<BodyTabProps> = ({ body, onItemChange, item }) =>
   return (
     <div className="space-y-3">
       {!body ? (
-        <div
-          data-testid="body-empty"
-          className="text-center py-6 border-2 border-dashed rounded"
-          style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}
-        >
+        <div data-testid="body-empty" className="text-center py-6 border-2 border-dashed rounded" style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}>
           No body content. Select a body type to add content.
         </div>
       ) : 'data' in body && typeof body.data === 'string' ? (
@@ -72,13 +72,19 @@ export const BodyTab: React.FC<BodyTabProps> = ({ body, onItemChange, item }) =>
             }
           }}
           language={
-            body.type === 'json' ? 'jsonc' : body.type === 'xml' ? 'xml' : body.type === 'sparql' ? 'sparql' : 'text'
+            body.type === 'json'
+              ? 'jsonc'
+              : body.type === 'xml'
+                ? 'xml'
+                : body.type === 'sparql'
+                  ? 'sparql'
+                  : 'text'
           }
           height="300px"
         />
       ) : Array.isArray(body) || (body?.type === 'form-urlencoded' && Array.isArray(body?.data)) ? (
         (() => {
-          const formDataArray = Array.isArray(body) ? body : body?.data || [];
+          const formDataArray = Array.isArray(body) ? body : (body?.data || []);
           const formBodyData: KeyValueRow[] = (formDataArray as any[]).map((field: any, index: number) => ({
             id: `form-${index}`,
             name: field.name || '',
@@ -103,18 +109,18 @@ export const BodyTab: React.FC<BodyTabProps> = ({ body, onItemChange, item }) =>
             </div>
           );
         })()
-      ) : body?.type === 'multipart-form' && Array.isArray(body?.data) ? (
+        ) : body?.type === 'multipart-form' && Array.isArray(body?.data) ? (
         (() => {
           const entries = body.data as any[];
           const textRows: KeyValueRow[] = entries
-            .filter((e) => e?.type !== 'file')
+            .filter(e => e?.type !== 'file')
             .map((e, index) => ({
               id: `mp-${index}`,
               name: e.name || '',
               value: e.value || '',
               enabled: e.disabled !== true
             }));
-          const fileEntries = entries.filter((e) => e?.type === 'file');
+          const fileEntries = entries.filter(e => e?.type === 'file');
 
           return (
             <div data-testid="body-multipart">
@@ -145,24 +151,20 @@ export const BodyTab: React.FC<BodyTabProps> = ({ body, onItemChange, item }) =>
             </div>
           );
         })()
-      ) : body?.type === 'file' && Array.isArray(body?.data) ? (
+        ) : body?.type === 'file' && Array.isArray(body?.data) ? (
         (() => {
           const variants = body.data as any[];
-          const selected = variants.find((v) => v?.selected) || variants[0];
+          const selected = variants.find(v => v?.selected) || variants[0];
 
           return (
             <div data-testid="body-file" className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-              <div className="mb-1 font-medium" style={{ color: 'var(--text-primary)' }}>
-                File / Binary
-              </div>
+              <div className="mb-1 font-medium" style={{ color: 'var(--text-primary)' }}>File / Binary</div>
               <div>Path: {selected?.filePath || '(no file selected)'}</div>
-              <div className="mt-1">
-                The file isn&apos;t read in the browser preview, so the request runs without the file body.
-              </div>
+              <div className="mt-1">The file isn&apos;t read in the browser preview, so the request runs without the file body.</div>
             </div>
           );
         })()
-      ) : (
+        ) : (
         <div className="text-center py-6" style={{ color: 'var(--text-secondary)' }}>
           Unsupported body type
         </div>

@@ -17,7 +17,14 @@ interface SelectProps {
   testId?: string;
 }
 
-export const Select: React.FC<SelectProps> = ({ value, options, onChange, id, ariaLabel, testId }) => {
+export const Select: React.FC<SelectProps> = ({
+  value,
+  options,
+  onChange,
+  id,
+  ariaLabel,
+  testId
+}) => {
   const selected = options.find((option) => option.value === value);
 
   const items = options.map((option) => ({

@@ -21,9 +21,7 @@ const render = (ui: React.ReactElement) => {
 const noop = () => {};
 
 const renderAuth = (auth: unknown, extra: Record<string, unknown> = {}) =>
-  render(
-    <AuthTab auth={auth} onAuthChange={noop} showFullAuth item={{ request: {} }} onItemChange={noop} {...extra} />
-  );
+  render(<AuthTab auth={auth} onAuthChange={noop} showFullAuth item={{ request: {} }} onItemChange={noop} {...extra} />);
 
 describe('AuthTab', () => {
   it('offers exactly the six supported auth types and none of the unsupported ones', () => {
@@ -107,13 +105,6 @@ describe('AuthTab', () => {
   it('uses the exact AWS field labels from Bruno', () => {
     const { root } = renderAuth({ type: 'awsv4' });
     const labels = root.querySelectorAll('.oc-label').map((l) => l.text.trim());
-    expect(labels).toEqual([
-      'Access Key ID',
-      'Secret Access Key',
-      'Session Token',
-      'Service',
-      'Region',
-      'AWS CLI Profile Name'
-    ]);
+    expect(labels).toEqual(['Access Key ID', 'Secret Access Key', 'Session Token', 'Service', 'Region', 'AWS CLI Profile Name']);
   });
 });

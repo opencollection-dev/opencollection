@@ -21,11 +21,6 @@ interface BodyModeSelectorProps {
   item: HttpRequest;
 }
 
-/**
- * Grouped body types, ported from bruno-app's RequestBodyMode (Form / Raw /
- * Other) with the same @tabler icons. `value`s keep oc-docs' hyphenated ids so
- * the existing body model + change handler are unchanged.
- */
 const BODY_TYPE_GROUPS = [
   {
     name: 'Form',

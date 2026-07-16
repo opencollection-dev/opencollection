@@ -54,9 +54,9 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
   const getMethodColor = getMethodColorVar;
 
   return (
-    <StyledWrapper
+    <StyledWrapper 
       className="flex items-stretch"
-      style={{
+      style={{ 
         height: '36px'
       }}
     >
