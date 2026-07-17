@@ -1,5 +1,6 @@
 import React from 'react';
 import { CaretIcon } from '../../../assets/icons';
+import MenuDropdown from '../../MenuDropdown';
 import { StyledWrapper } from './StyledWrapper';
 
 export interface SelectOption {
@@ -26,29 +27,23 @@ export const Select: React.FC<SelectProps> = ({
 }) => {
   const selected = options.find((option) => option.value === value);
 
+  const items = options.map((option) => ({
+    id: option.value,
+    label: option.label,
+    onClick: () => onChange(option.value)
+  }));
+
   return (
-    <StyledWrapper className="oc-select">
-      <span className="oc-select-label" aria-hidden="true">
-        {selected ? selected.label : ''}
-      </span>
-      <span className="oc-select-caret" aria-hidden="true">
-        <CaretIcon />
-      </span>
-      <select
-        id={id}
-        className="oc-select-native"
-        value={value}
-        aria-label={ariaLabel}
-        data-testid={testId}
-        onChange={(event) => onChange(event.target.value)}
-      >
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-    </StyledWrapper>
+    <MenuDropdown items={items} selectedItemId={value} placement="bottom-start" data-testid={testId}>
+      <StyledWrapper className="oc-select" id={id} role="button" tabIndex={0} aria-label={ariaLabel}>
+        <span className="oc-select-label" aria-hidden="true">
+          {selected ? selected.label : ''}
+        </span>
+        <span className="oc-select-caret" aria-hidden="true">
+          <CaretIcon />
+        </span>
+      </StyledWrapper>
+    </MenuDropdown>
   );
 };
 

@@ -5,13 +5,14 @@ import SidebarTree from './SidebarTree/SidebarTree';
 import SidebarFooter from './SidebarFooter/SidebarFooter';
 import { CubeIcon, GlobeIcon } from '../../../assets/icons';
 import { StyledWrapper } from './StyledWrapper';
+import { computeAutoReveal } from './autoReveal';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { toggleItem, expandFolders, selectDocsCollection } from '../../../store/slices/docs';
 import { getItemUuid } from '../../../utils/itemUtils';
 import { useNavModel } from '../../../routing/hooks';
 import { normalizeSlug } from '../../../routing/resolve';
 import { OVERVIEW_SLUG, ENVIRONMENTS_SLUG } from '../../../routing/navModel';
-import { useDocsNavigate } from '../../../hooks';
+import { useDocsNavigate, useAutoHideScrollbar, useIsMobileDevice } from '../../../hooks';
 import { useActiveExample } from './hooks/useActiveExample';
 
 interface SidebarProps {
@@ -43,52 +44,28 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
 
   const { activeExample, goToExample } = useActiveExample(model, activeSlug, uuidToSlug, onNavigate);
 
-  // Reveal the scrollbar thumb only while the list is active (mousemove/scroll),
-  // then hide it 1s after activity stops. Toggled via classList so pointer noise
-  // never triggers a re-render.
+  // Show the scrollbar while the list is in use, then fade it out after 1s idle.
+  // Shared with the playground sidebar so both behave the same.
   const itemsRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = itemsRef.current;
-    if (!el) return;
-    let timer: ReturnType<typeof setTimeout>;
-    const show = () => {
-      el.classList.add('scrolling');
-      clearTimeout(timer);
-      timer = setTimeout(() => el.classList.remove('scrolling'), 1000);
-    };
-    el.addEventListener('mousemove', show);
-    el.addEventListener('scroll', show, { passive: true });
-    return () => {
-      clearTimeout(timer);
-      el.removeEventListener('mousemove', show);
-      el.removeEventListener('scroll', show);
-    };
-  }, []);
+  useAutoHideScrollbar(itemsRef);
+
+  // Smaller nav text on real phones/tablets only. Based on the device, not the
+  // window size, so a narrow laptop window keeps the normal 13px.
+  const isMobileDevice = useIsMobileDevice();
 
   const autoRevealedSlug = useRef<string | null>(null);
   useEffect(() => {
-    if (autoRevealedSlug.current === activeSlug) return;
-    autoRevealedSlug.current = activeSlug;
-
-    const entry = model.bySlug.get(activeSlug);
-    if (!entry) return;
-
-    const uuids: string[] = [];
-    for (const ancestor of entry.ancestors) {
-      const uuid = getItemUuid(model.bySlug.get(ancestor.slug)?.item);
-      if (uuid) uuids.push(uuid);
-    }
-    // Also expand the active folder itself, so opening a folder reveals its
-    // contents in the tree (folder rows navigate; the chevron toggles manually).
-    if (entry.type === 'folder') {
-      const uuid = getItemUuid(entry.item);
-      if (uuid) uuids.push(uuid);
-    }
+    // Open the folders around the active item so it shows up in the tree. On
+    // reload the collection loads a moment later, so computeAutoReveal waits
+    // until it can resolve the slug; this effect runs again once it loads and
+    // opens the folders then, instead of leaving them closed.
+    const { claim, uuids } = computeAutoReveal(autoRevealedSlug.current, activeSlug, model);
+    if (claim) autoRevealedSlug.current = activeSlug;
     if (uuids.length) dispatch(expandFolders(uuids));
   }, [activeSlug, model, dispatch]);
 
   return (
-    <StyledWrapper className="sidebar" data-testid={testId}>
+    <StyledWrapper className={`sidebar${isMobileDevice ? ' mobile' : ''}`} data-testid={testId}>
       <div className="sidebar-top-links">
         <SidebarNavLink
           label="Overview"

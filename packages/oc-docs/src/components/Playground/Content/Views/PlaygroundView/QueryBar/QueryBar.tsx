@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import { StyledWrapper } from './StyledWrapper';
+import MenuDropdown from '../../../../../../ui/MenuDropdown';
 import { getHttpMethod, getRequestUrl, getHttpParams } from '../../../../../../utils/schemaHelpers';
 import { syncPathParams, syncQueryParams } from '../../../../../../utils/pathParams';
 import { availableMethods, getMethodColorVar } from '../../../../../../theme/methodColors';
@@ -58,32 +59,25 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
       }}
     >
       <div className="method-select-wrapper">
-        <select
-          className="method-select h-full"
-          data-testid="query-bar-method-select"
-          value={method}
-          onChange={(e) => handleMethodChange(e.target.value)}
-          style={{ color: getMethodColorVar(method) }}
+        <MenuDropdown
+          selectedItemId={method}
+          placement="bottom-start"
+          items={availableMethods.map((m) => ({
+            id: m,
+            label: <span style={{ color: getMethodColorVar(m) }}>{m}</span>,
+            ariaLabel: m,
+            onClick: () => handleMethodChange(m)
+          }))}
         >
-          {availableMethods.map((m) => (
-            <option key={m} value={m} style={{ color: getMethodColorVar(m) }}>
-              {m}
-            </option>
-          ))}
-        </select>
-        <svg
-          className="method-select-icon"
-          width="12"
-          height="12"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="var(--oc-colors-text-muted)"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <polyline points="6 9 12 15 18 9" />
-        </svg>
+          <button
+            type="button"
+            className="method-select h-full"
+            aria-label="HTTP method"
+            style={{ color: getMethodColorVar(method) }}
+          >
+            {method}
+          </button>
+        </MenuDropdown>
       </div>
 
       <input

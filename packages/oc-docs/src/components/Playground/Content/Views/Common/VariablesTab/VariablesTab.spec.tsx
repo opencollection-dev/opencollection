@@ -1,7 +1,6 @@
-import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { useRenderToDom } from '../../../../../../hooks/useRenderToDom';
-import { query } from '../../../../../../test-utils/dom';
+import { query, queryByTestId } from '../../../../../../test-utils/dom';
 import { VariablesTab } from './VariablesTab';
 
 const noop = () => {};
@@ -23,7 +22,7 @@ describe('VariablesTab', () => {
     const values = inputValues(root);
     expect(values).toContain('baseUrl');
     expect(values).toContain('https://api.example.com');
-    expect(root.querySelector('.var-type-select')).toBeTruthy();
+    expect(queryByTestId(root, 'variable-data-type-0')).toBeTruthy();
   });
 
   it('surfaces a typed value as its data string', () => {

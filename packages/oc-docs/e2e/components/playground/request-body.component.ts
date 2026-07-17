@@ -9,6 +9,7 @@ export class RequestBodyComponent extends BaseComponent {
   readonly file = this.page.getByTestId('body-file');
 
   async selectType(value: string): Promise<void> {
-    await this.typeSelect.selectOption(value);
+    await this.typeSelect.click();
+    await this.page.getByTestId(`body-type-select-${value}`).click();
   }
 }

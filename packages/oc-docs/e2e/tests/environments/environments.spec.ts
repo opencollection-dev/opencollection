@@ -24,27 +24,27 @@ test.describe('Environments page', () => {
       await expect(environmentsPage.variablesGroup).toBeVisible();
     });
 
-    await test.step('the host variable shows its value and a String data type', async () => {
+    await test.step('the host variable shows its value and a string data type', async () => {
       await expect(table.variableRow('host')).toBeVisible();
       await expect(table.valueOf('host')).toContainText('http://localhost:8081');
-      await expect(table.dataTypeOf('host')).toHaveText('String');
+      await expect(table.dataTypeOf('host')).toHaveText('string');
     });
   });
 
   test('labels number, boolean and object variables with their data type', async ({ environmentsPage }) => {
     const { table } = environmentsPage;
 
-    await test.step('a number variable shows its value and a Number data type', async () => {
+    await test.step('a number variable shows its value and a number data type', async () => {
       await expect(table.valueOf('retryCount')).toContainText('3');
-      await expect(table.dataTypeOf('retryCount')).toHaveText('Number');
+      await expect(table.dataTypeOf('retryCount')).toHaveText('number');
     });
 
-    await test.step('a boolean variable shows a Boolean data type', async () => {
-      await expect(table.dataTypeOf('featureEnabled')).toHaveText('Boolean');
+    await test.step('a boolean variable shows a boolean data type', async () => {
+      await expect(table.dataTypeOf('featureEnabled')).toHaveText('boolean');
     });
 
-    await test.step('an object variable shows an Object data type', async () => {
-      await expect(table.dataTypeOf('defaultUser')).toHaveText('Object');
+    await test.step('an object variable shows an object data type', async () => {
+      await expect(table.dataTypeOf('defaultUser')).toHaveText('object');
     });
   });
 

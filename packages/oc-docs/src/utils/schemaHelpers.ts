@@ -13,7 +13,7 @@
 
 import type { OpenCollection } from '@opencollection/types';
 import type { Item as OpenCollectionItem, Folder, ScriptFile } from '@opencollection/types/collection/item';
-import type { HttpRequest, HttpRequestHeader, HttpRequestExample } from '@opencollection/types/requests/http';
+import type { HttpRequest, HttpRequestHeader, HttpRequestExample, HttpRequestBody, HttpRequestBodyVariant } from '@opencollection/types/requests/http';
 import type { GraphQLRequest } from '@opencollection/types/requests/graphql';
 import type { GrpcRequest } from '@opencollection/types/requests/grpc';
 import type { WebSocketRequest } from '@opencollection/types/requests/websocket';
@@ -21,6 +21,9 @@ import type { Script, Scripts, ScriptType } from '@opencollection/types/common/s
 import { PROTOCOL_BADGE_LABELS } from '../constants';
 
 type RequestItem = HttpRequest | GraphQLRequest | GrpcRequest | WebSocketRequest;
+
+/** A request body as stored on an item: a single body, a list of body variants, or none. */
+export type RequestBody = HttpRequestBody | HttpRequestBodyVariant[] | undefined;
 
 /**
  * Get the type of an item (from info block or root for backwards compatibility)
@@ -205,7 +208,7 @@ export const getHttpHeaders = (item: HttpRequest | null | undefined): HttpReques
 /**
  * Get body from an HTTP request (from http block or root)
  */
-export const getHttpBody = (item: HttpRequest | null | undefined): HttpRequest['http'] extends { body?: infer B } ? B : any => {
+export const getHttpBody = (item: HttpRequest | null | undefined): RequestBody => {
   if (!item) return undefined;
   
   // New schema: body in http block

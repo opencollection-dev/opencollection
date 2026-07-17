@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { Folder } from '@opencollection/types/collection/item';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
@@ -11,6 +11,7 @@ import {
   setSelectedItemId,
   setSelectedExampleIndex,
   toggleFolderCollapse,
+  expandFolders,
 } from '@slices/playground';
 import { selectActiveEnvName } from '../../../store/slices/env';
 import type { ExampleHighlight } from '../../Docs/Sidebar/SidebarTree/SidebarTree';
@@ -25,6 +26,11 @@ import CollectionSettingsView from '../Content/Views/CollectionSettingsView/Coll
 import ExampleView from '../Content/Views/ExampleView/ExampleView';
 import PlaygroundSidebar from '../PlaygroundSidebar/PlaygroundSidebar';
 import type { DockMode } from '../../../utils/playgroundDock';
+import {
+  resolvePlaygroundTarget,
+  PLAYGROUND_ENVIRONMENTS_SLUG,
+  PLAYGROUND_COLLECTION_SLUG,
+} from './resolvePlaygroundTarget';
 import { StyledWrapper } from './StyledWrapper';
 
 const ORIENTATION_BREAKPOINT = 640;
@@ -86,87 +92,87 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
   const viewWidth = useElementWidth(viewRef);
   const orientation = viewWidth > 0 && viewWidth < ORIENTATION_BREAKPOINT ? 'vertical' : 'horizontal';
 
-  // Apply the URL's request slug once per value (deep-link / Try). Keyed on the
-  // slug, not selectedItemId, so opening the gear or a folder (which clears the
-  // selection) is not immediately reverted back to the request.
+  // Reopen whatever the URL says was last open. `pgReq` holds a request, a
+  // folder, or the environments / collection-settings view, so a deep link, a
+  // Try, or a reload all bring back the same thing. Runs once per URL value.
   useEffect(() => {
     if (!requestSlug || appliedSlugRef.current === requestSlug) return;
-    const entry = model.bySlug.get(requestSlug);
-    const uuid = entry ? getItemUuid(entry.item) : undefined;
-    // Only mark the slug applied once it actually resolves, so a deep-link / Try
-    // that arrives before the collection hydrates is retried when the model
-    // loads (the effect re-runs on `model`) instead of being dropped.
-    if (uuid) {
-      appliedSlugRef.current = requestSlug;
-      dispatch(setSelectedItemId(uuid));
-      dispatch(setSelectedExampleIndex(null));
-      dispatch(setViewMode('playground'));
-    }
-  }, [requestSlug, model, dispatch, appliedSlugRef]);
+    const target = resolvePlaygroundTarget(requestSlug, model);
+    if (!target) return; // sidebar list hasn't loaded this item yet - retry once it does
+    // A request or folder needs the playground's own copy of the collection to
+    // select it and open its parent folders. On reload that copy can arrive just
+    // after the sidebar list, so if it isn't ready we wait instead of marking
+    // this done - otherwise the folders would never open. The environments and
+    // collection views need no collection, so they open right away.
+    if (target.uuid && !collection?.items) return;
+    appliedSlugRef.current = requestSlug;
+    dispatch(setSelectedItemId(target.uuid));
+    dispatch(setSelectedExampleIndex(null));
+    dispatch(setViewMode(target.view));
+    if (target.expandUuids.length) dispatch(expandFolders(target.expandUuids));
+  }, [requestSlug, model, collection, dispatch, appliedSlugRef]);
 
   // In the inline dock the sidebar is an overlay, so close it once the user has
   // picked something to view (mirrors a mobile navigation drawer).
-  const closeSidebarIfInline = useCallback(() => {
+  const closeSidebarIfInline = () => {
     if (dock === 'inline') onCloseSidebar();
-  }, [dock, onCloseSidebar]);
+  };
 
-  const handleNavigate = useCallback(
-    (slug: string) => {
-      const entry = model.bySlug.get(slug);
-      if (!entry) return;
-      const uuid = getItemUuid(entry.item);
-      if (!uuid) return;
-      dispatch(setSelectedExampleIndex(null));
-      dispatch(setSelectedItemId(uuid));
-      if (isFolder(entry.item)) {
-        dispatch(setViewMode('folder-settings'));
-      } else {
-        dispatch(setViewMode('playground'));
-        setRequestSlug(slug);
-      }
-      closeSidebarIfInline();
-    },
-    [model, dispatch, setRequestSlug, closeSidebarIfInline]
-  );
+  // A sidebar click applies the target right away, then writes the slug so a
+  // reload restores it. Applying directly (not only through the reopen effect) is
+  // what makes leaving an example work: an example keeps the slug on its parent
+  // request, so clicking that request is a no-op slug write and the effect would
+  // never fire. appliedSlugRef is synced so the effect treats it as already done.
+  const handleNavigate = (slug: string) => {
+    const target = resolvePlaygroundTarget(slug, model);
+    if (!target || !target.uuid) return; // not a resolvable item, ignore the click
+    dispatch(setSelectedItemId(target.uuid));
+    dispatch(setSelectedExampleIndex(null));
+    dispatch(setViewMode(target.view));
+    if (target.expandUuids.length) dispatch(expandFolders(target.expandUuids));
+    appliedSlugRef.current = slug;
+    setRequestSlug(slug);
+    closeSidebarIfInline();
+  };
 
-  const handleToggleFolder = useCallback((uuid: string) => dispatch(toggleFolderCollapse(uuid)), [dispatch]);
+  const handleToggleFolder = (uuid: string) => dispatch(toggleFolderCollapse(uuid));
 
-  const handleExampleClick = useCallback(
-    (requestUuid: string, index: number) => {
-      dispatch(setSelectedItemId(requestUuid));
-      dispatch(setSelectedExampleIndex(index));
-      // Keep the deep-link slug pointing at the example's parent request, so a
-      // reload lands on that request (examples themselves are not deep-linked).
-      // Mark it applied first, otherwise the deep-link effect sees a new slug
-      // and reverts the view back to 'playground'.
-      const slug = uuidToSlug.get(requestUuid);
-      if (slug) {
-        appliedSlugRef.current = slug;
-        setRequestSlug(slug);
-      }
-      dispatch(setViewMode('example'));
-      closeSidebarIfInline();
-    },
-    [dispatch, uuidToSlug, setRequestSlug, appliedSlugRef, closeSidebarIfInline]
-  );
+  // Highlighting an example is applied directly, not through the URL. Keep the
+  // slug on the example's parent request (examples aren't deep-linked), and mark
+  // it applied first so the reopen effect above doesn't revert to 'playground'.
+  const handleExampleClick = (requestUuid: string, index: number) => {
+    dispatch(setSelectedItemId(requestUuid));
+    dispatch(setSelectedExampleIndex(index));
+    const slug = uuidToSlug.get(requestUuid);
+    if (slug) {
+      appliedSlugRef.current = slug;
+      setRequestSlug(slug);
+    }
+    dispatch(setViewMode('example'));
+    closeSidebarIfInline();
+  };
 
-  const openEnvironments = useCallback(() => {
+  const openEnvironments = () => {
     dispatch(setViewMode('environments'));
     dispatch(setSelectedItemId(null));
     dispatch(setSelectedExampleIndex(null));
+    appliedSlugRef.current = PLAYGROUND_ENVIRONMENTS_SLUG;
+    setRequestSlug(PLAYGROUND_ENVIRONMENTS_SLUG); // persist so a reload restores it
     closeSidebarIfInline();
-  }, [dispatch, closeSidebarIfInline]);
+  };
 
-  const openCollection = useCallback(() => {
+  const openCollection = () => {
     dispatch(setViewMode('collection-settings'));
     dispatch(setSelectedItemId(null));
     dispatch(setSelectedExampleIndex(null));
+    appliedSlugRef.current = PLAYGROUND_COLLECTION_SLUG;
+    setRequestSlug(PLAYGROUND_COLLECTION_SLUG); // persist so a reload restores it
     closeSidebarIfInline();
-  }, [dispatch, closeSidebarIfInline]);
+  };
 
   const view = (() => {
     if (viewMode === 'collection-settings' && collection) return <CollectionSettingsView collection={collection} />;
-    if (viewMode === 'environments' && collection) return <EnvironmentsView collection={collection} />;
+    if (viewMode === 'environments' && collection) return <EnvironmentsView collection={collection} compact={dock === 'inline'} />;
     if (viewMode === 'folder-settings' && selectedItem && isFolder(selectedItem) && collection) {
       return (
         <FolderSettingsView folder={selectedItem as Folder} collection={collection} onFolderChange={() => undefined} />

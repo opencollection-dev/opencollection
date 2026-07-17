@@ -29,4 +29,9 @@ export class CollectionSettingsComponent extends BaseComponent {
   async openTab(id: string): Promise<void> {
     await this.tab(id).click();
   }
+
+  async selectAuthMode(value: string): Promise<void> {
+    await this.authMode.click();
+    await this.page.getByTestId(`auth-mode-select-${value}`).click();
+  }
 }

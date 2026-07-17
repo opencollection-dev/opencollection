@@ -43,22 +43,21 @@ export const StyledWrapper = styled.div`
     align-items: center;
   }
 
-  select.method-select {
+  .method-select {
     appearance: none;
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+    font-family: inherit;
+    line-height: 1;
     background-color: transparent;
     border: none;
     outline: none;
     cursor: pointer;
-    padding: 0 24px 0 12px;
-    font-size: 12px;
+    padding: 0 0.5rem;
+    font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.02em;
-  }
-
-  .method-select-icon {
-    position: absolute;
-    right: 8px;
-    pointer-events: none;
   }
 
   button.send {

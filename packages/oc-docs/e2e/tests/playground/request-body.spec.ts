@@ -1,11 +1,9 @@
 import { test, expect } from '../../playwright';
 
-const openAt = (dock: string): string => `/#/?pg=1&dock=${dock}`;
-
 test.describe('Request body types', () => {
   test.beforeEach(async ({ page, playground }) => {
-    await page.goto(openAt('bottom'));
-    await playground.treeItems.filter({ hasText: 'get users' }).first().click();
+    await playground.open('bottom');
+    await playground.openRequest('get users');
     await expect(page).toHaveURL(/pgReq=/);
     await playground.selectTab('body');
   });

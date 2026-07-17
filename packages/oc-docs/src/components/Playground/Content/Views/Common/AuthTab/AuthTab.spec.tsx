@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { parse } from 'node-html-parser';
 import { describe, it, expect } from 'vitest';
 import { query } from '../../../../../../test-utils/dom';
+import { AUTH_DEFAULTS, AUTH_MODE_LABELS, PLACEMENT_OPTIONS } from '../../../../../../constants';
 import { AuthTab } from './AuthTab';
 
 const render = (ui: React.ReactElement) => {
@@ -24,27 +25,23 @@ const renderAuth = (auth: unknown, extra: Record<string, unknown> = {}) =>
 
 describe('AuthTab', () => {
   it('offers exactly the six supported auth types and none of the unsupported ones', () => {
-    const { getByTestId } = renderAuth(undefined);
-    const options = getByTestId('auth-mode-select')
-      .querySelectorAll('option')
-      .map((o) => o.text.trim());
-    expect(options).toEqual(['No Auth', 'Basic Auth', 'Bearer Token', 'API Key', 'Digest Auth', 'AWS Signature v4']);
+    const modeLabels = ['No Auth', ...Object.keys(AUTH_DEFAULTS).map((mode) => AUTH_MODE_LABELS[mode] ?? mode)];
+    expect(modeLabels).toEqual(['No Auth', 'Basic Auth', 'Bearer Token', 'API Key', 'Digest Auth', 'AWS Signature v4']);
     ['oauth', 'wsse', 'ntlm', 'edgegrid', 'akamai'].forEach((excluded) =>
-      expect(options.join(' ').toLowerCase()).not.toContain(excluded)
+      expect(modeLabels.join(' ').toLowerCase()).not.toContain(excluded)
     );
   });
 
-  it('adds the Inherit option only when showInherit is set', () => {
-    const withInherit = renderAuth(undefined, { showInherit: true })
-      .getByTestId('auth-mode-select')
-      .querySelectorAll('option')
-      .map((o) => o.text.trim());
-    expect(withInherit).toContain('Inherit');
-    const without = renderAuth(undefined)
-      .getByTestId('auth-mode-select')
-      .querySelectorAll('option')
-      .map((o) => o.text.trim());
-    expect(without).not.toContain('Inherit');
+  it('shows the current auth type on the mode trigger', () => {
+    expect(renderAuth(undefined).getByTestId('auth-mode-select').text).toContain('No Auth');
+    expect(renderAuth({ type: 'bearer', token: 'abc' }).getByTestId('auth-mode-select').text).toContain('Bearer Token');
+  });
+
+  it('offers Inherit as a mode only when showInherit is set', () => {
+    // Enabled: inherit is selectable and shows on the trigger.
+    expect(renderAuth('inherit', { showInherit: true }).getByTestId('auth-mode-select').text).toContain('Inherit');
+    // Disabled: inherit is not an option, so nothing matches and the trigger shows no label.
+    expect(renderAuth('inherit').getByTestId('auth-mode-select').text.trim()).toBe('');
   });
 
   it('renders no form for None', () => {
@@ -77,14 +74,13 @@ describe('AuthTab', () => {
     const { getByTestId } = renderAuth({ type: 'apikey', key: 'X-Api-Key', value: 'k', placement: 'query' });
     expect(getByTestId('auth-key').getAttribute('type')).toBe('text');
     expect(getByTestId('auth-value').getAttribute('type')).toBe('text');
-    const placement = getByTestId('auth-placement');
-    expect(placement.querySelectorAll('option').map((o) => o.text.trim())).toEqual(['Header', 'Query Params']);
-    expect(query(placement, 'option[selected]').text.trim()).toBe('Query Params');
+    expect(PLACEMENT_OPTIONS.map((option) => option.label)).toEqual(['Header', 'Query Params']);
+    expect(getByTestId('auth-placement').text).toContain('Query Params');
   });
 
   it('defaults the apikey placement to Header when none is stored', () => {
     const { getByTestId } = renderAuth({ type: 'apikey', key: '', value: '' });
-    expect(query(getByTestId('auth-placement'), 'option[selected]').text.trim()).toBe('Header');
+    expect(getByTestId('auth-placement').text).toContain('Header');
   });
 
   it('renders digest auth with a masked, revealable password', () => {

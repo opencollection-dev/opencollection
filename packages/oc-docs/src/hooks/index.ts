@@ -5,7 +5,13 @@ export {
   showsHamburger,
   type TopbarLayoutMode,
 } from './useTopbarLayout';
-export { useCanRunBrunoApp, computeCanRunBrunoApp, type DeviceEnv } from './useCanRunBrunoApp';
+export {
+  useCanRunBrunoApp,
+  computeCanRunBrunoApp,
+  computeIsMobileOS,
+  useIsMobileDevice,
+  type DeviceEnv,
+} from './useCanRunBrunoApp';
 export { useSearchHotkey } from './useSearchHotkey';
 export { useClickOutside } from './useClickOutside';
 export { useEscapeKey } from './useEscapeKey';
@@ -22,3 +28,4 @@ export {
 export { usePlaygroundUrlState, type PlaygroundUrlApi } from './usePlaygroundUrlState';
 export { useDocsNavigate } from './useDocsNavigate';
 export { useElementWidth } from './useElementWidth';
+export { useAutoHideScrollbar } from './useAutoHideScrollbar';

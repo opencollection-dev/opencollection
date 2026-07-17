@@ -9,7 +9,7 @@ export const StyledWrapper = styled.span`
   padding: 0.34375rem 0.75rem 0.34375rem 0.625rem;
   color: var(--primary-color);
   background-color: var(--bg-primary);
-  border: 0.0625rem solid var(--oc-border-border0);
+  border: 1px solid var(--oc-border-border0);
   border-radius: 0.375rem;
   cursor: pointer;
   transition: border-color 0.15s ease;
@@ -26,30 +26,5 @@ export const StyledWrapper = styled.span`
     flex: none;
     width: 0.75rem;
     height: 0.75rem;
-  }
-
-  .oc-select-native {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    border: none;
-    appearance: none;
-    -webkit-appearance: none;
-    background: transparent;
-    color: transparent;
-    opacity: 0;
-    cursor: inherit;
-  }
-
-  .oc-select-native:focus,
-  .oc-select-native:focus-visible {
-    outline: none;
-  }
-
-  .oc-select-native option {
-    color: var(--text-primary);
   }
 `;

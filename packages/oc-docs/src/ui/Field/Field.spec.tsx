@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { parse } from 'node-html-parser';
 import { describe, it, expect } from 'vitest';
 import { Field } from './Field';
-import { query } from '../../test-utils/dom';
+import { query, getByTestId } from '../../test-utils/dom';
 
 const noop = () => {};
 
@@ -41,7 +41,7 @@ describe('Field', () => {
         />
       </Field>
     );
-    expect(query(root, '.oc-field .oc-select-native').getAttribute('data-testid')).toBe('placement');
+    expect(getByTestId(root, 'placement')).toBeTruthy();
   });
 
   it('renders without a label when none is given', () => {

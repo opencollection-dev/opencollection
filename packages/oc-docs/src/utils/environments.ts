@@ -1,10 +1,10 @@
 import type { Environment } from '@opencollection/types/config/environments';
-import type { VariableValueType } from '@opencollection/types/common/variables';
-import { MANAGER_LABELS, TYPE_LABELS } from '../constants';
+import type { Variable, VariableValueOrVariants, VariableValueType } from '@opencollection/types/common/variables';
+import { MANAGER_LABELS } from '../constants';
 import { getDescription, getVariableType } from './request';
 import { isSecretVariable, unwrapVariableValue } from './variableResolution';
 
-const humanizeType = (type: VariableValueType | undefined): string => (type && TYPE_LABELS[type]) || 'String';
+export const humanizeType = (type: VariableValueType | undefined): string => type || 'string';
 
 const humanizeManager = (type: string | undefined): string => {
   if (!type) return 'External';
@@ -16,6 +16,50 @@ const humanizeManager = (type: string | undefined): string => {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ')
   );
+};
+
+// keeps the value's original shape
+export const writeBackValue = (
+  original: VariableValueOrVariants | undefined,
+  edited: string
+): VariableValueOrVariants => {
+  if (Array.isArray(original)) {
+    const selected = Math.max(0, original.findIndex((variant) => variant.selected));
+    return original.map((variant, index) => (index === selected ? { ...variant, value: edited } : variant));
+  }
+  if (original && typeof original === 'object') return { ...original, data: edited };
+  return edited;
+};
+
+export interface EnvVarRow {
+  id: string;
+  name: string;
+  value: string;
+  enabled: boolean;
+  dataType?: string;
+  secret?: boolean;
+  source?: Variable;
+}
+
+export const envVariableToRow = (variable: Variable, index: number): EnvVarRow => ({
+  id: `var-${index}`,
+  name: variable.name || '',
+  value: unwrapVariableValue(variable.value),
+  dataType: humanizeType(getVariableType(variable)),
+  enabled: !variable.disabled,
+  secret: isSecretVariable(variable),
+  source: variable
+});
+
+export const envRowToVariable = (row: EnvVarRow): Variable => {
+  const source = row.source ?? ({} as Variable);
+  if (row.secret) {
+    const secret = { ...source, name: row.name, disabled: !row.enabled, secret: true } as Variable & { value?: unknown };
+    if (row.value) secret.value = row.value;
+    else delete secret.value;
+    return secret;
+  }
+  return { ...source, name: row.name, value: writeBackValue(source.value, row.value), disabled: !row.enabled };
 };
 
 interface ExternalSecretsConfig {

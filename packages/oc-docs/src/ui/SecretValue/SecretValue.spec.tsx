@@ -23,4 +23,18 @@ describe('SecretValue', () => {
     expect(html).not.toContain('<button');
     expect(html).not.toContain('data-testid="secret-toggle"');
   });
+
+  it('is an editable, masked, read-only-until-revealed input when onChange is given', () => {
+    const html = renderToStaticMarkup(<SecretValue value="s3cr3t-token" onChange={() => undefined} testId="secret" />);
+    expect(html).toContain('data-testid="secret-input"');
+    expect(html).toContain('type="password"');
+    expect(html).toContain('readonly');
+    expect(html).toContain('data-testid="secret-toggle"');
+  });
+
+  it('stays display-only when readOnly even if onChange is passed', () => {
+    const html = renderToStaticMarkup(<SecretValue value="s3cr3t-token" readOnly onChange={() => undefined} testId="secret" />);
+    expect(html).not.toContain('data-testid="secret-input"');
+    expect(html).toContain(SECRET_MASK);
+  });
 });

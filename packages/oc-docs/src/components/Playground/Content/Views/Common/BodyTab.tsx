@@ -2,9 +2,10 @@ import React from 'react';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import CodeEditor from '../../../../../ui/CodeEditor/CodeEditor';
 import KeyValueTable, { type KeyValueRow } from '../../../../../components/KeyValueTable/KeyValueTable';
+import type { RequestBody } from '../../../../../utils/schemaHelpers';
 
 interface BodyTabProps {
-  body: any;
+  body: RequestBody;
   onItemChange: (item: HttpRequest) => void;
   item: HttpRequest;
 }
@@ -40,7 +41,7 @@ export const BodyTab: React.FC<BodyTabProps> = ({
       type: 'text' as const,
       disabled: !r.enabled
     }));
-    const fileEntries = ((body?.data as any[]) || []).filter(e => e?.type === 'file');
+    const fileEntries = (((body as { data?: any[] })?.data as any[]) || []).filter(e => e?.type === 'file');
     onItemChange({
       ...item,
       http: {
@@ -52,73 +53,6 @@ export const BodyTab: React.FC<BodyTabProps> = ({
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
-            Body Type:
-          </span>
-          <select
-            data-testid="body-type-select"
-            value={
-              !body ? 'none' :
-              'type' in body ? body.type :
-              Array.isArray(body) ? 'form-urlencoded' : 'none'
-            }
-            onChange={(e) => {
-              const bodyType = e.target.value;
-              if (bodyType === 'none') {
-                onItemChange({
-                  ...item,
-                  http: {
-                    ...item.http,
-                    body: undefined
-                  }
-                });
-              } else if (['json', 'text', 'xml', 'sparql'].includes(bodyType)) {
-                onItemChange({
-                  ...item,
-                  http: {
-                    ...item.http,
-                    body: { type: bodyType as any, data: '' }
-                  }
-                });
-              } else if (bodyType === 'form-urlencoded') {
-                onItemChange({
-                  ...item,
-                  http: {
-                    ...item.http,
-                    body: [] as any
-                  }
-                });
-              } else if (bodyType === 'multipart-form' || bodyType === 'file') {
-                onItemChange({
-                  ...item,
-                  http: {
-                    ...item.http,
-                    body: { type: bodyType, data: [] } as any
-                  }
-                });
-              }
-            }}
-            className="px-2 py-1 text-sm border rounded"
-            style={{
-              backgroundColor: 'var(--bg-secondary)',
-              borderColor: 'var(--border-color)',
-              color: 'var(--text-primary)'
-            }}
-          >
-            <option value="none">None</option>
-            <option value="json">JSON</option>
-            <option value="text">Text</option>
-            <option value="xml">XML</option>
-            <option value="form-urlencoded">Form URL Encoded</option>
-            <option value="multipart-form">Multipart Form</option>
-            <option value="file">File / Binary</option>
-            <option value='sparql'>SPARQL</option>
-          </select>
-        </div>
-      </div>
-
       {!body ? (
         <div data-testid="body-empty" className="text-center py-6 border-2 border-dashed rounded" style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}>
           No body content. Select a body type to add content.

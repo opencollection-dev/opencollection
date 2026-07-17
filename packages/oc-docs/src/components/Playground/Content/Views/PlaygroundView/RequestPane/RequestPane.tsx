@@ -7,10 +7,11 @@ import { rowToVariable } from '../../../../../../utils/variableDataType';
 import HeadersTab from '../../Common/HeadersTab/HeadersTab';
 import ParamsTab from '../../Common/ParamsTab';
 import BodyTab from '../../Common/BodyTab';
+import BodyModeSelector from '../../Common/BodyModeSelector/BodyModeSelector';
 import AuthTab from '../../Common/AuthTab/AuthTab';
 import ScriptsTab from '../../Common/ScriptsTab/ScriptsTab';
 import TestsTab from '../../Common/TestsTab/TestsTab';
-import AssertsTab from '../../Common/AssertsTab';
+import AssertsTab from '../../Common/AssertsTab/AssertsTab';
 import VariablesTab from '../../Common/VariablesTab/VariablesTab';
 import { 
   getHttpParams, 
@@ -217,11 +218,12 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
       contentIndicator: headers?.length || undefined, 
       content: <div className="py-3">{renderHeaders()}</div> 
     },
-    { 
-      id: 'body', 
+    {
+      id: 'body',
       label: 'Body',
       contentIndicator: hasBody ? '•' : undefined,
-      content: <div className="py-3">{renderBody()}</div> 
+      rightElement: <BodyModeSelector body={body} onItemChange={onItemChange} item={item} />,
+      content: <div className="py-3">{renderBody()}</div>
     },
     { 
       id: 'auth', 

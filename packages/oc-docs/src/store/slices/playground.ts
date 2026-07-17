@@ -1,5 +1,7 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { cloneDeep } from 'lodash-es';
 import type { OpenCollection as OpenCollectionCollection } from '@opencollection/types';
+import type { Environment } from '@opencollection/types/config/environments';
 import type { Item as OpenCollectionItem, Folder } from '@opencollection/types/collection/item';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { RootState } from '../store';
@@ -11,6 +13,7 @@ export type ViewMode = 'playground' | 'environments' | 'folder-settings' | 'coll
 export interface PlaygroundState {
   collection: OpenCollectionCollection | null;
   hydratedCollection: OpenCollectionCollection | null;
+  pristineEnvironments: Environment[] | null;
   responses: Record<string, any>; // Store responses by item UUID
   // UI State
   viewMode: ViewMode;
@@ -21,11 +24,21 @@ export interface PlaygroundState {
 const initialState: PlaygroundState = {
   collection: null,
   hydratedCollection: null,
+  pristineEnvironments: null,
   responses: {},
   // UI State
   viewMode: 'playground',
   selectedItemId: null,
   selectedExampleIndex: null,
+};
+
+const readEnvironments = (collection: OpenCollectionCollection): Environment[] | null =>
+  (collection as any).environments ?? collection.config?.environments ?? null;
+
+const writeEnvironments = (collection: OpenCollectionCollection, environments: Environment[] | null): void => {
+  if ((collection as any).environments !== undefined) (collection as any).environments = environments ?? undefined;
+  if (collection.config) collection.config.environments = environments ?? undefined;
+  else if (environments) collection.config = { environments };
 };
 
 const findAndUpdateItemInCollection = (
@@ -106,12 +119,16 @@ const playgroundSlice = createSlice({
   reducers: {
     setPlaygroundCollection: (state: PlaygroundState, action: PayloadAction<OpenCollectionCollection | null>) => {
       state.collection = action.payload;
-      
+
       if (!action.payload) {
         state.hydratedCollection = null;
+        state.pristineEnvironments = null;
         return;
       }
-      
+
+      const envs = readEnvironments(action.payload);
+      state.pristineEnvironments = envs ? cloneDeep(envs) : null;
+
       const hydrated = hydrateWithUUIDs(action.payload);
       
       // Preserve existing collapsed states from previous hydrated collection
@@ -126,6 +143,7 @@ const playgroundSlice = createSlice({
     clearPlaygroundCollection: (state: PlaygroundState) => {
       state.collection = null;
       state.hydratedCollection = null;
+      state.pristineEnvironments = null;
       state.responses = {};
       state.selectedItemId = null;
       state.selectedExampleIndex = null;
@@ -157,12 +175,24 @@ const playgroundSlice = createSlice({
     // Collection Mutation Actions
     toggleFolderCollapse: (state: PlaygroundState, action: PayloadAction<string>) => {
       if (!state.hydratedCollection?.items) return;
-      
+
       const uuid = action.payload;
       findAndUpdateItem(state.hydratedCollection.items, uuid, (item) => {
         const currentCollapsed = (item as any).isCollapsed ?? true;
         (item as any).isCollapsed = !currentCollapsed;
       });
+    },
+    // Opens the given folders in the sidebar tree so the selected item shows up
+    // inside them. Only ever opens, never closes, so a folder the user collapsed
+    // by hand stays closed.
+    expandFolders: (state: PlaygroundState, action: PayloadAction<string[]>) => {
+      if (!state.hydratedCollection?.items || action.payload.length === 0) return;
+      const targets = new Set(action.payload);
+      for (const uuid of targets) {
+        findAndUpdateItem(state.hydratedCollection.items, uuid, (item) => {
+          (item as { isCollapsed?: boolean }).isCollapsed = false;
+        });
+      }
     },
     updateCollectionSettings: (state: PlaygroundState, action: PayloadAction<OpenCollectionCollection>) => {
       state.collection = action.payload;
@@ -187,6 +217,11 @@ const playgroundSlice = createSlice({
         });
       }
     },
+    resetPlaygroundEnvironments: (state: PlaygroundState) => {
+      const environments = state.pristineEnvironments ? cloneDeep(state.pristineEnvironments) : null;
+      if (state.hydratedCollection) writeEnvironments(state.hydratedCollection, environments);
+      if (state.collection) writeEnvironments(state.collection, environments);
+    },
   }
 });
 
@@ -200,9 +235,11 @@ export const {
   setSelectedItemId,
   setSelectedExampleIndex,
   toggleFolderCollapse,
+  expandFolders,
   updateCollectionSettings,
   updateCollectionEnvironments,
-  updateFolderInCollection
+  updateFolderInCollection,
+  resetPlaygroundEnvironments
 } = playgroundSlice.actions;
 
 // Selectors
