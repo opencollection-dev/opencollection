@@ -41,6 +41,7 @@ export const ScriptsTab: React.FC<ScriptsTabProps> = ({
           language="javascript"
           height="300px"
           hintsFor={['req', 'bru']}
+          active={activeScriptTab === 'pre-request'}
           testId="scripts-editor-pre-request"
         />
       )
@@ -55,6 +56,7 @@ export const ScriptsTab: React.FC<ScriptsTabProps> = ({
           language="javascript"
           height="300px"
           hintsFor={['req', 'res', 'bru']}
+          active={activeScriptTab === 'post-response'}
           testId="scripts-editor-post-response"
         />
       )
@@ -74,6 +76,7 @@ export const ScriptsTab: React.FC<ScriptsTabProps> = ({
           activeTab={activeScriptTab}
           onTabChange={(selectedTabId) => setActiveScriptTab(selectedTabId as ScriptSubTab)}
           variant="button"
+          keepMounted
           testId="scripts-tabs"
         />
 
