@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import type { Item as OpenCollectionItem } from '@opencollection/types/collection/item';
-import { getItemDescription, getRequestBadgeLabel } from './schemaHelpers';
+import { getItemDescription, getRequestBadgeLabel, normalizeHttpMethod } from './schemaHelpers';
 
 const item = (data: Record<string, unknown>): OpenCollectionItem => data as unknown as OpenCollectionItem;
 
@@ -39,5 +39,25 @@ describe('getRequestBadgeLabel', () => {
     expect(getRequestBadgeLabel(item({ type: 'folder' }))).toBeUndefined();
     expect(getRequestBadgeLabel(item({ type: 'script' }))).toBeUndefined();
     expect(getRequestBadgeLabel(null)).toBeUndefined();
+  });
+});
+
+describe('normalizeHttpMethod', () => {
+  it('trims edge whitespace and uppercases', () => {
+    expect(normalizeHttpMethod('  post ')).toBe('POST');
+  });
+
+  it('strips internal whitespace so an accidental space is not an invalid token', () => {
+    expect(normalizeHttpMethod('PUR GE')).toBe('PURGE');
+    expect(normalizeHttpMethod('q u e r y')).toBe('QUERY');
+  });
+
+  it('returns an empty string for empty or whitespace-only input', () => {
+    expect(normalizeHttpMethod('')).toBe('');
+    expect(normalizeHttpMethod('   ')).toBe('');
+  });
+
+  it('leaves forbidden-but-valid verbs untouched', () => {
+    expect(normalizeHttpMethod('connect')).toBe('CONNECT');
   });
 });

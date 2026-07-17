@@ -1,6 +1,6 @@
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import { RunRequestResponse } from './index';
-import { getHttpMethod, getRequestUrl, getHttpHeaders, getHttpBody, getRequestAuth, getHttpParams } from '../utils/schemaHelpers';
+import { getHttpMethod, getRequestUrl, getHttpHeaders, getHttpBody, getRequestAuth, getHttpParams, normalizeHttpMethod } from '../utils/schemaHelpers';
 import { buildRequestUrl } from '../utils/pathParams';
 import { classifyRequestError, DEFAULT_TIMEOUT_MS } from './classifyRequestError';
 import stripJsonComments from 'strip-json-comments';
@@ -63,15 +63,17 @@ export class RequestExecutor {
   }
 
   private async buildFetchOptions(request: HttpRequest, timeout = DEFAULT_TIMEOUT_MS): Promise<RequestInit> {
-    const method = getHttpMethod(request);
+    const method = normalizeHttpMethod(getHttpMethod(request));
     const options: RequestInit = {
       method,
       headers: this.buildHeaders(request),
       signal: AbortSignal.timeout(timeout)
     };
 
+    // Like Bruno, attach the body whenever one is defined regardless of the verb,
+    // except for the body-less methods GET/HEAD where fetch throws if a body is set.
     const body = getHttpBody(request);
-    if (body && ['POST', 'PUT', 'PATCH'].includes(method)) {
+    if (body && !['GET', 'HEAD'].includes(method)) {
       options.body = await this.buildBody(request);
     }
 

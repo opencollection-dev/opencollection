@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import { StyledWrapper } from './StyledWrapper';
 import MenuDropdown from '../../../../../../ui/MenuDropdown';
-import { getHttpMethod, getRequestUrl, getHttpParams } from '../../../../../../utils/schemaHelpers';
+import { getHttpMethod, getRequestUrl, getHttpParams, normalizeHttpMethod } from '../../../../../../utils/schemaHelpers';
 import { syncPathParams, syncQueryParams } from '../../../../../../utils/pathParams';
 import { methodColorVars, getMethodColorVar } from '../../../../../../theme/methodColors';
 
@@ -16,11 +16,23 @@ interface QueryBarProps {
 const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onItemChange }) => {
   const [url, setUrl] = useState(getRequestUrl(item));
   const [method, setMethod] = useState(getHttpMethod(item));
+  const [isCustomMode, setIsCustomMode] = useState(false);
+  const [customValue, setCustomValue] = useState('');
+  const customInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setUrl(getRequestUrl(item));
     setMethod(getHttpMethod(item));
+    setIsCustomMode(false);
+    setCustomValue('');
   }, [item]);
+
+  useEffect(() => {
+    if (isCustomMode) {
+      customInputRef.current?.focus();
+      customInputRef.current?.select();
+    }
+  }, [isCustomMode]);
 
   const handleUrlChange = (newUrl: string) => {
     setUrl(newUrl);
@@ -53,6 +65,36 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
 
   const getMethodColor = getMethodColorVar;
 
+  const standardMethods = Object.keys(methodColorVars);
+  const isStandardMethod = standardMethods.includes(method.toUpperCase());
+
+  const enterCustomMode = () => {
+    setCustomValue('');
+    setIsCustomMode(true);
+  };
+
+  const commitCustomMethod = () => {
+    const normalized = normalizeHttpMethod(customValue);
+    if (normalized) {
+      handleMethodChange(normalized);
+    }
+    setIsCustomMode(false);
+  };
+
+  const cancelCustomMode = () => {
+    setIsCustomMode(false);
+  };
+
+  const handleCustomKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      commitCustomMethod();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      cancelCustomMode();
+    }
+  };
+
   return (
     <StyledWrapper 
       className="flex items-stretch"
@@ -61,25 +103,55 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
       }}
     >
       <div className="method-select-wrapper">
-        <MenuDropdown
-          selectedItemId={method}
-          placement="bottom-start"
-          items={Object.keys(methodColorVars).map((m) => ({
-            id: m,
-            label: <span style={{ color: getMethodColor(m) }}>{m}</span>,
-            ariaLabel: m,
-            onClick: () => handleMethodChange(m)
-          }))}
-        >
-          <button
-            type="button"
-            className="method-select h-full"
-            aria-label="HTTP method"
-            style={{ color: getMethodColor(method) }}
+        {isCustomMode ? (
+          <input
+            ref={customInputRef}
+            type="text"
+            value={customValue}
+            onChange={(e) => setCustomValue(e.target.value.toUpperCase())}
+            onKeyDown={handleCustomKeyDown}
+            onBlur={commitCustomMethod}
+            className="method-custom-input h-full"
+            style={{
+              color: getMethodColor(customValue),
+              width: `calc(${Math.min(Math.max(customValue.length + 1, 4), 16)}ch + 1rem)`
+            }}
+            aria-label="Custom HTTP method"
+            data-testid="method-custom-input"
+          />
+        ) : (
+          <MenuDropdown
+            selectedItemId={isStandardMethod ? method.toUpperCase() : null}
+            placement="bottom-start"
+            data-testid="method-select"
+            items={standardMethods.map((m) => ({
+              id: m,
+              label: <span style={{ color: getMethodColor(m) }}>{m}</span>,
+              ariaLabel: m,
+              onClick: () => handleMethodChange(m)
+            }))}
+            footer={
+              <button
+                type="button"
+                className="method-add-custom"
+                onClick={enterCustomMode}
+                data-testid="method-select-add-custom"
+              >
+                + Add custom
+              </button>
+            }
           >
-            {method}
-          </button>
-        </MenuDropdown>
+            <button
+              type="button"
+              className="method-select h-full"
+              aria-label="HTTP method"
+              title={method}
+              style={{ color: getMethodColor(method) }}
+            >
+              <span className="method-select-label">{method}</span>
+            </button>
+          </MenuDropdown>
+        )}
       </div>
 
       <input

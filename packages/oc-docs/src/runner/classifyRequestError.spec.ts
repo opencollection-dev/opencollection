@@ -34,6 +34,44 @@ describe('classifyRequestError', () => {
     });
   });
 
+  describe('invalid / unsupported HTTP method', () => {
+    it('classifies an invalid method token (Chrome phrasing)', () => {
+      const result = classifyRequestError(
+        failedToFetch("Failed to execute 'fetch' on 'Window': 'PUR GE' is not a valid HTTP method."),
+        { pageUrl: 'https://docs.example.com/', requestUrl: 'https://api.example.com/users' }
+      );
+      expect(result.type).toBe('invalid-method');
+      expect(result.title).toBe('Invalid HTTP method');
+      expect(result.message).toContain('CONNECT');
+    });
+
+    it('classifies a forbidden verb (unsupported method phrasing)', () => {
+      const result = classifyRequestError(
+        failedToFetch("Failed to execute 'fetch' on 'Window': 'CONNECT' HTTP method is unsupported."),
+        { pageUrl: 'https://docs.example.com/', requestUrl: 'https://api.example.com/users' }
+      );
+      expect(result.type).toBe('invalid-method');
+    });
+
+    it('takes precedence over the opaque-fetch-failure classification', () => {
+      // Chrome's invalid-method message also contains "fetch"; ordering must not
+      // regress into a browser-blocked / unreachable classification.
+      const result = classifyRequestError(
+        failedToFetch("Failed to execute 'fetch' on 'Window': 'TRACE' HTTP method is unsupported."),
+        { pageUrl: 'https://app.example.com/docs', requestUrl: 'https://app.example.com/api' }
+      );
+      expect(result.type).toBe('invalid-method');
+    });
+
+    it('still classifies a genuine network TypeError as an opaque failure', () => {
+      const result = classifyRequestError(failedToFetch('Failed to fetch'), {
+        pageUrl: 'https://docs.example.com/',
+        requestUrl: 'https://api.example.com/users'
+      });
+      expect(result.type).toBe('browser-blocked');
+    });
+  });
+
   describe('mixed content (secure page, insecure URL)', () => {
     it('classifies an https page calling an http URL', () => {
       const result = classifyRequestError(failedToFetch(), {

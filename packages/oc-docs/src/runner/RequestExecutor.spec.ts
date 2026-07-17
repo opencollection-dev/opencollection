@@ -37,14 +37,34 @@ describe('RequestExecutor', () => {
     vi.restoreAllMocks();
   });
 
-  it('sends the api key in the request url when placement is query', async () => {
-    const fetchMock = vi.fn().mockResolvedValue({
+  const okFetchMock = () =>
+    vi.fn().mockResolvedValue({
       status: 200,
       statusText: 'OK',
       url: 'https://api.example.com/data',
       headers: new Headers({ 'content-type': 'application/json' }),
       text: async () => JSON.stringify({ ok: true })
     });
+
+  const runWithBody = async (method: string) => {
+    const fetchMock = okFetchMock();
+    global.fetch = fetchMock as unknown as typeof fetch;
+
+    await new RequestExecutor().executeRequest({
+      name: `${method} with body`,
+      type: 'http',
+      http: {
+        method,
+        url: 'https://api.example.com/data',
+        body: { type: 'json', data: '{"hello":"world"}' }
+      }
+    } as any);
+
+    return (fetchMock.mock.calls[0][1] as RequestInit) ?? {};
+  };
+
+  it('sends the api key in the request url when placement is query', async () => {
+    const fetchMock = okFetchMock();
     global.fetch = fetchMock as unknown as typeof fetch;
 
     await new RequestExecutor().executeRequest({
@@ -58,5 +78,27 @@ describe('RequestExecutor', () => {
     } as any);
 
     expect(fetchMock.mock.calls[0][0]).toBe('https://api.example.com/data?api_key=secret123');
+  });
+
+  it('attaches the body for a custom body-carrying verb like QUERY', async () => {
+    const options = await runWithBody('QUERY');
+    expect(options.method).toBe('QUERY');
+    expect(options.body).toBe('{"hello":"world"}');
+  });
+
+  it('does not attach a body for GET or HEAD (fetch would throw)', async () => {
+    expect((await runWithBody('GET')).body).toBeUndefined();
+    expect((await runWithBody('HEAD')).body).toBeUndefined();
+  });
+
+  it('attaches the body for POST, PUT and PATCH as before', async () => {
+    expect((await runWithBody('POST')).body).toBe('{"hello":"world"}');
+    expect((await runWithBody('PUT')).body).toBe('{"hello":"world"}');
+    expect((await runWithBody('PATCH')).body).toBe('{"hello":"world"}');
+  });
+
+  it('normalizes lowercase / spaced methods before sending', async () => {
+    expect((await runWithBody('get')).method).toBe('GET');
+    expect((await runWithBody('get')).body).toBeUndefined();
   });
 });

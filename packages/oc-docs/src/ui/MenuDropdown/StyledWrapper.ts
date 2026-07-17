@@ -192,6 +192,28 @@ export const StyledWrapper = styled.div`
     padding: 0.25rem 0.625rem;
   }
 
+  .dropdown-footer-container .method-add-custom {
+    appearance: none;
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0.25rem 0.6rem;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--primary-color);
+    border-radius: 0.375rem;
+
+    &:hover {
+      background-color: var(--oc-dropdown-hover-bg);
+    }
+  }
+
   .dropdown-divider {
     height: 1px;
     background-color: var(--oc-dropdown-separator);

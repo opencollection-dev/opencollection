@@ -146,6 +146,16 @@ export const getHttpMethod = (item: HttpRequest | null | undefined): string => {
 };
 
 /**
+ * Normalizes a user-typed HTTP method into a clean token: trims edge whitespace,
+ * uppercases, and strips INTERNAL whitespace so an accidental space (e.g. "PUR GE")
+ * doesn't produce an invalid token the browser rejects. Forbidden verbs like
+ * CONNECT/TRACE/TRACK are valid tokens and pass through untouched — the runner
+ * surfaces those when fetch refuses them.
+ */
+export const normalizeHttpMethod = (method: string): string =>
+  method.trim().replace(/\s+/g, '').toUpperCase();
+
+/**
  * The badge label for a request item: its HTTP method (GET, POST, ...) or the
  * protocol short-label (GQL, GRPC, WS). Returns undefined for anything that
  * carries no badge (folders, scripts, built-in pages). Single source of truth

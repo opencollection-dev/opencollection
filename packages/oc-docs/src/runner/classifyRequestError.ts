@@ -18,6 +18,7 @@
 
 export type RequestErrorType =
   | 'timeout'
+  | 'invalid-method'
   | 'mixed-content'
   | 'browser-blocked'
   | 'unreachable'
@@ -64,6 +65,20 @@ const isOpaqueFetchFailure = (error: unknown): boolean => {
   return msg.includes('fetch') || msg.includes('load failed') || msg.includes('networkerror');
 };
 
+/**
+ * `fetch` rejects with a `TypeError` when the method is an invalid token
+ * ("'FOO BAR' is not a valid HTTP method") or a forbidden verb the browser
+ * refuses to send (CONNECT/TRACE/TRACK -> "'CONNECT' HTTP method is
+ * unsupported"). These carry "fetch" in the message on Chrome, so this must run
+ * before isOpaqueFetchFailure to avoid being misread as a network/CORS failure.
+ */
+const isInvalidMethodError = (error: unknown): boolean => {
+  if (!(error instanceof Error)) return false;
+  if (error.name !== 'TypeError') return false;
+  const msg = error.message.toLowerCase();
+  return msg.includes('is not a valid http method') || msg.includes('http method is unsupported');
+};
+
 const safeParseUrl = (url?: string): URL | null => {
   if (!url) return null;
   try {
@@ -77,6 +92,15 @@ const TIMEOUT: ClassifiedRequestError = {
   type: 'timeout',
   title: 'Request timed out',
   message: "Request timed out. The server didn't respond in time."
+};
+
+const INVALID_METHOD: ClassifiedRequestError = {
+  type: 'invalid-method',
+  title: 'Invalid HTTP method',
+  message:
+    "The HTTP method isn't accepted by the browser. Some verbs (like CONNECT, TRACE and " +
+    'TRACK) and methods with spaces or special characters are rejected. Try it in the ' +
+    'Bruno desktop app.'
 };
 
 const MIXED_CONTENT: ClassifiedRequestError = {
@@ -107,6 +131,10 @@ export const classifyRequestError = (
 ): ClassifiedRequestError => {
   if (isTimeoutError(error)) {
     return TIMEOUT;
+  }
+
+  if (isInvalidMethodError(error)) {
+    return INVALID_METHOD;
   }
 
   if (isOpaqueFetchFailure(error)) {

@@ -60,6 +60,27 @@ export const StyledWrapper = styled.div`
     letter-spacing: 0.02em;
   }
 
+  .method-select-label {
+    display: block;
+    max-width: 15ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .method-custom-input {
+    appearance: none;
+    margin: 0;
+    padding: 0 0.5rem;
+    min-width: 4ch;
+    max-width: calc(16ch + 1rem);
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-align: left;
+  }
+
   button.send {
     background-color: var(--primary-color);
     font-size: 11px;
