@@ -22,18 +22,19 @@ describe('MenuDropdown', () => {
     expect(html).not.toContain('role="menu"');
   });
 
-  it('forwards the data-testid to the trigger', () => {
+  it('forwards the testId to the trigger', () => {
     const html = renderToStaticMarkup(
-      <MenuDropdown items={items} data-testid="row-actions">
+      <MenuDropdown items={items} testId="row-actions">
         <button type="button">Actions</button>
       </MenuDropdown>
     );
     expect(html).toContain('data-testid="row-actions"');
   });
 
-  it('renders a plain wrapper trigger when children is not a single element', () => {
+  it('omits the trigger data-testid when no testId is provided', () => {
     const html = renderToStaticMarkup(<MenuDropdown items={items}>Actions</MenuDropdown>);
-    expect(html).toContain('data-testid="menu-dropdown"');
+    expect(html).not.toContain('data-testid="menu-dropdown"');
+    expect(html).not.toContain('data-testid="undefined"');
     expect(html).toContain('Actions');
   });
 

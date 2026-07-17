@@ -45,11 +45,18 @@ export const StyledWrapper = styled.div`
   }
 
   .var-type-control {
+    appearance: none;
     position: relative;
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    font-family: inherit;
+    font-size: inherit;
     color: var(--oc-colors-text-subtext0);
+    background: transparent;
+    border: none;
     cursor: pointer;
   }
 

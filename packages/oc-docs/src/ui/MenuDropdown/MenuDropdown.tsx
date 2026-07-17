@@ -68,7 +68,7 @@ export interface MenuDropdownProps extends Omit<
   autoFocusFirstOption?: boolean;
   /** Submenu placement/arrow direction: `'right'` (default) or `'left'`. */
   submenuPlacement?: 'right' | 'left';
-  'data-testid'?: string;
+  testId?: string;
 }
 
 // Type guard: distinguishes the grouped input format from the flat format.
@@ -102,7 +102,7 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
       autoFocusFirstOption = false,
       submenuPlacement = 'right',
       itemToText,
-      'data-testid': testId = 'menu-dropdown',
+      testId,
       ...dropdownProps
     },
     ref
@@ -168,10 +168,10 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
             }
 
             if (group.name) {
-              const normalizeGroupNameForId = group.name.toLowerCase().replace(/ /g, '-');
+              const normalizedGroupName = group.name.toLowerCase().replace(/ /g, '-');
               result.push({
                 type: 'label',
-                id: `label-${normalizeGroupNameForId}-${groupIndex}`,
+                id: `label-${normalizedGroupName}-${groupIndex}`,
                 label: group.name,
                 groupStyle
               });
@@ -416,7 +416,7 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
         'aria-disabled': item.disabled,
         'aria-current': isActive ? 'true' : undefined,
         title: item.title,
-        'data-testid': `${testId}-${String(item.id).toLowerCase()}`,
+        'data-testid': testId && `${testId}-${String(item.id).toLowerCase()}`,
         ...restExtraProps
       };
     };
@@ -481,7 +481,7 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
           key={item.id ?? `label-${labelText}`}
           className={`label-item ${item.groupStyle === 'select' ? 'label-select' : ''}`}
           role="presentation"
-          data-testid={`${testId}-label-${labelText.toLowerCase().replace(/ /g, '-')}`}
+          data-testid={testId && `${testId}-label-${labelText.toLowerCase().replace(/ /g, '-')}`}
         >
           {item.groupStyle === 'select' ? labelText.toUpperCase() : (item.label ?? '')}
         </div>
@@ -519,12 +519,13 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
           handleTriggerClick();
         },
         'aria-expanded': isOpen,
+        'aria-haspopup': 'menu',
         'data-testid': testId
       };
       triggerElement = React.cloneElement(child, triggerProps);
     } else if (children != null) {
       triggerElement = (
-        <div onClick={handleTriggerClick} aria-expanded={isOpen} data-testid={testId}>
+        <div onClick={handleTriggerClick} aria-expanded={isOpen} aria-haspopup="menu" data-testid={testId}>
           {children}
         </div>
       );
@@ -555,7 +556,7 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
         onClickOutside={handleClickOutside}
         {...dropdownProps}
       >
-        <div data-testid={`${testId}-dropdown`}>
+        <div data-testid={testId && `${testId}-dropdown`}>
           {header && (
             <div className="dropdown-header-container">
               {header}

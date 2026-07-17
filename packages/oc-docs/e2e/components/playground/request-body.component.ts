@@ -1,3 +1,4 @@
+import type { Locator } from '@playwright/test';
 import { BaseComponent } from '../base.component';
 
 // The Body tab inside the playground request pane: the body-type dropdown and
@@ -11,5 +12,14 @@ export class RequestBodyComponent extends BaseComponent {
   async selectType(value: string): Promise<void> {
     await this.typeSelect.click();
     await this.page.getByTestId(`body-type-select-${value}`).click();
+  }
+
+  option(value: string): Locator {
+    return this.page.getByTestId(`body-type-select-${value}`);
+  }
+
+  async openWithKeyboard(key: 'Enter' | ' '): Promise<void> {
+    await this.typeSelect.focus();
+    await this.typeSelect.press(key);
   }
 }

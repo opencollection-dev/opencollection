@@ -1,12 +1,17 @@
 import styled from '@emotion/styled';
 
-export const StyledWrapper = styled.span`
+export const StyledWrapper = styled.button`
+  appearance: none;
   position: relative;
   display: inline-flex;
   align-self: flex-start;
   align-items: center;
   gap: 0.25rem;
+  margin: 0;
   padding: 0.34375rem 0.75rem 0.34375rem 0.625rem;
+  font-family: inherit;
+  font-size: inherit;
+  text-align: left;
   color: var(--primary-color);
   background-color: var(--bg-primary);
   border: 1px solid var(--oc-border-border0);

@@ -64,6 +64,7 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
         <MenuDropdown
           selectedItemId={method}
           placement="bottom-start"
+          testId="method-select"
           items={Object.keys(methodColorVars).map((m) => ({
             id: m,
             label: <span style={{ color: getMethodColor(m) }}>{m}</span>,
