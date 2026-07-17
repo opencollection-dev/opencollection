@@ -23,6 +23,8 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
   useEffect(() => {
     setUrl(getRequestUrl(item));
     setMethod(getHttpMethod(item));
+    setIsCustomMode(false);
+    setCustomValue('');
   }, [item]);
 
   useEffect(() => {
