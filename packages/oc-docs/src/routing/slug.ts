@@ -16,6 +16,18 @@ export const slugifySegment = (name: string): string => {
   return slug || 'unnamed';
 };
 
+/**
+ * URL segments for a request's saved examples, one per name in array order.
+ * Names slugify like page segments; a blank name falls back to `example-<n>`
+ * (1-based); duplicates get -2, -3, … Name-based (not index-based) so a slug
+ * stays stable when examples are reordered. Order follows the examples array,
+ * which is the render order, so the same list always yields the same slugs.
+ */
+export const exampleSlugs = (names: (string | null | undefined)[]): string[] =>
+  dedupeSiblingSlugs(
+    names.map((name, i) => (name && name.trim() ? slugifySegment(name) : `example-${i + 1}`))
+  );
+
 /** Append -2, -3, … to duplicate sibling segments; input must be pre-sorted for deterministic output. */
 export const dedupeSiblingSlugs = (segments: string[]): string[] => {
   const used = new Set<string>();

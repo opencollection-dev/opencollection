@@ -5,6 +5,7 @@ import {
   PARAM_OPEN,
   PARAM_DOCK,
   PARAM_REQUEST,
+  PARAM_EXAMPLE,
   readPlaygroundParams,
   writePlaygroundParams,
 } from './playgroundDock';
@@ -30,6 +31,7 @@ describe('readPlaygroundParams', () => {
       open: false,
       dock: DEFAULT_DOCK,
       requestSlug: null,
+      exampleSlug: null,
     });
   });
 
@@ -38,7 +40,19 @@ describe('readPlaygroundParams', () => {
       open: true,
       dock: 'inline',
       requestSlug: 'users/get',
+      exampleSlug: null,
     });
+  });
+
+  it('reads the example slug when a request slug is present', () => {
+    expect(readPlaygroundParams(new URLSearchParams('pg=1&pgReq=users/get&pgEx=list-users'))).toMatchObject({
+      requestSlug: 'users/get',
+      exampleSlug: 'list-users',
+    });
+  });
+
+  it('ignores an example slug when no request slug is present', () => {
+    expect(readPlaygroundParams(new URLSearchParams('pg=1&pgEx=orphan')).exampleSlug).toBeNull();
   });
 
   it('falls back to the default dock for an invalid dock param', () => {
@@ -83,7 +97,36 @@ describe('writePlaygroundParams', () => {
       dock: 'inline',
       requestSlug: 'x',
     });
-    expect(readPlaygroundParams(next)).toEqual({ open: true, dock: 'inline', requestSlug: 'x' });
+    expect(readPlaygroundParams(next)).toEqual({
+      open: true,
+      dock: 'inline',
+      requestSlug: 'x',
+      exampleSlug: null,
+    });
+  });
+
+  it('sets pgEx alongside pgReq and round-trips the example', () => {
+    const next = writePlaygroundParams(new URLSearchParams(), {
+      open: true,
+      dock: 'bottom',
+      requestSlug: 'users/get',
+      exampleSlug: 'list-users',
+    });
+    expect(next.get(PARAM_EXAMPLE)).toBe('list-users');
+    expect(readPlaygroundParams(next)).toMatchObject({ requestSlug: 'users/get', exampleSlug: 'list-users' });
+  });
+
+  it('drops pgEx when the request slug is cleared', () => {
+    const start = new URLSearchParams('pg=1&pgReq=users/get&pgEx=list-users');
+    const next = writePlaygroundParams(start, { open: true, dock: 'bottom' });
+    expect(next.get(PARAM_REQUEST)).toBeNull();
+    expect(next.get(PARAM_EXAMPLE)).toBeNull();
+  });
+
+  it('clears pgEx when closing', () => {
+    const start = new URLSearchParams('pg=1&pgReq=users/get&pgEx=list-users');
+    const next = writePlaygroundParams(start, { open: false });
+    expect(next.get(PARAM_EXAMPLE)).toBeNull();
   });
 
   it('defaults the dock when the param is missing (no persistence)', () => {

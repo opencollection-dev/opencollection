@@ -54,3 +54,36 @@ describe('resolveSlug', () => {
     expect(resolveSlug(model(), 'does/not/exist')).toBeNull();
   });
 });
+
+const withExamples = () =>
+  buildNavModel({
+    opencollection: '1.0.0',
+    info: { name: 'Hotel API' },
+    items: [
+      {
+        info: { name: 'Login', type: 'http', seq: 1 },
+        http: { method: 'POST', url: 'https://x/login' },
+        examples: [{ name: 'Successful login' }, { name: 'Invalid credentials' }],
+      },
+    ],
+  } as unknown as OpenCollection);
+
+describe('resolveSlug — examples', () => {
+  it('resolves a trailing example segment to its parent request and index', () => {
+    const r = resolveSlug(withExamples(), 'login/successful-login')!;
+    expect(r.entry.type).toBe('request');
+    expect(r.entry.slug).toBe('login');
+    expect(r.example).toEqual({ slug: 'successful-login', index: 0 });
+  });
+
+  it('resolves the second example by its own slug', () => {
+    const r = resolveSlug(withExamples(), 'login/invalid-credentials')!;
+    expect(r.example).toEqual({ slug: 'invalid-credentials', index: 1 });
+  });
+
+  it('falls back to the request (no example) for an unmatched trailing segment', () => {
+    const r = resolveSlug(withExamples(), 'login/does-not-exist')!;
+    expect(r.entry.slug).toBe('login');
+    expect(r.example).toBeUndefined();
+  });
+});

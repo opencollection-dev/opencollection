@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { slugifySegment, dedupeSiblingSlugs } from './slug';
+import { slugifySegment, dedupeSiblingSlugs, exampleSlugs } from './slug';
 
 describe('slugifySegment', () => {
   it('kebab-cases a plain name (spaces become single dashes)', () => {
@@ -61,5 +61,29 @@ describe('dedupeSiblingSlugs', () => {
       'login-2',
       'login-3',
     ]);
+  });
+});
+
+describe('exampleSlugs', () => {
+  it('slugifies example names in array order', () => {
+    expect(exampleSlugs(['Successful login', 'Invalid credentials'])).toEqual([
+      'successful-login',
+      'invalid-credentials',
+    ]);
+  });
+
+  it('falls back to example-<1-based-index> for blank names', () => {
+    expect(exampleSlugs(['', undefined, '  '])).toEqual(['example-1', 'example-2', 'example-3']);
+  });
+
+  it('de-duplicates colliding slugs with -2, -3', () => {
+    expect(exampleSlugs(['Login', 'login', 'LOGIN'])).toEqual(['login', 'login-2', 'login-3']);
+  });
+
+  it('is stable under reorder (name-based, not index-based)', () => {
+    const forward = exampleSlugs(['OK', 'Unauthorized']);
+    const reversed = exampleSlugs(['Unauthorized', 'OK']);
+    expect(forward).toEqual(['ok', 'unauthorized']);
+    expect(reversed).toEqual(['unauthorized', 'ok']);
   });
 });
