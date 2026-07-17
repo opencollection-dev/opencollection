@@ -10,7 +10,7 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { toggleItem, expandFolders, selectDocsCollection } from '../../../store/slices/docs';
 import { getItemUuid } from '../../../utils/itemUtils';
 import { useNavModel } from '../../../routing/hooks';
-import { normalizeSlug } from '../../../routing/resolve';
+import { normalizeSlug, resolveSlug } from '../../../routing/resolve';
 import { OVERVIEW_SLUG, ENVIRONMENTS_SLUG } from '../../../routing/navModel';
 import { useDocsNavigate, useAutoHideScrollbar, useIsMobileDevice } from '../../../hooks';
 import { useActiveExample } from './hooks/useActiveExample';
@@ -26,7 +26,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
   const model = useNavModel();
   const docsNavigate = useDocsNavigate();
   const { pathname } = useLocation();
-  const activeSlug = normalizeSlug(pathname);
+  // Resolve to the entry slug so an example path (<request>/<example>) still
+  // highlights and auto-reveals its parent request, not the raw (unmatched) path.
+  const activeSlug = resolveSlug(model, pathname)?.entry.slug ?? normalizeSlug(pathname);
 
   const goTo = (slug: string) => {
     docsNavigate(slug);
@@ -42,7 +44,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
     return map;
   }, [model]);
 
-  const { activeExample, goToExample } = useActiveExample(model, activeSlug, uuidToSlug, onNavigate);
+  const { activeExample, goToExample } = useActiveExample(model, uuidToSlug, onNavigate);
 
   // Show the scrollbar while the list is in use, then fade it out after 1s idle.
   // Shared with the playground sidebar so both behave the same.

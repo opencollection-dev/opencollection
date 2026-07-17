@@ -30,7 +30,7 @@ const playgroundLoadError = (
 
 const Playground: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { open, dock, requestSlug, setDock, closePlayground } = usePlaygroundUrlState();
+  const { open, dock, requestSlug, exampleSlug, setDock, closePlayground } = usePlaygroundUrlState();
 
   // discard environment edits when the playground reopens
   useEffect(() => {
@@ -65,6 +65,7 @@ const Playground: React.FC = () => {
       <Suspense fallback={<div data-testid="playground-loading" style={{ padding: 16 }} />}>
         <PlaygroundBody
           requestSlug={requestSlug}
+          exampleSlug={exampleSlug}
           sidebarOpen={sidebarOpen}
           dock={dock}
           onCloseSidebar={() => setSidebarOpen(false)}

@@ -13,6 +13,7 @@ export interface PlaygroundUrlApi extends PlaygroundUrlState {
   closePlayground: () => void;
   setDock: (dock: DockMode) => void;
   setRequestSlug: (requestSlug?: string | null) => void;
+  setRequestExample: (requestSlug?: string | null, exampleSlug?: string | null) => void;
 }
 
 export const usePlaygroundUrlState = (): PlaygroundUrlApi => {
@@ -63,5 +64,17 @@ export const usePlaygroundUrlState = (): PlaygroundUrlApi => {
     [setParams]
   );
 
-  return { ...state, openPlayground, closePlayground, setDock, setRequestSlug };
+  // Open a specific example: writes pgReq + pgEx together so a reload / share
+  // restores the same example (they must move as one, see writePlaygroundParams).
+  const setRequestExample = useCallback(
+    (requestSlug?: string | null, exampleSlug?: string | null) => {
+      setParams((prev) => {
+        const current = readPlaygroundParams(prev);
+        return writePlaygroundParams(prev, { open: true, dock: current.dock, requestSlug, exampleSlug });
+      });
+    },
+    [setParams]
+  );
+
+  return { ...state, openPlayground, closePlayground, setDock, setRequestSlug, setRequestExample };
 };

@@ -15,15 +15,15 @@ const collection = {
   ]
 } as any;
 
-// The highlight rides on the navigation entry's state, so render at the request
-// route with { exampleIndex } in history state, exactly what a sidebar example
-// click produces.
+// The highlight is read from the route, so render at the example's own path
+// (<request-slug>/<example-slug>) - exactly the URL a sidebar example click
+// navigates to.
 const buildSidebar = () => {
   const store = createOpenCollectionStore();
   store.dispatch(setDocsCollection(collection));
   return (
     <Provider store={store}>
-      <MemoryRouter initialEntries={[{ pathname: '/login', state: { exampleIndex: 0 } }]}>
+      <MemoryRouter initialEntries={['/login/ok']}>
         <Sidebar />
       </MemoryRouter>
     </Provider>

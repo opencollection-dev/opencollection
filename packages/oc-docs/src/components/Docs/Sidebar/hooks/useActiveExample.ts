@@ -1,37 +1,28 @@
-import { useLocation } from 'react-router-dom';
 import { getItemUuid } from '../../../../utils/itemUtils';
 import { useDocsNavigate } from '../../../../hooks';
-import type { NavigationState } from '../../../../hooks/useDocsNavigate';
+import { useActiveResolution } from '../../../../routing/hooks';
+import { exampleSlugs } from '../../../../routing/slug';
 import type { NavModel } from '../../../../routing';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 
-export function useActiveExample(
-  model: NavModel,
-  activeSlug: string,
-  uuidToSlug: Map<string, string>,
-  onNavigate?: () => void
-) {
-  // The highlighted example rides on the navigation entry's state, not the URL,
-  // so it is not shareable/deep-linked, clears itself on any navigation, and is
-  // restored correctly by browser back/forward. It always belongs to the request
-  // currently shown.
-  const { state } = useLocation();
+export function useActiveExample(model: NavModel, uuidToSlug: Map<string, string>, onNavigate?: () => void) {
+  // The active example is read from the route (<request-slug>/<example-slug>),
+  // so it is shareable/deep-linked, survives reload, and back/forward restore it.
+  const resolution = useActiveResolution();
   const docsNavigate = useDocsNavigate();
-  const exampleIndex = (state as NavigationState)?.exampleIndex;
-  const activeItem = model.bySlug.get(activeSlug)?.item;
-  const activeRequestUuid = getItemUuid(activeItem);
-  // Bound the highlight to the request's own example count, mirroring the sibling
-  // paths (PlaygroundBody, Examples) so a stale index never lights up a row.
-  const exampleCount = (activeItem as HttpRequest | undefined)?.examples?.length ?? 0;
+  const activeRequestUuid = resolution?.example ? getItemUuid(resolution.entry.item) : undefined;
   const activeExample =
-    exampleIndex != null && activeRequestUuid !== undefined && exampleIndex < exampleCount
-      ? { requestUuid: activeRequestUuid, index: exampleIndex }
+    resolution?.example && activeRequestUuid !== undefined
+      ? { requestUuid: activeRequestUuid, index: resolution.example.index }
       : null;
 
   const goToExample = (requestUuid: string, index: number) => {
     const slug = uuidToSlug.get(requestUuid);
     if (slug == null) return;
-    docsNavigate(slug, { state: { exampleIndex: index } });
+    const item = model.bySlug.get(slug)?.item as HttpRequest | null;
+    const exampleSlug = exampleSlugs((item?.examples ?? []).map((example) => example.name))[index];
+    if (!exampleSlug) return;
+    docsNavigate(`${slug}/${exampleSlug}`);
     onNavigate?.();
   };
 
