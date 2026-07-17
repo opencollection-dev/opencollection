@@ -1,7 +1,7 @@
 import React from 'react';
 import Portal from '../../../../ui/Portal/Portal';
 import PlaygroundHeader from '../../PlaygroundHeader/PlaygroundHeader';
-import { useEscapeKey, useLockBodyScroll } from '../../../../hooks';
+import { useLockBodyScroll } from '../../../../hooks';
 import type { DockMode } from '../../../../utils/playgroundDock';
 import { StyledWrapper } from './StyledWrapper';
 
@@ -14,11 +14,9 @@ interface MobileDockProps {
 }
 
 const MobileDock: React.FC<MobileDockProps> = ({ dock, onDockChange, onToggleSidebar, onClose, children }) => {
-  // Full-screen phone presentation: lock the docs scroll behind it and close on
-  // Escape, like the modal dock. No dock switcher or collapse - there is nowhere
-  // to dock on a phone.
+  // Full-screen phone presentation: lock the docs scroll behind it. No dock
+  // switcher or collapse - there is nowhere to dock on a phone.
   useLockBodyScroll();
-  useEscapeKey(onClose);
 
   return (
     <Portal>
