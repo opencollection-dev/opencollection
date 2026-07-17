@@ -2,15 +2,16 @@ import React, { useMemo } from 'react';
 import type { GraphQLRequest } from '@opencollection/types/requests/graphql';
 import type { GrpcRequest } from '@opencollection/types/requests/grpc';
 import type { WebSocketRequest } from '@opencollection/types/requests/websocket';
-import { getItemDescription, getItemDocs, getItemType, getRequestUrl } from '../../utils/schemaHelpers';
+import { getItemDocs, getItemType, getRequestUrl } from '../../utils/schemaHelpers';
 import cx from '../../utils/cx';
 import { Heading } from '../Heading/Heading';
 import { EmptyState } from '../../ui/EmptyState/EmptyState';
-import Description from '../Description/Description';
 import RequestUrlBar from '../Request/RequestUrlBar/RequestUrlBar';
 import BreadcrumbWrapper, { type BreadcrumbWrapperProps } from './BreadcrumbWrapper/BreadcrumbWrapper';
 import { REQUEST_TYPE_LABELS } from '../../constants';
 import ViewMore from '../ViewMore/ViewMore';
+import { TitleLabel } from './StyledWrapper';
+import { useMarkdownRenderer } from '../../hooks';
 
 function getRequestTypeLabel(label: string | undefined) {
   const fallback = {
@@ -42,6 +43,7 @@ interface UnsupportedRequestProps {
   emptyStateProps: UnsupportedEmptyStateProps;
   className?: string;
   breadcrumbs?: Omit<BreadcrumbWrapperProps, 'showBreadcrumbs' | 'item'>;
+  titleVariant?: 'heading' | 'label';
   testId?: string;
 }
 
@@ -51,8 +53,18 @@ export const UnsupportedRequest: React.FC<UnsupportedRequestProps> = ({
   className,
   showRequestDocs,
   breadcrumbs,
+  titleVariant = 'heading',
   testId = 'unsupported-request'
 }) => {
+  const md = useMarkdownRenderer();
+  const docs = useMemo(() => {
+    if (!showRequestDocs) {
+      return '';
+    }
+    const docs = getItemDocs(item);
+    return docs ? md.render(docs) : '';
+  }, [item, showRequestDocs, md]);
+
   const { icon, heading, subheadingSuffix } = emptyStateProps;
   const { shortName, fullName } = useMemo(() => getRequestTypeLabel(getItemType(item)), [item]);
   const subheading = useMemo(() => [fullName, subheadingSuffix.trim()].join(' '), [fullName, subheadingSuffix]);
@@ -61,21 +73,25 @@ export const UnsupportedRequest: React.FC<UnsupportedRequestProps> = ({
     <div className={cx(className, 'w-full')} data-testid={testId}>
       <BreadcrumbWrapper showBreadcrumbs={Boolean(breadcrumbs)} item={item} {...(breadcrumbs ?? {})} />
 
-      <Heading size="md" style={{ marginTop: '0.875rem' }} testId="unsupported-request-title">
-        {fullName}
-      </Heading>
-
-      <Description text={getItemDescription(item)} />
+      {titleVariant === 'label' ? (
+        <TitleLabel data-testid="unsupported-request-title">{fullName}</TitleLabel>
+      ) : (
+        <Heading size="md" style={{ marginTop: '0.875rem' }} testId="unsupported-request-title">
+          {fullName}
+        </Heading>
+      )}
 
       <RequestUrlBar className="mt-2" method={shortName} url={getRequestUrl(item)} />
 
-      <ViewMore collapsedHeight='4.5rem' testId="overview-markdown-view-more">
-        <div
-          className="overview-markdown markdown-documentation mt-5"
-          data-testid="overview-markdown-documentation"
-          dangerouslySetInnerHTML={{ __html: getItemDocs(item) ?? '' }}
-        />
-      </ViewMore>
+      {showRequestDocs && (
+        <ViewMore collapsedHeight='4.5rem' testId="overview-markdown-view-more">
+          <div
+            className="overview-markdown markdown-documentation mt-5"
+            data-testid="overview-markdown-documentation"
+            dangerouslySetInnerHTML={{ __html: docs }}
+          />
+        </ViewMore>
+      )}
 
       <EmptyState
         className="mt-4"

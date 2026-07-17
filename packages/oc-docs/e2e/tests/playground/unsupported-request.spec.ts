@@ -30,6 +30,6 @@ test.describe('Playground — unsupported request types', () => {
     await playground.openTreeItem(['Realtime', 'Live Updates']);
 
     await expect(playground.unsupported).toBeVisible();
-    await expect(playground.view.getByTestId('request-description')).toHaveCount(0);
+    await expect(playground.view.getByTestId('overview-markdown-documentation')).toHaveCount(0);
   });
 });

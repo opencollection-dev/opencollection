@@ -11,7 +11,7 @@ export class UnsupportedRequestPage extends BasePage {
   readonly root = this.page.getByTestId('unsupported-request');
   readonly title = this.page.getByTestId('unsupported-request-title');
   readonly message = this.page.getByTestId('unsupported-request-empty');
-  readonly docs = this.page.getByTestId('request-description');
+  readonly docs = this.root.getByTestId('overview-markdown-documentation');
 
   async open(path: string[]): Promise<void> {
     await this.navigate('/');

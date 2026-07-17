@@ -141,6 +141,7 @@ const PlaygroundView: React.FC<PlaygroundViewProps> = ({ item, ...otherProps }) 
       <UnsupportedRequest
         className='px-4'
         item={item}
+        titleVariant="label"
         showRequestDocs={false}
         emptyStateProps={{
           icon: <FileNotFoundIcon />,

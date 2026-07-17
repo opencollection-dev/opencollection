@@ -122,13 +122,25 @@ items:
         type: "websocket"
         url: "{{host}}/ws/updates"
         docs: |
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque vel nunc nisl. Donec hendrerit eget justo id efficitur. Mauris auctor metus justo, vel vulputate neque vestibulum eu. Proin a imperdiet erat. Integer venenatis sed tellus nec ornare. Etiam ut posuere tellus. Duis bibendum ac dui vel lobortis. Curabitur sed est ut libero laoreet rutrum quis quis leo. Etiam a laoreet purus. Nulla sapien purus, varius non dolor in, scelerisque finibus metus.
+          # Websockets
+          WebSockets provide a persistent, full-duplex communication channel over a single, long-lived TCP connection. Unlike standard HTTP request-response cycles, they enable real-time, low-latency data transfer.
 
-          Nam nec consequat dolor. Pellentesque sit amet efficitur tellus, vel consequat metus. Aliquam ut mauris sed eros blandit porttitor. Phasellus fringilla faucibus diam quis ultrices. Suspendisse sagittis commodo porta. Integer eget eros non lorem lobortis sodales non quis diam. Donec arcu orci, convallis vehicula lobortis vel, aliquet in ex. Aliquam bibendum elit eget ante imperdiet volutpat. Pellentesque venenatis lectus a molestie aliquam. Integer sollicitudin rhoncus ipsum, in congue lacus euismod nec. Aenean at risus ac elit suscipit vehicula. Donec mollis malesuada erat nec gravida. Phasellus eu neque in eros tincidunt facilisis sed vel nisl. Etiam sit amet sapien sagittis, semper dui sit amet, porta leo.
+          ### 🔄 How WebSockets Work
 
-          Suspendisse pharetra, diam eu interdum sagittis, tellus diam eleifend mauris, vitae commodo libero velit et augue. Ut nisi mi, rutrum nec auctor eu, bibendum sed nulla. Morbi elementum commodo enim, quis efficitur quam consectetur vel. Duis tempus justo et elit posuere ultricies. Morbi odio risus, dignissim fringilla scelerisque vel, varius laoreet felis. Nunc maximus in nunc eget pharetra. Sed vel finibus mi. Maecenas lectus ex, malesuada id suscipit vestibulum, gravida a massa. Integer leo elit, accumsan non eleifend nec, faucibus ornare nisl. Aenean quis fermentum purus. Morbi placerat lacus est, at fringilla enim pulvinar ut. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse interdum urna ultricies odio viverra, sed consectetur tellus tristique. Vestibulum in urna ac metus aliquet pulvinar vel at ex. Praesent sed commodo dolor.
+          * **The Handshake:** A WebSocket session begins with an HTTP GET request containing a specific 'Upgrade' header. If both sides agree, the server responds with a '101 Switching Protocols' status code. 
+          * **Data Transfer:** After the handshake, the connection is upgraded. Clients and servers can send data back and forth as messages, which are composed of one or more data frames.
+          * **Control Frames:** Besides payload data, the connection maintains its health using control frames such as *ping* and *pong* to detect dead connections, and *close* frames to gracefully disconnect.
 
-          Phasellus eget massa consectetur, rutrum augue vel, feugiat nibh. Aenean vehicula libero et ex facilisis commodo. Mauris sit amet ante sed erat facilisis sollicitudin rhoncus vel dolor. Donec eget hendrerit ligula, ac pharetra sem. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent id condimentum lectus, id auctor dolor. Vestibulum feugiat augue et mauris semper, consequat bibendum neque faucibus. Nulla congue felis et enim pharetra, at sollicitudin nunc vulputate. Donec ut vehicula justo, in faucibus mauris. Proin euismod eros et velit porta, ut fringilla turpis aliquam. Praesent euismod sodales ultrices. Donec quis ligula vestibulum, malesuada dolor ut, varius nunc. Etiam sit amet consequat lorem, at accumsan nunc. Mauris nec orci quis nibh mollis eleifend eget ut ante. Suspendisse urna arcu, tempor sit amet dolor ut, finibus mattis est.
+          ### ⚡ Key Advantages
+
+          * **Reduced Latency:** Because you do not need to re-authenticate and re-establish a TCP connection for every transmission, network overhead is significantly reduced.
+          * **Bidirectional Communication:** Servers can push information to clients without waiting for a request, which is ideal for streaming data, live chats, and multiplayer games.
+
+          ### ⚠️ Protocol Limits & Challenges
+
+          * **Message Size Limits:** While the protocol itself supports large messages, practically all implementations (like Tomcat, Cloudflare Workers, or Kong) enforce message size limits to prevent out-of-memory crashes.
+          * **Handling Large Payloads:** If you need to transfer large files or data, most developers use **chunking** (splitting data into smaller pieces) or push a tiny notification to the client requesting it to fetch the data from a standard REST endpoint.
+          * **Scalability:** Maintaining thousands of open connections consumes server resources. Developers often scale horizontally by placing a **message broker** (like Redis or RabbitMQ) between multiple WebSocket servers so that messages are broadcasted to all users regardless of which server node they are connected to.
       - name: "GraphQL API"
         type: "graphql"
         url: "{{host}}/graphql"
