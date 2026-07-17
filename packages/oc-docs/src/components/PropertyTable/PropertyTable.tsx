@@ -51,7 +51,7 @@ export const PropertyTable: React.FC<PropertyTableProps> = ({ rows, emptyMessage
           <div className="property-row" key={`${row.label}-${index}`}>
             <dt className="property-key"><TruncatedText text={row.label} /></dt>
             <dd className="property-value-cell" data-testid={testId && row.testId ? `${testId}-${row.testId}` : undefined}>
-              <div className="property-value-line">
+              <div className="property-value-line" data-testid="property-value-line">
                 <div className="property-value-main" data-testid="property-value"><ValueCell row={row} testId={testId} /></div>
                 {row.type ? <span className="property-type">{row.type}</span> : null}
                 {row.disabled ? <DisabledBadge /> : null}

@@ -87,30 +87,37 @@ test.describe('Collection Overview', () => {
     });
   });
 
-  test('mobile: the Disabled chip stays pinned at the row end without overflowing', async ({ overviewPage, page }) => {
+  test('mobile: every Disabled chip stays pinned at the row end without overflowing', async ({ overviewPage, page }) => {
     await page.setViewportSize({ width: 360, height: 800 });
     const { configuration } = overviewPage;
 
-    await expect(configuration.disabledBadge).toBeVisible();
+    const rows = configuration.disabledRows;
+    const count = await rows.count();
+    expect(count).toBeGreaterThan(0);
 
-    const chip = await boundingBoxOf(configuration.disabledBadge);
-    const value = await boundingBoxOf(configuration.disabledRowValue());
     const card = await boundingBoxOf(configuration.root);
 
-    await test.step('the chip sits at the end — to the right of the value', () => {
-      expect(chip.x).toBeGreaterThanOrEqual(value.x + value.width);
-    });
+    for (let i = 0; i < count; i += 1) {
+      const row = rows.nth(i);
+      const value = row.getByTestId('property-value');
+      const chip = await boundingBoxOf(row.getByTestId('disabled-badge'));
+      const valueBox = await boundingBoxOf(value);
 
-    await test.step('the chip stays within the config card, never clipped or overflowing', () => {
-      expect(chip.x + chip.width).toBeLessThanOrEqual(card.x + card.width);
-    });
-
-    await test.step('the value keeps its truncation styling, so a long value ellipsizes rather than pushing the chip off', async () => {
-      const style = await configuration.disabledRowValue().evaluate((el) => {
-        const cs = getComputedStyle(el);
-        return { overflow: cs.overflow, textOverflow: cs.textOverflow, whiteSpace: cs.whiteSpace };
+      await test.step(`row ${i}: the chip sits at the end — to the right of the value`, () => {
+        expect(chip.x).toBeGreaterThanOrEqual(valueBox.x + valueBox.width);
       });
-      expect(style).toEqual({ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' });
-    });
+
+      await test.step(`row ${i}: the chip stays within the config card, never clipped or overflowing`, () => {
+        expect(chip.x + chip.width).toBeLessThanOrEqual(card.x + card.width);
+      });
+
+      await test.step(`row ${i}: the value keeps its truncation styling, so a long value ellipsizes rather than pushing the chip off`, async () => {
+        const style = await value.evaluate((el) => {
+          const cs = getComputedStyle(el);
+          return { overflow: cs.overflow, textOverflow: cs.textOverflow, whiteSpace: cs.whiteSpace };
+        });
+        expect(style).toEqual({ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' });
+      });
+    }
   });
 });

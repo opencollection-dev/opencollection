@@ -1,22 +1,25 @@
-import type { Locator } from '@playwright/test';
-import { BaseComponent } from '../base.component';
-import { SecretValueComponent } from '../secret-value.component';
+import type { Locator } from "@playwright/test";
+import { BaseComponent } from "../base.component";
+import { SecretValueComponent } from "../secret-value.component";
 
 export class ConfigurationSection extends BaseComponent {
-  readonly root = this.page.getByTestId('collection-config');
+  readonly root = this.page.getByTestId("collection-config");
 
-  readonly copyButton = this.root.getByTestId('collection-config-tests-copy');
+  readonly copyButton = this.root.getByTestId("collection-config-tests-copy");
 
-  readonly secret = new SecretValueComponent(this.page, 'collection-config-auth-secret');
+  readonly secret = new SecretValueComponent(
+    this.page,
+    "collection-config-auth-secret",
+  );
 
-  readonly disabledBadge = this.root.getByTestId('disabled-badge');
-
-  disabledRowValue(): Locator {
-    return this.disabledBadge.locator('..').getByTestId('property-value');
-  }
+  readonly disabledRows = this.root
+    .getByTestId("property-value-line")
+    .filter({ has: this.page.getByTestId("disabled-badge") });
 
   subHeading(name: string): Locator {
-    return this.root.getByTestId('collection-config-subheading').filter({ hasText: name });
+    return this.root
+      .getByTestId("collection-config-subheading")
+      .filter({ hasText: name });
   }
 
   async copyToClipboard(): Promise<void> {
