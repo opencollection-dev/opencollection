@@ -47,4 +47,28 @@ test.describe('Playground - Examples', () => {
     await expect(exampleView).toContainText('Unauthorized');
     await expect(playground.exampleViewControls).toHaveCount(0);
   });
+
+  test('deep-links the example: pgEx in the url, reload restores the example view', async ({ page, playground }) => {
+    await playground.exampleToggle('get users').click();
+    await playground.exampleRow(LIST_USERS_EXAMPLE).click();
+    await expect(playground.exampleView).toBeVisible();
+    await expect(page).toHaveURL(/[?&]pgEx=list-users\b/);
+
+    await page.reload();
+    await expect(playground.exampleView).toBeVisible();
+    await expect(playground.exampleView).toContainText('200');
+  });
+
+  test('browser back and forward move between examples in the playground', async ({ page, playground }) => {
+    await playground.exampleToggle('get users').click();
+    await playground.exampleRow(LIST_USERS_EXAMPLE).click();
+    await expect(playground.exampleView).toContainText('200');
+    await playground.exampleRow(UNAUTHORIZED_EXAMPLE).click();
+    await expect(playground.exampleView).toContainText('401');
+
+    await page.goBack();
+    await expect(playground.exampleView).toContainText('200');
+    await page.goForward();
+    await expect(playground.exampleView).toContainText('401');
+  });
 });

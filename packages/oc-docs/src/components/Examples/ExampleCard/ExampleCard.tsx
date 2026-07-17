@@ -319,7 +319,7 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
           <span className="example-name" data-testid="example-name">{name}</span>
         </button>
         {onTry && (
-          <button type="button" className="example-try" onClick={handleTry}>
+          <button type="button" className="example-try" data-testid="example-try" onClick={handleTry}>
             <PlayIcon />
             Try
           </button>

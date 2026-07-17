@@ -3,6 +3,8 @@ import { test, expect } from '../../playwright';
 const GET_ALL_CUSTOMERS = ['billing', 'customers', 'Get All Customers'];
 const OK_EXAMPLE = '200 OK - first page';
 const BAD_REQUEST_EXAMPLE = '400 Bad Request - invalid per_page';
+const REQUEST_PATH = '#/billing/customers/get-all-customers';
+const OK_EXAMPLE_URL = `/${REQUEST_PATH}/200-ok-first-page`;
 
 test.describe('Sidebar - Examples (docs)', () => {
   test.beforeEach(async ({ requestPage }) => {
@@ -27,7 +29,7 @@ test.describe('Sidebar - Examples (docs)', () => {
     await sidebar.exampleRow(OK_EXAMPLE).click();
 
     await expect(page.getByTestId('page')).toHaveAttribute('data-page-type', 'request');
-    await expect(page).toHaveURL(/#\/billing\/customers\/get-all-customers$/);
+    await expect(page).toHaveURL(/#\/billing\/customers\/get-all-customers\/200-ok-first-page$/);
 
     const activeCard = requestPage.examples.activeCard;
     await expect(activeCard).toBeVisible();
@@ -48,5 +50,44 @@ test.describe('Sidebar - Examples (docs)', () => {
     await expect(activeCard).toContainText(BAD_REQUEST_EXAMPLE);
     await expect(activeCard).not.toContainText(OK_EXAMPLE);
     await expect(sidebar.exampleRow(BAD_REQUEST_EXAMPLE)).toHaveClass(/active/);
+  });
+
+  test('deep-links the example: opening its url (share) and reloading restore the highlight', async ({
+    page,
+    requestPage
+  }) => {
+    await page.goto(OK_EXAMPLE_URL);
+    await expect(page.getByTestId('page')).toHaveAttribute('data-page-type', 'request');
+    await expect(requestPage.examples.activeCard).toContainText(OK_EXAMPLE);
+
+    await page.reload();
+    await expect(requestPage.examples.activeCard).toContainText(OK_EXAMPLE);
+  });
+
+  test('browser back and forward move the highlight between examples', async ({ sidebar, requestPage, page }) => {
+    await sidebar.toggleExamples('Get All Customers');
+    await sidebar.exampleRow(OK_EXAMPLE).click();
+    await expect(requestPage.examples.activeCard).toContainText(OK_EXAMPLE);
+    await sidebar.exampleRow(BAD_REQUEST_EXAMPLE).click();
+    await expect(requestPage.examples.activeCard).toContainText(BAD_REQUEST_EXAMPLE);
+
+    await page.goBack();
+    await expect(requestPage.examples.activeCard).toContainText(OK_EXAMPLE);
+    await page.goForward();
+    await expect(requestPage.examples.activeCard).toContainText(BAD_REQUEST_EXAMPLE);
+  });
+
+  test('an unknown example slug falls back to the request page with no highlight', async ({ page, requestPage }) => {
+    await page.goto(`/${REQUEST_PATH}/does-not-exist`);
+    await expect(page.getByTestId('page')).toHaveAttribute('data-page-type', 'request');
+    await expect(requestPage.examples.activeCard).toHaveCount(0);
+  });
+
+  test('Try on an example opens the playground on that example, deep-linked', async ({ requestPage, playground, page }) => {
+    await requestPage.examples.try(OK_EXAMPLE);
+
+    await expect(playground.exampleView).toBeVisible();
+    await expect(page).toHaveURL(/[?&]pgEx=200-ok-first-page\b/);
+    await expect(playground.exampleViewControls).toHaveCount(0);
   });
 });
