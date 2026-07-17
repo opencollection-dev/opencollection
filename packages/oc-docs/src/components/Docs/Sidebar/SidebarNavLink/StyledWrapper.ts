@@ -75,7 +75,7 @@ export const StyledWrapper = styled.div`
   }
 
   .navlink-method {
-    width: 40px;
+    width: 2.5rem;
     flex-shrink: 0;
     /* inline-block so the badge's own text baseline (not a flex box's synthesised
        one) sits on the name's baseline via align-self below, reading as level with
