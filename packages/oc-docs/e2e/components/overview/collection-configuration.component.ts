@@ -9,7 +9,7 @@ export class ConfigurationSection extends BaseComponent {
 
   readonly secret = new SecretValueComponent(this.page, 'collection-config-auth-secret');
 
-  readonly disabledBadge = this.root.getByTestId('disabled-badge').first();
+  readonly disabledBadge = this.root.getByTestId('disabled-badge');
 
   disabledRowValue(): Locator {
     return this.disabledBadge.locator('..').getByTestId('property-value');
