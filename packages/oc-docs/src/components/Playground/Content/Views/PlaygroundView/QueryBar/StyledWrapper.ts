@@ -81,27 +81,6 @@ export const StyledWrapper = styled.div`
     text-align: left;
   }
 
-  .method-add-custom {
-    appearance: none;
-    display: block;
-    width: 100%;
-    margin: 0;
-    padding: 0.25rem 0.6rem;
-    background-color: transparent;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    text-align: left;
-    font-family: inherit;
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: var(--primary-color);
-
-    &:hover {
-      background-color: color-mix(in srgb, var(--oc-text) 5%, transparent);
-    }
-  }
-
   button.send {
     background-color: var(--primary-color);
     font-size: 11px;
