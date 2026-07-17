@@ -3,14 +3,14 @@ import type { GraphQLRequest } from '@opencollection/types/requests/graphql';
 import type { GrpcRequest } from '@opencollection/types/requests/grpc';
 import type { WebSocketRequest } from '@opencollection/types/requests/websocket';
 import { getItemDescription, getItemDocs, getItemType, getRequestUrl } from '../../utils/schemaHelpers';
-import { getValidClasses } from '../../utils/common';
+import cx from '../../utils/cx';
 import { Heading } from '../Heading/Heading';
 import { EmptyState } from '../../ui/EmptyState/EmptyState';
 import Description from '../Description/Description';
 import RequestUrlBar from '../Request/RequestUrlBar/RequestUrlBar';
-import RequestDescription from '../Request/RequestDescription/RequestDescription';
 import BreadcrumbWrapper, { type BreadcrumbWrapperProps } from './BreadcrumbWrapper/BreadcrumbWrapper';
 import { REQUEST_TYPE_LABELS } from '../../constants';
+import ViewMore from '../ViewMore/ViewMore';
 
 function getRequestTypeLabel(label: string | undefined) {
   const fallback = {
@@ -58,7 +58,7 @@ export const UnsupportedRequest: React.FC<UnsupportedRequestProps> = ({
   const subheading = useMemo(() => [fullName, subheadingSuffix.trim()].join(' '), [fullName, subheadingSuffix]);
 
   return (
-    <div className={getValidClasses(className, 'w-full')} data-testid={testId}>
+    <div className={cx(className, 'w-full')} data-testid={testId}>
       <BreadcrumbWrapper showBreadcrumbs={Boolean(breadcrumbs)} item={item} {...(breadcrumbs ?? {})} />
 
       <Heading size="md" style={{ marginTop: '0.875rem' }} testId="unsupported-request-title">
@@ -69,7 +69,13 @@ export const UnsupportedRequest: React.FC<UnsupportedRequestProps> = ({
 
       <RequestUrlBar className="mt-2" method={shortName} url={getRequestUrl(item)} />
 
-      {showRequestDocs && <RequestDescription className="mt-5" html={getItemDocs(item) ?? ''} />}
+      <ViewMore collapsedHeight='4.5rem' testId="overview-markdown-view-more">
+        <div
+          className="overview-markdown markdown-documentation mt-5"
+          data-testid="overview-markdown-documentation"
+          dangerouslySetInnerHTML={{ __html: getItemDocs(item) ?? '' }}
+        />
+      </ViewMore>
 
       <EmptyState
         className="mt-4"
