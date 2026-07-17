@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import { StyledWrapper } from './StyledWrapper';
 import MenuDropdown from '../../../../../../ui/MenuDropdown';
-import { getHttpMethod, getRequestUrl, getHttpParams } from '../../../../../../utils/schemaHelpers';
+import { getHttpMethod, getRequestUrl, getHttpParams, normalizeHttpMethod } from '../../../../../../utils/schemaHelpers';
 import { syncPathParams, syncQueryParams } from '../../../../../../utils/pathParams';
 import { methodColorVars, getMethodColorVar } from '../../../../../../theme/methodColors';
 
@@ -74,9 +74,9 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
   };
 
   const commitCustomMethod = () => {
-    const trimmed = customValue.trim().toUpperCase();
-    if (trimmed) {
-      handleMethodChange(trimmed);
+    const normalized = normalizeHttpMethod(customValue);
+    if (normalized) {
+      handleMethodChange(normalized);
     }
     setIsCustomMode(false);
   };
