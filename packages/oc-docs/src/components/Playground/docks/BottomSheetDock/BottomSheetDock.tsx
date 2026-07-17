@@ -27,9 +27,9 @@ const BottomSheetDock: React.FC<BottomSheetDockProps> = ({
   openNonce,
   children,
 }) => {
-  // Opens to 75% of the viewport by default (and re-expands to it from collapsed),
+  // Opens to 60% of the viewport by default (and re-expands to it from collapsed),
   // and can be dragged up to full screen or down to collapse.
-  const defaultHeight = Math.round(window.innerHeight * 0.75);
+  const defaultHeight = Math.round(window.innerHeight * 0.6);
   const { size, dragging, startDrag, setSize } = useDockResize({
     axis: 'y',
     initial: defaultHeight,
