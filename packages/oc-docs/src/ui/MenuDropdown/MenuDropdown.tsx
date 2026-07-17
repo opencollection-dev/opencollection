@@ -50,6 +50,8 @@ export interface MenuDropdownProps extends Omit<
   className?: string;
   /** ID of the selected/active item to focus on open and mark active. */
   selectedItemId?: MenuItemId | null;
+  /** ARIA role family: 'menu' (default) for action menus; 'listbox' for single-select value pickers. */
+  role?: 'menu' | 'listbox';
   /** Controlled open state. When provided, the component is controlled. */
   opened?: boolean;
   /** Called when the dropdown open state changes. */
@@ -92,6 +94,7 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
       placement = 'bottom-end',
       className,
       selectedItemId,
+      role = 'menu',
       opened,
       onChange,
       header,
@@ -124,14 +127,16 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
 
     const isOpen = isControlled ? opened : internalIsOpen;
 
+    const itemRole = role === 'listbox' ? 'option' : 'menuitem';
+
     const getMenuItems = useCallback((): HTMLElement[] => {
       const popper = tippyRef.current?.popper;
       if (!popper) return [];
 
-      const menuContainer = popper.querySelector('[role="menu"]');
+      const menuContainer = popper.querySelector('.menu-dropdown-list');
       if (!menuContainer) return [];
 
-      return Array.from(menuContainer.querySelectorAll<HTMLElement>('[role="menuitem"]:not([aria-disabled="true"])'));
+      return Array.from(menuContainer.querySelectorAll<HTMLElement>('[data-item-id]:not([aria-disabled="true"])'));
     }, []);
 
     const updateOpenState = useCallback(
@@ -256,7 +261,7 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
 
     const focusMenuItem = (item: HTMLElement | undefined, addFocusedClass = true) => {
       if (item) {
-        const menuContainer = item.closest('[role="menu"]');
+        const menuContainer = item.closest('.menu-dropdown-list');
         clearFocusedClass(menuContainer);
 
         if (addFocusedClass) {
@@ -348,11 +353,11 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
           onShow: () => {
             // Use requestAnimationFrame to ensure DOM is ready
             requestAnimationFrame(() => {
-              const menuContainer = instance.popper?.querySelector('[role="menu"]');
+              const menuContainer = instance.popper?.querySelector('.menu-dropdown-list');
               if (!menuContainer) return;
 
               const menuItems = Array.from(
-                menuContainer.querySelectorAll<HTMLElement>('[role="menuitem"]:not([aria-disabled="true"])')
+                menuContainer.querySelectorAll<HTMLElement>('[data-item-id]:not([aria-disabled="true"])')
               );
 
               // Use ref to get the latest value
@@ -378,7 +383,7 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
             });
           },
           onHide: () => {
-            const menuContainer = instance.popper?.querySelector('[role="menu"]');
+            const menuContainer = instance.popper?.querySelector('.menu-dropdown-list');
             clearFocusedClass(menuContainer);
           }
         });
@@ -409,12 +414,12 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
         className: `dropdown-item ${item.disabled ? 'disabled' : ''} ${selectIndentClass} ${activeClass} ${
           extraClassName ?? ''
         } ${item.className ?? ''}`.trim(),
-        role: 'menuitem',
+        role: itemRole,
         'data-item-id': item.id,
-        tabIndex: item.disabled ? -1 : 0,
+        tabIndex: item.disabled ? -1 : role === 'listbox' ? (isActive ? 0 : -1) : 0,
         'aria-label': item.ariaLabel,
         'aria-disabled': item.disabled,
-        'aria-current': isActive ? 'true' : undefined,
+        ...(role === 'listbox' ? { 'aria-selected': isActive } : { 'aria-current': isActive ? 'true' : undefined }),
         title: item.title,
         'data-testid': testId && `${testId}-${String(item.id).toLowerCase()}`,
         ...restExtraProps
@@ -519,13 +524,13 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
           handleTriggerClick();
         },
         'aria-expanded': isOpen,
-        'aria-haspopup': 'menu',
+        'aria-haspopup': role,
         'data-testid': testId
       };
       triggerElement = React.cloneElement(child, triggerProps);
     } else if (children != null) {
       triggerElement = (
-        <div onClick={handleTriggerClick} aria-expanded={isOpen} aria-haspopup="menu" data-testid={testId}>
+        <div onClick={handleTriggerClick} aria-expanded={isOpen} aria-haspopup={role} data-testid={testId}>
           {children}
         </div>
       );
@@ -537,7 +542,7 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
           className="menu-dropdown-trigger"
           onClick={handleTriggerClick}
           aria-expanded={isOpen}
-          aria-haspopup="menu"
+          aria-haspopup={role}
           data-testid={testId}
         >
           <span className="menu-dropdown-trigger-label">{resolveItemText(selectedItem)}</span>
@@ -563,7 +568,7 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
               <div className="dropdown-divider"></div>
             </div>
           )}
-          <div role="menu" tabIndex={-1} onKeyDown={handleMenuKeyDown}>
+          <div role={role} className="menu-dropdown-list" tabIndex={-1} onKeyDown={handleMenuKeyDown}>
             {renderMenuContent()}
           </div>
           {footer && (

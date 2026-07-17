@@ -18,7 +18,7 @@ export const StyledWrapper = styled.div`
   max-width: unset !important;
   padding: 0.25rem;
 
-  [role='menu'] {
+  .menu-dropdown-list {
     outline: none;
     &:focus {
       outline: none;

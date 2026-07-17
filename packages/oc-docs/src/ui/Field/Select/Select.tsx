@@ -34,7 +34,7 @@ export const Select: React.FC<SelectProps> = ({
   }));
 
   return (
-    <MenuDropdown items={items} selectedItemId={value} placement="bottom-start" testId={testId}>
+    <MenuDropdown items={items} selectedItemId={value} placement="bottom-start" role="listbox" testId={testId}>
       <StyledWrapper className="oc-select" id={id} aria-label={ariaLabel}>
         <span className="oc-select-label" aria-hidden="true">
           {selected ? selected.label : ''}

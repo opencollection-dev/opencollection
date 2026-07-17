@@ -161,6 +161,7 @@ export const AssertsTab: React.FC<AssertsTabProps> = ({
                 <MenuDropdown
                   selectedItemId={currentOperator.value}
                   placement="bottom-start"
+                  role="listbox"
                   testId={`assertion-operator-${index}`}
                   items={ASSERTION_OPERATORS.map((op) => ({
                     id: op.value,

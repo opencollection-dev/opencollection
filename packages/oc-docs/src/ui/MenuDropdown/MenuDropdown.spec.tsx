@@ -51,4 +51,14 @@ describe('MenuDropdown', () => {
     );
     expect(html).toContain('Format: Copy');
   });
+
+  it('defaults the trigger aria-haspopup to menu', () => {
+    const html = renderToStaticMarkup(<MenuDropdown items={items} selectedItemId="copy" />);
+    expect(html).toContain('aria-haspopup="menu"');
+  });
+
+  it('reflects role="listbox" on the trigger aria-haspopup', () => {
+    const html = renderToStaticMarkup(<MenuDropdown items={items} selectedItemId="copy" role="listbox" />);
+    expect(html).toContain('aria-haspopup="listbox"');
+  });
 });
