@@ -13,15 +13,8 @@ import {
 import { VARIABLE_NAME_REGEX } from '../../../../../../constants/regex';
 import { CaretIcon, WarningIcon } from '../../../../../../assets/icons';
 import MenuDropdown from '../../../../../../ui/MenuDropdown';
+import type { PostResponseVar } from '../../../../../../utils/request';
 import { StyledWrapper } from './StyledWrapper';
-
-export interface PostResponseVar {
-  name?: string;
-  expr?: string;
-  disabled?: boolean;
-  scope?: string;
-  description?: unknown;
-}
 
 interface VariablesTabProps {
   variables: Array<Variable | { name?: string; value?: unknown; disabled?: boolean }>;

@@ -258,6 +258,11 @@ export const getRequestAuth = (item: RequestItem | null | undefined): any => {
     }
   }
 
+  // Nested request shape (also Collection/Folder): auth under a `request` block.
+  if ((item as any).request?.auth != null) {
+    return (item as any).request.auth;
+  }
+
   // Legacy: auth grouped under a runtime block.
   if ('runtime' in item && (item as any).runtime?.auth) {
     return (item as any).runtime.auth;

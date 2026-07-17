@@ -64,15 +64,17 @@ export const BodyModeSelector: React.FC<BodyModeSelectorProps> = ({ body, onItem
   const { type: currentBodyType, label: currentBodyLabel } = resolveBodyMode(body);
 
   const handleBodyTypeChange = (bodyType: string) => {
-    if (bodyType === 'none') {
-      onItemChange({ ...item, http: { ...item.http, body: undefined } });
-    } else if (['json', 'text', 'xml', 'sparql'].includes(bodyType)) {
-      onItemChange({ ...item, http: { ...item.http, body: { type: bodyType as any, data: '' } } });
-    } else if (bodyType === 'form-urlencoded') {
-      onItemChange({ ...item, http: { ...item.http, body: [] as any } });
-    } else if (bodyType === 'multipart-form' || bodyType === 'file') {
-      onItemChange({ ...item, http: { ...item.http, body: { type: bodyType, data: [] } as any } });
-    }
+    // getHttpBody falls back to a legacy root-level body, so clearing only
+    // http.body lets the old body resurface — drop the root shadow too.
+    const applyBody = (body: unknown) => {
+      const next = { ...item, http: { ...item.http, body } } as any;
+      delete next.body;
+      onItemChange(next as HttpRequest);
+    };
+    if (bodyType === 'none') applyBody(undefined);
+    else if (['json', 'text', 'xml', 'sparql'].includes(bodyType)) applyBody({ type: bodyType, data: '' });
+    else if (bodyType === 'form-urlencoded') applyBody([]);
+    else if (bodyType === 'multipart-form' || bodyType === 'file') applyBody({ type: bodyType, data: [] });
   };
 
   const bodyMenuItems: MenuDropdownGroup[] = BODY_TYPE_GROUPS.map((group) => ({

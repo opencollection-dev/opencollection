@@ -2,6 +2,7 @@ import React from 'react';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { OpenCollection as OpenCollectionCollection } from '@opencollection/types';
 import { getItemName } from '../../../../../../../utils/schemaHelpers';
+import { Heading } from '../../../../../../Heading/Heading';
 
 interface RequestHeaderProps {
   item: HttpRequest;
@@ -12,16 +13,9 @@ interface RequestHeaderProps {
   readOnlyEnvironment?: boolean;
 }
 
-const RequestHeader: React.FC<RequestHeaderProps> = ({ 
-  item, 
-  collection, 
-  selectedEnvironment, 
-  onEnvironmentChange,
-  toggleRunnerMode,
-  readOnlyEnvironment = false
-}) => {
+const RequestHeader: React.FC<RequestHeaderProps> = ({ item }) => {
   const itemName = getItemName(item) || 'Untitled Request';
-  
+
   return (
     <div 
       className="flex items-center justify-between my-4"
@@ -31,17 +25,9 @@ const RequestHeader: React.FC<RequestHeaderProps> = ({
       }}
     >
       <div className="flex items-center gap-2.5 min-w-0">
-        <h2 
-          className="text-lg font-semibold truncate tracking-tight"
-          style={{
-            color: 'var(--text-primary)',
-            letterSpacing: '-0.015em',
-            lineHeight: '1.3'
-          }}
-          title={itemName}
-        >
+        <Heading as="h2" size="md" className="truncate">
           {itemName}
-        </h2>
+        </Heading>
       </div>
     </div>
   );
