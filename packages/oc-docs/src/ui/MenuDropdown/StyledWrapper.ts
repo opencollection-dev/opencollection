@@ -6,6 +6,9 @@ import styled from '@emotion/styled';
  * `theme.dropdown.*` values mapped onto oc-docs `--oc-*` CSS variables.
  */
 export const StyledWrapper = styled.div`
+  /* Portaled to <body> (Tippy appendTo), so it must clear the playground docks
+     (<= --z-modal). Keep it at --z-popover — the top of the app's z-scale. */
+  z-index: var(--z-popover);
   min-width: 10rem;
   font-size: 0.8125rem;
   color: var(--oc-dropdown-color);

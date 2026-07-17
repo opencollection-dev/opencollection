@@ -42,23 +42,33 @@ export const StyledWrapper = styled.div`
     max-width: 160px;
   }
 
-  .env-switcher-popover {
-    position: absolute;
-    top: calc(100% + 6px);
-    right: 0;
-    z-index: 40;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    width: max-content;
-    min-width: 100%;
-    max-width: min(260px, calc(100vw - 24px));
-    padding: 4px;
-    box-sizing: border-box;
-    background: var(--oc-dropdown-bg);
-    border: 1px solid var(--oc-dropdown-separator);
-    border-radius: var(--oc-radius);
+  @media (max-width: 640px) {
+    .env-switcher-trigger-name {
+      max-width: 72px;
+    }
   }
+`;
+
+/**
+ * The popover is portaled to <body> so it escapes the topbar's stacking context
+ * and renders above every playground dock. It's positioned with `fixed` from the
+ * trigger's rect (see EnvSwitcher); `--z-popover` keeps it at the top of the
+ * app's z-scale. Theme `--oc-*` vars cascade from :root, so they resolve on body.
+ */
+export const PopoverWrapper = styled.div`
+  position: fixed;
+  z-index: var(--z-popover);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: max-content;
+  max-width: min(260px, calc(100vw - 24px));
+  padding: 4px;
+  box-sizing: border-box;
+  font-family: var(--font-sans);
+  background: var(--oc-dropdown-bg);
+  border: 1px solid var(--oc-dropdown-separator);
+  border-radius: var(--oc-radius);
 
   .env-switcher-option {
     display: flex;
@@ -96,11 +106,5 @@ export const StyledWrapper = styled.div`
     padding: 8px 10px;
     font-size: 12px;
     color: var(--oc-dropdown-muted-text);
-  }
-
-  @media (max-width: 640px) {
-    .env-switcher-trigger-name {
-      max-width: 72px;
-    }
   }
 `;
