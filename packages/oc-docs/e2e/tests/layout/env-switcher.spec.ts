@@ -16,10 +16,10 @@ test.describe('Environment switcher', () => {
 
     await test.step('opening the switcher lists every environment', async () => {
       await envSwitcher.open();
-      await expect(envSwitcher.listbox).toBeVisible();
+      await expect(envSwitcher.menu).toBeVisible();
       await expect(envSwitcher.option('Local')).toBeVisible();
       await expect(envSwitcher.option('Prod')).toBeVisible();
-      await expect(envSwitcher.option('Local')).toHaveAttribute('aria-selected', 'true');
+      await expect(envSwitcher.option('Local')).toHaveAttribute('aria-current', 'true');
     });
   });
 
@@ -28,7 +28,7 @@ test.describe('Environment switcher', () => {
 
     await expect(envSwitcher.trigger).toContainText('Prod');
     await envSwitcher.open();
-    await expect(envSwitcher.option('Prod')).toHaveAttribute('aria-selected', 'true');
+    await expect(envSwitcher.option('Prod')).toHaveAttribute('aria-current', 'true');
   });
 
   test('the show-variables toggle flips on and off', async ({ envSwitcher }) => {

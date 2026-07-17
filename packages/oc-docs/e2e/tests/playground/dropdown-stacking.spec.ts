@@ -4,9 +4,9 @@ import type { Locator } from '@playwright/test';
 
 /**
  * Regression: the environment selector dropdown must stack above the playground
- * docks in every dock mode. Its panel is portaled to <body> with --z-popover so
+ * docks in every dock mode. Its menu is portaled to <body> with --z-popover so
  * it clears the docks (all at or below --z-modal). We assert not just visibility
- * but that the option is the topmost element at its own centre — a panel hidden
+ * but that the option is the topmost element at its own centre — a menu hidden
  * behind a dock is "visible" to the DOM but not the hit-test.
  */
 
@@ -20,7 +20,7 @@ const isTopmost = async (option: Locator): Promise<boolean> => {
   return option.page().evaluate(
     ({ x, y }) => {
       const el = document.elementFromPoint(x, y);
-      return !!el?.closest('[role="listbox"][aria-label="Environments"]');
+      return !!el?.closest('[role="menu"]');
     },
     { x, y }
   );
@@ -37,7 +37,7 @@ test.describe('env selector dropdown stacks above the docks', () => {
       const envSwitcher = new EnvSwitcherComponent(page);
       await envSwitcher.open();
 
-      await expect(envSwitcher.listbox).toBeVisible();
+      await expect(envSwitcher.menu).toBeVisible();
       await expect(envSwitcher.option('Prod')).toBeVisible();
       expect(await isTopmost(envSwitcher.option('Prod'))).toBe(true);
     });
@@ -47,10 +47,14 @@ test.describe('env selector dropdown stacks above the docks', () => {
     await playground.open('modal');
     await expect(playground.modalPanel).toBeVisible();
 
+    // The playground env switcher lives in the playground sidebar, so it must be
+    // on screen before we can open it.
+    await expect(playground.sidebarPanel).toBeVisible();
+
     const envSwitcher = new EnvSwitcherComponent(page, 'playground-env-switcher');
     await envSwitcher.open();
 
-    await expect(envSwitcher.listbox).toBeVisible();
+    await expect(envSwitcher.menu).toBeVisible();
     await expect(envSwitcher.option('Prod')).toBeVisible();
     expect(await isTopmost(envSwitcher.option('Prod'))).toBe(true);
   });
