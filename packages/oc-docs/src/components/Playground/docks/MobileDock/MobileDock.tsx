@@ -20,7 +20,7 @@ const MobileDock: React.FC<MobileDockProps> = ({ dock, onDockChange, onToggleSid
 
   return (
     <Portal>
-      <StyledWrapper data-testid="playground-dock-mobile-panel">
+      <StyledWrapper data-testid="playground-dock-mobile-panel" role="dialog" aria-modal="true" aria-label="Bruno Playground">
         <PlaygroundHeader
           dock={dock}
           onDockChange={onDockChange}
