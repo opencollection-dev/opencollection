@@ -1,10 +1,11 @@
 import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
-import { usePlaygroundUrlState } from '../../hooks';
+import { usePlaygroundUrlState, useIsMobilePhone } from '../../hooks';
 import { useAppDispatch } from '../../store/hooks';
 import { resetPlaygroundEnvironments } from '@slices/playground';
 import InlineDock from './docks/InlineDock/InlineDock';
 import BottomSheetDock from './docks/BottomSheetDock/BottomSheetDock';
 import ModalDock from './docks/ModalDock/ModalDock';
+import MobileDock from './docks/MobileDock/MobileDock';
 import { ErrorBoundary } from '../ErrorBoundary/ErrorBoundary';
 
 // Lazy so opening the dock shell never eagerly loads the runner/QuickJS runtime.
@@ -31,6 +32,11 @@ const playgroundLoadError = (
 const Playground: React.FC = () => {
   const dispatch = useAppDispatch();
   const { open, dock, requestSlug, setDock, closePlayground } = usePlaygroundUrlState();
+  const isPhone = useIsMobilePhone();
+  // On a phone the playground is always the fullscreen MobileDock, and its
+  // sidebar behaves like the inline dock's overlay. Feed that dock downstream so
+  // the sidebar-open default and PlaygroundBody's overlay behaviour follow.
+  const effectiveDock = isPhone ? 'inline' : dock;
 
   // discard environment edits when the playground reopens
   useEffect(() => {
@@ -39,10 +45,10 @@ const Playground: React.FC = () => {
   // In the inline dock the sidebar is an overlay over the request/response, so it
   // starts closed (content full width) and opens on demand; bottom/modal show it
   // side by side, so it starts open. Reset to the dock's default when the dock changes.
-  const [sidebarOpen, setSidebarOpen] = useState(dock !== 'inline');
+  const [sidebarOpen, setSidebarOpen] = useState(effectiveDock !== 'inline');
   useEffect(() => {
-    setSidebarOpen(dock !== 'inline');
-  }, [dock]);
+    setSidebarOpen(effectiveDock !== 'inline');
+  }, [effectiveDock]);
 
   // Tracks which request slug has been applied to the view. Lives here (not in
   // PlaygroundBody) because Playground stays mounted across a dock switch but
@@ -54,7 +60,7 @@ const Playground: React.FC = () => {
   if (!open) return null;
 
   const shared = {
-    dock,
+    dock: effectiveDock,
     onDockChange: setDock,
     onToggleSidebar: () => setSidebarOpen((value) => !value),
     onClose: closePlayground,
@@ -66,7 +72,7 @@ const Playground: React.FC = () => {
         <PlaygroundBody
           requestSlug={requestSlug}
           sidebarOpen={sidebarOpen}
-          dock={dock}
+          dock={effectiveDock}
           onCloseSidebar={() => setSidebarOpen(false)}
           appliedSlugRef={appliedSlugRef}
         />
@@ -74,6 +80,7 @@ const Playground: React.FC = () => {
     </ErrorBoundary>
   );
 
+  if (isPhone) return <MobileDock {...shared}>{body}</MobileDock>;
   if (dock === 'inline') return <InlineDock {...shared}>{body}</InlineDock>;
   if (dock === 'modal') return <ModalDock {...shared}>{body}</ModalDock>;
   return <BottomSheetDock {...shared}>{body}</BottomSheetDock>;
