@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-export const TitleLabel = styled.p`
+export const StyledWrapper = styled.p`
   margin-top: 0.875rem;
   font-family: var(--font-sans);
   font-weight: 500;

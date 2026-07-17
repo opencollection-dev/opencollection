@@ -10,7 +10,7 @@ import RequestUrlBar from '../Request/RequestUrlBar/RequestUrlBar';
 import BreadcrumbWrapper, { type BreadcrumbWrapperProps } from './BreadcrumbWrapper/BreadcrumbWrapper';
 import { REQUEST_TYPE_LABELS } from '../../constants';
 import ViewMore from '../ViewMore/ViewMore';
-import { TitleLabel } from './StyledWrapper';
+import { TitleLabel } from '../TitleLabel/TitleLabel';
 import { useMarkdownRenderer } from '../../hooks';
 
 function getRequestTypeLabel(label: string | undefined) {
@@ -74,7 +74,7 @@ export const UnsupportedRequest: React.FC<UnsupportedRequestProps> = ({
       <BreadcrumbWrapper showBreadcrumbs={Boolean(breadcrumbs)} item={item} {...(breadcrumbs ?? {})} />
 
       {titleVariant === 'label' ? (
-        <TitleLabel data-testid="unsupported-request-title">{fullName}</TitleLabel>
+        <TitleLabel testId="unsupported-request-title">{fullName}</TitleLabel>
       ) : (
         <Heading size="md" style={{ marginTop: '0.875rem' }} testId="unsupported-request-title">
           {fullName}
