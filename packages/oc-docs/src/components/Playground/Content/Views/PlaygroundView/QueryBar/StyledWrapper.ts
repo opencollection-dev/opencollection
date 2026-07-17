@@ -60,6 +60,48 @@ export const StyledWrapper = styled.div`
     letter-spacing: 0.02em;
   }
 
+  .method-select-label {
+    display: block;
+    max-width: 15ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .method-custom-input {
+    appearance: none;
+    margin: 0;
+    padding: 0 0.5rem;
+    min-width: 4ch;
+    max-width: calc(16ch + 1rem);
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-align: left;
+  }
+
+  .method-add-custom {
+    appearance: none;
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0.25rem 0.6rem;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--primary-color);
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--oc-text) 5%, transparent);
+    }
+  }
+
   button.send {
     background-color: var(--primary-color);
     font-size: 11px;
