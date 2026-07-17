@@ -5,12 +5,15 @@ import { test, expect } from '../../playwright';
 const IPHONE_UA =
   'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1';
 
+// The dock param is ignored on a phone (MobileDock renders regardless); a
+// non-default dock is used here to prove it is overridden.
+const OPEN_ON_PHONE = '/#/?pg=1&dock=bottom';
+
 test.describe('playground on a phone', () => {
   test.use({ userAgent: IPHONE_UA, viewport: { width: 390, height: 844 } });
 
   test('opens fullscreen with no dock switcher or collapse', async ({ page, playground }) => {
-    // The dock param is ignored on a phone; MobileDock renders instead.
-    await page.goto('/#/?pg=1&dock=bottom');
+    await page.goto(OPEN_ON_PHONE);
     await expect(playground.mobilePanel).toBeVisible();
     await expect(playground.runner).toBeVisible();
     await expect(playground.switcher).toHaveCount(0);
@@ -22,7 +25,7 @@ test.describe('playground on a phone', () => {
   });
 
   test('sidebar is an overlay: starts closed, opens on toggle, closes on navigate', async ({ page, playground }) => {
-    await page.goto('/#/?pg=1&dock=bottom');
+    await page.goto(OPEN_ON_PHONE);
     await expect(playground.mobilePanel).toBeVisible();
     await expect(playground.sidebarPanel).toHaveCount(0);
 
@@ -35,7 +38,7 @@ test.describe('playground on a phone', () => {
   });
 
   test('closes from the header and clears the url state', async ({ page, playground }) => {
-    await page.goto('/#/?pg=1&dock=bottom');
+    await page.goto(OPEN_ON_PHONE);
     await expect(playground.mobilePanel).toBeVisible();
 
     await playground.close();
