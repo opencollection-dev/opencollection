@@ -64,6 +64,17 @@ test.describe('playground query bar - custom HTTP method', () => {
     await expect(queryBar.methodLabel).toHaveText('POST');
   });
 
+  test('a custom method with internal whitespace commits as a single normalized token', async ({ queryBar }) => {
+    await queryBar.enterCustomMode();
+    await queryBar.methodCustomInput.type('pur ge');
+    await expect(queryBar.methodCustomInput).toHaveValue('PUR GE');
+
+    await queryBar.methodCustomInput.press('Enter');
+
+    await expect(queryBar.methodCustomInput).toHaveCount(0);
+    await expect(queryBar.methodLabel).toHaveText('PURGE');
+  });
+
   test('a lowercase standard verb normalizes to the standard method', async ({ queryBar }) => {
     await queryBar.enterCustomMode();
     await queryBar.methodCustomInput.type('patch');
