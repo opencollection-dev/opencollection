@@ -14,6 +14,7 @@ export class EnvSwitcherComponent extends BaseComponent {
   readonly showVarsToggle = this.page.getByTestId('show-vars-toggle');
   readonly trigger: Locator;
   readonly menu = this.page.getByRole('menu');
+  readonly emptyOption = this.option('No environments');
 
   constructor(
     page: Page,
@@ -38,5 +39,9 @@ export class EnvSwitcherComponent extends BaseComponent {
 
   async toggle(): Promise<void> {
     await this.showVarsToggle.click();
+  }
+
+  async pressKey(key: string): Promise<void> {
+    await this.page.keyboard.press(key);
   }
 }

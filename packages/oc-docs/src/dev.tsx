@@ -17,6 +17,7 @@ import { createOpenCollectionStore } from './store/store';
 import { sampleCollectionYaml } from './sampleCollection';
 import { foldersFixtureCollection } from './e2eFixtures/foldersCollection';
 import { variablesFixtureCollection } from './e2eFixtures/variablesCollection';
+import { noEnvsFixtureCollection } from './e2eFixtures/noEnvsCollection';
 
 // `?fixture=folders` mounts a nested-folder collection for routing e2e tests;
 const fixture = new URLSearchParams(window.location.search).get('fixture');
@@ -25,7 +26,9 @@ const devCollection =
     ? foldersFixtureCollection
     : fixture === 'vars'
       ? variablesFixtureCollection
-      : sampleCollectionYaml;
+      : fixture === 'no-envs'
+        ? noEnvsFixtureCollection
+        : sampleCollectionYaml;
 
 // Ensure Prism is available globally for any code that might access it
 if (typeof window !== 'undefined') {

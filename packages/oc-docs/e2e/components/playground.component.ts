@@ -78,6 +78,13 @@ export class PlaygroundComponent extends BaseComponent {
     await this.treeItems.filter({ hasText: name }).first().click();
   }
 
+  async revealSidebar(): Promise<void> {
+    if (!(await this.sidebarPanel.isVisible())) {
+      await this.sidebarToggle.click();
+    }
+    await this.sidebarPanel.waitFor({ state: 'visible' });
+  }
+
   async openEnvironments(): Promise<void> {
     if (!(await this.gear.isVisible())) {
       await this.sidebarToggle.click();
