@@ -56,6 +56,17 @@ export const StyledWrapper = styled.div`
     margin-bottom: 0.625rem;
   }
 
+  .environment-name-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .environment-name-cell .environment-name {
+    min-width: 0;
+  }
+
   .environment-name {
     font-family: 'Fira Code', var(--font-mono);
     font-weight: 500;

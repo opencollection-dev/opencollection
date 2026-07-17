@@ -62,7 +62,7 @@ describe('FolderConfiguration', () => {
     expect(root.querySelector('[data-testid="folder-config-tests"]')).toBeTruthy();
   });
 
-  it('renders disabled headers (dimmed) and their descriptions', () => {
+  it('renders disabled headers with a Disabled chip and their descriptions', () => {
     const config: FolderConfig = {
       ...baseConfig,
       headers: [{ name: 'X-Debug', value: 'on', disabled: true, description: 'toggles debug logging' }]
@@ -72,7 +72,7 @@ describe('FolderConfiguration', () => {
     const headers = root.querySelector('[data-testid="folder-config-headers"]');
     expect(headers).toBeTruthy();
     expect(headers?.querySelector('.property-key')?.text.trim()).toBe('X-Debug');
-    expect(headers?.querySelector('.property-row--disabled')).toBeTruthy();
+    expect(headers?.querySelector('.disabled-badge')).toBeTruthy();
     expect(headers?.text).toContain('toggles debug logging');
   });
 
