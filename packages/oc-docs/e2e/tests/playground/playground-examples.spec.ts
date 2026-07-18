@@ -2,6 +2,7 @@ import { test, expect } from '../../playwright';
 
 const openAt = (dock: string): string => `/#/?pg=1&dock=${dock}`;
 const LIST_USERS_EXAMPLE = 'List Users';
+const LIST_USERS_SLUG = 'list-users';
 const UNAUTHORIZED_EXAMPLE = 'Unauthorized';
 
 test.describe('Playground - Examples', () => {
@@ -52,7 +53,7 @@ test.describe('Playground - Examples', () => {
     await playground.exampleToggle('get users').click();
     await playground.exampleRow(LIST_USERS_EXAMPLE).click();
     await expect(playground.exampleView).toBeVisible();
-    await expect(page).toHaveURL(/[?&]pgEx=list-users\b/);
+    await expect(page).toHaveURL(new RegExp(`[?&]pgEx=${LIST_USERS_SLUG}(?:&|$)`));
 
     await page.reload();
     await expect(playground.exampleView).toBeVisible();

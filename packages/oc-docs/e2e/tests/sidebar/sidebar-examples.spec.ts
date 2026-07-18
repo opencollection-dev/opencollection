@@ -4,7 +4,8 @@ const GET_ALL_CUSTOMERS = ['billing', 'customers', 'Get All Customers'];
 const OK_EXAMPLE = '200 OK - first page';
 const BAD_REQUEST_EXAMPLE = '400 Bad Request - invalid per_page';
 const REQUEST_PATH = '#/billing/customers/get-all-customers';
-const OK_EXAMPLE_URL = `/${REQUEST_PATH}/200-ok-first-page`;
+const OK_EXAMPLE_SLUG = '200-ok-first-page';
+const OK_EXAMPLE_URL = `/${REQUEST_PATH}/${OK_EXAMPLE_SLUG}`;
 
 test.describe('Sidebar - Examples (docs)', () => {
   test.beforeEach(async ({ requestPage }) => {
@@ -87,7 +88,7 @@ test.describe('Sidebar - Examples (docs)', () => {
     await requestPage.examples.try(OK_EXAMPLE);
 
     await expect(playground.exampleView).toBeVisible();
-    await expect(page).toHaveURL(/[?&]pgEx=200-ok-first-page\b/);
+    await expect(page).toHaveURL(new RegExp(`[?&]pgEx=${OK_EXAMPLE_SLUG}(?:&|$)`));
     await expect(playground.exampleViewControls).toHaveCount(0);
   });
 });
