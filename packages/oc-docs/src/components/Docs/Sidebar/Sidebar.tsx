@@ -28,10 +28,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
   const { pathname } = useLocation();
   // Resolve to the entry slug so an example path (<request>/<example>) still
   // highlights and auto-reveals its parent request, not the raw (unmatched) path.
-  const activeSlug = useMemo(
-    () => resolveSlug(model, pathname)?.entry.slug ?? normalizeSlug(pathname),
-    [model, pathname]
-  );
+  const activeSlug = resolveSlug(model, pathname)?.entry.slug ?? normalizeSlug(pathname);
 
   const goTo = (slug: string) => {
     docsNavigate(slug);

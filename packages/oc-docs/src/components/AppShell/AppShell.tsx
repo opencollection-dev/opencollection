@@ -15,7 +15,7 @@ import { useAppSelector } from '../../store/hooks';
 import { selectDocsCollection } from '../../store/slices/docs';
 import { selectGitCollectionUrl } from '../../store/slices/app';
 import { useActiveResolution } from '../../routing/hooks';
-import { exampleSlugs } from '../../routing/slug';
+import { exampleSlugForIndex } from '../../routing/slug';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import { layoutModeForWidth } from '../../hooks/useTopbarLayout';
 import { buildFetchInBrunoUrl } from '../../utils/buildFetchInBrunoUrl';
@@ -87,15 +87,11 @@ const AppShell: React.FC<AppShellProps> = ({ logo, testId = 'app-shell' }) => {
   // Open the playground on a specific example of the current request (its Try
   // action): pgReq keeps the request, pgEx the example, so a share/reload lands
   // on the same read-only example view.
-  const handleTryExample = useCallback(
-    (index: number) => {
-      const entry = resolution?.entry;
-      if (!entry) return;
-      const names = ((entry.item as HttpRequest | null)?.examples ?? []).map((example) => example.name);
-      setRequestExample(entry.slug, exampleSlugs(names)[index] ?? null);
-    },
-    [resolution, setRequestExample]
-  );
+  const handleTryExample = (index: number) => {
+    const entry = resolution?.entry;
+    if (!entry) return;
+    setRequestExample(entry.slug, exampleSlugForIndex(entry.item as HttpRequest | null, index));
+  };
 
   return (
     <StyledWrapper
