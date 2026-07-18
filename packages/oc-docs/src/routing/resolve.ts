@@ -1,6 +1,6 @@
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import { OVERVIEW_SLUG } from './navModel';
-import { exampleSlugs } from './slug';
+import { exampleIndexForSlug } from './slug';
 import type { NavEntry, NavModel, SeqNeighbor } from './types';
 
 export interface Resolution {
@@ -14,9 +14,8 @@ export interface Resolution {
 /** Match a trailing path segment against a request entry's example slugs. */
 const resolveExample = (entry: NavEntry, tail: string): { slug: string; index: number } | undefined => {
   if (entry.type !== 'request' || !entry.item) return undefined;
-  const names = ((entry.item as HttpRequest).examples ?? []).map((example) => example.name);
-  const index = exampleSlugs(names).indexOf(tail);
-  return index >= 0 ? { slug: tail, index } : undefined;
+  const index = exampleIndexForSlug(entry.item as HttpRequest, tail);
+  return index != null ? { slug: tail, index } : undefined;
 };
 
 /** Strip leading/trailing slashes; the bare root maps to the overview slug. */

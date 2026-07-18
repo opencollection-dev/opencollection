@@ -68,7 +68,7 @@ const withExamples = () =>
     ],
   } as unknown as OpenCollection);
 
-describe('resolveSlug — examples', () => {
+describe('resolveSlug - examples', () => {
   it('resolves a trailing example segment to its parent request and index', () => {
     const r = resolveSlug(withExamples(), 'login/successful-login')!;
     expect(r.entry.type).toBe('request');

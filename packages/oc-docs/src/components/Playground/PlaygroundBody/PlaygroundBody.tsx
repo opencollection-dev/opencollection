@@ -19,7 +19,7 @@ import { useNavModel } from '../../../routing/hooks';
 import { usePlaygroundUrlState, useElementWidth } from '../../../hooks';
 import { getItemUuid, findItemByUuid } from '../../../utils/itemUtils';
 import { isFolder } from '../../../utils/schemaHelpers';
-import { exampleSlugs } from '../../../routing/slug';
+import { exampleIndexForSlug, exampleSlugForIndex } from '../../../routing/slug';
 import PlaygroundView from '../Content/Views/PlaygroundView/PlaygroundView';
 import FolderSettingsView from '../Content/Views/FolderSettingsView/FolderSettingsView';
 import EnvironmentsView from '../Content/Views/EnvironmentsView/EnvironmentsView';
@@ -41,14 +41,6 @@ const ORIENTATION_BREAKPOINT = 640;
 // request slug (matching what handleNavigate / openEnvironments store).
 const applyKey = (requestSlug: string | null, exampleSlug: string | null): string =>
   exampleSlug ? `${requestSlug} ${exampleSlug}` : requestSlug ?? '';
-
-// The example index a URL slug addresses within a request, or null if it names
-// no current example (stale/renamed) -> caller falls back to the live request.
-const exampleIndexForSlug = (item: HttpRequest, exampleSlug: string): number | null => {
-  const names = (item.examples ?? []).map((example) => example.name);
-  const index = exampleSlugs(names).indexOf(exampleSlug);
-  return index >= 0 ? index : null;
-};
 
 interface PlaygroundBodyProps {
   requestSlug: string | null;
@@ -170,8 +162,8 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
     const slug = uuidToSlug.get(requestUuid);
     if (slug) {
       const item = findItemByUuid(collection?.items, requestUuid);
-      const names = item && !isFolder(item) ? ((item as HttpRequest).examples ?? []).map((example) => example.name) : [];
-      const nextExampleSlug = exampleSlugs(names)[index] ?? null;
+      const request = item && !isFolder(item) ? (item as HttpRequest) : null;
+      const nextExampleSlug = exampleSlugForIndex(request, index);
       appliedSlugRef.current = applyKey(slug, nextExampleSlug);
       setRequestExample(slug, nextExampleSlug);
     }

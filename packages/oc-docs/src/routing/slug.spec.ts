@@ -1,5 +1,16 @@
 import { describe, it, expect } from 'vitest';
-import { slugifySegment, dedupeSiblingSlugs, exampleSlugs } from './slug';
+import type { HttpRequest } from '@opencollection/types/requests/http';
+import {
+  slugifySegment,
+  dedupeSiblingSlugs,
+  exampleSlugs,
+  exampleNames,
+  exampleIndexForSlug,
+  exampleSlugForIndex,
+} from './slug';
+
+const request = (...names: string[]): HttpRequest =>
+  ({ examples: names.map((name) => ({ name })) } as unknown as HttpRequest);
 
 describe('slugifySegment', () => {
   it('kebab-cases a plain name (spaces become single dashes)', () => {
@@ -85,5 +96,45 @@ describe('exampleSlugs', () => {
     const reversed = exampleSlugs(['Unauthorized', 'OK']);
     expect(forward).toEqual(['ok', 'unauthorized']);
     expect(reversed).toEqual(['unauthorized', 'ok']);
+  });
+});
+
+describe('exampleNames', () => {
+  it('reads names in array order', () => {
+    expect(exampleNames(request('OK', 'Unauthorized'))).toEqual(['OK', 'Unauthorized']);
+  });
+
+  it('is empty for a request with no examples or a null request', () => {
+    expect(exampleNames({} as HttpRequest)).toEqual([]);
+    expect(exampleNames(null)).toEqual([]);
+  });
+});
+
+describe('exampleIndexForSlug', () => {
+  it('returns the index of a matching example slug', () => {
+    expect(exampleIndexForSlug(request('OK', 'Unauthorized'), 'unauthorized')).toBe(1);
+  });
+
+  it('returns null for an unknown/stale slug or a null request', () => {
+    expect(exampleIndexForSlug(request('OK', 'Unauthorized'), 'does-not-exist')).toBeNull();
+    expect(exampleIndexForSlug(null, 'ok')).toBeNull();
+  });
+});
+
+describe('exampleSlugForIndex', () => {
+  it('returns the slug at a given index', () => {
+    expect(exampleSlugForIndex(request('OK', 'Unauthorized'), 1)).toBe('unauthorized');
+  });
+
+  it('returns null for an out-of-range index or a null request', () => {
+    expect(exampleSlugForIndex(request('OK'), 5)).toBeNull();
+    expect(exampleSlugForIndex(null, 0)).toBeNull();
+  });
+
+  it('round-trips with exampleIndexForSlug', () => {
+    const req = request('OK', 'Unauthorized', 'OK');
+    const slug = exampleSlugForIndex(req, 2);
+    expect(slug).toBe('ok-2');
+    expect(exampleIndexForSlug(req, slug!)).toBe(2);
   });
 });
