@@ -60,6 +60,35 @@ test.describe('Playground - Examples', () => {
     await expect(playground.exampleView).toContainText('200');
   });
 
+  test('an unknown example slug in the url falls back to the live request and stays open', async ({ page, playground }) => {
+    // Open a real example to obtain its request slug, then swap in a bogus pgEx.
+    await playground.exampleToggle('get users').click();
+    await playground.exampleRow(LIST_USERS_EXAMPLE).click();
+    await expect(playground.exampleView).toBeVisible();
+
+    const stale = page.url().replace(`pgEx=${LIST_USERS_SLUG}`, 'pgEx=does-not-exist');
+    await page.goto(stale);
+
+    // Unmatched example: no example view, the live request opens instead, no crash.
+    await expect(playground.runner).toBeVisible();
+    await expect(playground.exampleView).toHaveCount(0);
+    await expect(page).toHaveURL(/[?&]pgReq=/);
+  });
+
+  test('switching docks keeps the example view and its pgEx in the url', async ({ page, playground }) => {
+    await playground.exampleToggle('get users').click();
+    await playground.exampleRow(LIST_USERS_EXAMPLE).click();
+    await expect(playground.exampleView).toBeVisible();
+    await expect(page).toHaveURL(new RegExp(`[?&]pgEx=${LIST_USERS_SLUG}(?:&|$)`));
+
+    // A dock switch is presentation only: the example must survive it.
+    await playground.selectDock('modal');
+    await expect(playground.panel('modal')).toBeVisible();
+    await expect(playground.exampleView).toBeVisible();
+    await expect(playground.exampleView).toContainText('200');
+    await expect(page).toHaveURL(new RegExp(`[?&]pgEx=${LIST_USERS_SLUG}(?:&|$)`));
+  });
+
   test('browser back and forward move between examples in the playground', async ({ page, playground }) => {
     await playground.exampleToggle('get users').click();
     await playground.exampleRow(LIST_USERS_EXAMPLE).click();

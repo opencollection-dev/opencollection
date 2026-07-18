@@ -46,7 +46,15 @@ export const usePlaygroundUrlState = (): PlaygroundUrlApi => {
       setParams(
         (prev) => {
           const current = readPlaygroundParams(prev);
-          return writePlaygroundParams(prev, { open: true, dock, requestSlug: current.requestSlug });
+          // A dock switch is presentation only: preserve the full view state,
+          // including the open example, so switching docks never yanks the user
+          // off an example (pgEx survives only when both slugs are written).
+          return writePlaygroundParams(prev, {
+            open: true,
+            dock,
+            requestSlug: current.requestSlug,
+            exampleSlug: current.exampleSlug
+          });
         },
         { replace: true }
       );
