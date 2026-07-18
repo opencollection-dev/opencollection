@@ -32,6 +32,7 @@ export class PlaygroundComponent extends BaseComponent {
   readonly inlinePanel = this.page.getByTestId('playground-dock-inline-panel');
   readonly bottomPanel = this.page.getByTestId('playground-dock-bottom-panel');
   readonly modalPanel = this.page.getByTestId('playground-dock-modal-panel');
+  readonly mobilePanel = this.page.getByTestId('playground-dock-mobile-panel');
   readonly methodSelect = this.view.getByTestId('query-bar-method-select');
   readonly methodMenu = this.page.getByTestId('query-bar-method-select-dropdown');
   readonly methodOptionsList = this.methodMenu.getByRole('menuitem');

@@ -14,6 +14,7 @@ interface PlaygroundSidebarProps {
   uuidToSlug: Map<string, string>;
   onNavigate: (slug: string) => void;
   onToggleFolder: (uuid: string) => void;
+  onExpandFolder: (uuid: string) => void;
   onOpenEnvironments: () => void;
   environmentsActive: boolean;
   onOpenCollection: () => void;
@@ -29,6 +30,7 @@ const PlaygroundSidebar: React.FC<PlaygroundSidebarProps> = ({
   uuidToSlug,
   onNavigate,
   onToggleFolder,
+  onExpandFolder,
   onOpenEnvironments,
   environmentsActive,
   onOpenCollection,
@@ -70,6 +72,7 @@ const PlaygroundSidebar: React.FC<PlaygroundSidebarProps> = ({
             uuidToSlug={uuidToSlug}
             onNavigate={onNavigate}
             onToggleFolder={onToggleFolder}
+            onExpandFolder={onExpandFolder}
             activeExample={activeExample}
             onExampleClick={onExampleClick}
             collectionRoot={{

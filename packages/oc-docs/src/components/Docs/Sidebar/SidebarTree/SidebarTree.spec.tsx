@@ -25,6 +25,7 @@ const render = (props: Partial<React.ComponentProps<typeof SidebarTree>> = {}) =
       uuidToSlug={uuidToSlug}
       onNavigate={noop}
       onToggleFolder={noop}
+      onExpandFolder={noop}
       {...props}
     />
   );
@@ -63,6 +64,7 @@ describe('SidebarTree', () => {
         uuidToSlug={new Map()}
         onNavigate={noop}
         onToggleFolder={noop}
+        onExpandFolder={noop}
       />
     );
     expect(html).toContain('WS');
@@ -80,6 +82,7 @@ describe('SidebarTree', () => {
         uuidToSlug={new Map([['s1', 'setup']])}
         onNavigate={noop}
         onToggleFolder={noop}
+        onExpandFolder={noop}
       />
     );
     expect(html).toContain('setup.js');
@@ -96,6 +99,7 @@ describe('SidebarTree collectionRoot', () => {
     uuidToSlug: new Map([['u1', 'get-users']]),
     onNavigate: noop,
     onToggleFolder: noop,
+    onExpandFolder: noop,
     activeExample: null
   };
 
@@ -162,6 +166,7 @@ const baseProps = {
   uuidToSlug: new Map<string, string>([['req-1', 'login']]),
   onNavigate: () => {},
   onToggleFolder: () => {},
+  onExpandFolder: () => {},
   activeExample: null
 };
 

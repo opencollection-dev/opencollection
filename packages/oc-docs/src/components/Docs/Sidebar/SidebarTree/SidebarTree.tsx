@@ -33,6 +33,7 @@ interface SidebarTreeProps {
   uuidToSlug: Map<string, string>;
   onNavigate: (slug: string) => void;
   onToggleFolder: (uuid: string) => void;
+  onExpandFolder: (uuid: string) => void;
   collectionRoot?: CollectionRoot;
   activeExample: ExampleHighlight | null;
   onExampleClick?: (requestUuid: string, index: number) => void;
@@ -45,6 +46,7 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
   uuidToSlug,
   onNavigate,
   onToggleFolder,
+  onExpandFolder,
   collectionRoot,
   activeExample,
   onExampleClick
@@ -94,7 +96,15 @@ const SidebarTree: React.FC<SidebarTreeProps> = ({
                 }
                 testId="sidebar-item"
                 slug={slug}
-                onClick={() => slug !== undefined && onNavigate(slug)}
+                // Name click navigates and reveals the folder. Expand-only (not
+                // toggle) so re-clicking an already-open folder keeps it open;
+                // the chevron is the only control that collapses. Reveals even
+                // when the folder is already active (auto-reveal only fires on a
+                // slug change, so it can't re-open a manually collapsed folder).
+                onClick={() => {
+                  if (slug !== undefined) onNavigate(slug);
+                  if (uuid) onExpandFolder(uuid);
+                }}
               />
               {expanded && children.length > 0 && (
                 <StyledWrapper style={{ '--guide-left': `${itemLevel * 19 + 14}px` } as React.CSSProperties}>

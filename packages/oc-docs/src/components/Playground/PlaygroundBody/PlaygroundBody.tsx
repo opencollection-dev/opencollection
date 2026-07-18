@@ -151,6 +151,7 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
   };
 
   const handleToggleFolder = (uuid: string) => dispatch(toggleFolderCollapse(uuid));
+  const handleExpandFolder = (uuid: string) => dispatch(expandFolders([uuid]));
 
   // An example is applied directly and its slug written to the URL (pgReq+pgEx),
   // so a reload / share restores it. Mark the combined key applied first so the
@@ -232,6 +233,7 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
             uuidToSlug={uuidToSlug}
             onNavigate={handleNavigate}
             onToggleFolder={handleToggleFolder}
+            onExpandFolder={handleExpandFolder}
             onOpenEnvironments={openEnvironments}
             environmentsActive={viewMode === 'environments'}
             onOpenCollection={openCollection}
