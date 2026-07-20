@@ -4,9 +4,9 @@ import { describe, it, expect } from 'vitest';
 import { TitleLabel } from './TitleLabel';
 
 describe('TitleLabel', () => {
-  it('renders its children inside a paragraph', () => {
+  it('renders its children inside a heading element', () => {
     const html = renderToStaticMarkup(<TitleLabel>Websocket</TitleLabel>);
-    expect(html).toContain('<p');
+    expect(html).toContain('<h2');
     expect(html).toContain('Websocket');
   });
 

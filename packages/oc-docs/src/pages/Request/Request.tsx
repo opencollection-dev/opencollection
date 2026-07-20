@@ -267,8 +267,8 @@ export const Request: React.FC<RequestProps> = ({ item, ancestry = [], collectio
           breadcrumbs={{
             collection,
             ancestry,
-            onBreadcrumbClick}
-          }
+            onBreadcrumbClick
+          }}
           showRequestDocs
           emptyStateProps={{
             icon: <EyeOffIcon />,

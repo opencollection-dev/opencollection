@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import type { GraphQLRequest } from '@opencollection/types/requests/graphql';
 import type { GrpcRequest } from '@opencollection/types/requests/grpc';
 import type { WebSocketRequest } from '@opencollection/types/requests/websocket';
-import { getItemDocs, getItemType, getRequestUrl } from '../../utils/schemaHelpers';
+import { getItemDocs, getItemName, getItemType, getRequestUrl } from '../../utils/schemaHelpers';
 import cx from '../../utils/cx';
 import { Heading } from '../Heading/Heading';
 import { EmptyState } from '../../ui/EmptyState/EmptyState';
@@ -42,7 +42,11 @@ interface UnsupportedRequestProps {
   showRequestDocs: boolean;
   emptyStateProps: UnsupportedEmptyStateProps;
   className?: string;
-  breadcrumbs?: Omit<BreadcrumbWrapperProps, 'showBreadcrumbs' | 'item'>;
+  breadcrumbs?: Omit<BreadcrumbWrapperProps, 'showBreadcrumbs' | 'name'>;
+  /**
+   * @default 'Untitled request'
+   */
+  customName?: string;
   titleVariant?: 'heading' | 'label';
   testId?: string;
 }
@@ -53,9 +57,11 @@ export const UnsupportedRequest: React.FC<UnsupportedRequestProps> = ({
   className,
   showRequestDocs,
   breadcrumbs,
+  customName = 'Untitled request',
   titleVariant = 'heading',
   testId = 'unsupported-request'
 }) => {
+  const name = getItemName(item) || customName;
   const md = useMarkdownRenderer();
   const docs = useMemo(() => {
     if (!showRequestDocs) {
@@ -71,13 +77,13 @@ export const UnsupportedRequest: React.FC<UnsupportedRequestProps> = ({
 
   return (
     <div className={cx(className, 'w-full')} data-testid={testId}>
-      <BreadcrumbWrapper showBreadcrumbs={Boolean(breadcrumbs)} item={item} {...(breadcrumbs ?? {})} />
+      <BreadcrumbWrapper showBreadcrumbs={Boolean(breadcrumbs)} name={name} {...(breadcrumbs ?? {})} />
 
       {titleVariant === 'label' ? (
-        <TitleLabel testId="unsupported-request-title">{fullName}</TitleLabel>
+        <TitleLabel className='mt-3' testId="unsupported-request-title">{name}</TitleLabel>
       ) : (
         <Heading size="md" style={{ marginTop: '0.875rem' }} testId="unsupported-request-title">
-          {fullName}
+          {name}
         </Heading>
       )}
 

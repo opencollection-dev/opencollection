@@ -11,6 +11,10 @@ const websocketItem = {
   docs: 'Streams **real-time** updates.'
 } as unknown as WebSocketRequest;
 
+const unnamedItem = {
+  info: { type: 'websocket' }
+} as unknown as WebSocketRequest;
+
 const emptyStateProps = {
   icon: <span>icon</span>,
   heading: 'Preview not available',
@@ -18,13 +22,13 @@ const emptyStateProps = {
 };
 
 describe('UnsupportedRequest', () => {
-  it('shows the request type as the page heading', () => {
+  it('shows the request name as the page heading', () => {
     const root = parse(
       renderToStaticMarkup(
         <UnsupportedRequest item={websocketItem} showRequestDocs emptyStateProps={emptyStateProps} />
       )
     );
-    expect(getByTestId(root, 'unsupported-request-title').text).toContain('Websocket');
+    expect(getByTestId(root, 'unsupported-request-title').text).toContain('WS');
   });
 
   it('renders the heading title variant by default', () => {
@@ -35,7 +39,7 @@ describe('UnsupportedRequest', () => {
     );
     const title = getByTestId(root, 'unsupported-request-title');
     expect(title.classNames).toContain('heading');
-    expect(title.text).toContain('Websocket');
+    expect(title.text).toContain('WS');
   });
 
   it('renders the label title variant with the shared testid', () => {
@@ -50,9 +54,69 @@ describe('UnsupportedRequest', () => {
       )
     );
     const title = getByTestId(root, 'unsupported-request-title');
-    expect(title.tagName).toBe('P');
+    expect(title.classNames).toContain('title-label');
     expect(title.classNames).not.toContain('heading');
-    expect(title.text).toContain('Websocket');
+    expect(title.text).toContain('WS');
+  });
+
+  it('falls back to a provided customName when the item has no name', () => {
+    const root = parse(
+      renderToStaticMarkup(
+        <UnsupportedRequest
+          item={unnamedItem}
+          customName="My request"
+          showRequestDocs={false}
+          emptyStateProps={emptyStateProps}
+        />
+      )
+    );
+    expect(getByTestId(root, 'unsupported-request-title').text).toContain('My request');
+  });
+
+  it('falls back to the default "Untitled request" in the label variant', () => {
+    const root = parse(
+      renderToStaticMarkup(
+        <UnsupportedRequest
+          item={unnamedItem}
+          titleVariant="label"
+          showRequestDocs={false}
+          emptyStateProps={emptyStateProps}
+        />
+      )
+    );
+    expect(getByTestId(root, 'unsupported-request-title').text).toContain('Untitled request');
+  });
+
+  it('falls back to the default "Untitled request" when the item has no name and no customName', () => {
+    const root = parse(
+      renderToStaticMarkup(
+        <UnsupportedRequest item={unnamedItem} showRequestDocs={false} emptyStateProps={emptyStateProps} />
+      )
+    );
+    expect(getByTestId(root, 'unsupported-request-title').text).toContain('Untitled request');
+  });
+
+  it('renders the resolved name as the current breadcrumb when breadcrumbs are shown', () => {
+    const root = parse(
+      renderToStaticMarkup(
+        <UnsupportedRequest
+          item={websocketItem}
+          breadcrumbs={{}}
+          showRequestDocs={false}
+          emptyStateProps={emptyStateProps}
+        />
+      )
+    );
+    expect(getByTestId(root, 'unsupported-request-breadcrumb-current').text).toContain('WS');
+  });
+
+  it('does not render the breadcrumb when no breadcrumbs are passed', () => {
+    const root = parse(
+      renderToStaticMarkup(
+        <UnsupportedRequest item={websocketItem} showRequestDocs={false} emptyStateProps={emptyStateProps} />
+      )
+    );
+    expect(queryByTestId(root, 'unsupported-request-breadcrumb')).toBeNull();
   });
 
   it('explains that the type cannot be previewed in this viewer', () => {
