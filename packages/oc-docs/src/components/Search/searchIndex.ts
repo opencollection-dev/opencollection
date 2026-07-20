@@ -9,10 +9,11 @@
  * Pure + React-free so it can be unit tested and memoized by the caller.
  */
 
+import Fuse from 'fuse.js';
+import type { IFuseOptions, FuseResultMatch } from 'fuse.js';
 import type { NavEntry } from '../../routing/types';
-import { getItemDocs, getItemDescription, getRequestUrl, getHttpParams } from '../../utils/schemaHelpers';
+import { getRequestUrl } from '../../utils/schemaHelpers';
 import { getItemUuid } from '../../utils/itemUtils';
-import { fuzzyScore } from '../../utils/fuzzyMatch';
 
 export interface SearchRecord {
   /** Item UUID (the matchingItemIds contract + sidebar key). */
@@ -21,13 +22,11 @@ export interface SearchRecord {
   slug: string;
   name: string;
   method?: string;
-  /** Folder chain for display, e.g. "Hotels / Browse & search". */
+  /** Folder chain, searchable + displayed, e.g. "Hotels / Browse & search". */
   breadcrumb: string;
   /** Ancestor folder slugs, for the folder filter chip. */
   ancestorSlugs: string[];
   url: string;
-  params: string;
-  description: string;
 }
 
 /** A folder offered in the palette's folder filter dropdown. */
@@ -35,21 +34,6 @@ export interface FolderOption {
   slug: string;
   name: string;
 }
-
-const paramsToText = (item: NavEntry['item']): string => {
-  const params = getHttpParams(item as never) as Array<{ name?: string; value?: string }> | undefined;
-  if (!Array.isArray(params)) return '';
-  return params
-    .map((p) => [p?.name, p?.value].filter(Boolean).join(' '))
-    .filter(Boolean)
-    .join(' ');
-};
-
-const descriptionOf = (item: NavEntry['item']): string => {
-  const docs = getItemDocs(item) || '';
-  const infoDesc = getItemDescription(item);
-  return [infoDesc, docs].filter(Boolean).join(' ');
-};
 
 /** Build the searchable records (request nodes only) from the nav model. */
 export const buildSearchRecords = (entries: NavEntry[]): SearchRecord[] => {
@@ -66,8 +50,6 @@ export const buildSearchRecords = (entries: NavEntry[]): SearchRecord[] => {
       breadcrumb: entry.ancestors.map((a) => a.name).join(' / '),
       ancestorSlugs: entry.ancestors.map((a) => a.slug),
       url: getRequestUrl(entry.item as never),
-      params: paramsToText(entry.item),
-      description: descriptionOf(entry.item),
     });
   }
   return records;
@@ -104,39 +86,59 @@ export const collectMethods = (entries: NavEntry[]): string[] => {
   });
 };
 
-/** Field weights: name dominates, then url, params, description. */
-const FIELD_WEIGHTS: Array<[keyof Pick<SearchRecord, 'name' | 'url' | 'params' | 'description'>, number]> = [
-  ['name', 10],
-  ['url', 4],
-  ['params', 2],
-  ['description', 1],
-];
+/** Searchable + highlightable fields, in weight order (name dominates). */
+type SearchField = 'name' | 'url' | 'breadcrumb';
 
-/** Best weighted fuzzy score across a record's searchable fields, or null. */
-export const scoreRecord = (query: string, rec: SearchRecord): number | null => {
-  let best: number | null = null;
-  for (const [field, weight] of FIELD_WEIGHTS) {
-    const s = fuzzyScore(query, rec[field]);
-    if (s === null) continue;
-    const weighted = s * weight;
-    best = best === null ? weighted : Math.max(best, weighted);
+/** Matched character ranges per field, as inclusive [start, end] pairs. */
+export type FieldMatches = Partial<Record<SearchField, Array<[number, number]>>>;
+
+/** A ranked result plus the ranges that matched, so the row can bold them. */
+export interface SearchHit {
+  record: SearchRecord;
+  matches: FieldMatches;
+}
+
+/**
+ * Fuse options tuned for endpoint search. Bitap gives typo tolerance
+ * (`bikling` → `billing`) while matching a *contiguous* window, so a query
+ * never stitches characters across separate words the way a subsequence would.
+ * `ignoreLocation` is required because URLs are long and the match can sit
+ * anywhere in them; `threshold` trades typo tolerance against noise.
+ */
+const FUSE_OPTIONS: IFuseOptions<SearchRecord> = {
+  includeMatches: true,
+  includeScore: true,
+  ignoreLocation: true,
+  threshold: 0.3,
+  minMatchCharLength: 2,
+  keys: [
+    { name: 'name', weight: 3 },
+    { name: 'url', weight: 2 },
+    { name: 'breadcrumb', weight: 1 }
+  ]
+};
+
+/** Build the Fuse index once per record set (memoize at the call site). */
+export const createSearchIndex = (records: SearchRecord[]): Fuse<SearchRecord> =>
+  new Fuse(records, FUSE_OPTIONS);
+
+const collectMatches = (matches: readonly FuseResultMatch[] | undefined): FieldMatches => {
+  const byField: FieldMatches = {};
+  for (const m of matches ?? []) {
+    const field = m.key as SearchField | undefined;
+    if (!field) continue;
+    byField[field] = m.indices.map(([start, end]) => [start, end]);
   }
-  return best;
+  return byField;
 };
 
 /**
  * Rank records against a query (text only; filters are applied separately by
- * the caller so they stay out of the shared slice). Empty query → [] (the
- * palette shows its initial empty state, not the whole collection).
+ * the caller). Empty query → [] (the palette shows its initial empty state,
+ * not the whole collection). Results arrive already sorted by Fuse relevance.
  */
-export const searchRecords = (query: string, records: SearchRecord[]): SearchRecord[] => {
+export const searchHits = (fuse: Fuse<SearchRecord>, query: string): SearchHit[] => {
   const q = query.trim();
   if (!q) return [];
-  const scored: Array<{ rec: SearchRecord; score: number }> = [];
-  for (const rec of records) {
-    const score = scoreRecord(q, rec);
-    if (score !== null) scored.push({ rec, score });
-  }
-  scored.sort((a, b) => b.score - a.score);
-  return scored.map((s) => s.rec);
+  return fuse.search(q).map((r) => ({ record: r.item, matches: collectMatches(r.matches) }));
 };

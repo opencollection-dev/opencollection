@@ -12,8 +12,6 @@ const record: SearchRecord = {
   breadcrumb: 'Hotels / Browse & search',
   ancestorSlugs: ['hotels'],
   url: '{{baseUrl}}/api/v1/hotels',
-  params: '',
-  description: '',
 };
 
 describe('SearchResultItem', () => {
@@ -28,5 +26,18 @@ describe('SearchResultItem', () => {
   it('omits the url line when there is no url', () => {
     const html = renderToStaticMarkup(<SearchResultItem record={{ ...record, url: '' }} onSelect={() => {}} />);
     expect(html).not.toContain('class="search-result-url"');
+  });
+
+  it('bolds the matched ranges reported for a field', () => {
+    // "Hotels" sits at indices 8-13 of "Get All Hotels".
+    const html = renderToStaticMarkup(
+      <SearchResultItem record={record} matches={{ name: [[8, 13]] }} onSelect={() => {}} />,
+    );
+    expect(html).toContain('<b class="search-hl">Hotels</b>');
+  });
+
+  it('renders plain text when a field has no matches', () => {
+    const html = renderToStaticMarkup(<SearchResultItem record={record} matches={{}} onSelect={() => {}} />);
+    expect(html).not.toContain('<b class="search-hl">');
   });
 });

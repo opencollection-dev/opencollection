@@ -3,8 +3,8 @@ import {
   buildSearchRecords,
   collectTopLevelFolders,
   collectMethods,
-  searchRecords,
-  scoreRecord,
+  createSearchIndex,
+  searchHits,
   type SearchRecord,
 } from './searchIndex';
 import type { NavEntry } from '../../routing/types';
@@ -36,19 +36,24 @@ describe('buildSearchRecords', () => {
     expect(recs[0].method).toBe('GET');
     expect(recs[0].breadcrumb).toBe('Hotels');
     expect(recs[0].url).toContain('/api/v1/hotels');
-    expect(recs[0].params).toContain('page');
-    expect(recs[0].description).toContain('List hotels');
   });
 
-  it('indexes an object-form info.description ({ content }) as searchable text', () => {
-    const entry = requestEntry({ uuid: 'u1' });
-    (entry.item as { info: { description: unknown } }).info.description = {
-      content: 'Cancels a reservation',
-      type: 'text/markdown',
-    };
-    const recs = buildSearchRecords([entry]);
-    expect(recs[0].description).toContain('Cancels a reservation');
-    expect(recs[0].description).not.toContain('[object Object]');
+  it('does not carry params or description onto the record (out of search scope)', () => {
+    const recs = buildSearchRecords([requestEntry({ uuid: 'u1' })]);
+    expect(recs[0]).not.toHaveProperty('params');
+    expect(recs[0]).not.toHaveProperty('description');
+  });
+
+  it('joins the ancestor chain into a breadcrumb', () => {
+    const entry = requestEntry({
+      uuid: 'u1',
+      ancestors: [
+        { name: 'Billing', slug: 'billing' },
+        { name: 'Lookups', slug: 'billing/lookups' },
+      ],
+    });
+    expect(buildSearchRecords([entry])[0].breadcrumb).toBe('Billing / Lookups');
+    expect(buildSearchRecords([entry])[0].ancestorSlugs).toEqual(['billing', 'billing/lookups']);
   });
 
   it('excludes folders and built-in pages from records', () => {
@@ -95,33 +100,154 @@ describe('collectMethods', () => {
 });
 
 const rec = (over: Partial<SearchRecord>): SearchRecord => ({
-  id: 'id', slug: 's', name: '', method: 'GET', breadcrumb: '', ancestorSlugs: [],
-  url: '', params: '', description: '', ...over,
+  id: 'id', slug: 's', name: '', method: 'GET', breadcrumb: '', ancestorSlugs: [], url: '', ...over,
 });
 
-describe('scoreRecord / searchRecords', () => {
-  it('matches on name, url, params and description', () => {
-    expect(scoreRecord('hotel', rec({ name: 'Get Hotels' }))).not.toBeNull();
-    expect(scoreRecord('v1', rec({ url: '/api/v1/x' }))).not.toBeNull();
-    expect(scoreRecord('page', rec({ params: 'page 1' }))).not.toBeNull();
-    expect(scoreRecord('auth', rec({ description: 'authenticates the user' }))).not.toBeNull();
+/** Substrings the reported ranges actually cover, for match-locality assertions. */
+const matchedText = (text: string, ranges?: Array<[number, number]>): string[] =>
+  (ranges ?? []).map(([start, end]) => text.slice(start, end + 1));
+
+const ids = (hits: ReturnType<typeof searchHits>): string[] => hits.map((h) => h.record.id);
+
+// A small, representative billing collection reused across the matching tests.
+const BILLING: SearchRecord[] = [
+  rec({ id: 'payments', name: 'Get All Payments', breadcrumb: 'Billing', url: '{{baseUrl}}/billing/payments' }),
+  rec({ id: 'invoices', name: 'Get All Invoices', breadcrumb: 'Billing', url: '{{baseUrl}}/billing/invoices' }),
+  rec({ id: 'customers', name: 'Get All Customers', breadcrumb: 'Billing', url: '{{baseUrl}}/billing/customers' }),
+  rec({ id: 'subs', name: 'Get All Subscriptions', breadcrumb: 'Billing', url: '{{baseUrl}}/billing/subscriptions' }),
+  rec({ id: 'currencies', name: 'Get Currencies', breadcrumb: 'Billing / Lookups', url: '{{baseUrl}}/billing/lookups/currencies' }),
+];
+
+describe('searchHits — empty & degenerate queries', () => {
+  it('empty / whitespace query returns no results (initial empty state)', () => {
+    const fuse = createSearchIndex([rec({ name: 'anything' })]);
+    expect(searchHits(fuse, '')).toEqual([]);
+    expect(searchHits(fuse, '   ')).toEqual([]);
   });
 
-  it('weights a name hit above a description-only hit', () => {
-    const nameHit = scoreRecord('book', rec({ name: 'book' }))!;
-    const descHit = scoreRecord('book', rec({ description: 'book' }))!;
-    expect(nameHit).toBeGreaterThan(descHit);
+  it('a single character does not match (minMatchCharLength = 2)', () => {
+    const fuse = createSearchIndex(BILLING);
+    expect(searchHits(fuse, 'p')).toEqual([]);
   });
 
-  it('empty query returns no results (initial empty state, not full list)', () => {
-    expect(searchRecords('', [rec({ name: 'anything' })])).toEqual([]);
-    expect(searchRecords('   ', [rec({ name: 'anything' })])).toEqual([]);
+  it('gibberish returns nothing (no false positives)', () => {
+    const fuse = createSearchIndex(BILLING);
+    expect(searchHits(fuse, 'zzzzz')).toEqual([]);
+    expect(searchHits(fuse, 'qwxyz')).toEqual([]);
+  });
+});
+
+describe('searchHits — exact matches per field', () => {
+  it('matches on the name', () => {
+    const fuse = createSearchIndex(BILLING);
+    expect(ids(searchHits(fuse, 'invoices'))).toContain('invoices');
   });
 
-  it('returns matches ranked by score, drops non-matches', () => {
-    const a = rec({ id: 'a', name: 'Get All Hotels' });
-    const b = rec({ id: 'b', name: 'Booking list' });
-    const out = searchRecords('hotel', [a, b]);
-    expect(out.map((r) => r.id)).toEqual(['a']);
+  it('matches on the url', () => {
+    const fuse = createSearchIndex([rec({ id: 'x', name: 'Unrelated', url: '{{baseUrl}}/api/v1/hotels' })]);
+    expect(ids(searchHits(fuse, 'hotels'))).toContain('x');
+  });
+
+  it('matches on the folder chain (breadcrumb)', () => {
+    const fuse = createSearchIndex([rec({ id: 'x', name: 'Get item', breadcrumb: 'Billing / Lookups' })]);
+    expect(ids(searchHits(fuse, 'lookups'))).toContain('x');
+  });
+
+  it('is case-insensitive', () => {
+    const fuse = createSearchIndex(BILLING);
+    expect(ids(searchHits(fuse, 'PAYMENTS'))).toContain('payments');
+    expect(ids(searchHits(fuse, 'PaYmEnTs'))).toContain('payments');
+  });
+});
+
+describe('searchHits — typo tolerance', () => {
+  it('tolerates a one-character error', () => {
+    const fuse = createSearchIndex(BILLING);
+    expect(ids(searchHits(fuse, 'paymnt'))).toContain('payments'); // dropped letter
+    expect(ids(searchHits(fuse, 'invoises'))).toContain('invoices'); // substitution
+    expect(ids(searchHits(fuse, 'custmers'))).toContain('customers');
+  });
+
+  it('tolerates a transposition / two-character error', () => {
+    const fuse = createSearchIndex(BILLING);
+    expect(ids(searchHits(fuse, 'paymnet'))).toContain('payments');
+    expect(ids(searchHits(fuse, 'subscripton'))).toContain('subs');
+  });
+
+  it('the intended record ranks first for a typo', () => {
+    const fuse = createSearchIndex(BILLING);
+    expect(searchHits(fuse, 'invoises')[0].record.id).toBe('invoices');
+  });
+});
+
+describe('searchHits — precision (threshold 0.3)', () => {
+  it('does not bleed a shared prefix into an unrelated word (cursor !-> currencies)', () => {
+    const fuse = createSearchIndex(BILLING);
+    expect(ids(searchHits(fuse, 'cursor'))).not.toContain('currencies');
+  });
+});
+
+describe('searchHits — match locality (no cross-word stitching)', () => {
+  it('highlights the real word, not a stray leading char from another token', () => {
+    const fuse = createSearchIndex(BILLING);
+    const hit = searchHits(fuse, 'billing').find((h) => h.record.id === 'payments')!;
+    const url = hit.record.url;
+    const subs = matchedText(url, hit.matches.url);
+    // The matched span is the word "billing" itself...
+    expect(subs).toContain('billing');
+    // ...never the "b" of "{{baseUrl}}" at index 2.
+    expect(hit.matches.url?.map(([start]) => start)).not.toContain(2);
+  });
+});
+
+describe('searchHits — ranking & weights', () => {
+  it('ranks a name hit above a folder-only hit', () => {
+    const named = rec({ id: 'named', name: 'Booking' });
+    const foldered = rec({ id: 'foldered', name: 'Get item', breadcrumb: 'Booking / Active' });
+    const fuse = createSearchIndex([foldered, named]);
+    expect(searchHits(fuse, 'booking')[0].record.id).toBe('named');
+  });
+
+  it('ranks an exact match above a typo match', () => {
+    const exact = rec({ id: 'exact', name: 'payments' });
+    const typo = rec({ id: 'typo', name: 'paymznts' });
+    const fuse = createSearchIndex([typo, exact]);
+    expect(searchHits(fuse, 'payments')[0].record.id).toBe('exact');
+  });
+
+  it('drops non-matching records from the result set', () => {
+    const fuse = createSearchIndex([rec({ id: 'a', name: 'Get All Hotels' }), rec({ id: 'b', name: 'Booking list' })]);
+    expect(ids(searchHits(fuse, 'hotel'))).toEqual(['a']);
+  });
+});
+
+describe('searchHits — reported matches for highlighting', () => {
+  it('reports ranges only for the fields that actually matched', () => {
+    const fuse = createSearchIndex([rec({ id: 'x', name: 'Get All Payments', breadcrumb: 'Billing', url: '{{baseUrl}}/billing/payments' })]);
+    const hit = searchHits(fuse, 'payments')[0];
+    // "payments" is in name and url but not the breadcrumb "Billing".
+    expect(hit.matches.name).toBeTruthy();
+    expect(hit.matches.url).toBeTruthy();
+    expect(hit.matches.breadcrumb).toBeUndefined();
+  });
+
+  it('reported ranges slice back to the query word', () => {
+    const fuse = createSearchIndex([rec({ id: 'x', name: 'Get All Payments' })]);
+    const hit = searchHits(fuse, 'payments')[0];
+    expect(matchedText(hit.record.name, hit.matches.name)).toContain('Payments');
+  });
+});
+
+describe('searchHits — abbreviations are intentionally out of scope', () => {
+  // Bitap only matches contiguous approximate spans, never a gapped subsequence
+  // like a consonant-skeleton abbreviation. Supporting those would need a much
+  // looser threshold that reopens the prefix-bleed false positives above, so it
+  // is deliberately left unsupported. These guard that boundary: if the matcher
+  // ever starts accepting abbreviations, precision has almost certainly slipped.
+  it('does not match a consonant-skeleton abbreviation', () => {
+    const hotels = createSearchIndex([rec({ id: 'h', name: 'Get All Hotels', url: '{{baseUrl}}/api/v1/hotels' })]);
+    expect(ids(searchHits(hotels, 'htl'))).not.toContain('h'); // htl -> hotel
+    const fuse = createSearchIndex(BILLING);
+    expect(ids(searchHits(fuse, 'pmts'))).not.toContain('payments'); // pmts -> payments
   });
 });
