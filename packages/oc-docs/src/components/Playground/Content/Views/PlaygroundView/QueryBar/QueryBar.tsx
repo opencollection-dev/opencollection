@@ -5,6 +5,8 @@ import MenuDropdown from '../../../../../../ui/MenuDropdown';
 import { getHttpMethod, getRequestUrl, getHttpParams } from '../../../../../../utils/schemaHelpers';
 import { syncPathParams, syncQueryParams } from '../../../../../../utils/pathParams';
 import { availableMethods, getMethodColorVar } from '../../../../../../theme/methodColors';
+import { MethodBadge } from '../../../../../MethodBadge/MethodBadge';
+import { CopyButton } from '../../../../../../ui/CopyButton/CopyButton';
 
 interface QueryBarProps {
   item: HttpRequest;
@@ -52,12 +54,7 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
   };
 
   return (
-    <StyledWrapper
-      className="flex items-stretch"
-      style={{
-        height: '36px'
-      }}
-    >
+    <StyledWrapper className="flex items-center">
       <div className="method-select-wrapper">
         <MenuDropdown
           selectedItemId={method}
@@ -70,13 +67,8 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
             onClick: () => handleMethodChange(m)
           }))}
         >
-          <button
-            type="button"
-            className="method-select h-full"
-            aria-label="HTTP method"
-            style={{ color: getMethodColorVar(method) }}
-          >
-            {method}
+          <button type="button" className="method-select" aria-label="HTTP method">
+            <MethodBadge method={method} />
           </button>
         </MenuDropdown>
       </div>
@@ -99,16 +91,20 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
         }}
       />
 
-      <button
-        onClick={onSendRequest}
-        disabled={isLoading || !url.trim()}
-        className="send px-4 uppercase text-xs font-semibold text-white disabled:cursor-not-allowed flex items-center gap-2 transition-all"
-      >
-        {isLoading && (
-          <div className="w-2.5 h-2.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-        )}
-        {isLoading ? 'Sending' : 'Send'}
-      </button>
+      <div className="actions">
+        <CopyButton text={url} label="Copy URL" copiedLabel="Copied" testId="query-bar-copy-url" />
+        <button
+          type="button"
+          onClick={onSendRequest}
+          disabled={isLoading || !url.trim()}
+          className="send font-semibold text-white disabled:cursor-not-allowed flex items-center gap-2 transition-all"
+        >
+          {isLoading && (
+            <div className="w-2.5 h-2.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          )}
+          {isLoading ? 'Sending' : 'Send'}
+        </button>
+      </div>
     </StyledWrapper>
   );
 };

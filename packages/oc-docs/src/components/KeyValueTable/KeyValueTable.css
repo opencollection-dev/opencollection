@@ -212,6 +212,11 @@
   min-width: 0;
 }
 
+.key-value-table .value-input-tip {
+  display: block;
+  min-width: 0;
+}
+
 .key-value-table .value-cell-trailing {
   flex: none;
   display: flex;
