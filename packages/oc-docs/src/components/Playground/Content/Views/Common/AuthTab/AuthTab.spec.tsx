@@ -24,10 +24,10 @@ const renderAuth = (auth: unknown, extra: Record<string, unknown> = {}) =>
   render(<AuthTab auth={auth} onAuthChange={noop} showFullAuth item={{ request: {} }} onItemChange={noop} {...extra} />);
 
 describe('AuthTab', () => {
-  it('offers exactly the six supported auth types and none of the unsupported ones', () => {
+  it('offers exactly the four supported auth types and none of the unsupported ones', () => {
     const modeLabels = ['No Auth', ...Object.keys(AUTH_DEFAULTS).map((mode) => AUTH_MODE_LABELS[mode] ?? mode)];
-    expect(modeLabels).toEqual(['No Auth', 'Basic Auth', 'Bearer Token', 'API Key', 'Digest Auth', 'AWS Signature v4']);
-    ['oauth', 'wsse', 'ntlm', 'edgegrid', 'akamai'].forEach((excluded) =>
+    expect(modeLabels).toEqual(['No Auth', 'Basic Auth', 'Bearer Token', 'API Key']);
+    ['digest', 'aws', 'signature', 'oauth', 'wsse', 'ntlm', 'edgegrid', 'akamai'].forEach((excluded) =>
       expect(modeLabels.join(' ').toLowerCase()).not.toContain(excluded)
     );
   });
