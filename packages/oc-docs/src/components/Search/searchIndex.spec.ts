@@ -238,6 +238,26 @@ describe('searchHits — reported matches for highlighting', () => {
   });
 });
 
+describe('searchHits — transposition typos (adjacent letter swap)', () => {
+  it('matches a single adjacent swap on a short word the raw threshold misses', () => {
+    const fuse = createSearchIndex([rec({ id: 'hotels', name: 'Get All Hotels', url: '{{baseUrl}}/hotels' })]);
+    expect(ids(searchHits(fuse, 'hotles'))).toContain('hotels'); // hotels -> l/e swapped
+    expect(ids(searchHits(fuse, 'htoels'))).toContain('hotels'); // hotels -> o/t swapped
+  });
+
+  it('improves the rank of a typo that contains a transposition', () => {
+    const fuse = createSearchIndex(BILLING);
+    expect(searchHits(fuse, 'paymnet')[0].record.id).toBe('payments');
+  });
+
+  it('swap variants do not introduce unrelated records (near-exact gate)', () => {
+    const fuse = createSearchIndex(BILLING);
+    // Scrambling "cursor" must not back-door "currencies" in via a variant.
+    expect(ids(searchHits(fuse, 'cursor'))).not.toContain('currencies');
+    expect(searchHits(fuse, 'zzzzz')).toEqual([]);
+  });
+});
+
 describe('searchHits — abbreviations are intentionally out of scope', () => {
   // Bitap only matches contiguous approximate spans, never a gapped subsequence
   // like a consonant-skeleton abbreviation. Supporting those would need a much

@@ -133,12 +133,59 @@ const collectMatches = (matches: readonly FuseResultMatch[] | undefined): FieldM
 };
 
 /**
+ * Adjacent-character swaps of `query`, e.g. "hotles" → ["ohtles", "htoles",
+ * "holtes", "hotels", "hotlse"]. Bitap scores a transposition as two edits, so
+ * a swap-typo on a short word ("hotles" → "hotels") busts the threshold and is
+ * missed. Searching these variants restores the correction as a near-exact hit
+ * without loosening the threshold (which would reopen prefix-bleed matches).
+ * Swaps of equal neighbours are skipped (they reproduce the original).
+ */
+const adjacentSwaps = (query: string): string[] => {
+  const variants: string[] = [];
+  for (let i = 0; i < query.length - 1; i++) {
+    if (query[i] === query[i + 1]) continue;
+    variants.push(query.slice(0, i) + query[i + 1] + query[i] + query.slice(i + 2));
+  }
+  return variants;
+};
+
+/**
+ * A swap variant must come back near-exact to count: a genuine de-typo lands at
+ * ~0 (the corrected word is really there), whereas a variant that only fuzzily
+ * grazes an unrelated record scores higher and is noise. This gate only applies
+ * to records the original query did NOT already surface.
+ */
+const TRANSPOSITION_MAX_SCORE = 0.1;
+
+/**
  * Rank records against a query (text only; filters are applied separately by
  * the caller). Empty query → [] (the palette shows its initial empty state,
- * not the whole collection). Results arrive already sorted by Fuse relevance.
+ * not the whole collection). The original query runs at the normal threshold;
+ * adjacent-swap variants back-fill transposition typos the threshold misses.
+ * Each record is kept at its best (lowest) score, so a variant that corrects a
+ * typo also improves the row's rank and highlight.
  */
 export const searchHits = (fuse: Fuse<SearchRecord>, query: string): SearchHit[] => {
   const q = query.trim();
   if (!q) return [];
-  return fuse.search(q).map((r) => ({ record: r.item, matches: collectMatches(r.matches) }));
+
+  const bestById = new Map<string, { record: SearchRecord; matches: FieldMatches; score: number }>();
+  const ingest = (results: ReturnType<Fuse<SearchRecord>['search']>, isOriginal: boolean) => {
+    for (const r of results) {
+      const score = r.score ?? 1;
+      const seen = bestById.get(r.item.id);
+      // A variant may only introduce a new record when it matched near-exactly.
+      if (!isOriginal && !seen && score > TRANSPOSITION_MAX_SCORE) continue;
+      if (!seen || score < seen.score) {
+        bestById.set(r.item.id, { record: r.item, matches: collectMatches(r.matches), score });
+      }
+    }
+  };
+
+  ingest(fuse.search(q), true);
+  for (const variant of adjacentSwaps(q)) ingest(fuse.search(variant), false);
+
+  return [...bestById.values()]
+    .sort((a, b) => a.score - b.score)
+    .map(({ record, matches }) => ({ record, matches }));
 };
