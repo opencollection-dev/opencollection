@@ -30,7 +30,8 @@ export const StyledWrapper = styled.div`
 
   .collection-settings-tabs {
     flex: 1;
-    overflow: hidden;
+    min-height: 0;
+    overflow-y: auto;
     margin-top: 1.25rem;
 
     .tabs {

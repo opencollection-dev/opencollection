@@ -22,6 +22,11 @@ export class CollectionSettingsComponent extends BaseComponent {
     return this.view.getByTestId(`auth-${name}`);
   }
 
+  /** An option inside the (opened) auth-mode dropdown. */
+  authModeOption(value: string): Locator {
+    return this.page.getByTestId(`auth-mode-select-${value}`);
+  }
+
   async open(): Promise<void> {
     await this.collectionNode.click();
   }

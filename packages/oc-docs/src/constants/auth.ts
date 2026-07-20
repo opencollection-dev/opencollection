@@ -37,21 +37,10 @@ export const ADDITIONAL_PARAM_GROUPS: Array<{
   { key: 'refreshTokenRequest', label: 'Refresh Token Request' }
 ];
 
-/** Blank field sets seeded when switching an item to a given auth mode. */
 export const AUTH_DEFAULTS: Record<string, Record<string, string>> = {
   basic: { type: 'basic', username: '', password: '' },
   bearer: { type: 'bearer', token: '' },
-  apikey: { type: 'apikey', key: '', value: '', placement: 'header' },
-  digest: { type: 'digest', username: '', password: '' },
-  awsv4: {
-    type: 'awsv4',
-    accessKeyId: '',
-    secretAccessKey: '',
-    sessionToken: '',
-    service: '',
-    region: '',
-    profileName: ''
-  }
+  apikey: { type: 'apikey', key: '', value: '', placement: 'header' }
 };
 
 /** Where an API-key credential is sent. */
