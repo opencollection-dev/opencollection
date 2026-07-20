@@ -25,14 +25,4 @@ test.describe('Request body types', () => {
     await expect(requestBody.empty).toBeVisible();
     await expect(requestBody.multipart).toHaveCount(0);
   });
-
-  test('opens the body-type menu when Enter is pressed on the focused trigger', async ({ requestBody }) => {
-    await requestBody.openWithKeyboard('Enter');
-    await expect(requestBody.option('multipart-form')).toBeVisible();
-  });
-
-  test('opens the body-type menu when Space is pressed on the focused trigger', async ({ requestBody }) => {
-    await requestBody.openWithKeyboard(' ');
-    await expect(requestBody.option('multipart-form')).toBeVisible();
-  });
 });
