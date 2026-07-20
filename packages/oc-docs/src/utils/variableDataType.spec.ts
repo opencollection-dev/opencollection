@@ -1,5 +1,20 @@
 import { describe, it, expect } from 'vitest';
-import { parseValueByDataType, validateDataTypeValue, rowToVariable } from './variableDataType';
+import { parseValueByDataType, validateDataTypeValue, rowToVariable, coerceVariableValue, toDataType } from './variableDataType';
+
+describe('toDataType', () => {
+  it('passes through a supported data type', () => {
+    expect(toDataType('number')).toBe('number');
+    expect(toDataType('boolean')).toBe('boolean');
+    expect(toDataType('object')).toBe('object');
+    expect(toDataType('string')).toBe('string');
+  });
+
+  it('defaults an unknown, empty, or undefined type to string', () => {
+    expect(toDataType('null')).toBe('string');
+    expect(toDataType('')).toBe('string');
+    expect(toDataType(undefined)).toBe('string');
+  });
+});
 
 describe('parseValueByDataType', () => {
   it('leaves string / untyped values unchanged', () => {
@@ -45,6 +60,23 @@ describe('validateDataTypeValue', () => {
     expect(validateDataTypeValue('', 'string')).toBeNull();
     expect(validateDataTypeValue(undefined, 'number')).toBeNull();
     expect(validateDataTypeValue(null, 'number')).toBeNull();
+  });
+});
+
+describe('coerceVariableValue', () => {
+  it('coerces a typed value to its native runtime value', () => {
+    expect(coerceVariableValue({ type: 'number', data: '200' } as never)).toBe(200);
+    expect(coerceVariableValue({ type: 'boolean', data: 'true' } as never)).toBe(true);
+    expect(coerceVariableValue({ type: 'object', data: '{"scope":"folder","ticket":"BRU-3794"}' } as never)).toEqual({
+      scope: 'folder',
+      ticket: 'BRU-3794'
+    });
+  });
+
+  it('leaves a plain string as-is, keeps an un-coercible typed value raw, and maps unset to empty', () => {
+    expect(coerceVariableValue('plain-untyped')).toBe('plain-untyped');
+    expect(coerceVariableValue({ type: 'number', data: 'not-a-number' } as never)).toBe('not-a-number');
+    expect(coerceVariableValue(undefined)).toBe('');
   });
 });
 

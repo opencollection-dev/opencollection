@@ -6,6 +6,7 @@ import ScriptRuntime from '../scripting/runtime/script-runtime';
 import AssertRuntime, { type AssertionResult } from '../scripting/runtime/assert-runtime';
 import { getTreePathFromCollectionToItem, mergeHeaders, mergeScripts, mergeAuth, interpolateVars } from './utils';
 import { getCollectionFolderRequestVariables } from './utils/variable-merger';
+import { coerceVariableValue } from '../utils/variableDataType';
 import { getRequestScripts, getRequestAssertions, scriptsArrayToObject } from '../utils/schemaHelpers';
 
 export interface RunRequestOptions {
@@ -211,8 +212,8 @@ export class RequestRunner {
     return environment.variables.reduce((vars, variable: any) => {
       const name = variable.name;
       if (name && !variable.disabled) {
-        // Handle both Variable and SecretVariable types
-        vars[name] = variable.value ?? '';
+        // Coerce typed values (number/boolean/object) to native, like folder/collection/request vars.
+        vars[name] = coerceVariableValue(variable.value);
       }
       return vars;
     }, {} as Record<string, any>);

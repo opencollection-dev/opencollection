@@ -3,37 +3,30 @@ import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { Variable } from '@opencollection/types/common/variables';
 import { getTreePathFromCollectionToItem } from './tree-utils';
 import { isFolder, getRequestVariables } from '../../utils/schemaHelpers';
-import { unwrapVariableTyped } from '../../utils/variableResolution';
-import { parseValueByDataType } from '../../utils/variableDataType';
-
-/** Coerce a variable's (possibly typed `{type,data}`) value to its send-time string form. */
-const resolveVarString = (rawValue: Variable['value']): string => {
-  const { value, dataType } = unwrapVariableTyped(rawValue);
-  const coerced = parseValueByDataType(value, dataType);
-  if (coerced === null || coerced === undefined) return '';
-  return typeof coerced === 'object' ? JSON.stringify(coerced) : String(coerced);
-};
+import { coerceVariableValue } from '../../utils/variableDataType';
 
 /**
- * Merge variables from collection and folder hierarchy into the request
+ * Merge variables from collection and folder hierarchy into the request. Values are kept in their
+ * native, data-type-coerced form (object/number/boolean/string) — the interpolator inserts an
+ * object as raw JSON and a number/boolean bare, so a typed variable stays valid inside a JSON body.
  */
-export const getCollectionFolderRequestVariables = (collection: OpenCollection, request: HttpRequest): { collectionVariables: Record<string, string>, folderVariables: Record<string, string>, requestVariables: Record<string, string> } => {
+export const getCollectionFolderRequestVariables = (collection: OpenCollection, request: HttpRequest): { collectionVariables: Record<string, unknown>, folderVariables: Record<string, unknown>, requestVariables: Record<string, unknown> } => {
   // Get the tree path from collection to this item
   const requestTreePath = getTreePathFromCollectionToItem(collection, request);
 
   const variables = new Map<string, Variable>();
   
   // Track variables by scope for debugging/inspection
-  const collectionVariables: Record<string, string> = {};
-  const folderVariables: Record<string, string> = {};
-  const requestVariablesResult: Record<string, string> = {};
+  const collectionVariables: Record<string, unknown> = {};
+  const folderVariables: Record<string, unknown> = {};
+  const requestVariablesResult: Record<string, unknown> = {};
   
   // Start with collection-level variables
   const collectionVars = collection.request?.variables || [];
   collectionVars.forEach((variable: any) => {
     if (!variable.disabled) {
       variables.set(variable.name, variable);
-      const value = resolveVarString(variable.value);
+      const value = coerceVariableValue(variable.value);
       collectionVariables[variable.name] = value;
     }
   });
@@ -45,7 +38,7 @@ export const getCollectionFolderRequestVariables = (collection: OpenCollection, 
       folderVars.forEach((variable: any) => {
         if (!variable.disabled) {
           variables.set(variable.name, variable);
-          const value = resolveVarString(variable.value);
+          const value = coerceVariableValue(variable.value);
           folderVariables[variable.name] = value;
         }
       });
@@ -58,7 +51,7 @@ export const getCollectionFolderRequestVariables = (collection: OpenCollection, 
   // Process request-level variables
   requestVars.forEach((variable: any) => {
     if (!variable.disabled) {
-      const value = resolveVarString(variable.value);
+      const value = coerceVariableValue(variable.value);
       requestVariablesResult[variable.name] = value;
     }
   });

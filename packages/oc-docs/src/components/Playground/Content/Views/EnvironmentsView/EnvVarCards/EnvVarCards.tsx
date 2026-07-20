@@ -4,6 +4,8 @@ import { SecretValue } from '../../../../../../ui/SecretValue/SecretValue';
 import { TrashIcon } from '../../../../../../assets/icons';
 import { useEditableRows } from '../../../../../../hooks/useEditableRows';
 import { cx } from '../../../../../../utils/cx';
+import { toDataType } from '../../../../../../utils/variableDataType';
+import { VariableTypeControl } from '../../Common/VariableTypeControl/VariableTypeControl';
 import { StyledWrapper } from './StyledWrapper';
 
 interface EnvVarCardsProps {
@@ -11,6 +13,7 @@ interface EnvVarCardsProps {
   onChange: (rows: KeyValueRow[]) => void;
   makeNewRow?: () => Partial<KeyValueRow>;
   disableNewRow?: boolean;
+  editableDataType?: boolean;
   addWhenComplete?: boolean;
   testId?: string;
 }
@@ -20,6 +23,7 @@ const EnvVarCards: React.FC<EnvVarCardsProps> = ({
   onChange,
   makeNewRow,
   disableNewRow = false,
+  editableDataType = false,
   addWhenComplete = false,
   testId
 }) => {
@@ -60,7 +64,14 @@ const EnvVarCards: React.FC<EnvVarCardsProps> = ({
                     onChange={(e) => updateRow(index, { value: e.target.value })}
                   />
                 )}
-                {row.dataType ? <span className="datatype">{row.dataType}</span> : null}
+                {editableDataType && !row.secret && !isBlankRow ? (
+                  <VariableTypeControl
+                    dataType={toDataType(row.dataType)}
+                    value={row.value}
+                    index={index}
+                    onChange={(type) => updateRow(index, { dataType: type })}
+                  />
+                ) : null}
               </div>
             </div>
             {!isBlankRow && (

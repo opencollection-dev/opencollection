@@ -75,9 +75,13 @@ const interpolate = (str: string, variables: Record<string, any>, options: { esc
       return match; // Keep original if variable not found
     }
 
-    let result = String(value);
+    // A typed object/array variable is inserted as raw JSON (never quote-escaped — that would
+    // corrupt a JSON body), and numbers/booleans bare. Only string values get JSON-escaped.
+    if (typeof value === 'object') {
+      return JSON.stringify(value);
+    }
 
-    // Escape JSON strings if needed
+    let result = String(value);
     if (escapeJSONStrings && typeof value === 'string') {
       result = result.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
     }

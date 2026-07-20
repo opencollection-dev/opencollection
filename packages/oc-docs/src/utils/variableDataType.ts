@@ -6,12 +6,22 @@ export type VariableDataType = 'string' | 'number' | 'boolean' | 'object';
 
 export const VARIABLE_DATA_TYPES: VariableDataType[] = ['string', 'number', 'boolean', 'object'];
 
+/** A variable value coerced to its native runtime type (or kept as the raw string when un-coercible). */
+export type CoercedVariableValue = string | number | boolean | object | null;
+
+/** Normalize a stored/humanized type string to one of the offered data types, defaulting to `string`. */
+export const toDataType = (dataType?: string): VariableDataType =>
+  dataType && (VARIABLE_DATA_TYPES as string[]).includes(dataType) ? (dataType as VariableDataType) : 'string';
+
 /**
  * Coerce a string value to its declared data type, matching Bruno's
  * `parseValueByDataType`. Returns the raw value unchanged on any failure so an
  * un-coercible value never throws and never blocks a request.
  */
-export const parseValueByDataType = (value: unknown, dataType?: VariableValueType | string): unknown => {
+export const parseValueByDataType = (
+  value: CoercedVariableValue,
+  dataType?: VariableValueType | string
+): CoercedVariableValue => {
   if (!dataType || dataType === 'string') return value;
   try {
     if (dataType === 'number') {
@@ -42,7 +52,10 @@ export const parseValueByDataType = (value: unknown, dataType?: VariableValueTyp
  * string when the coerced value's runtime type doesn't match the declared type.
  * UI-only — never blocks sending.
  */
-export const validateDataTypeValue = (value: unknown, dataType?: VariableValueType | string): string | null => {
+export const validateDataTypeValue = (
+  value: CoercedVariableValue | undefined,
+  dataType?: VariableValueType | string
+): string | null => {
   if (!dataType || dataType === 'string') return null;
   if (value === undefined || value === null) return null;
   if (dataType === 'number' && typeof value !== 'number') return `Value is not a valid ${dataType}`;
@@ -51,12 +64,17 @@ export const validateDataTypeValue = (value: unknown, dataType?: VariableValueTy
   return null;
 };
 
+export const coerceVariableValue = (rawValue: VariableValueOrVariants | undefined): CoercedVariableValue => {
+  const { value, dataType } = unwrapVariableTyped(rawValue);
+  return parseValueByDataType(value, dataType);
+};
+
 export interface VariableRowInput {
   name: string;
   value: string;
   enabled: boolean;
   dataType?: string;
-  description?: unknown;
+  description?: Variable['description'];
   originalValue?: VariableValueOrVariants;
 }
 
@@ -69,7 +87,7 @@ export interface VariableRowInput {
  */
 export const rowToVariable = (row: VariableRowInput): Variable => {
   const dataType = row.dataType && row.dataType !== 'string' ? (row.dataType as VariableValueType) : undefined;
-  const description = row.description !== undefined ? { description: row.description as Variable['description'] } : {};
+  const description = row.description !== undefined ? { description: row.description } : {};
 
   const nextValue = dataType ? { type: dataType, data: row.value } : row.value;
 

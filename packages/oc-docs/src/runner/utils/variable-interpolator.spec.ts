@@ -68,3 +68,50 @@ describe('interpolateVars — built-in dynamic variables', () => {
     expect(out.http!.url).toMatch(UUID);
   });
 });
+
+describe('interpolateVars — typed variables in a JSON body', () => {
+  const jsonReq = (data: string) =>
+    req({
+      method: 'POST',
+      url: 'https://httpbingo.org/anything',
+      headers: [{ name: 'Content-Type', value: 'application/json' }],
+      body: { type: 'json', data }
+    });
+
+  it('inserts an object as raw JSON and number/boolean bare, keeping the body valid JSON (BRU-3794)', () => {
+    const out = interpolateVars(
+      jsonReq(
+        '{"scope":"{{scope}}","fold_str":"{{fold_str}}","fold_num":{{fold_num}},"fold_bool":{{fold_bool}},"fold_obj":{{fold_obj}},"fold_untyped":"{{fold_untyped}}"}'
+      ),
+      {
+        folderVariables: {
+          scope: 'folder',
+          fold_str: 'folder_string',
+          fold_num: 200,
+          fold_bool: true,
+          fold_obj: { scope: 'folder', ticket: 'BRU-3794' },
+          fold_untyped: 'plain-untyped-folder'
+        }
+      }
+    );
+
+    const bodyData = (out.http!.body as { data: string }).data;
+    // The object must NOT be quote-escaped (that produced `{\"scope\":...}` → invalid → 400).
+    expect(bodyData).not.toContain('\\"');
+    expect(JSON.parse(bodyData)).toEqual({
+      scope: 'folder',
+      fold_str: 'folder_string',
+      fold_num: 200,
+      fold_bool: true,
+      fold_obj: { scope: 'folder', ticket: 'BRU-3794' },
+      fold_untyped: 'plain-untyped-folder'
+    });
+  });
+
+  it('still JSON-escapes a string value that contains quotes', () => {
+    const out = interpolateVars(jsonReq('{"note":"{{note}}"}'), {
+      folderVariables: { note: 'he said "hi"' }
+    });
+    expect(JSON.parse((out.http!.body as { data: string }).data)).toEqual({ note: 'he said "hi"' });
+  });
+});
