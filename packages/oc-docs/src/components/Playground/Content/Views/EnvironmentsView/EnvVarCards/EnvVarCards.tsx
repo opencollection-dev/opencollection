@@ -50,7 +50,7 @@ const EnvVarCards: React.FC<EnvVarCardsProps> = ({
               />
               <div className="value">
                 {row.secret ? (
-                  <SecretValue value={row.value} placeholder="Value" onChange={(v) => updateRow(index, { value: v })} className="px-2" />
+                  <SecretValue value={row.value} placeholder="Value" onChange={(v) => updateRow(index, { value: v })} />
                 ) : (
                   <input
                     className="value-input"

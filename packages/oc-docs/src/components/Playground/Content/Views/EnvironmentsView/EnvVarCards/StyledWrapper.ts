@@ -51,6 +51,10 @@ export const StyledWrapper = styled.div`
     flex-wrap: wrap;
   }
 
+  .env-card .value .secret-value {
+    padding: 0 0.5rem;
+  }
+
   .env-card .value-input {
     flex: 0 1 auto;
     field-sizing: content;

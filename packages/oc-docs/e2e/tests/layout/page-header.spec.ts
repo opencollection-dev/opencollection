@@ -1,4 +1,5 @@
 import { test, expect } from '../../playwright';
+import type { Locator } from '@playwright/test';
 
 /**
  * The page header (sticky top navigation bar): brand cluster + Open-in-Bruno
@@ -9,6 +10,12 @@ test.use({ colorScheme: 'light' });
 
 const DESKTOP = { width: 1280, height: 900 };
 const MOBILE = { width: 390, height: 800 };
+
+const boundingBoxOf = async (locator: Locator) => {
+  const box = await locator.boundingBox();
+  if (box === null) throw new Error('expected the element to have a bounding box');
+  return box;
+};
 
 test.describe('Page header', () => {
   test('shows brand (name + version) and a pinned bar', async ({ page, pageHeader }) => {
@@ -21,8 +28,7 @@ test.describe('Page header', () => {
 
     // Sticky: header stays at the top after the page scrolls.
     await page.mouse.wheel(0, 600);
-    const box = await pageHeader.root.boundingBox();
-    if (!box) throw new Error('header has no bounding box');
+    const box = await boundingBoxOf(pageHeader.root);
     expect(box.y).toBeLessThanOrEqual(1);
   });
 
@@ -48,13 +54,13 @@ test.describe('Page header', () => {
     // The right cluster hugs the right edge: the theme toggle is the right-most
     // control (within the 20px bar padding), the CTA sits just left of it, and
     // both are well clear of the brand.
-    const headerBox = await pageHeader.root.boundingBox();
-    const ctaBox = await pageHeader.openInBruno.boundingBox();
-    const brandBox = await pageHeader.brand.boundingBox();
-    const toggleBox = await pageHeader.themeToggle.boundingBox();
-    expect((headerBox!.x + headerBox!.width) - (toggleBox!.x + toggleBox!.width)).toBeLessThanOrEqual(24);
-    expect(toggleBox!.x).toBeGreaterThanOrEqual(ctaBox!.x + ctaBox!.width);
-    expect(ctaBox!.x).toBeGreaterThan(brandBox!.x + brandBox!.width + 100);
+    const headerBox = await boundingBoxOf(pageHeader.root);
+    const ctaBox = await boundingBoxOf(pageHeader.openInBruno);
+    const brandBox = await boundingBoxOf(pageHeader.brand);
+    const toggleBox = await boundingBoxOf(pageHeader.themeToggle);
+    expect((headerBox.x + headerBox.width) - (toggleBox.x + toggleBox.width)).toBeLessThanOrEqual(24);
+    expect(toggleBox.x).toBeGreaterThanOrEqual(ctaBox.x + ctaBox.width);
+    expect(ctaBox.x).toBeGreaterThan(brandBox.x + brandBox.width + 100);
   });
 
   test('mobile condenses: hamburger shows, Open-in-Bruno becomes a glyph, brand compact', async ({ page, pageHeader }) => {
