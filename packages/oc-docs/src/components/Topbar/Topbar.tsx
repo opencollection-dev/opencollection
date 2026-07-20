@@ -23,6 +23,7 @@ export interface TopbarProps {
   onSearchOpenChange?: (open: boolean) => void;
   /** Secondary controls slot (env switcher + show-vars). */
   envSwitcherSlot?: React.ReactNode;
+  themeToggleSlot?: React.ReactNode;
   onOpenInBruno?: () => void;
   /** Optional Fetch-in-Bruno URL; when set the CTA renders as an anchor. */
   openInBrunoHref?: string;
@@ -41,9 +42,10 @@ export interface TopbarProps {
  * Sticky, purely-presentational top navigation bar.
  *
  * No routing, data fetching, or store access — everything arrives via props.
- * Composes small reusable subcomponents and exposes two slots (search,
- * env-switcher) that render whatever node is passed and degrade gracefully
- * when empty. Responsive layout:
+ * Composes small reusable subcomponents and exposes slots (search,
+ * env-switcher, and a trailing theme-toggle pinned right of the CTA) that
+ * render whatever node is passed and degrade gracefully when empty.
+ * Responsive layout:
  * - desktop (>=1024): full bar — brand · centered search · env switcher · Open-in-Bruno.
  * - tablet (768-1023): hamburger · brand · search icon · env switcher inline · Bruno glyph CTA.
  * - mobile (<768): hamburger · brand · search icon · env switcher · Bruno glyph CTA.
@@ -65,6 +67,7 @@ const Topbar: React.FC<TopbarProps> = ({
   searchOpen: controlledSearchOpen,
   onSearchOpenChange,
   envSwitcherSlot,
+  themeToggleSlot,
   onOpenInBruno,
   openInBrunoHref,
   onToggleSidebar,
@@ -141,6 +144,8 @@ const Topbar: React.FC<TopbarProps> = ({
         {canRunBrunoApp && hasCta && (
           <OpenInBrunoButton href={openInBrunoHref} onClick={onOpenInBruno} iconOnly={isMobile} />
         )}
+
+        {themeToggleSlot}
       </div>
 
       {hasSearch && !isDesktop && searchOpen && (

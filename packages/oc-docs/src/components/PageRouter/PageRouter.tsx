@@ -10,6 +10,7 @@ import { getAncestorsByUuid } from '../../utils/fileUtils';
 import { ItemVariableResolverProvider } from '../../hooks';
 import type { Item } from '@opencollection/types/collection/item';
 import PrevNext from '../PrevNext/PrevNext';
+import PoweredByFooter from '../PoweredByFooter/PoweredByFooter';
 import { PageWrapper } from '../PageWrapper/PageWrapper';
 import { ErrorBoundary } from '../ErrorBoundary/ErrorBoundary';
 import { StyledWrapper } from './StyledWrapper';
@@ -101,14 +102,17 @@ const PageRouter: React.FC<PageRouterProps> = ({ onOpenPlayground, onTryExample,
 
   return (
     <StyledWrapper data-testid={testId} data-page-type={entry.type} data-page-slug={entry.slug}>
-      <div className="page-body">
-        <ErrorBoundary key={entry.slug}>{renderBody()}</ErrorBoundary>
+      <div className="page-fill">
+        <div className="page-body">
+          <ErrorBoundary key={entry.slug}>{renderBody()}</ErrorBoundary>
+        </div>
+        <div className="page-footer">
+          <PageWrapper>
+            <PrevNext prev={prev} next={next} />
+          </PageWrapper>
+        </div>
       </div>
-      <div className="page-footer">
-        <PageWrapper>
-          <PrevNext prev={prev} next={next} />
-        </PageWrapper>
-      </div>
+      <PoweredByFooter />
     </StyledWrapper>
   );
 };
