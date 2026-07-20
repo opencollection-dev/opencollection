@@ -44,7 +44,7 @@ interface UnsupportedRequestProps {
   className?: string;
   breadcrumbs?: Omit<BreadcrumbWrapperProps, 'showBreadcrumbs' | 'name'>;
   /**
-   * @default 'Untitled request'
+   * @default 'Untitled Request'
    */
   customName?: string;
   titleVariant?: 'heading' | 'label';
@@ -57,7 +57,7 @@ export const UnsupportedRequest: React.FC<UnsupportedRequestProps> = ({
   className,
   showRequestDocs,
   breadcrumbs,
-  customName = 'Untitled request',
+  customName = 'Untitled Request',
   titleVariant = 'heading',
   testId = 'unsupported-request'
 }) => {

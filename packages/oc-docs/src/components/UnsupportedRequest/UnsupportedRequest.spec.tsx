@@ -73,7 +73,7 @@ describe('UnsupportedRequest', () => {
     expect(getByTestId(root, 'unsupported-request-title').text).toContain('My request');
   });
 
-  it('falls back to the default "Untitled request" in the label variant', () => {
+  it('falls back to the default "Untitled Request" in the label variant', () => {
     const root = parse(
       renderToStaticMarkup(
         <UnsupportedRequest
@@ -84,16 +84,16 @@ describe('UnsupportedRequest', () => {
         />
       )
     );
-    expect(getByTestId(root, 'unsupported-request-title').text).toContain('Untitled request');
+    expect(getByTestId(root, 'unsupported-request-title').text).toContain('Untitled Request');
   });
 
-  it('falls back to the default "Untitled request" when the item has no name and no customName', () => {
+  it('falls back to the default "Untitled Request" when the item has no name and no customName', () => {
     const root = parse(
       renderToStaticMarkup(
         <UnsupportedRequest item={unnamedItem} showRequestDocs={false} emptyStateProps={emptyStateProps} />
       )
     );
-    expect(getByTestId(root, 'unsupported-request-title').text).toContain('Untitled request');
+    expect(getByTestId(root, 'unsupported-request-title').text).toContain('Untitled Request');
   });
 
   it('renders the resolved name as the current breadcrumb when breadcrumbs are shown', () => {
