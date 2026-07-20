@@ -7,12 +7,10 @@ const MOBILE = { width: 390, height: 800 };
 test.describe('sidebar - desktop (inline, collapsible)', () => {
   test.use({ viewport: DESKTOP });
 
-  test('renders inline with the overview link and a pinned footer, no hamburger or drawer', async ({ page, sidebar }) => {
+  test('renders inline with the overview link, no hamburger or drawer', async ({ page, sidebar }) => {
     await page.goto(FOLDERS);
     await expect(sidebar.inline).toBeVisible();
     await expect(sidebar.overview).toBeVisible();
-    await expect(sidebar.footer).toBeVisible();
-    await expect(sidebar.footer).toContainText('Powered by');
     await expect(sidebar.hamburger).toHaveCount(0);
     await expect(sidebar.drawer).toHaveCount(0);
   });

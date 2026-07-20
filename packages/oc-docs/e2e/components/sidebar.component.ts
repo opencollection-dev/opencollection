@@ -6,7 +6,6 @@ export class SidebarComponent extends BaseComponent {
   readonly inline = this.page.getByTestId('app-sidebar');
   readonly overview = this.page.getByTestId('sidebar-overview');
   readonly environments = this.page.getByTestId('sidebar-environments');
-  readonly footer = this.page.getByTestId('sidebar-footer');
   readonly collapseButton = this.page.getByTestId('sidebar-collapse');
   readonly expandButton = this.page.getByTestId('sidebar-expand');
   readonly drawer = this.page.getByTestId('sidebar-drawer');

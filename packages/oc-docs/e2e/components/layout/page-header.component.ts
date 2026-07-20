@@ -24,6 +24,8 @@ export class PageHeaderComponent extends BaseComponent {
   // Open-in-Bruno CTA
   readonly openInBruno = this.root.getByTestId('open-in-bruno');
 
+  readonly themeToggle = this.root.getByTestId('theme-toggle');
+
   // Sidebar (hamburger) trigger — shown below desktop. The header only renders
   // the button; the drawer it opens lives elsewhere.
   readonly menuButton = this.root.getByTestId('topbar-menu');

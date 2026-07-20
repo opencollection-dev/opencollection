@@ -45,11 +45,15 @@ test.describe('Page header', () => {
     expect(await pageHeader.openInBruno.getAttribute('target')).toBe('_blank');
     expect(await pageHeader.openInBruno.getAttribute('rel')).toContain('noopener');
 
-    // CTA hugs the right edge (within the 20px bar padding), not the brand.
+    // The right cluster hugs the right edge: the theme toggle is the right-most
+    // control (within the 20px bar padding), the CTA sits just left of it, and
+    // both are well clear of the brand.
     const headerBox = await pageHeader.root.boundingBox();
     const ctaBox = await pageHeader.openInBruno.boundingBox();
     const brandBox = await pageHeader.brand.boundingBox();
-    expect((headerBox!.x + headerBox!.width) - (ctaBox!.x + ctaBox!.width)).toBeLessThanOrEqual(24);
+    const toggleBox = await pageHeader.themeToggle.boundingBox();
+    expect((headerBox!.x + headerBox!.width) - (toggleBox!.x + toggleBox!.width)).toBeLessThanOrEqual(24);
+    expect(toggleBox!.x).toBeGreaterThanOrEqual(ctaBox!.x + ctaBox!.width);
     expect(ctaBox!.x).toBeGreaterThan(brandBox!.x + brandBox!.width + 100);
   });
 
