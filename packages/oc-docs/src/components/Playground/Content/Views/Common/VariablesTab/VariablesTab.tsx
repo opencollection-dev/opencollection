@@ -56,21 +56,22 @@ const typeColumn = {
         <MenuDropdown
           selectedItemId={dataType}
           placement="bottom-end"
-          data-testid={`variable-data-type-${index}`}
+          role="listbox"
+          testId={`variable-data-type-${index}`}
           items={VARIABLE_DATA_TYPES.map((type) => ({
             id: type,
             label: type,
             onClick: () => updateField('dataType', type)
           }))}
         >
-          <span className="var-type-control" role="button" tabIndex={0} aria-label="Variable data type">
+          <button type="button" className="var-type-control" aria-label="Variable data type">
             <span className="var-type-label" aria-hidden="true">
               {dataType}
             </span>
             <span className="var-type-caret" aria-hidden="true">
               <CaretIcon />
             </span>
-          </span>
+          </button>
         </MenuDropdown>
       </div>
     );

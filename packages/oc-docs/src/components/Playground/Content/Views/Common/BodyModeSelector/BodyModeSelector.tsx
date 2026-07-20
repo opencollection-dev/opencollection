@@ -91,7 +91,8 @@ export const BodyModeSelector: React.FC<BodyModeSelectorProps> = ({ body, onItem
     <MenuDropdown
       selectedItemId={currentBodyType}
       placement="bottom-end"
-      data-testid="body-type-select"
+      role="listbox"
+      testId="body-type-select"
       items={bodyMenuItems}
       groupStyle="select"
       showGroupDividers={false}

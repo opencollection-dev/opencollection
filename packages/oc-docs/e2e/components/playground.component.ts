@@ -33,9 +33,6 @@ export class PlaygroundComponent extends BaseComponent {
   readonly bottomPanel = this.page.getByTestId('playground-dock-bottom-panel');
   readonly modalPanel = this.page.getByTestId('playground-dock-modal-panel');
   readonly mobilePanel = this.page.getByTestId('playground-dock-mobile-panel');
-  readonly methodSelect = this.view.getByTestId('query-bar-method-select');
-  readonly methodMenu = this.page.getByTestId('query-bar-method-select-dropdown');
-  readonly methodOptionsList = this.methodMenu.getByRole('menuitem');
   readonly unsupported = this.view.getByTestId('unsupported-request');
   readonly unsupportedTitle = this.view.getByTestId('unsupported-request-title');
   readonly unsupportedMessage = this.view.getByTestId('unsupported-request-empty');
@@ -72,17 +69,6 @@ export class PlaygroundComponent extends BaseComponent {
 
   async selectScriptTab(id: string): Promise<void> {
     await this.scriptTab(id).click();
-  }
-
-  async methodOptions(): Promise<string[]> {
-    await this.methodSelect.click();
-    await this.methodOptionsList.first().waitFor({ state: 'visible' });
-    // Read the aria-label rather than the text: the active item renders a "✓" glyph
-    // that would otherwise leak into the option label.
-    const labels = await this.methodOptionsList.evaluateAll((nodes) =>
-      nodes.map((node) => node.getAttribute('aria-label') ?? '')
-    );
-    return labels;
   }
 
   async openTreeItem(names: string[]): Promise<void> {
