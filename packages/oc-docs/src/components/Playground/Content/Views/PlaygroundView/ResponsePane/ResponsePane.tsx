@@ -4,6 +4,7 @@ import ResponseBodyTab from '../../Common/ResponseBodyTab';
 import ResponseHeadersTab from '../../Common/ResponseHeadersTab';
 import TestResultsTab from '../../Common/TestResultsTab';
 import ErrorBanner from '../../../../../../ui/ErrorBanner/ErrorBanner';
+import { StyledWrapper } from './StyledWrapper';
 
 interface ResponsePaneProps {
   response: any;
@@ -131,7 +132,7 @@ const ResponsePane: React.FC<ResponsePaneProps> = ({ response, isLoading }) => {
   );
 
   return (
-    <div className="h-full" style={{ backgroundColor: 'var(--bg-primary)' }}>
+    <StyledWrapper>
       <Tabs
         className='h-full'
         tabs={tabs}
@@ -139,7 +140,7 @@ const ResponsePane: React.FC<ResponsePaneProps> = ({ response, isLoading }) => {
         onTabChange={setActiveTab}
         rightElement={response.error ? undefined : statusInfo}
       />
-    </div>
+    </StyledWrapper>
   );
 };
 
