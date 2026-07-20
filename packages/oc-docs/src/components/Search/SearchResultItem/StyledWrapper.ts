@@ -59,7 +59,6 @@ export const StyledWrapper = styled.button`
     text-overflow: ellipsis;
   }
 
-  /* Matched query characters: bold, keeping each field's own colour. */
   .search-hl {
     font-weight: 700;
   }
