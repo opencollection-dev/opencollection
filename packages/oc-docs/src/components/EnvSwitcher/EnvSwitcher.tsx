@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import type { Environment } from '@opencollection/types/config/environments';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { selectDocsCollection } from '../../store/slices/docs';
 import { selectActiveEnvName, setActiveEnv } from '../../store/slices/env';
-import { useClickOutside, useEscapeKey } from '../../hooks';
 import { ChevronDownIcon } from '../../assets/icons';
 import { EnvironmentLabel } from '../EnvironmentLabel/EnvironmentLabel';
+import MenuDropdown, { type MenuDropdownItem } from '../../ui/MenuDropdown';
 import { StyledWrapper } from './StyledWrapper';
 
 export interface EnvSwitcherProps {
@@ -16,32 +16,22 @@ export interface EnvSwitcherProps {
  * Environment switcher for the docs: lets the reader pick which environment's
  * values are shown, storing the choice in the env slice. Self-contained (no
  * layout assumptions) so it can sit in the topbar or elsewhere. The dot + name
- * reuse `EnvironmentLabel`; dismissal reuses the shared `useClickOutside` /
- * `useEscapeKey` hooks.
+ * reuse `EnvironmentLabel`. The menu renders through `MenuDropdown` (Tippy),
+ * which portals to <body>, positions against the trigger, tracks scroll/resize,
+ * and handles outside-click and Escape — so this component owns no positioning
+ * or dismissal logic of its own. Tippy's `--z-popover` surface keeps the menu
+ * above every playground dock.
  */
 const EnvSwitcher: React.FC<EnvSwitcherProps> = ({ testId = 'env-switcher' }) => {
   const dispatch = useAppDispatch();
   const collection = useAppSelector(selectDocsCollection);
   const activeEnvName = useAppSelector(selectActiveEnvName);
-  const [open, setOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
 
   const environments = useMemo(
     () => (collection?.config?.environments ?? []) as Environment[],
     [collection]
   );
   const hasEnvironments = environments.length > 0;
-
-  const close = useCallback(() => setOpen(false), []);
-  // Escape returns focus to the trigger for keyboard users; a pointer-driven
-  // outside close leaves focus where the pointer went.
-  const closeAndRefocus = useCallback(() => {
-    setOpen(false);
-    triggerRef.current?.focus();
-  }, []);
-  useClickOutside(containerRef, close, open);
-  useEscapeKey(closeAndRefocus, open);
 
   // The active env, resolving a null or stale (no longer present) selection to
   // the first environment. Single source for both the render and the effect.
@@ -57,64 +47,42 @@ const EnvSwitcher: React.FC<EnvSwitcherProps> = ({ testId = 'env-switcher' }) =>
     }
   }, [activeEnv, activeEnvName, dispatch]);
 
-  const select = (name: string) => {
-    dispatch(setActiveEnv(name));
-    setOpen(false);
-    triggerRef.current?.focus();
-  };
+  const items: MenuDropdownItem[] = hasEnvironments
+    ? environments.map((environment) => ({
+        id: environment.name,
+        label: <EnvironmentLabel name={environment.name} color={environment.color} />,
+        ariaLabel: environment.name,
+        title: environment.name,
+        onClick: () => dispatch(setActiveEnv(environment.name))
+      }))
+    : [{ id: 'no-environments', label: 'No environments', disabled: true }];
 
   return (
-    <StyledWrapper ref={containerRef} data-testid={testId}>
-      <button
-        ref={triggerRef}
-        type="button"
-        className={`env-switcher-trigger${hasEnvironments ? '' : ' env-switcher-trigger--empty'}`}
-        data-testid={`${testId}-trigger`}
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        aria-label="Select environment"
-        title={hasEnvironments ? activeEnv?.name : undefined}
-        onClick={() => setOpen((prev) => !prev)}
+    <StyledWrapper data-testid={`${testId}-root`}>
+      <MenuDropdown
+        items={items}
+        selectedItemId={hasEnvironments ? activeEnv?.name : undefined}
+        showTickMark={false}
+        placement="bottom-end"
+        testId={testId}
       >
-        <EnvironmentLabel
-          name={hasEnvironments ? activeEnv?.name ?? '' : 'No environments'}
-          color={activeEnv?.color}
-          nameClassName="env-switcher-trigger-name"
-        />
-        <span className="env-switcher-chevron">
-          <ChevronDownIcon />
-        </span>
-      </button>
-
-      {open && (
-        <div className="env-switcher-popover" role="listbox" aria-label="Environments">
-          {hasEnvironments ? (
-            environments.map((environment) => {
-              const isActive = environment.name === activeEnv?.name;
-              return (
-                <button
-                  key={environment.name}
-                  type="button"
-                  role="option"
-                  aria-selected={isActive}
-                  data-testid={`${testId}-option-${environment.name}`}
-                  className={`env-switcher-option${isActive ? ' env-switcher-option--active' : ''}`}
-                  title={environment.name}
-                  onClick={() => select(environment.name)}
-                >
-                  <EnvironmentLabel
-                    name={environment.name}
-                    color={environment.color}
-                    nameClassName="env-switcher-option-name"
-                  />
-                </button>
-              );
-            })
-          ) : (
-            <div className="env-switcher-empty">No environments</div>
-          )}
-        </div>
-      )}
+        <button
+          type="button"
+          className={`env-switcher-trigger${hasEnvironments ? '' : ' env-switcher-trigger--empty'}`}
+          aria-haspopup="menu"
+          aria-label="Select environment"
+          title={hasEnvironments ? activeEnv?.name : undefined}
+        >
+          <EnvironmentLabel
+            name={hasEnvironments ? activeEnv?.name ?? '' : 'No environments'}
+            color={activeEnv?.color}
+            nameClassName="env-switcher-trigger-name"
+          />
+          <span className="env-switcher-chevron">
+            <ChevronDownIcon />
+          </span>
+        </button>
+      </MenuDropdown>
     </StyledWrapper>
   );
 };

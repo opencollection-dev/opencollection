@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 export const StyledWrapper = styled.header`
   position: sticky;
   top: 0;
-  z-index: 30;
+  z-index: var(--z-header);
   width: 100%;
   box-sizing: border-box;
   font-family: var(--font-sans);

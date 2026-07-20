@@ -22,18 +22,19 @@ describe('MenuDropdown', () => {
     expect(html).not.toContain('role="menu"');
   });
 
-  it('forwards the data-testid to the trigger', () => {
+  it('forwards the testId to the trigger', () => {
     const html = renderToStaticMarkup(
-      <MenuDropdown items={items} data-testid="row-actions">
+      <MenuDropdown items={items} testId="row-actions">
         <button type="button">Actions</button>
       </MenuDropdown>
     );
     expect(html).toContain('data-testid="row-actions"');
   });
 
-  it('renders a plain wrapper trigger when children is not a single element', () => {
+  it('omits the trigger data-testid when no testId is provided', () => {
     const html = renderToStaticMarkup(<MenuDropdown items={items}>Actions</MenuDropdown>);
-    expect(html).toContain('data-testid="menu-dropdown"');
+    expect(html).not.toContain('data-testid="menu-dropdown"');
+    expect(html).not.toContain('data-testid="undefined"');
     expect(html).toContain('Actions');
   });
 
@@ -49,5 +50,15 @@ describe('MenuDropdown', () => {
       <MenuDropdown items={items} selectedItemId="copy" itemToText={(item) => `Format: ${item.label}`} />
     );
     expect(html).toContain('Format: Copy');
+  });
+
+  it('defaults the trigger aria-haspopup to menu', () => {
+    const html = renderToStaticMarkup(<MenuDropdown items={items} selectedItemId="copy" />);
+    expect(html).toContain('aria-haspopup="menu"');
+  });
+
+  it('reflects role="listbox" on the trigger aria-haspopup', () => {
+    const html = renderToStaticMarkup(<MenuDropdown items={items} selectedItemId="copy" role="listbox" />);
+    expect(html).toContain('aria-haspopup="listbox"');
   });
 });

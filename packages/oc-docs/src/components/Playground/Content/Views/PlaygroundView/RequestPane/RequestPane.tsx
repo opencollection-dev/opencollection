@@ -13,17 +13,19 @@ import ScriptsTab from '../../Common/ScriptsTab/ScriptsTab';
 import TestsTab from '../../Common/TestsTab/TestsTab';
 import AssertsTab from '../../Common/AssertsTab/AssertsTab';
 import VariablesTab from '../../Common/VariablesTab/VariablesTab';
-import { 
-  getHttpParams, 
-  getHttpHeaders, 
-  getHttpBody, 
-  getRequestAuth, 
-  getRequestVariables, 
+import OverviewTab from '../../Common/OverviewTab/OverviewTab';
+import {
+  getHttpParams,
+  getHttpHeaders,
+  getHttpBody,
+  getRequestAuth,
+  getRequestVariables,
   getRequestAssertions,
   getRequestScripts,
   scriptsArrayToObject,
   scriptsObjectToArray,
-  getRequestUrl
+  getRequestUrl,
+  getItemDocs
 } from '../../../../../../utils/schemaHelpers';
 import { setUrlQueryParams } from '../../../../../../utils/pathParams';
 import { actionsToPostResponseVars, postResponseVarsToActions } from '../../../../../../utils/request';
@@ -34,7 +36,7 @@ interface RequestPaneProps {
 }
 
 const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
-  const [activeTab, setActiveTab] = useState('params');
+  const [activeTab, setActiveTab] = useState('overview');
 
   const handleParamsChange = (params: KeyValueRow[]) => {
     const originals = getHttpParams(item) as Array<{ name?: string }>;
@@ -211,9 +213,21 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
   const hasTests = scriptsObj?.tests;
 
   const tabs = [
-    { 
-      id: 'params', 
-      label: 'Params', 
+    {
+      id: 'overview',
+      label: 'Overview',
+      content: (
+        <div className="py-3">
+          <OverviewTab
+            docs={getItemDocs(item)}
+            emptyStateSubheading="This request has no docs. Add one in Bruno to introduce your API to readers: what it does, who it's for, and how to authenticate."
+          />
+        </div>
+      )
+    },
+    {
+      id: 'params',
+      label: 'Params',
       contentIndicator: params?.length || undefined, 
       content: <div className="py-3">{renderParams()}</div> 
     },
