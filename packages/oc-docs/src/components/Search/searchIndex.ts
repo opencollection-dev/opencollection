@@ -127,7 +127,7 @@ const collectMatches = (matches: readonly FuseResultMatch[] | undefined): FieldM
   for (const m of matches ?? []) {
     const field = m.key as SearchField | undefined;
     if (!field) continue;
-    byField[field] = m.indices.map(([start, end]) => [start, end]);
+    byField[field] = m.indices.map(([start, end]) => [start, end] as [number, number]);
   }
   return byField;
 };
@@ -138,9 +138,14 @@ const collectMatches = (matches: readonly FuseResultMatch[] | undefined): FieldM
  * a swap-typo on a short word ("hotles" → "hotels") busts the threshold and is
  * missed. Searching these variants restores the correction as a near-exact hit
  * without loosening the threshold (which would reopen prefix-bleed matches).
- * Swaps of equal neighbours are skipped (they reproduce the original).
+ * Swaps of equal neighbours are skipped (they reproduce the original). Long
+ * queries are not expanded: they are far more likely a pasted string than a
+ * mistyped word, and expansion is one Fuse pass per character position.
  */
+const MAX_SWAP_QUERY_LENGTH = 24;
+
 const adjacentSwaps = (query: string): string[] => {
+  if (query.length > MAX_SWAP_QUERY_LENGTH) return [];
   const variants: string[] = [];
   for (let i = 0; i < query.length - 1; i++) {
     if (query[i] === query[i + 1]) continue;

@@ -18,7 +18,8 @@ interface SearchResultItemProps {
 /**
  * Bold the `ranges` (inclusive [start, end] pairs from Fuse) inside `text`, so
  * each field advertises the exact substring that matched. The mark keeps the
- * field's own colour — weight is the only highlight signal. No ranges → plain.
+ * field's own colour (weight is the only highlight signal). No ranges leaves
+ * the text plain.
  */
 const highlightRanges = (text: string, ranges?: Array<[number, number]>): React.ReactNode => {
   if (!ranges || ranges.length === 0) return text;

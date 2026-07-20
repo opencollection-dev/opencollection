@@ -18,6 +18,11 @@ import { StyledWrapper } from './StyledWrapper';
 
 const RESULTS_ID = 'search-listbox';
 
+// A single character can't clear Fuse's `minMatchCharLength`, so treat a query
+// shorter than this as "not typing yet": keep the initial prompt rather than
+// flashing "no matching requests" after the first keystroke.
+const MIN_QUERY_LENGTH = 2;
+
 interface SearchBarProps {
   /** Open state, controlled by the shell so it is shared with the Topbar's
    *  below-desktop search row (one source of truth: icon, row and panel agree). */
@@ -60,7 +65,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ open, onOpenChange, focusN
 
   const optionId = (i: number) => `${RESULTS_ID}-opt-${i}`;
 
-  const hasQuery = query.trim().length > 0;
+  const hasQuery = query.trim().length >= MIN_QUERY_LENGTH;
   const hasFilter = methods.size > 0 || folder !== null;
 
   const results = useMemo<SearchHit[]>(() => {

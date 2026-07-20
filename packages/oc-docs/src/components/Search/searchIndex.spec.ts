@@ -118,7 +118,7 @@ const BILLING: SearchRecord[] = [
   rec({ id: 'currencies', name: 'Get Currencies', breadcrumb: 'Billing / Lookups', url: '{{baseUrl}}/billing/lookups/currencies' }),
 ];
 
-describe('searchHits — empty & degenerate queries', () => {
+describe('searchHits - empty & degenerate queries', () => {
   it('empty / whitespace query returns no results (initial empty state)', () => {
     const fuse = createSearchIndex([rec({ name: 'anything' })]);
     expect(searchHits(fuse, '')).toEqual([]);
@@ -137,7 +137,7 @@ describe('searchHits — empty & degenerate queries', () => {
   });
 });
 
-describe('searchHits — exact matches per field', () => {
+describe('searchHits - exact matches per field', () => {
   it('matches on the name', () => {
     const fuse = createSearchIndex(BILLING);
     expect(ids(searchHits(fuse, 'invoices'))).toContain('invoices');
@@ -160,7 +160,7 @@ describe('searchHits — exact matches per field', () => {
   });
 });
 
-describe('searchHits — typo tolerance', () => {
+describe('searchHits - typo tolerance', () => {
   it('tolerates a one-character error', () => {
     const fuse = createSearchIndex(BILLING);
     expect(ids(searchHits(fuse, 'paymnt'))).toContain('payments'); // dropped letter
@@ -180,14 +180,14 @@ describe('searchHits — typo tolerance', () => {
   });
 });
 
-describe('searchHits — precision (threshold 0.3)', () => {
+describe('searchHits - precision (threshold 0.3)', () => {
   it('does not bleed a shared prefix into an unrelated word (cursor !-> currencies)', () => {
     const fuse = createSearchIndex(BILLING);
     expect(ids(searchHits(fuse, 'cursor'))).not.toContain('currencies');
   });
 });
 
-describe('searchHits — match locality (no cross-word stitching)', () => {
+describe('searchHits - match locality (no cross-word stitching)', () => {
   it('highlights the real word, not a stray leading char from another token', () => {
     const fuse = createSearchIndex(BILLING);
     const hit = searchHits(fuse, 'billing').find((h) => h.record.id === 'payments')!;
@@ -200,7 +200,7 @@ describe('searchHits — match locality (no cross-word stitching)', () => {
   });
 });
 
-describe('searchHits — ranking & weights', () => {
+describe('searchHits - ranking & weights', () => {
   it('ranks a name hit above a folder-only hit', () => {
     const named = rec({ id: 'named', name: 'Booking' });
     const foldered = rec({ id: 'foldered', name: 'Get item', breadcrumb: 'Booking / Active' });
@@ -221,7 +221,7 @@ describe('searchHits — ranking & weights', () => {
   });
 });
 
-describe('searchHits — reported matches for highlighting', () => {
+describe('searchHits - reported matches for highlighting', () => {
   it('reports ranges only for the fields that actually matched', () => {
     const fuse = createSearchIndex([rec({ id: 'x', name: 'Get All Payments', breadcrumb: 'Billing', url: '{{baseUrl}}/billing/payments' })]);
     const hit = searchHits(fuse, 'payments')[0];
@@ -238,7 +238,7 @@ describe('searchHits — reported matches for highlighting', () => {
   });
 });
 
-describe('searchHits — transposition typos (adjacent letter swap)', () => {
+describe('searchHits - transposition typos (adjacent letter swap)', () => {
   it('matches a single adjacent swap on a short word the raw threshold misses', () => {
     const fuse = createSearchIndex([rec({ id: 'hotels', name: 'Get All Hotels', url: '{{baseUrl}}/hotels' })]);
     expect(ids(searchHits(fuse, 'hotles'))).toContain('hotels'); // hotels -> l/e swapped
@@ -258,7 +258,7 @@ describe('searchHits — transposition typos (adjacent letter swap)', () => {
   });
 });
 
-describe('searchHits — abbreviations are intentionally out of scope', () => {
+describe('searchHits - abbreviations are intentionally out of scope', () => {
   // Bitap only matches contiguous approximate spans, never a gapped subsequence
   // like a consonant-skeleton abbreviation. Supporting those would need a much
   // looser threshold that reopens the prefix-bleed false positives above, so it
