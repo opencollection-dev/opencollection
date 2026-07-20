@@ -1,6 +1,6 @@
 import { test, expect } from '../../playwright';
 
-test.describe('Method select (listbox keyboard navigation)', () => {
+test.describe('Method select', () => {
   test.beforeEach(async ({ page, playground }) => {
     await playground.open('bottom');
     await playground.openRequest('get users');
@@ -44,5 +44,15 @@ test.describe('Method select (listbox keyboard navigation)', () => {
     await expect(methodSelect.surface).toBeVisible();
     await methodSelect.focusedOption.press('Escape');
     await expect(methodSelect.surface).toBeHidden();
+  });
+
+  test('offers only HTTP methods, not non-HTTP protocols', async ({ methodSelect }) => {
+    const HTTP_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'];
+    const NON_HTTP_METHODS = ['GRAPHQL', 'GQL', 'GRPC', 'WEBSOCKET', 'WS'];
+    const options = (await methodSelect.optionLabels()).map((o) => o.trim().toUpperCase());
+    expect(options).toEqual(HTTP_METHODS);
+    for (const protocol of NON_HTTP_METHODS) {
+      expect(options).not.toContain(protocol);
+    }
   });
 });

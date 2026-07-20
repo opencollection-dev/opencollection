@@ -8,9 +8,18 @@ export class MethodSelectComponent extends BaseComponent {
   readonly surface = this.page.getByTestId('method-select-dropdown');
   readonly activeOption = this.surface.locator('[role="option"][aria-selected="true"]');
   readonly focusedOption = this.surface.locator('.dropdown-item-focused');
+  readonly options = this.surface.getByRole('option');
 
   option(id: string): Locator {
     return this.page.getByTestId(`method-select-${id.toLowerCase()}`);
+  }
+
+  async optionLabels(): Promise<string[]> {
+    await this.open();
+    await this.options.first().waitFor({ state: 'visible' });
+    // Read aria-label, not text: the selected option renders a "✓" glyph that
+    // would otherwise leak into the label.
+    return this.options.evaluateAll((nodes) => nodes.map((node) => node.getAttribute('aria-label') ?? ''));
   }
 
   async open(): Promise<void> {
