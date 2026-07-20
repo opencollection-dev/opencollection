@@ -4,12 +4,9 @@ import { StyledWrapper } from './StyledWrapper';
 import { EmptyState } from '../../../../../../ui/EmptyState/EmptyState';
 import { BookIcon } from '../../../../../../assets/icons';
 
-const DEFAULT_EMPTY_SUBHEADING =
-  "This collection has no description or readme. Add one in Bruno to introduce your API to readers: what it does, who it's for, and how to authenticate.";
-
-const OverviewTab: React.FC<{ docs?: string; emptySubheading?: string }> = ({
+const OverviewTab: React.FC<{ docs?: string; emptyStateSubheading: string }> = ({
   docs,
-  emptySubheading = DEFAULT_EMPTY_SUBHEADING
+  emptyStateSubheading
 }) => {
   const md = useMarkdownRenderer();
   const docsHtml = useMemo(() => {
@@ -22,7 +19,7 @@ const OverviewTab: React.FC<{ docs?: string; emptySubheading?: string }> = ({
         testId="overview-empty"
         icon={<BookIcon />}
         heading="No overview content yet"
-        subheading={emptySubheading}
+        subheading={emptyStateSubheading}
       />
     );
   }

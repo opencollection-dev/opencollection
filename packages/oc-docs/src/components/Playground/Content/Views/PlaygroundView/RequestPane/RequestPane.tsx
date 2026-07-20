@@ -220,7 +220,7 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
         <div className="py-3">
           <OverviewTab
             docs={getItemDocs(item)}
-            emptySubheading="This request has no description or readme. Add one in Bruno to introduce your API to readers: what it does, who it's for, and how to authenticate."
+            emptyStateSubheading="This request has no docs. Add one in Bruno to introduce your API to readers: what it does, who it's for, and how to authenticate."
           />
         </div>
       )
