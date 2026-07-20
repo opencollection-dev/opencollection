@@ -63,7 +63,7 @@ test.describe('Search palette', () => {
     await search.field.click();
 
     await expect(search.panel).toContainText('Search the collection');
-    await expect(search.panel).toContainText('Find any request by name, endpoint, or description.');
+    await expect(search.panel).toContainText('Find any request by name, endpoint, or folder.');
   });
 
   test('typing fuzzy-matches over request names', async ({ page, search }) => {
