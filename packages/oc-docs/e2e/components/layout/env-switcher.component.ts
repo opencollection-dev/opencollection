@@ -8,13 +8,13 @@ import { BaseComponent } from '../base.component';
  * the switcher root. The menu renders through MenuDropdown (Tippy), portaled to
  * <body> so it escapes the topbar stacking context and clears the playground
  * docks, so its menu and options are located page-wide. Parts are found by test
- * id or role, never by class.
+ * id, never by class.
  */
 export class EnvSwitcherComponent extends BaseComponent {
   readonly showVarsToggle = this.page.getByTestId('show-vars-toggle');
   readonly trigger: Locator;
-  readonly menu = this.page.getByRole('menu');
-  readonly emptyOption = this.option('No environments');
+  readonly menu: Locator;
+  readonly emptyOption: Locator;
 
   constructor(
     page: Page,
@@ -22,10 +22,12 @@ export class EnvSwitcherComponent extends BaseComponent {
   ) {
     super(page, page.getByTestId(`${base}-root`));
     this.trigger = this.root.getByTestId(base);
+    this.menu = this.page.getByTestId(`${base}-dropdown`);
+    this.emptyOption = this.option('no-environments');
   }
 
   option(name: string): Locator {
-    return this.menu.getByRole('menuitem', { name });
+    return this.menu.getByTestId(`${this.base}-${name.toLowerCase()}`);
   }
 
   async open(): Promise<void> {
