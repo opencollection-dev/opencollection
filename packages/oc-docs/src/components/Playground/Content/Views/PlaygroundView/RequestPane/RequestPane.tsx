@@ -263,7 +263,7 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
   ];
 
   return (
-    <div className="h-full" style={{ backgroundColor: 'var(--bg-primary)' }}>
+    <div className="h-full overflow-y-auto" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <Tabs
         tabs={tabs}
         activeTab={activeTab}

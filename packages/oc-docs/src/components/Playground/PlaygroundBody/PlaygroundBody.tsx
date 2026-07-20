@@ -19,6 +19,7 @@ import { useNavModel } from '../../../routing/hooks';
 import { usePlaygroundUrlState, useElementWidth } from '../../../hooks';
 import { getItemUuid, findItemByUuid } from '../../../utils/itemUtils';
 import { isFolder } from '../../../utils/schemaHelpers';
+import { exampleIndexForSlug, exampleSlugForIndex } from '../../../routing/slug';
 import PlaygroundView from '../Content/Views/PlaygroundView/PlaygroundView';
 import FolderSettingsView from '../Content/Views/FolderSettingsView/FolderSettingsView';
 import EnvironmentsView from '../Content/Views/EnvironmentsView/EnvironmentsView';
@@ -35,18 +36,26 @@ import { StyledWrapper } from './StyledWrapper';
 
 const ORIENTATION_BREAKPOINT = 640;
 
+// The applied-guard key combines request + example so switching examples under
+// the same request still re-applies, while a null example collapses to the bare
+// request slug (matching what handleNavigate / openEnvironments store).
+const applyKey = (requestSlug: string | null, exampleSlug: string | null): string =>
+  exampleSlug ? `${requestSlug} ${exampleSlug}` : requestSlug ?? '';
+
 interface PlaygroundBodyProps {
   requestSlug: string | null;
+  exampleSlug: string | null;
   sidebarOpen: boolean;
   dock: DockMode;
   onCloseSidebar: () => void;
-  // Tracks the applied request slug across dock-switch remounts; owned by
-  // Playground so it survives a dock switch but resets on close (see there).
+  // Tracks the applied request (+example) key across dock-switch remounts; owned
+  // by Playground so it survives a dock switch but resets on close (see there).
   appliedSlugRef: React.MutableRefObject<string | null>;
 }
 
 const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
   requestSlug,
+  exampleSlug,
   sidebarOpen,
   dock,
   onCloseSidebar,
@@ -54,7 +63,7 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const model = useNavModel();
-  const { setRequestSlug } = usePlaygroundUrlState();
+  const { setRequestSlug, setRequestExample } = usePlaygroundUrlState();
   const collection = useAppSelector(selectHydratedCollection);
   const viewMode = useAppSelector(selectViewMode);
   const selectedItemId = useAppSelector(selectSelectedItemId);
@@ -96,7 +105,8 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
   // folder, or the environments / collection-settings view, so a deep link, a
   // Try, or a reload all bring back the same thing. Runs once per URL value.
   useEffect(() => {
-    if (!requestSlug || appliedSlugRef.current === requestSlug) return;
+    const key = applyKey(requestSlug, exampleSlug);
+    if (!requestSlug || appliedSlugRef.current === key) return;
     const target = resolvePlaygroundTarget(requestSlug, model);
     if (!target) return; // sidebar list hasn't loaded this item yet - retry once it does
     // A request or folder needs the playground's own copy of the collection to
@@ -105,12 +115,17 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
     // this done - otherwise the folders would never open. The environments and
     // collection views need no collection, so they open right away.
     if (target.uuid && !collection?.items) return;
-    appliedSlugRef.current = requestSlug;
+    // Resolve the URL's example against the request; an unmatched slug (renamed/
+    // removed) leaves the example unset so we open the live request instead.
+    const item = target.uuid ? findItemByUuid(collection?.items, target.uuid) : undefined;
+    const exampleIndex =
+      exampleSlug && item && !isFolder(item) ? exampleIndexForSlug(item as HttpRequest, exampleSlug) : null;
+    appliedSlugRef.current = key;
     dispatch(setSelectedItemId(target.uuid));
-    dispatch(setSelectedExampleIndex(null));
-    dispatch(setViewMode(target.view));
+    dispatch(setSelectedExampleIndex(exampleIndex));
+    dispatch(setViewMode(exampleIndex != null ? 'example' : target.view));
     if (target.expandUuids.length) dispatch(expandFolders(target.expandUuids));
-  }, [requestSlug, model, collection, dispatch, appliedSlugRef]);
+  }, [requestSlug, exampleSlug, model, collection, dispatch, appliedSlugRef]);
 
   // In the inline dock the sidebar is an overlay, so close it once the user has
   // picked something to view (mirrors a mobile navigation drawer).
@@ -138,18 +153,21 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
   const handleToggleFolder = (uuid: string) => dispatch(toggleFolderCollapse(uuid));
   const handleExpandFolder = (uuid: string) => dispatch(expandFolders([uuid]));
 
-  // Highlighting an example is applied directly, not through the URL. Keep the
-  // slug on the example's parent request (examples aren't deep-linked), and mark
-  // it applied first so the reopen effect above doesn't revert to 'playground'.
+  // An example is applied directly and its slug written to the URL (pgReq+pgEx),
+  // so a reload / share restores it. Mark the combined key applied first so the
+  // reopen effect treats it as done and doesn't re-run.
   const handleExampleClick = (requestUuid: string, index: number) => {
     dispatch(setSelectedItemId(requestUuid));
     dispatch(setSelectedExampleIndex(index));
+    dispatch(setViewMode('example'));
     const slug = uuidToSlug.get(requestUuid);
     if (slug) {
-      appliedSlugRef.current = slug;
-      setRequestSlug(slug);
+      const item = findItemByUuid(collection?.items, requestUuid);
+      const request = item && !isFolder(item) ? (item as HttpRequest) : null;
+      const nextExampleSlug = exampleSlugForIndex(request, index);
+      appliedSlugRef.current = applyKey(slug, nextExampleSlug);
+      setRequestExample(slug, nextExampleSlug);
     }
-    dispatch(setViewMode('example'));
     closeSidebarIfInline();
   };
 

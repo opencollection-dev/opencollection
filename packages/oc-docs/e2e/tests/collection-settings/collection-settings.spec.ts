@@ -42,7 +42,7 @@ test.describe('collection settings', () => {
     await expect(collectionSettings.authField('password')).toHaveAttribute('type', 'password');
   });
 
-  test('bearer, api key, and digest render their fields', async ({ collectionSettings }) => {
+  test('bearer and api key render their fields', async ({ collectionSettings }) => {
     await collectionSettings.openTab('auth');
 
     await collectionSettings.selectAuthMode('bearer');
@@ -52,28 +52,15 @@ test.describe('collection settings', () => {
     await expect(collectionSettings.authField('key')).toBeVisible();
     await expect(collectionSettings.authField('value')).toHaveAttribute('type', 'text');
     await expect(collectionSettings.authField('placement')).toBeVisible();
-
-    await collectionSettings.selectAuthMode('digest');
-    await expect(collectionSettings.authField('username')).toBeVisible();
-    await expect(collectionSettings.authField('password')).toHaveAttribute('type', 'password');
   });
 
-  test('aws signature v4 shows all six fields and reveals only the secret access key', async ({
-    collectionSettings
-  }) => {
+  test('does not offer Digest or AWS Signature v4 as selectable auth modes', async ({ collectionSettings }) => {
     await collectionSettings.openTab('auth');
-    await collectionSettings.selectAuthMode('awsv4');
+    await collectionSettings.authMode.click();
 
-    for (const field of ['accessKeyId', 'secretAccessKey', 'sessionToken', 'service', 'region', 'profileName']) {
-      await expect(collectionSettings.authField(field)).toBeVisible();
-    }
-
-    const secret = collectionSettings.authField('secretAccessKey');
-    await expect(secret).toHaveAttribute('type', 'password');
-    await collectionSettings.authField('secretAccessKey-toggle').click();
-    await expect(secret).toHaveAttribute('type', 'text');
-
-    await expect(collectionSettings.authField('accessKeyId')).toHaveAttribute('type', 'text');
+    await expect(collectionSettings.authModeOption('basic')).toBeVisible();
+    await expect(collectionSettings.authModeOption('digest')).toHaveCount(0);
+    await expect(collectionSettings.authModeOption('awsv4')).toHaveCount(0);
   });
 
   test('scripts shows pre-request and post-response editors', async ({ collectionSettings }) => {

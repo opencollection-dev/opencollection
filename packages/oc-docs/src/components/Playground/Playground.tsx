@@ -36,7 +36,7 @@ interface PlaygroundProps {
 
 const Playground: React.FC<PlaygroundProps> = ({ openNonce }) => {
   const dispatch = useAppDispatch();
-  const { open, dock, requestSlug, setDock, closePlayground } = usePlaygroundUrlState();
+  const { open, dock, requestSlug, exampleSlug, setDock, closePlayground } = usePlaygroundUrlState();
   const isPhone = useIsMobilePhone();
   // On a phone the playground is always the fullscreen MobileDock, and its
   // sidebar behaves like the inline dock's overlay. Feed that dock downstream so
@@ -76,6 +76,7 @@ const Playground: React.FC<PlaygroundProps> = ({ openNonce }) => {
       <Suspense fallback={<div data-testid="playground-loading" style={{ padding: 16 }} />}>
         <PlaygroundBody
           requestSlug={requestSlug}
+          exampleSlug={exampleSlug}
           sidebarOpen={sidebarOpen}
           dock={effectiveDock}
           onCloseSidebar={() => setSidebarOpen(false)}

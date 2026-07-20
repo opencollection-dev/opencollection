@@ -1,6 +1,6 @@
 {
   "name": "@opencollection/schema",
-  "version": "0.9.2",
+  "version": "0.10.0",
   "description": "OpenCollection schema",
   "author": "Bruno Software Inc.",
   "type": "module",

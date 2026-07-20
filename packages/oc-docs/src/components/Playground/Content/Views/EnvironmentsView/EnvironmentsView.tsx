@@ -147,6 +147,7 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection, compact
         keyPlaceholder="Name"
         valuePlaceholder="Value"
         showEnabled={true}
+        multilineValues
         disableNewRow={disableNewRow}
         makeNewRow={makeNewRow}
         addWhenComplete

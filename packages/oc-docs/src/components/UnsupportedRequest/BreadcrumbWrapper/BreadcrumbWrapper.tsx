@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { getItemName } from '../../../utils/schemaHelpers';
 import { Breadcrumb, type BreadcrumbSegment } from '../../../ui/Breadcrumb/Breadcrumb';
 import { Item } from '@opencollection/types/collection/item';
 import { OpenCollection } from '@opencollection/types';
@@ -7,8 +6,7 @@ import { buildBreadcrumbSegments } from '../../../utils/common';
 
 export interface BreadcrumbWrapperProps {
   showBreadcrumbs: boolean;
-  item: Item;
-  customName?: string;
+  name: string;
   collection?: OpenCollection | null;
   ancestry?: Item[];
   onBreadcrumbClick?: (uuid: string) => void;
@@ -16,13 +14,11 @@ export interface BreadcrumbWrapperProps {
 
 const BreadcrumbWrapper: React.FC<BreadcrumbWrapperProps> = ({
   showBreadcrumbs,
-  item,
+  name,
   collection,
   ancestry = [],
-  customName,
   onBreadcrumbClick
 }) => {
-  const name = getItemName(item) || customName;
   const segments = useMemo<BreadcrumbSegment[]>(
     () => (showBreadcrumbs ? buildBreadcrumbSegments(collection, ancestry) : []),
     [collection, ancestry, showBreadcrumbs]

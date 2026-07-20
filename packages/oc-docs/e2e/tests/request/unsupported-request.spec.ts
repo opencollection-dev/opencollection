@@ -11,7 +11,7 @@ test.describe('Request page — unsupported request types', () => {
     test(`shows a "preview not available" notice for a ${typeLabel} request`, async ({ unsupportedRequestPage }) => {
       await unsupportedRequestPage.open(paths);
 
-      await expect(unsupportedRequestPage.title).toHaveText(typeLabel);
+      await expect(unsupportedRequestPage.title).toHaveText(name);
       await expect(unsupportedRequestPage.breadcrumb.segment('Realtime')).toBeVisible();
       await expect(unsupportedRequestPage.breadcrumb.current).toHaveText(name);
       await expect(unsupportedRequestPage.message).toContainText('Preview not available');

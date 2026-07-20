@@ -61,7 +61,7 @@
     "@faker-js/faker": "^9.7.0",
     "@mintlify/httpsnippet": "^1.0.10",
     "@monaco-editor/react": "^4.7.0",
-    "@opencollection/types": "0.9.2",
+    "@opencollection/types": "0.10.0",
     "@prantlf/jsonlint": "^16.0.0",
     "@reduxjs/toolkit": "^2.10.1",
     "@tabler/icons": "^1.46.0",

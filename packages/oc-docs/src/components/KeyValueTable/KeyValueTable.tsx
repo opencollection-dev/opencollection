@@ -48,6 +48,11 @@ interface KeyValueTableProps {
   testId?: string;
 }
 
+const valueTruncated = (anchor: HTMLElement): boolean => {
+  const field = anchor.querySelector<HTMLElement>('input, textarea');
+  return !!field && (field.scrollWidth > field.clientWidth || field.scrollHeight > field.clientHeight);
+};
+
 const KeyValueTable: React.FC<KeyValueTableProps> = ({
   data,
   onChange,
@@ -140,6 +145,29 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                 </button>
               );
 
+              const valueField = row.secret ? (
+                <SecretValue
+                  value={row.value}
+                  placeholder={valuePlaceholder}
+                  onChange={(v) => updateField(index, 'value', v)}
+                />
+              ) : (
+                <Tooltip content={row.value} shouldOpen={valueTruncated}>
+                  <span className="value-input-tip">
+                    <HighlightedInput
+                      value={row.value}
+                      placeholder={isLastEmptyRow ? valuePlaceholder : ''}
+                      onValueChange={(v) => updateField(index, 'value', v)}
+                      isFound={isFound}
+                      names={names}
+                      anywordHints={valueAutocomplete}
+                      multiline={multilineValues}
+                      testId={`${testId}-value-input`}
+                    />
+                  </span>
+                </Tooltip>
+              );
+
               return (
                 <tr key={row.id} className={isLastEmptyRow ? 'empty-row' : ''}>
                   <td className="col-key">
@@ -180,27 +208,7 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                   <td className="col-value">
                     {inlineActions ? (
                       <div className="value-cell">
-                        <div className="value-cell-field">
-                          {row.secret ? (
-                            <SecretValue
-                              value={row.value}
-                              placeholder={valuePlaceholder}
-                              onChange={(v) => updateField(index, 'value', v)}
-                            />
-                          ) : (
-                            <HighlightedInput
-                              value={row.value}
-                              placeholder={isLastEmptyRow ? valuePlaceholder : ''}
-                              onValueChange={(v) => updateField(index, 'value', v)}
-                              isFound={isFound}
-                              names={names}
-                              anywordHints={valueAutocomplete}
-                              multiline={multilineValues}
-                              title={row.value}
-                              testId={`${testId}-value-input`}
-                            />
-                          )}
-                        </div>
+                        <div className="value-cell-field">{valueField}</div>
                         {!isLastEmptyRow && cellError(row, index, 'value')}
                         {!isLastEmptyRow && (
                           <div className="value-cell-trailing">
@@ -211,24 +219,8 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                           </div>
                         )}
                       </div>
-                    ) : row.secret ? (
-                      <SecretValue
-                        value={row.value}
-                        placeholder={valuePlaceholder}
-                        onChange={(v) => updateField(index, 'value', v)}
-                      />
                     ) : (
-                      <HighlightedInput
-                        value={row.value}
-                        placeholder={isLastEmptyRow ? valuePlaceholder : ''}
-                        onValueChange={(v) => updateField(index, 'value', v)}
-                        isFound={isFound}
-                        names={names}
-                        anywordHints={valueAutocomplete}
-                        multiline={multilineValues}
-                        title={row.value}
-                        testId={`${testId}-value-input`}
-                      />
+                      valueField
                     )}
                   </td>
                   {!inlineActions &&

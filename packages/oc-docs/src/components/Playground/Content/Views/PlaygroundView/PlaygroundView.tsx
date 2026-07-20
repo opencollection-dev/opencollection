@@ -2,13 +2,13 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { OpenCollection as OpenCollectionCollection } from '@opencollection/types';
 import { requestRunner } from '../../../../../runner';
-import RequestHeader from './RequestPane/RequestHeader/RequestHeader';
+import TitleLabel from '../../../../TitleLabel/TitleLabel';
 import QueryBar from './QueryBar/QueryBar';
 import RequestPane from './RequestPane/RequestPane';
 import ResponsePane from './ResponsePane/ResponsePane';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { updatePlaygroundItem, setPlaygroundResponse, selectPlaygroundResponse } from '../../../../../store/slices/playground';
-import { isUnsupportedRequest } from '../../../../../utils/schemaHelpers';
+import { getItemName, isUnsupportedRequest } from '../../../../../utils/schemaHelpers';
 import UnsupportedRequest from '../../../../UnsupportedRequest/UnsupportedRequest';
 import { FileNotFoundIcon } from '../../../../../assets/icons';
 import { useSplitPane } from '../../../../../hooks/useSplitPane';
@@ -24,6 +24,7 @@ interface PlaygroundViewProps {
 const HttpRequestPlaygroundView: React.FC<PlaygroundViewProps> = ({ item, collection, selectedEnvironment = '', orientation = 'horizontal' }) => {
   const dispatch = useAppDispatch();
   const [editableItem, setEditableItem] = useState<HttpRequest>(item);
+  const itemName = getItemName(editableItem) || 'Untitled Request';
   const itemUuid = (item as any).uuid;
   const response = useAppSelector(state => selectPlaygroundResponse(state, itemUuid));
   const [isLoading, setIsLoading] = useState(false);
@@ -94,13 +95,7 @@ const HttpRequestPlaygroundView: React.FC<PlaygroundViewProps> = ({ item, collec
 
   return (
     <div className="request-runner-container h-full flex flex-col px-4" style={{ backgroundColor: 'var(--bg-primary)' }}>
-      <RequestHeader 
-        item={editableItem} 
-        collection={collection}
-        selectedEnvironment={selectedEnvironment}
-        onEnvironmentChange={() => {}} // Environment is now managed by parent
-        readOnlyEnvironment={true}
-      />
+      <TitleLabel className="truncate mb-2 mt-3">{itemName}</TitleLabel>
       
       <QueryBar 
         item={editableItem}

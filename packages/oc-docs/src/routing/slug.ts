@@ -1,3 +1,5 @@
+import type { HttpRequest } from '@opencollection/types/requests/http';
+
 /**
  * Convert a single item/folder name into a URL segment.
  *
@@ -15,6 +17,35 @@ export const slugifySegment = (name: string): string => {
     .replace(/^-|-$/g, '');
   return slug || 'unnamed';
 };
+
+/**
+ * URL segments for a request's saved examples, one per name in array order.
+ * Names slugify like page segments; a blank name falls back to `example-<n>`
+ * (1-based); duplicates get -2, -3, … Name-based (not index-based) so a slug
+ * stays stable when examples are reordered. Order follows the examples array,
+ * which is the render order, so the same list always yields the same slugs.
+ */
+export const exampleSlugs = (names: (string | null | undefined)[]): string[] =>
+  dedupeSiblingSlugs(
+    names.map((name, i) => (name && name.trim() ? slugifySegment(name) : `example-${i + 1}`))
+  );
+
+/** A request's example names in array (render) order; the basis for its slugs. */
+export const exampleNames = (request: HttpRequest | null | undefined): string[] =>
+  (request?.examples ?? []).map((example) => example.name);
+
+/**
+ * The example index a slug addresses within a request, or null when it names no
+ * current example (stale/renamed) so callers fall back to the live request.
+ */
+export const exampleIndexForSlug = (request: HttpRequest | null | undefined, slug: string): number | null => {
+  const index = exampleSlugs(exampleNames(request)).indexOf(slug);
+  return index >= 0 ? index : null;
+};
+
+/** The slug for the example at a given index, or null when the index is out of range. */
+export const exampleSlugForIndex = (request: HttpRequest | null | undefined, index: number): string | null =>
+  exampleSlugs(exampleNames(request))[index] ?? null;
 
 /** Append -2, -3, … to duplicate sibling segments; input must be pre-sorted for deterministic output. */
 export const dedupeSiblingSlugs = (segments: string[]): string[] => {
