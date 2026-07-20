@@ -2,12 +2,14 @@ import type { Locator } from '@playwright/test';
 import { BaseComponent } from './base.component';
 import { KeyValueTableComponent } from './key-value-table/key-value-table.component';
 import { CodeEditorComponent } from './code-editor/code-editor.component';
+import { MethodSelectComponent } from './playground/method-select.component';
 import type { DockMode } from '../../src/utils/playgroundDock';
 
 export class PlaygroundComponent extends BaseComponent {
   readonly keyValueTable = new KeyValueTableComponent(this.page);
   readonly preRequestScriptEditor = new CodeEditorComponent(this.page, 'scripts-editor-pre-request');
   readonly postResponseScriptEditor = new CodeEditorComponent(this.page, 'scripts-editor-post-response');
+  readonly methodSelect = new MethodSelectComponent(this.page);
 
   readonly header = this.page.getByTestId('playground-header');
   readonly switcher = this.page.getByTestId('playground-dock-switcher');
