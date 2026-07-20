@@ -44,8 +44,7 @@ export const parseValueByDataType = (value: unknown, dataType?: VariableValueTyp
  */
 export const validateDataTypeValue = (value: unknown, dataType?: VariableValueType | string): string | null => {
   if (!dataType || dataType === 'string') return null;
-  // An empty/unset value isn't a type mismatch — don't warn on a field the user hasn't filled.
-  if (value === undefined || value === null || value === '') return null;
+  if (value === undefined || value === null) return null;
   if (dataType === 'number' && typeof value !== 'number') return `Value is not a valid ${dataType}`;
   if (dataType === 'boolean' && typeof value !== 'boolean') return `Value is not a valid ${dataType}`;
   if (dataType === 'object' && typeof value !== 'object') return `Value is not a valid ${dataType}`;
@@ -76,7 +75,10 @@ export const rowToVariable = (row: VariableRowInput): Variable => {
 
   if (row.originalValue !== undefined) {
     const original = unwrapVariableTyped(row.originalValue);
-    const originalType = original.dataType && original.dataType !== 'string' ? original.dataType : undefined;
+    const originalType =
+      original.dataType && original.dataType !== 'string' && (VARIABLE_DATA_TYPES as string[]).includes(original.dataType)
+        ? original.dataType
+        : undefined;
     if (original.value === row.value && originalType === dataType) {
       return { name: row.name, value: row.originalValue, disabled: !row.enabled, ...description };
     }

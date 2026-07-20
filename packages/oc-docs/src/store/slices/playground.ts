@@ -149,10 +149,9 @@ const playgroundSlice = createSlice({
       state.selectedExampleIndex = null;
     },
     updatePlaygroundItem: (state: PlaygroundState, action: PayloadAction<{ uuid: string; item: HttpRequest }>) => {
-      if (!state.collection || !state.collection.items) return;
-      
       const { uuid, item } = action.payload;
-      findAndUpdateItemInCollection(state.collection.items, uuid, item);
+      if (state.collection?.items) findAndUpdateItemInCollection(state.collection.items, uuid, item);
+      if (state.hydratedCollection?.items) findAndUpdateItemInCollection(state.hydratedCollection.items, uuid, item);
     },
     setPlaygroundResponse: (state: PlaygroundState, action: PayloadAction<{ uuid: string; response: any }>) => {
       const { uuid, response } = action.payload;

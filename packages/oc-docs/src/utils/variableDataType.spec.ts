@@ -37,6 +37,15 @@ describe('validateDataTypeValue', () => {
     expect(validateDataTypeValue('nope', 'boolean')).toContain('boolean');
     expect(validateDataTypeValue('{bad', 'object')).toContain('object');
   });
+
+  it('flags an empty value under a non-string type (matches Bruno) but never an unset value', () => {
+    expect(validateDataTypeValue('', 'number')).toContain('number');
+    expect(validateDataTypeValue('', 'boolean')).toContain('boolean');
+    expect(validateDataTypeValue('', 'object')).toContain('object');
+    expect(validateDataTypeValue('', 'string')).toBeNull();
+    expect(validateDataTypeValue(undefined, 'number')).toBeNull();
+    expect(validateDataTypeValue(null, 'number')).toBeNull();
+  });
 });
 
 describe('rowToVariable', () => {
@@ -59,5 +68,21 @@ describe('rowToVariable', () => {
       disabled: true,
       description: 'd'
     });
+  });
+
+  it('keeps an unsupported-type value verbatim when the display value is unchanged (a sibling-row edit must not flatten it)', () => {
+    const original = { type: 'null', data: '' } as never;
+    expect(rowToVariable({ name: 'x', value: '', enabled: true, dataType: 'string', originalValue: original })).toEqual({
+      name: 'x',
+      value: original,
+      disabled: false
+    });
+  });
+
+  it('converts an unsupported-type value to a plain string only when its value is actually edited', () => {
+    const original = { type: 'null', data: '' } as never;
+    expect(
+      rowToVariable({ name: 'x', value: 'edited', enabled: true, dataType: 'string', originalValue: original })
+    ).toEqual({ name: 'x', value: 'edited', disabled: false });
   });
 });

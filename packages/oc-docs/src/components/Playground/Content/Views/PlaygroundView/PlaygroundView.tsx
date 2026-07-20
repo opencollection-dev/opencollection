@@ -33,36 +33,38 @@ const HttpRequestPlaygroundView: React.FC<PlaygroundViewProps> = ({ item, collec
   const { size: paneSize, isResizing, containerRef, startResize } = useSplitPane(orientation);
   const runner = useMemo(() => requestRunner, []);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const pendingSaveRef = useRef<{ uuid: string; item: HttpRequest } | null>(null);
 
   useEffect(() => {
     setEditableItem(item);
     // Don't clear response anymore - it's preserved in Redux by UUID
   }, [item]);
 
-  // Save changes to Redux with debouncing
+  // Save changes to Redux with debouncing.
   const handleItemChange = useCallback((updatedItem: HttpRequest) => {
     setEditableItem(updatedItem);
-    
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
-    
+
+    const itemUuid = (updatedItem as any).uuid || (item as any).uuid;
+    if (itemUuid) pendingSaveRef.current = { uuid: itemUuid, item: { ...updatedItem, uuid: itemUuid } as any };
+
+    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
     saveTimeoutRef.current = setTimeout(() => {
-      const itemUuid = (updatedItem as any).uuid || (item as any).uuid;
-      if (itemUuid) {
-        const itemWithUuid = { ...updatedItem, uuid: itemUuid } as any;
-        dispatch(updatePlaygroundItem({ uuid: itemUuid, item: itemWithUuid }));
+      if (pendingSaveRef.current) {
+        dispatch(updatePlaygroundItem(pendingSaveRef.current));
+        pendingSaveRef.current = null;
       }
     }, 500);
   }, [dispatch, item]);
 
   useEffect(() => {
     return () => {
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
+      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+      if (pendingSaveRef.current) {
+        dispatch(updatePlaygroundItem(pendingSaveRef.current));
+        pendingSaveRef.current = null;
       }
     };
-  }, []);
+  }, [dispatch]);
 
   const handleSendRequest = useCallback(async () => {
     setIsLoading(true);
