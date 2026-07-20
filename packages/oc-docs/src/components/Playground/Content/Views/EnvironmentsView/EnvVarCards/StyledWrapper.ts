@@ -51,7 +51,8 @@ export const StyledWrapper = styled.div`
     flex-wrap: wrap;
   }
 
-  .env-card .value .secret-value {
+  .env-card .value .value-secret {
+    flex: 1;
     padding: 0 0.5rem;
   }
 

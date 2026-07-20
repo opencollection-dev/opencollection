@@ -10,6 +10,7 @@ interface SecretValueProps {
   readOnly?: boolean;
   onChange?: (value: string) => void;
   placeholder?: string;
+  className?: string;
   testId?: string;
 }
 
@@ -19,6 +20,7 @@ export const SecretValue: React.FC<SecretValueProps> = ({
   readOnly = false,
   onChange,
   placeholder,
+  className,
   testId = 'secret-value'
 }) => {
   const [isRevealed, setIsRevealed] = useState(false);
@@ -30,7 +32,7 @@ export const SecretValue: React.FC<SecretValueProps> = ({
       className={cx('secret-value', {
         'secret-value--start': align === 'start',
         'secret-value--readonly': readOnly
-      })}
+      }, className)}
       data-testid={testId}
     >
       {editable ? (
