@@ -21,6 +21,10 @@ export const StyledWrapper = styled.div`
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
     color: var(--oc-colors-text-subtext0);
     cursor: pointer;
   }
