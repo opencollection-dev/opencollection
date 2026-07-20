@@ -6,9 +6,12 @@ import reducer, {
   selectHydratedCollection,
   setViewMode,
   setSelectedExampleIndex,
-  clearPlaygroundCollection
+  clearPlaygroundCollection,
+  toggleFolderCollapse,
+  expandFolders
 } from './playground';
 import { createOpenCollectionStore } from '../store';
+import type { OpenCollection as OpenCollectionCollection } from '@opencollection/types';
 
 const makeCollection = () =>
   ({
@@ -63,5 +66,32 @@ describe('playground example view', () => {
     expect(set.selectedExampleIndex).toBe(3);
     const cleared = reducer(set, clearPlaygroundCollection());
     expect(cleared.selectedExampleIndex).toBeNull();
+  });
+});
+
+describe('playground folder collapse', () => {
+  const withFolder = () =>
+    ({
+      info: { name: 'Test', version: '1.0.0' },
+      items: [{ type: 'folder', uuid: 'f1', name: 'Folder', isCollapsed: false, items: [] }]
+    }) as unknown as OpenCollectionCollection;
+  const folder = (store: ReturnType<typeof createOpenCollectionStore>) =>
+    selectHydratedCollection(store.getState())!.items![0] as { isCollapsed?: boolean };
+
+  it('expandFolders reveals a collapsed folder', () => {
+    const store = createOpenCollectionStore();
+    store.dispatch(setPlaygroundCollection(withFolder()));
+    store.dispatch(toggleFolderCollapse('f1'));
+    expect(folder(store).isCollapsed).toBe(true);
+
+    store.dispatch(expandFolders(['f1']));
+    expect(folder(store).isCollapsed).toBe(false);
+  });
+
+  it('expandFolders keeps an already-open folder open (never collapses)', () => {
+    const store = createOpenCollectionStore();
+    store.dispatch(setPlaygroundCollection(withFolder()));
+    store.dispatch(expandFolders(['f1']));
+    expect(folder(store).isCollapsed).toBe(false);
   });
 });

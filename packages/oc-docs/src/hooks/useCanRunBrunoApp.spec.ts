@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { computeCanRunBrunoApp, computeIsMobileOS, type DeviceEnv } from './useCanRunBrunoApp';
+import { computeCanRunBrunoApp, computeIsMobileOS, computeIsMobilePhone, type DeviceEnv } from './useCanRunBrunoApp';
 
 const base: DeviceEnv = {
   anyHoverFine: true,
@@ -101,5 +101,39 @@ describe('computeIsMobileOS', () => {
   it('does not depend on viewport width (a narrow desktop window is still not mobile)', () => {
     // Same desktop env regardless of window size -> always false.
     expect(computeIsMobileOS(base)).toBe(false);
+  });
+});
+
+describe('computeIsMobilePhone', () => {
+  it('is true for an iPhone', () => {
+    expect(
+      computeIsMobilePhone({ ...base, userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) Mobile/15E148', platform: 'iPhone', maxTouchPoints: 5 })
+    ).toBe(true);
+  });
+
+  it('is true for an Android phone (carries the Mobile token)', () => {
+    expect(
+      computeIsMobilePhone({ ...base, userAgent: 'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 Chrome/120 Mobile Safari/537.36', platform: 'Linux armv8l', maxTouchPoints: 5 })
+    ).toBe(true);
+  });
+
+  it('is false for an Android tablet (no Mobile token)', () => {
+    expect(
+      computeIsMobilePhone({ ...base, userAgent: 'Mozilla/5.0 (Linux; Android 13; SM-X700) AppleWebKit/537.36 Chrome/120 Safari/537.36', platform: 'Linux armv8l', maxTouchPoints: 5 })
+    ).toBe(false);
+  });
+
+  it('is false for an iPad reporting iPad in the UA', () => {
+    expect(
+      computeIsMobilePhone({ ...base, userAgent: 'Mozilla/5.0 (iPad; CPU OS 16_0 like Mac OS X) Safari/604', platform: 'iPad', maxTouchPoints: 5 })
+    ).toBe(false);
+  });
+
+  it('is false for an iPad masquerading as MacIntel with touch points', () => {
+    expect(computeIsMobilePhone({ ...base, maxTouchPoints: 5 })).toBe(false);
+  });
+
+  it('is false for a real desktop', () => {
+    expect(computeIsMobilePhone(base)).toBe(false);
   });
 });

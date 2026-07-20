@@ -8,6 +8,7 @@ import { EnvironmentLabel } from '../../components/EnvironmentLabel/EnvironmentL
 import { VariableText } from '../../components/VariableText/VariableText';
 import { TruncatedText } from '../../components/TruncatedText/TruncatedText';
 import { Description } from '../../components/Description/Description';
+import { DisabledBadge } from '../../components/DisabledBadge/DisabledBadge';
 import { ViewMore } from '../../components/ViewMore/ViewMore';
 import { EmptyState } from '../../ui/EmptyState/EmptyState';
 import { PageWrapper } from '../../components/PageWrapper/PageWrapper';
@@ -23,7 +24,17 @@ const COLUMNS: TableColumn[] = [
 
 const emptyCell = <span className="environment-empty">(empty)</span>;
 
-const nameCell = (name: string): React.ReactNode => <TruncatedText className="environment-name" text={name} />;
+const nameCell = (name: string, disabled?: boolean): React.ReactNode => {
+  const label = <TruncatedText className="environment-name" text={name} />;
+  return disabled ? (
+    <span className="environment-name-cell">
+      {label}
+      <DisabledBadge />
+    </span>
+  ) : (
+    label
+  );
+};
 
 const valueCell = (value: string): React.ReactNode =>
   value ? (
@@ -76,10 +87,9 @@ export const Environments: React.FC<EnvironmentsProps> = ({ collection }) => {
         rows: variables.map((row) => ({
           id: `var-${row.name}`,
           rowHeaderKey: 'name',
-          disabled: row.disabled,
           testId: 'environment-variable-row',
           cells: {
-            name: nameCell(row.name),
+            name: nameCell(row.name, row.disabled),
             value: valueCell(row.value),
             type: typeCell(row.dataType)
           },
@@ -97,10 +107,9 @@ export const Environments: React.FC<EnvironmentsProps> = ({ collection }) => {
         rows: secretVariables.map((row) => ({
           id: `secret-${row.name}`,
           rowHeaderKey: 'name',
-          disabled: row.disabled,
           testId: 'environment-secret-variable-row',
           cells: {
-            name: nameCell(row.name),
+            name: nameCell(row.name, row.disabled),
             value: secretCell(),
             type: typeCell(row.dataType)
           },
@@ -119,10 +128,9 @@ export const Environments: React.FC<EnvironmentsProps> = ({ collection }) => {
         rows: externalSecrets.variables.map((row) => ({
           id: `ext-${row.name}`,
           rowHeaderKey: 'name',
-          disabled: row.disabled,
           testId: 'environment-external-secret-row',
           cells: {
-            name: nameCell(row.name),
+            name: nameCell(row.name, row.disabled),
             value: valueCell(row.secretName),
             type: typeCell(row.dataType)
           }

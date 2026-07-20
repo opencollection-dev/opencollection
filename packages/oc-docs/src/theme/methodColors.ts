@@ -16,8 +16,12 @@ export const methodColorVars: Record<string, string> = {
   GQL: 'var(--oc-request-gql)',
   GRPC: 'var(--oc-request-grpc)',
   WEBSOCKET: 'var(--oc-request-ws)',
-  WS: 'var(--oc-request-ws)',
+  WS: 'var(--oc-request-ws)'
 };
+
+const notSupportedMethods = ['GRAPHQL', 'GQL', 'GRPC', 'WEBSOCKET', 'WS'];
+
+export const availableMethods = Object.keys(methodColorVars).filter((option) => !notSupportedMethods.includes(option));
 
 /** Method colour var, case-insensitive, with a muted fallback for unknown methods. */
 export const getMethodColorVar = (method?: string): string =>

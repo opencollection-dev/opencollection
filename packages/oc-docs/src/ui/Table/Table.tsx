@@ -12,7 +12,6 @@ export interface TableRow {
   id: string;
   cells: Record<string, React.ReactNode>;
   rowHeaderKey?: string;
-  disabled?: boolean;
   testId?: string;
   description?: React.ReactNode;
 }
@@ -67,15 +66,12 @@ const Cells: React.FC<{ row: TableRow; columns: TableColumn[] }> = ({ row, colum
 const Rows: React.FC<{ rows: TableRow[]; columns: TableColumn[] }> = ({ rows, columns }) =>
   rows.map((row) => (
     <React.Fragment key={row.id}>
-      <tr
-        className={['table-row', row.disabled ? 'table-row--disabled' : ''].filter(Boolean).join(' ')}
-        data-testid={row.testId}
-      >
+      <tr className="table-row" data-testid={row.testId}>
         <Cells row={row} columns={columns} />
       </tr>
       {row.description && (
         <tr
-          className={['table-row-description', row.disabled ? 'table-row--disabled' : ''].filter(Boolean).join(' ')}
+          className="table-row-description"
           data-testid={row.testId ? `${row.testId}-description` : undefined}
         >
           <td colSpan={columns.length} className="table-description-cell">

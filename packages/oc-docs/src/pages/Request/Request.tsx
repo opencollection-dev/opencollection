@@ -40,7 +40,7 @@ import { Heading } from '../../components/Heading/Heading';
 import { Section } from '../../components/Section/Section';
 import { Breadcrumb, type BreadcrumbSegment } from '../../ui/Breadcrumb/Breadcrumb';
 import { EmptyState } from '../../ui/EmptyState/EmptyState';
-import { FileIcon, RefreshIcon } from '../../assets/icons';
+import { EyeOffIcon, FileIcon, RefreshIcon } from '../../assets/icons';
 import { RequestUrlBar } from '../../components/Request/RequestUrlBar/RequestUrlBar';
 import { ViewMore } from '../../components/ViewMore/ViewMore';
 import { AuthDetails } from '../../components/AuthDetails/AuthDetails';
@@ -260,7 +260,24 @@ const RequestContent: React.FC<RequestContentProps> = ({
 
 export const Request: React.FC<RequestProps> = ({ item, ancestry = [], collection, onTryClick, onBreadcrumbClick }) => {
   if (isUnsupportedRequest(item)) {
-    return <UnsupportedRequest item={item} ancestry={ancestry} collection={collection} onBreadcrumbClick={onBreadcrumbClick} />;
+    return (
+      <PageWrapper>
+        <UnsupportedRequest
+          item={item}
+          breadcrumbs={{
+            collection,
+            ancestry,
+            onBreadcrumbClick}
+          }
+          showRequestDocs
+          emptyStateProps={{
+            icon: <EyeOffIcon />,
+            heading: 'Preview not available',
+            subheadingSuffix: "documentation isn't supported in this viewer."
+          }}
+        />
+      </PageWrapper>
+    );
   }
 
   return (

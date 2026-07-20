@@ -9,7 +9,9 @@ export {
   useCanRunBrunoApp,
   computeCanRunBrunoApp,
   computeIsMobileOS,
+  computeIsMobilePhone,
   useIsMobileDevice,
+  useIsMobilePhone,
   type DeviceEnv,
 } from './useCanRunBrunoApp';
 export { useSearchHotkey } from './useSearchHotkey';

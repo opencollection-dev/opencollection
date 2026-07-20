@@ -136,6 +136,7 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
   };
 
   const handleToggleFolder = (uuid: string) => dispatch(toggleFolderCollapse(uuid));
+  const handleExpandFolder = (uuid: string) => dispatch(expandFolders([uuid]));
 
   // Highlighting an example is applied directly, not through the URL. Keep the
   // slug on the example's parent request (examples aren't deep-linked), and mark
@@ -214,6 +215,7 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
             uuidToSlug={uuidToSlug}
             onNavigate={handleNavigate}
             onToggleFolder={handleToggleFolder}
+            onExpandFolder={handleExpandFolder}
             onOpenEnvironments={openEnvironments}
             environmentsActive={viewMode === 'environments'}
             onOpenCollection={openCollection}

@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 export const StyledWrapper = styled.nav`
   display: flex;
   align-items: stretch;
-  gap: 16px;
-  margin-top: 20px;
+  gap: 1rem;
+  margin-top: 1.25rem;
 
   .prevnext-half {
     display: flex;
@@ -19,12 +19,13 @@ export const StyledWrapper = styled.nav`
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 10px;
+    gap: 0.5rem;
     width: 100%;
-    min-height: 65px;
-    padding: 14px 18px;
-    border-radius: var(--oc-radius);
-    border: 1px solid var(--oc-border-border0, var(--border-color));
+    max-width: 20rem;
+    min-height: 4.0625rem;
+    padding: 0.875rem 1.125rem;
+    border-radius: 0.375rem;
+    border: 0.0625rem solid var(--oc-border-border0, var(--border-color));
     text-decoration: none;
     transition: border-color 0.12s ease, background-color 0.12s ease;
   }
@@ -38,16 +39,19 @@ export const StyledWrapper = styled.nav`
   }
 
   .prevnext-chevron {
+    display: flex;
     flex-shrink: 0;
-    font-size: 1.1rem;
-    line-height: 1;
-    color: var(--oc-colors-text-subtext2);
+    color: var(--primary-color);
+  }
+  .prevnext-chevron svg {
+    width: 0.75rem;
+    height: 0.75rem;
   }
 
   .prevnext-textcol {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 0.25rem;
     flex: 1;
     min-width: 0;
   }
@@ -57,19 +61,20 @@ export const StyledWrapper = styled.nav`
   }
 
   .prevnext-label {
-    font-size: 0.7rem;
-    line-height: 1.2;
+    font-size: 0.75rem;
+    font-weight: 400;
+    line-height: 1;
     letter-spacing: normal;
     color: var(--oc-colors-text-subtext2);
   }
   .prevnext-name {
     display: flex;
     align-items: baseline;
-    gap: 0.5rem;
+    gap: 0.375rem;
     max-width: 100%;
     min-width: 0;
-    font-size: 0.9rem;
-    line-height: 1.2;
+    font-size: 0.8125rem;
+    line-height: 1;
     font-weight: 600;
     color: var(--oc-text);
   }
@@ -84,7 +89,7 @@ export const StyledWrapper = styled.nav`
   }
   .prevnext-method {
     flex-shrink: 0;
-    font-size: 0.7rem;
+    font-size: 0.8125rem;
     font-weight: 700;
     line-height: 1;
     font-family: 'Fira Code', var(--font-mono);
@@ -92,26 +97,26 @@ export const StyledWrapper = styled.nav`
 
   @container docs (max-width: 1024px) {
     .prevnext-card {
-      min-height: 56px;
-      padding: 10px 14px;
+      min-height: 3.5rem;
+      padding: 0.625rem 0.875rem;
     }
   }
 
   @container docs (max-width: 768px) {
-    gap: 8px;
-    padding-top: 20px;
+    gap: 0.5rem;
+    padding-top: 1.25rem;
 
     .prevnext-card {
-      min-height: 48px;
-      padding: 8px 10px;
-      gap: 6px;
+      min-height: 3rem;
+      padding: 0.5rem 0.625rem;
+      gap: 0.375rem;
     }
     .prevnext-label,
     .prevnext-name {
-      font-size: 12px;
+      font-size: 0.75rem;
     }
     .prevnext-method {
-      font-size: 11px;
+      font-size: 0.6875rem;
     }
     .prevnext-name,
     .prevnext-method {

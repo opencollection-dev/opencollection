@@ -26,6 +26,7 @@ import {
   getRequestUrl
 } from '../../../../../../utils/schemaHelpers';
 import { setUrlQueryParams } from '../../../../../../utils/pathParams';
+import { actionsToPostResponseVars, postResponseVarsToActions } from '../../../../../../utils/request';
 
 interface RequestPaneProps {
   item: HttpRequest;
@@ -113,12 +114,20 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
     });
   };
 
+  const handlePostResponseVarsChange = (rows: KeyValueRow[]) => {
+    onItemChange({
+      ...item,
+      runtime: { ...item.runtime, actions: postResponseVarsToActions(rows, item.runtime?.actions) }
+    });
+  };
+
   // Get values using helper functions
   const params = getHttpParams(item);
   const headers = getHttpHeaders(item);
   const body = getHttpBody(item);
   const auth = getRequestAuth(item);
   const variables = getRequestVariables(item);
+  const postResponseVars = actionsToPostResponseVars(item.runtime?.actions);
   const assertions = getRequestAssertions(item);
   const scriptsObj = scriptsArrayToObject(getRequestScripts(item));
 
@@ -133,6 +142,8 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
     <VariablesTab
       variables={variables}
       onVariablesChange={handleRequestVariablesChange}
+      postResponseVars={postResponseVars}
+      onPostResponseVarsChange={handlePostResponseVarsChange}
       title="Request Variables"
       description="These variables will be available to this request"
     />

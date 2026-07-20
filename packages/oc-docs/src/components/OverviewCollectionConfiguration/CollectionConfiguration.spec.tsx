@@ -29,7 +29,7 @@ describe('CollectionConfiguration', () => {
     expect(html).toContain('Accept');
     expect(html).toContain('application/json');
     expect(html).toContain('X-Disabled');
-    expect(html).toContain('property-row--disabled');
+    expect(html).toContain('disabled-badge');
 
     // Auth mode resolved via the supplied labels; username shown, password masked
     expect(html).toContain('Basic Auth');

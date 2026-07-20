@@ -41,9 +41,6 @@ export const StyledWrapper = styled.div`
   &.property-table--no-row-borders .property-box {
     border: none;
   }
-  .property-row--disabled {
-    opacity: 0.55;
-  }
 
   .property-key {
     font-family: var(--font-sans);
@@ -71,6 +68,10 @@ export const StyledWrapper = styled.div`
     align-items: baseline;
     gap: 0.5rem;
     min-width: 0;
+  }
+  .property-value-line .disabled-badge {
+    margin-left: auto;
+    align-self: center;
   }
   .property-value-main {
     min-width: 0;

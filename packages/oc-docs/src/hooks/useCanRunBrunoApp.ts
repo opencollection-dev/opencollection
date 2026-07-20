@@ -20,6 +20,18 @@ export const computeIsMobileOS = ({ userAgent, platform, maxTouchPoints }: Devic
   (platform === 'MacIntel' && maxTouchPoints > 1);
 
 /**
+ * True only on a phone OS, deliberately narrower than computeIsMobileOS: an
+ * Android phone carries the `Mobile` token where a tablet does not, and iPad is
+ * excluded entirely (both the `iPad` UA and the iPadOS-as-`MacIntel` case). Used
+ * to switch on the phone-only fullscreen playground; a tablet keeps the desktop
+ * docks. Pure so it can be unit tested against a device matrix without a DOM.
+ */
+export const computeIsMobilePhone = ({ userAgent }: DeviceEnv): boolean =>
+  /iPhone|iPod/.test(userAgent) ||
+  (/Android/.test(userAgent) && /Mobile/.test(userAgent)) ||
+  /Windows Phone/.test(userAgent);
+
+/**
  * Whether this device can plausibly run the Bruno desktop app, the gate for
  * showing the Open-in-Bruno CTA. Viewport width is the wrong signal (iPad Pro is
  * 1024-1366px wide), so we look at input capability instead: require a fine,
@@ -75,4 +87,16 @@ export const useIsMobileDevice = (): boolean => {
     typeof window === 'undefined' ? false : computeIsMobileOS(readDeviceEnv())
   );
   return isMobile;
+};
+
+/**
+ * True only on a phone, whatever the window size. The device can't change
+ * mid-session, so it's checked once (safe to `false` with no window). Use this,
+ * not a width breakpoint, so a narrow laptop window is never treated as a phone.
+ */
+export const useIsMobilePhone = (): boolean => {
+  const [isPhone] = useState(() =>
+    typeof window === 'undefined' ? false : computeIsMobilePhone(readDeviceEnv())
+  );
+  return isPhone;
 };

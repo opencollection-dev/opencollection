@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import type { OpenCollection } from '@opencollection/types';
-import type { Action, ActionSetVariable } from '@opencollection/types/common/actions';
 import Tabs from '../../../../../ui/Tabs/Tabs';
 import { type KeyValueRow } from '../../../../../components/KeyValueTable/KeyValueTable';
 import HeadersTab from '../Common/HeadersTab/HeadersTab';
@@ -13,10 +12,8 @@ import { useAppDispatch } from '../../../../../store/hooks';
 import { updateCollectionSettings } from '@slices/playground';
 import { countEnabled, getItemDocs, scriptsArrayToObject, scriptsObjectToArray } from '../../../../../utils/schemaHelpers';
 import { rowToVariable } from '../../../../../utils/variableDataType';
+import { actionsToPostResponseVars, postResponseVarsToActions } from '../../../../../utils/request';
 import { StyledWrapper } from './StyledWrapper';
-
-const isAfterResponseSetVariable = (action: Action): action is ActionSetVariable =>
-  action.type === 'set-variable' && action.phase === 'after-response';
 
 interface CollectionSettingsProps {
   collection: OpenCollection;
@@ -52,16 +49,7 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
   };
 
   const handlePostResponseVarsChange = (rows: KeyValueRow[]) => {
-    const otherActions = (collection.request?.actions ?? []).filter((action) => !isAfterResponseSetVariable(action));
-    const postActions: ActionSetVariable[] = rows.map((row) => ({
-      type: 'set-variable',
-      phase: 'after-response',
-      selector: { expression: row.value, method: 'jsonq' },
-      variable: { name: row.name, scope: row.scope || 'runtime' },
-      disabled: !row.enabled,
-      ...(row.description !== undefined ? { description: row.description } : {})
-    }));
-    updateRequest({ ...collection.request, actions: [...otherActions, ...postActions] });
+    updateRequest({ ...collection.request, actions: postResponseVarsToActions(rows, collection.request?.actions) });
   };
 
   const handleScriptChange = (scriptType: 'preRequest' | 'postResponse' | 'tests', value: string) => {
@@ -80,15 +68,7 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
 
   const headers = collection.request?.headers ?? [];
   const variables = collection.request?.variables ?? [];
-  const postResponseVars = (collection.request?.actions ?? [])
-    .filter(isAfterResponseSetVariable)
-    .map((action) => ({
-      name: action.variable?.name,
-      expr: action.selector?.expression,
-      disabled: action.disabled,
-      scope: action.variable?.scope,
-      description: action.description
-    }));
+  const postResponseVars = actionsToPostResponseVars(collection.request?.actions);
   const scripts = scriptsArrayToObject(collection.request?.scripts);
   const version = collection.info?.version;
 

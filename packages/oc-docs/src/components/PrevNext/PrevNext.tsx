@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import type { SeqNeighbor } from '../../routing/types';
 import { getMethodColorVar } from '../../theme/methodColors';
 import { getShortMethod } from '../../utils/request';
+import { ChevronLeftIcon, ChevronRightIcon } from '../../assets/icons';
 import { StyledWrapper } from './StyledWrapper';
 
 const toPath = (slug: string) => `/${slug}`;
@@ -22,7 +23,7 @@ const Card: React.FC<{ dir: 'prev' | 'next'; neighbor: SeqNeighbor; search: stri
   >
     {dir === 'prev' && (
       <span className="prevnext-chevron" aria-hidden>
-        ‹
+        <ChevronLeftIcon />
       </span>
     )}
     <span className="prevnext-textcol">
@@ -34,7 +35,7 @@ const Card: React.FC<{ dir: 'prev' | 'next'; neighbor: SeqNeighbor; search: stri
     </span>
     {dir === 'next' && (
       <span className="prevnext-chevron" aria-hidden>
-        ›
+        <ChevronRightIcon />
       </span>
     )}
   </Link>

@@ -53,6 +53,7 @@ request:
       value: "collection_pre_var_value"
     - name: "collection-var"
       value: "collection-var-value"
+      disabled: true
   auth:
     type: "bearer"
     token: "{{bearer_auth_token}}"
@@ -118,8 +119,29 @@ items:
     type: "folder"
     items:
       - name: "Live Updates"
+        description: "Streams live order updates over a WebSocket connection."
         type: "websocket"
         url: "{{host}}/ws/updates"
+        docs: |
+          # Websockets
+          WebSockets provide a persistent, full-duplex communication channel over a single, long-lived TCP connection. Unlike standard HTTP request-response cycles, they enable real-time, low-latency data transfer.
+
+          ### 🔄 How WebSockets Work
+
+          * **The Handshake:** A WebSocket session begins with an HTTP GET request containing a specific 'Upgrade' header. If both sides agree, the server responds with a '101 Switching Protocols' status code. 
+          * **Data Transfer:** After the handshake, the connection is upgraded. Clients and servers can send data back and forth as messages, which are composed of one or more data frames.
+          * **Control Frames:** Besides payload data, the connection maintains its health using control frames such as *ping* and *pong* to detect dead connections, and *close* frames to gracefully disconnect.
+
+          ### ⚡ Key Advantages
+
+          * **Reduced Latency:** Because you do not need to re-authenticate and re-establish a TCP connection for every transmission, network overhead is significantly reduced.
+          * **Bidirectional Communication:** Servers can push information to clients without waiting for a request, which is ideal for streaming data, live chats, and multiplayer games.
+
+          ### ⚠️ Protocol Limits & Challenges
+
+          * **Message Size Limits:** While the protocol itself supports large messages, practically all implementations (like Tomcat, Cloudflare Workers, or Kong) enforce message size limits to prevent out-of-memory crashes.
+          * **Handling Large Payloads:** If you need to transfer large files or data, most developers use **chunking** (splitting data into smaller pieces) or push a tiny notification to the client requesting it to fetch the data from a standard REST endpoint.
+          * **Scalability:** Maintaining thousands of open connections consumes server resources. Developers often scale horizontally by placing a **message broker** (like Redis or RabbitMQ) between multiple WebSocket servers so that messages are broadcasted to all users regardless of which server node they are connected to.
       - name: "GraphQL API"
         type: "graphql"
         url: "{{host}}/graphql"

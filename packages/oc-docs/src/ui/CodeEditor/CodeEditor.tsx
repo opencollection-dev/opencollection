@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import Editor, { type Monaco, type OnMount } from '@monaco-editor/react';
 import { useAppSelector } from '../../store/hooks';
 import { CopyButton } from '../CopyButton/CopyButton';
 import { ensureScriptApiCompletions, setModelHints } from './scriptApiCompletions';
 import type { ScriptApiRoot } from '../../utils/scriptAutocomplete';
 import { StyledWrapper } from './StyledWrapper';
+
+type EditorInstance = Parameters<OnMount>[0];
 
 interface CodeEditorProps {
   value: string;
@@ -17,6 +19,7 @@ interface CodeEditorProps {
   hintsFor?: ScriptApiRoot[];
   /** Show a copy-to-clipboard button (revealed on hover, top-right). Defaults to on. */
   showCopy?: boolean;
+  active?: boolean;
   testId?: string;
 }
 
@@ -47,11 +50,29 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   placeholder = '...',
   hintsFor,
   showCopy = true,
+  active = true,
   testId
 }) => {
   const mode = useAppSelector((s) => s.theme.mode);
+  const editorRef = useRef<EditorInstance | null>(null);
+
+  useEffect(() => {
+    if (active && editorRef.current) editorRef.current.layout();
+  }, [active]);
 
   const handleMount: OnMount = (editor, monaco) => {
+    editorRef.current = editor;
+
+    const mono = getComputedStyle(document.documentElement).getPropertyValue('--font-mono').trim();
+    if (mono) editor.updateOptions({ fontFamily: mono });
+
+    const runAction = (id: string) => {
+      const action = editor.getAction(id);
+      if (action) action.run();
+    };
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyY, () => runAction('editor.foldAll'));
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyJ, () => runAction('editor.action.joinLines'));
+
     if (!hintsFor?.length) return;
     ensureScriptApiCompletions(monaco);
     const model = editor.getModel();
@@ -74,11 +95,15 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           scrollBeyondLastLine: false,
           fontSize: 12,
           fontWeight: 'normal',
+          tabSize: 2,
+          insertSpaces: true,
+          detectIndentation: false,
           lineNumbers: 'on',
           roundedSelection: false,
           scrollbar: { vertical: 'auto', horizontal: 'auto', verticalScrollbarSize: 5, horizontalScrollbarSize: 5 },
           wordWrap: 'on',
-          folding: false,
+          folding: true,
+          showFoldingControls: 'always',
           stickyScroll: { enabled: false },
           glyphMargin: false,
           lineDecorationsWidth: 12,

@@ -5,6 +5,10 @@ import { CodeEditorComponent } from './code-editor/code-editor.component';
 import type { DockMode } from '../../src/utils/playgroundDock';
 
 export class PlaygroundComponent extends BaseComponent {
+  readonly keyValueTable = new KeyValueTableComponent(this.page);
+  readonly preRequestScriptEditor = new CodeEditorComponent(this.page, 'scripts-editor-pre-request');
+  readonly postResponseScriptEditor = new CodeEditorComponent(this.page, 'scripts-editor-post-response');
+
   readonly header = this.page.getByTestId('playground-header');
   readonly switcher = this.page.getByTestId('playground-dock-switcher');
   readonly content = this.page.getByTestId('playground-content');
@@ -28,9 +32,18 @@ export class PlaygroundComponent extends BaseComponent {
   readonly inlinePanel = this.page.getByTestId('playground-dock-inline-panel');
   readonly bottomPanel = this.page.getByTestId('playground-dock-bottom-panel');
   readonly modalPanel = this.page.getByTestId('playground-dock-modal-panel');
+  readonly mobilePanel = this.page.getByTestId('playground-dock-mobile-panel');
+  readonly methodSelect = this.view.getByTestId('query-bar-method-select');
+  readonly methodMenu = this.page.getByTestId('query-bar-method-select-dropdown');
+  readonly methodOptionsList = this.methodMenu.getByRole('menuitem');
+  readonly unsupported = this.view.getByTestId('unsupported-request');
+  readonly unsupportedTitle = this.view.getByTestId('unsupported-request-title');
+  readonly unsupportedMessage = this.view.getByTestId('unsupported-request-empty');
+  readonly unsupportedIcon = this.view.getByTestId('file-not-found-icon');
   readonly exampleView = this.page.getByTestId('example-view');
   readonly exampleViewRequest = this.page.getByTestId('example-view-request');
   readonly exampleViewResponse = this.page.getByTestId('example-view-response');
+
   readonly exampleViewControls = this.exampleView.locator('input, textarea');
 
   exampleToggle(requestName: string): Locator {
@@ -41,9 +54,9 @@ export class PlaygroundComponent extends BaseComponent {
     return this.sidebarPanel.getByTestId('sidebar-example').filter({ hasText: exampleName });
   }
 
-  readonly keyValueTable = new KeyValueTableComponent(this.page);
-  readonly preRequestScriptEditor = new CodeEditorComponent(this.page, 'scripts-editor-pre-request');
-  readonly postResponseScriptEditor = new CodeEditorComponent(this.page, 'scripts-editor-post-response');
+  async open(dock: DockMode = 'bottom'): Promise<void> {
+    await this.page.goto(`/#/?pg=1&dock=${dock}`);
+  }
 
   sidebarItem(name: string): Locator {
     return this.treeItems.filter({ hasText: name }).first();
@@ -59,6 +72,23 @@ export class PlaygroundComponent extends BaseComponent {
 
   async selectScriptTab(id: string): Promise<void> {
     await this.scriptTab(id).click();
+  }
+
+  async methodOptions(): Promise<string[]> {
+    await this.methodSelect.click();
+    await this.methodOptionsList.first().waitFor({ state: 'visible' });
+    // Read the aria-label rather than the text: the active item renders a "✓" glyph
+    // that would otherwise leak into the option label.
+    const labels = await this.methodOptionsList.evaluateAll((nodes) =>
+      nodes.map((node) => node.getAttribute('aria-label') ?? '')
+    );
+    return labels;
+  }
+
+  async openTreeItem(names: string[]): Promise<void> {
+    for (const name of names) {
+      await this.treeItems.filter({ hasText: name }).first().click();
+    }
   }
 
   dockButton(mode: DockMode): Locator {

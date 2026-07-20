@@ -8,7 +8,7 @@ export const StyledWrapper = styled.div`
   gap: 8px;
   height: 52px;
   padding: 0 14px;
-  border-bottom: 1px solid var(--oc-border-border1);
+  border-bottom: 1px solid var(--oc-border-border0);
   background-color: var(--oc-background-base);
 
   .header-left,

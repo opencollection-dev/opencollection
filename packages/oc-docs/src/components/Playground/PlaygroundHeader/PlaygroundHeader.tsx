@@ -8,6 +8,7 @@ import { StyledWrapper } from './StyledWrapper';
 interface PlaygroundHeaderProps {
   dock: DockMode;
   onDockChange: (dock: DockMode) => void;
+  showDockSwitcher?: boolean;
   onToggleSidebar: () => void;
   onClose: () => void;
   collapsed?: boolean;
@@ -18,6 +19,7 @@ interface PlaygroundHeaderProps {
 const PlaygroundHeader: React.FC<PlaygroundHeaderProps> = ({
   dock,
   onDockChange,
+  showDockSwitcher = true,
   onToggleSidebar,
   onClose,
   collapsed,
@@ -41,7 +43,7 @@ const PlaygroundHeader: React.FC<PlaygroundHeaderProps> = ({
       </span>
     </div>
     <div className="header-right">
-      <DockSwitcher dock={dock} onDockChange={onDockChange} />
+      {showDockSwitcher && <DockSwitcher dock={dock} onDockChange={onDockChange} />}
       {onToggleCollapse && (
         <IconButton
           className={`header-collapse${collapsed ? ' collapsed' : ''}`}

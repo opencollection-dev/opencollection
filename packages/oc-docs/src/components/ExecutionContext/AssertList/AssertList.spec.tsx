@@ -25,8 +25,8 @@ describe('AssertList', () => {
     expect(root.querySelector('.assert-expr')?.text.trim()).toBe('res.body.token is defined');
   });
 
-  it('marks a disabled assertion with the is-disabled class', () => {
+  it('marks a disabled assertion with the Disabled chip', () => {
     const root = useRenderToDom(<AssertList assertions={[disabled]} />);
-    expect(root.querySelector('.assert-item.is-disabled')).not.toBeNull();
+    expect(root.querySelector('.disabled-badge')).not.toBeNull();
   });
 });

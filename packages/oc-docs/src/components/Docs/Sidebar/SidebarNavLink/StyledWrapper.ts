@@ -75,12 +75,16 @@ export const StyledWrapper = styled.div`
   }
 
   .navlink-method {
-    width: 34px;
+    width: 2.5rem;
     flex-shrink: 0;
-    margin-right: -4px;
+    /* inline-block so the badge's own text baseline (not a flex box's synthesised
+       one) sits on the name's baseline via align-self below, reading as level with
+       the request name. Paired with align-self on .navlink-label. */
+    display: inline-block;
+    align-self: baseline;
     font-family: var(--font-mono);
     font-size: 10.5px;
-    line-height: 1.2;
+    line-height: 1;
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -125,6 +129,9 @@ export const StyledWrapper = styled.div`
   .navlink-label {
     flex: 1;
     min-width: 0;
+    /* Share a baseline with the method badge (both opt in, so icon/folder rows
+       stay vertically centred). */
+    align-self: baseline;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

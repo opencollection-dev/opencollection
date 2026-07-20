@@ -4,7 +4,7 @@ import { StyledWrapper } from './StyledWrapper';
 import MenuDropdown from '../../../../../../ui/MenuDropdown';
 import { getHttpMethod, getRequestUrl, getHttpParams } from '../../../../../../utils/schemaHelpers';
 import { syncPathParams, syncQueryParams } from '../../../../../../utils/pathParams';
-import { methodColorVars, getMethodColorVar } from '../../../../../../theme/methodColors';
+import { availableMethods, getMethodColorVar } from '../../../../../../theme/methodColors';
 
 interface QueryBarProps {
   item: HttpRequest;
@@ -51,12 +51,10 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
     onItemChange(updatedItem);
   };
 
-  const getMethodColor = getMethodColorVar;
-
   return (
-    <StyledWrapper 
+    <StyledWrapper
       className="flex items-stretch"
-      style={{ 
+      style={{
         height: '36px'
       }}
     >
@@ -64,11 +62,10 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
         <MenuDropdown
           selectedItemId={method}
           placement="bottom-start"
-          role="listbox"
-          testId="method-select"
-          items={Object.keys(methodColorVars).map((m) => ({
+          data-testid="query-bar-method-select"
+          items={availableMethods.map((m) => ({
             id: m,
-            label: <span style={{ color: getMethodColor(m) }}>{m}</span>,
+            label: <span style={{ color: getMethodColorVar(m) }}>{m}</span>,
             ariaLabel: m,
             onClick: () => handleMethodChange(m)
           }))}
@@ -77,7 +74,7 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
             type="button"
             className="method-select h-full"
             aria-label="HTTP method"
-            style={{ color: getMethodColor(method) }}
+            style={{ color: getMethodColorVar(method) }}
           >
             {method}
           </button>

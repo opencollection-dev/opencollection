@@ -18,6 +18,7 @@ export * from './SendIcon';
 export * from './EyeIcon';
 export * from './EyeOffIcon';
 export * from './FileIcon';
+export * from './FileNotFoundIcon';
 export * from './RefreshIcon';
 export * from './DockInlineIcon';
 export * from './DockBottomIcon';

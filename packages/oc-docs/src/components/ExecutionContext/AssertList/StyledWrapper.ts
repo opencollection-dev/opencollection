@@ -7,9 +7,6 @@ export const StyledWrapper = styled.div`
   .assert-item:not(:first-child) {
     border-top: 0.0625rem solid var(--oc-border-border0);
   }
-  .assert-item.is-disabled {
-    opacity: 0.55;
-  }
   .assert-row {
     display: flex;
     align-items: center;

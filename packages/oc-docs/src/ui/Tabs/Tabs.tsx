@@ -21,6 +21,7 @@ interface TabsProps {
   className?: string;
   testId?: string;
   ariaLabel?: string;
+  keepMounted?: boolean;
 }
 
 export const Tabs: React.FC<TabsProps> = ({
@@ -32,7 +33,8 @@ export const Tabs: React.FC<TabsProps> = ({
   variant = 'underline',
   className,
   testId = 'tabs',
-  ariaLabel
+  ariaLabel,
+  keepMounted = false
 }) => {
   const [internalActive, setInternalActive] = useState(defaultActiveTab ?? tabs[0]?.id ?? '');
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
@@ -115,18 +117,33 @@ export const Tabs: React.FC<TabsProps> = ({
         </div>
         {rightContent !== undefined && <div className="tabs-right">{rightContent}</div>}
       </div>
-      {activeTabData && (
-        <div
-          key={activeTabData.id}
-          id={panelId(activeTabData.id)}
-          role="tabpanel"
-          aria-labelledby={tabButtonId(activeTabData.id)}
-          className="tab-panel"
-          tabIndex={0}
-        >
-          {activeTabData.content}
-        </div>
-      )}
+      {keepMounted
+        ? tabs.map((tab) => (
+            <div
+              key={tab.id}
+              id={panelId(tab.id)}
+              role="tabpanel"
+              aria-labelledby={tabButtonId(tab.id)}
+              className="tab-panel"
+              tabIndex={0}
+              aria-hidden={tab.id !== current}
+              style={{ display: tab.id === current ? undefined : 'none' }}
+            >
+              {tab.content}
+            </div>
+          ))
+        : activeTabData && (
+            <div
+              key={activeTabData.id}
+              id={panelId(activeTabData.id)}
+              role="tabpanel"
+              aria-labelledby={tabButtonId(activeTabData.id)}
+              className="tab-panel"
+              tabIndex={0}
+            >
+              {activeTabData.content}
+            </div>
+          )}
     </StyledWrapper>
   );
 };

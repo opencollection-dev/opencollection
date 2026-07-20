@@ -1,4 +1,11 @@
 import { test, expect } from '../../playwright';
+import type { Locator } from '@playwright/test';
+
+const boundingBoxOf = async (locator: Locator) => {
+  const box = await locator.boundingBox();
+  if (box === null) throw new Error('expected the element to have a bounding box');
+  return box;
+};
 
 test.describe('Collection Overview', () => {
   test.beforeEach(async ({ overviewPage }) => {
@@ -78,5 +85,39 @@ test.describe('Collection Overview', () => {
         await expect(configuration.copyButton).toHaveAttribute('aria-label', 'Copied');
       });
     });
+  });
+
+  test('mobile: every Disabled chip stays pinned at the row end without overflowing', async ({ overviewPage, page }) => {
+    await page.setViewportSize({ width: 360, height: 800 });
+    const { configuration } = overviewPage;
+
+    const rows = configuration.disabledRows;
+    const count = await rows.count();
+    expect(count).toBeGreaterThan(0);
+
+    const card = await boundingBoxOf(configuration.root);
+
+    for (let i = 0; i < count; i += 1) {
+      const row = rows.nth(i);
+      const value = row.getByTestId('property-value');
+      const chip = await boundingBoxOf(row.getByTestId('disabled-badge'));
+      const valueBox = await boundingBoxOf(value);
+
+      await test.step(`row ${i}: the chip sits at the end — to the right of the value`, () => {
+        expect(chip.x).toBeGreaterThanOrEqual(valueBox.x + valueBox.width);
+      });
+
+      await test.step(`row ${i}: the chip stays within the config card, never clipped or overflowing`, () => {
+        expect(chip.x + chip.width).toBeLessThanOrEqual(card.x + card.width);
+      });
+
+      await test.step(`row ${i}: the value keeps its truncation styling, so a long value ellipsizes rather than pushing the chip off`, async () => {
+        const style = await value.evaluate((el) => {
+          const cs = getComputedStyle(el);
+          return { overflow: cs.overflow, textOverflow: cs.textOverflow, whiteSpace: cs.whiteSpace };
+        });
+        expect(style).toEqual({ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' });
+      });
+    }
   });
 });

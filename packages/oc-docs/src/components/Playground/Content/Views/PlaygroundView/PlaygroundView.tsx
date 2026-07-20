@@ -8,17 +8,20 @@ import RequestPane from './RequestPane/RequestPane';
 import ResponsePane from './ResponsePane/ResponsePane';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { updatePlaygroundItem, setPlaygroundResponse, selectPlaygroundResponse } from '../../../../../store/slices/playground';
+import { isUnsupportedRequest } from '../../../../../utils/schemaHelpers';
+import UnsupportedRequest from '../../../../UnsupportedRequest/UnsupportedRequest';
+import { FileNotFoundIcon } from '../../../../../assets/icons';
 import { useSplitPane } from '../../../../../hooks/useSplitPane';
 import { SplitDivider } from '../../../../SplitDivider/SplitDivider';
 
-interface PlaygroundProps {
+interface PlaygroundViewProps {
   item: HttpRequest;
   collection: OpenCollectionCollection;
   selectedEnvironment?: string;
   orientation?: 'horizontal' | 'vertical';
 }
 
-const Playground: React.FC<PlaygroundProps> = ({ item, collection, selectedEnvironment = '', orientation = 'horizontal' }) => {
+const HttpRequestPlaygroundView: React.FC<PlaygroundViewProps> = ({ item, collection, selectedEnvironment = '', orientation = 'horizontal' }) => {
   const dispatch = useAppDispatch();
   const [editableItem, setEditableItem] = useState<HttpRequest>(item);
   const itemUuid = (item as any).uuid;
@@ -132,4 +135,23 @@ const Playground: React.FC<PlaygroundProps> = ({ item, collection, selectedEnvir
   );
 };
 
-export default Playground; 
+const PlaygroundView: React.FC<PlaygroundViewProps> = ({ item, ...otherProps }) => {
+  if (isUnsupportedRequest(item)) {
+    return (
+      <UnsupportedRequest
+        className='px-4'
+        item={item}
+        titleVariant="label"
+        showRequestDocs={false}
+        emptyStateProps={{
+          icon: <FileNotFoundIcon />,
+          heading: 'Request type not supported',
+          subheadingSuffix: "isn't currently supported in this playground."
+        }}
+      />
+    );
+  }
+  return <HttpRequestPlaygroundView item={item} {...otherProps} />;
+};
+
+export default PlaygroundView;
