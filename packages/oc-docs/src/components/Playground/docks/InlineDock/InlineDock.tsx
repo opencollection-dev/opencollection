@@ -7,12 +7,13 @@ import { StyledWrapper } from './StyledWrapper';
 interface InlineDockProps {
   dock: DockMode;
   onDockChange: (dock: DockMode) => void;
+  sidebarOpen: boolean;
   onToggleSidebar: () => void;
   onClose: () => void;
   children: React.ReactNode;
 }
 
-const InlineDock: React.FC<InlineDockProps> = ({ dock, onDockChange, onToggleSidebar, onClose, children }) => {
+const InlineDock: React.FC<InlineDockProps> = ({ dock, onDockChange, sidebarOpen, onToggleSidebar, onClose, children }) => {
   const { size, dragging, startDrag } = useDockResize({
     axis: 'x',
     initial: Math.round(window.innerWidth * 0.4),
@@ -31,6 +32,7 @@ const InlineDock: React.FC<InlineDockProps> = ({ dock, onDockChange, onToggleSid
         <PlaygroundHeader
           dock={dock}
           onDockChange={onDockChange}
+          sidebarOpen={sidebarOpen}
           onToggleSidebar={onToggleSidebar}
           onClose={onClose}
         />

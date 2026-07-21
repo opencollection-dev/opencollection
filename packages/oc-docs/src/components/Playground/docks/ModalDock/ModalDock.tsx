@@ -8,12 +8,13 @@ import { StyledWrapper } from './StyledWrapper';
 interface ModalDockProps {
   dock: DockMode;
   onDockChange: (dock: DockMode) => void;
+  sidebarOpen: boolean;
   onToggleSidebar: () => void;
   onClose: () => void;
   children: React.ReactNode;
 }
 
-const ModalDock: React.FC<ModalDockProps> = ({ dock, onDockChange, onToggleSidebar, onClose, children }) => {
+const ModalDock: React.FC<ModalDockProps> = ({ dock, onDockChange, sidebarOpen, onToggleSidebar, onClose, children }) => {
   // Modal is a true full-screen overlay: lock the docs body scroll behind it and
   // close on Escape (the inline/bottom docks are persistent panels, so they get
   // neither). Focus containment / focus-return is a tracked follow-up.
@@ -28,6 +29,7 @@ const ModalDock: React.FC<ModalDockProps> = ({ dock, onDockChange, onToggleSideb
           <PlaygroundHeader
             dock={dock}
             onDockChange={onDockChange}
+            sidebarOpen={sidebarOpen}
             onToggleSidebar={onToggleSidebar}
             onClose={onClose}
           />

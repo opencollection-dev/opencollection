@@ -58,9 +58,7 @@ export const StyledWrapper = styled.div`
   }
 
   .method-badge {
-    padding: 0.125rem 0.5rem;
-    border-radius: var(--oc-radius);
-    background-color: color-mix(in srgb, currentColor 12%, transparent);
+    padding: 0;
   }
 
   .actions {
