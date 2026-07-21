@@ -49,5 +49,6 @@ export const StyledWrapper = styled.div`
 
   .folder-fullwidth {
     margin-top: 1.5rem;
+    color: var(--text-muted);
   }
 `;

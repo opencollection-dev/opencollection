@@ -82,12 +82,12 @@ export const UnsupportedRequest: React.FC<UnsupportedRequestProps> = ({
       {titleVariant === 'label' ? (
         <TitleLabel className='mt-3' testId="unsupported-request-title">{name}</TitleLabel>
       ) : (
-        <Heading size="md" style={{ marginTop: '0.875rem' }} testId="unsupported-request-title">
+        <Heading size="md" style={{ marginTop: '0.25rem' }} testId="unsupported-request-title">
           {name}
         </Heading>
       )}
 
-      <RequestUrlBar className="mt-2" method={shortName} url={getRequestUrl(item)} />
+      <RequestUrlBar className="mt-3" method={shortName} url={getRequestUrl(item)} />
 
       {showRequestDocs && (
         <ViewMore collapsedHeight='4.5rem' testId="overview-markdown-view-more">
