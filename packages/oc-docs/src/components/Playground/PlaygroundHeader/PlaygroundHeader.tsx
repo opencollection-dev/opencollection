@@ -9,6 +9,7 @@ interface PlaygroundHeaderProps {
   dock: DockMode;
   onDockChange: (dock: DockMode) => void;
   showDockSwitcher?: boolean;
+  sidebarOpen?: boolean;
   onToggleSidebar: () => void;
   onClose: () => void;
   collapsed?: boolean;
@@ -20,6 +21,7 @@ const PlaygroundHeader: React.FC<PlaygroundHeaderProps> = ({
   dock,
   onDockChange,
   showDockSwitcher = true,
+  sidebarOpen = false,
   onToggleSidebar,
   onClose,
   collapsed,
@@ -32,10 +34,11 @@ const PlaygroundHeader: React.FC<PlaygroundHeaderProps> = ({
         className="header-sidebar-toggle"
         label="Toggle playground sidebar"
         title="Toggle sidebar"
+        aria-pressed={sidebarOpen}
         data-testid="playground-sidebar-toggle"
         onClick={onToggleSidebar}
       >
-        <SidebarToggleIcon />
+        <SidebarToggleIcon active={sidebarOpen} />
       </IconButton>
       <span className="header-brand">
         <BrunoGlyph />

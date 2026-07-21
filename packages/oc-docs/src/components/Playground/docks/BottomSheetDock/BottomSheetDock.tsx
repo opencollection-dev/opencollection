@@ -12,6 +12,7 @@ const COLLAPSE_EPSILON = 8;
 interface BottomSheetDockProps {
   dock: DockMode;
   onDockChange: (dock: DockMode) => void;
+  sidebarOpen: boolean;
   onToggleSidebar: () => void;
   onClose: () => void;
   /** Bumped on each Try click; re-expands the sheet when it is collapsed. */
@@ -22,6 +23,7 @@ interface BottomSheetDockProps {
 const BottomSheetDock: React.FC<BottomSheetDockProps> = ({
   dock,
   onDockChange,
+  sidebarOpen,
   onToggleSidebar,
   onClose,
   openNonce,
@@ -72,6 +74,7 @@ const BottomSheetDock: React.FC<BottomSheetDockProps> = ({
       <PlaygroundHeader
         dock={dock}
         onDockChange={onDockChange}
+        sidebarOpen={sidebarOpen}
         onToggleSidebar={onToggleSidebar}
         onClose={onClose}
         collapsed={collapsed}

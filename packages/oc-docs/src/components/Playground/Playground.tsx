@@ -67,6 +67,7 @@ const Playground: React.FC<PlaygroundProps> = ({ openNonce }) => {
   const shared = {
     dock: effectiveDock,
     onDockChange: setDock,
+    sidebarOpen,
     onToggleSidebar: () => setSidebarOpen((value) => !value),
     onClose: closePlayground,
   };

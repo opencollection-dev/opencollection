@@ -8,12 +8,13 @@ import { StyledWrapper } from './StyledWrapper';
 interface MobileDockProps {
   dock: DockMode;
   onDockChange: (dock: DockMode) => void;
+  sidebarOpen: boolean;
   onToggleSidebar: () => void;
   onClose: () => void;
   children: React.ReactNode;
 }
 
-const MobileDock: React.FC<MobileDockProps> = ({ dock, onDockChange, onToggleSidebar, onClose, children }) => {
+const MobileDock: React.FC<MobileDockProps> = ({ dock, onDockChange, sidebarOpen, onToggleSidebar, onClose, children }) => {
   // Full-screen phone presentation: lock the docs scroll behind it. No dock
   // switcher or collapse - there is nowhere to dock on a phone.
   useLockBodyScroll();
@@ -24,6 +25,7 @@ const MobileDock: React.FC<MobileDockProps> = ({ dock, onDockChange, onToggleSid
         <PlaygroundHeader
           dock={dock}
           onDockChange={onDockChange}
+          sidebarOpen={sidebarOpen}
           onToggleSidebar={onToggleSidebar}
           onClose={onClose}
           showDockSwitcher={false}

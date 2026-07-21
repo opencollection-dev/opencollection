@@ -106,10 +106,13 @@ test.describe('playground docks (desktop)', () => {
   test('header toggle hides and restores the playground sidebar', async ({ page, playground }) => {
     await page.goto(openAt('bottom'));
     await expect(playground.sidebarPanel).toBeVisible();
+    await expect(playground.sidebarToggle).toHaveAttribute('aria-pressed', 'true');
     await playground.sidebarToggle.click();
     await expect(playground.sidebarPanel).toHaveCount(0);
+    await expect(playground.sidebarToggle).toHaveAttribute('aria-pressed', 'false');
     await playground.sidebarToggle.click();
     await expect(playground.sidebarPanel).toBeVisible();
+    await expect(playground.sidebarToggle).toHaveAttribute('aria-pressed', 'true');
   });
 
   test('clicking a request in the sidebar loads it, gear opens environments', async ({ page, playground }) => {
