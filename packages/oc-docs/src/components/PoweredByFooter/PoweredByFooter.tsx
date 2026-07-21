@@ -2,7 +2,7 @@ import React from 'react';
 import { StyledWrapper } from './StyledWrapper';
 
 const PoweredByFooter: React.FC<{ testId?: string }> = ({ testId = 'powered-by-footer' }) => (
-  <StyledWrapper className="powered-by-footer" data-testid={testId}>
+  <StyledWrapper data-testid={testId}>
     Powered by{' '}
     <a
       className="powered-by-link"
