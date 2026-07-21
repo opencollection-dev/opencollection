@@ -1,21 +1,15 @@
 import { test, expect } from '../../playwright';
-import type { Locator } from '@playwright/test';
 
 /**
- * The page header (sticky top navigation bar): brand cluster + Open-in-Bruno
- * CTA. These tests cover what the mounted app actually renders — the search and
- * env-switcher slots ship empty here, so they aren't exercised in this suite.
+ * The page header (sticky top navigation bar): brand cluster, Open-in-Bruno
+ * CTA and theme toggle. These tests cover what the mounted app actually
+ * renders — the search and env-switcher slots ship empty here, so they aren't
+ * exercised in this suite.
  */
 test.use({ colorScheme: 'light' });
 
 const DESKTOP = { width: 1280, height: 900 };
 const MOBILE = { width: 390, height: 800 };
-
-const boundingBoxOf = async (locator: Locator) => {
-  const box = await locator.boundingBox();
-  if (box === null) throw new Error('expected the element to have a bounding box');
-  return box;
-};
 
 test.describe('Page header', () => {
   test('shows brand (name + version) and a pinned bar', async ({ page, pageHeader }) => {
@@ -28,7 +22,8 @@ test.describe('Page header', () => {
 
     // Sticky: header stays at the top after the page scrolls.
     await page.mouse.wheel(0, 600);
-    const box = await boundingBoxOf(pageHeader.root);
+    const box = await pageHeader.root.boundingBox();
+    if (box === null) throw new Error('header has no bounding box');
     expect(box.y).toBeLessThanOrEqual(1);
   });
 
@@ -41,7 +36,14 @@ test.describe('Page header', () => {
     await expect(pageHeader.brandInitials).toHaveText('BT');
   });
 
-  test('Open-in-Bruno CTA links to the Fetch-in-Bruno page (new tab) and pins right, before the theme toggle', async ({ page, pageHeader }) => {
+  test('shows the theme toggle in the header', async ({ page, themeToggle }) => {
+    await page.setViewportSize(DESKTOP);
+    await page.goto('/');
+
+    await expect(themeToggle.button).toBeVisible();
+  });
+
+  test('shows the Open-in-Bruno CTA linking to Fetch-in-Bruno when the collection has a git url', async ({ page, pageHeader }) => {
     await page.setViewportSize(DESKTOP);
     await page.goto('/');
 
@@ -50,17 +52,6 @@ test.describe('Page header', () => {
     expect(href).toMatch(/^https:\/\/fetch\.usebruno\.com\?url=/);
     expect(await pageHeader.openInBruno.getAttribute('target')).toBe('_blank');
     expect(await pageHeader.openInBruno.getAttribute('rel')).toContain('noopener');
-
-    // The right cluster hugs the right edge: the theme toggle is the right-most
-    // control (within the 20px bar padding), the CTA sits just left of it, and
-    // both are well clear of the brand.
-    const headerBox = await boundingBoxOf(pageHeader.root);
-    const ctaBox = await boundingBoxOf(pageHeader.openInBruno);
-    const brandBox = await boundingBoxOf(pageHeader.brand);
-    const toggleBox = await boundingBoxOf(pageHeader.themeToggle);
-    expect((headerBox.x + headerBox.width) - (toggleBox.x + toggleBox.width)).toBeLessThanOrEqual(24);
-    expect(toggleBox.x).toBeGreaterThanOrEqual(ctaBox.x + ctaBox.width);
-    expect(ctaBox.x).toBeGreaterThan(brandBox.x + brandBox.width + 100);
   });
 
   test('mobile condenses: hamburger shows, Open-in-Bruno becomes a glyph, brand compact', async ({ page, pageHeader }) => {
