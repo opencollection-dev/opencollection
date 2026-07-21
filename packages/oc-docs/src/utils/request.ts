@@ -12,7 +12,8 @@ import type { PropertyRow } from '../components/PropertyTable/PropertyTable';
 import type { Auth } from '@opencollection/types/common/auth';
 import type { Scripts } from '@opencollection/types/common/scripts';
 import type { Variable, SecretVariable, VariableValue, VariableValueType } from '@opencollection/types/common/variables';
-import type { Action, ActionSetVariable } from '@opencollection/types/common/actions';
+import type { Action, ActionSetVariable, ActionVariableScope } from '@opencollection/types/common/actions';
+import type { Description } from '@opencollection/types/common/description';
 import {
   getRequestAuth,
   getItemName,
@@ -412,16 +413,16 @@ export interface PostResponseVar {
   name?: string;
   expr?: string;
   disabled?: boolean;
-  scope?: string;
-  description?: unknown;
+  scope?: ActionVariableScope;
+  description?: Description;
 }
 
 export interface PostResponseRowInput {
   name?: string;
   value?: string;
   enabled?: boolean;
-  scope?: string;
-  description?: unknown;
+  scope?: ActionVariableScope;
+  description?: Description;
 }
 
 // Shared row-builders. Request items keep vars/actions under `runtime`; collection

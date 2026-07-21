@@ -8,13 +8,14 @@ export const StyledWrapper = styled.div`
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.6875rem 1rem;
+    min-height: 2rem;
+    padding: 0.375rem 1rem;
     cursor: pointer;
   }
   .test-name {
     min-width: 0;
     font-family: var(--font-mono);
-    font-size: 12.5px;
+    font-size: 0.75rem;
     color: var(--text-primary);
     overflow: hidden;
     text-overflow: ellipsis;

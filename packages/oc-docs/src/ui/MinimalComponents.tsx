@@ -18,7 +18,6 @@ export const MinimalDataTable: React.FC<MinimalDataTableProps> = ({
   data,
   title,
   columns,
-  compact = true
 }) => {
   if (!data || data.length === 0) return null;
 

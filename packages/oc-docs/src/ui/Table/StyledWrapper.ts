@@ -30,11 +30,15 @@ export const StyledWrapper = styled.div`
   .table-empty-message {
     margin: 0;
     font-family: var(--font-sans);
-    font-weight: 500;
-    font-style: italic;
-    font-size: 0.8125rem;
+    font-weight: 400;
+    font-size: var(--oc-font-size-base);
     line-height: 1;
+    letter-spacing: 0;
     color: var(--text-secondary);
+  }
+
+  &:has(> .table-empty-message) {
+    border: none;
   }
 
   .table {

@@ -143,12 +143,12 @@ const RequestContent: React.FC<RequestContentProps> = ({
       <StyledWrapper className="request" data-testid={testId}>
         <Breadcrumb segments={segments} current={name} onSegmentClick={onBreadcrumbClick} testId="request-breadcrumb" />
 
-        <Heading size="md" style={{ marginTop: '0.875rem' }} testId="request-title">{name}</Heading>
+        <Heading size="md" style={{ marginTop: '0.25rem' }} testId="request-title">{name}</Heading>
 
-        <RequestUrlBar method={method} url={url} onTry={onTryClick} style={{ marginTop: '0.9375rem' }} />
+        <RequestUrlBar method={method} url={url} onTry={onTryClick} style={{ marginTop: '0.75rem' }} />
 
         {descHtml && (
-          <ViewMore collapsedHeight="4.5rem" style={{ marginTop: '0.9375rem' }} testId="request-description">
+          <ViewMore collapsedHeight="4.5rem" style={{ marginTop: '1.5rem' }} testId="request-description">
             <div className="markdown-documentation" dangerouslySetInnerHTML={{ __html: descHtml }} />
           </ViewMore>
         )}

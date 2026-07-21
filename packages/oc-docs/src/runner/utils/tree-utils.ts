@@ -1,7 +1,7 @@
 import type { OpenCollection } from '@opencollection/types';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { Item, Folder } from '@opencollection/types/collection/item';
-import { getItemType, getItemName, getHttpMethod, getRequestUrl, isFolder, isHttpRequest } from '../../utils/schemaHelpers';
+import { getItemName, getHttpMethod, getRequestUrl, isFolder, isHttpRequest } from '../../utils/schemaHelpers';
 
 /**
  * Find the path from collection root to a specific item

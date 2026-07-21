@@ -10,12 +10,13 @@ export const StyledWrapper = styled.div`
     grid-template-columns: min-content 0.875rem minmax(0, 1fr) auto;
     align-items: center;
     column-gap: 0.5rem;
-    padding: 0.75rem 1rem;
+    min-height: 2rem;
+    padding: 0.375rem 1rem;
   }
   .step-num {
     justify-self: start;
     font-family: var(--font-mono);
-    font-size: 0.71875rem;
+    font-size: 0.75rem;
     color: var(--text-muted);
   }
 
@@ -48,7 +49,7 @@ export const StyledWrapper = styled.div`
   @container docs (max-width: 600px) {
     .script-line {
       gap: 0.5rem;
-      padding: 0.625rem 0.75rem;
+      padding: 0.375rem 0.75rem;
     }
     .script-http-url {
       white-space: normal;
