@@ -4,6 +4,11 @@ import { describe, it, expect } from 'vitest';
 import { SearchResultItem } from './SearchResultItem';
 import type { SearchRecord } from '../searchIndex';
 
+// Match "<text>" wrapped in a bold element, regardless of its attributes, so the
+// assertion keys off the tag (the highlight contract) and not a styling class.
+const boldElement = /<b(?:\s[^>]*)?>([^<]*)<\/b>/g;
+const boldedText = (html: string): string[] => [...html.matchAll(boldElement)].map((m) => m[1]);
+
 const record: SearchRecord = {
   id: 'u1',
   slug: 'hotels/get-all',
@@ -28,16 +33,16 @@ describe('SearchResultItem', () => {
     expect(html).not.toContain('class="search-result-url"');
   });
 
-  it('bolds the matched ranges reported for a field', () => {
+  it('wraps the matched ranges of a field in a bold element', () => {
     // "Hotels" sits at indices 8-13 of "Get All Hotels".
     const html = renderToStaticMarkup(
       <SearchResultItem record={record} matches={{ name: [[8, 13]] }} onSelect={() => {}} />,
     );
-    expect(html).toContain('<b class="search-hl">Hotels</b>');
+    expect(boldedText(html)).toContain('Hotels');
   });
 
-  it('renders plain text when a field has no matches', () => {
+  it('renders plain text (no bold element) when a field has no matches', () => {
     const html = renderToStaticMarkup(<SearchResultItem record={record} matches={{}} onSelect={() => {}} />);
-    expect(html).not.toContain('<b class="search-hl">');
+    expect(boldedText(html)).toHaveLength(0);
   });
 });
