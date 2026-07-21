@@ -23,6 +23,12 @@ interface SearchBarProps {
   onOpenChange: (open: boolean) => void;
   /** Changes on each hotkey press to refocus the field even when already open. */
   focusNonce?: number;
+  /**
+   * Below-desktop layout: the field is revealed as a full-width row, so the
+   * panel widens to center within the docs area. Driven by the shell's
+   * docs-area-derived mode rather than a viewport media query.
+   */
+  collapsed?: boolean;
   testId?: string;
 }
 
@@ -35,7 +41,7 @@ interface SearchBarProps {
  * rather than opening a centered modal. Open state is controlled so the Topbar
  * search icon/row and this panel share one state (no redundant affordances).
  */
-export const SearchBar: React.FC<SearchBarProps> = ({ open, onOpenChange, focusNonce, testId = 'search' }) => {
+export const SearchBar: React.FC<SearchBarProps> = ({ open, onOpenChange, focusNonce, collapsed = false, testId = 'search' }) => {
   const docsNavigate = useDocsNavigate();
   const model = useNavModel();
 
@@ -170,7 +176,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ open, onOpenChange, focusN
   const showInitial = !hasQuery && !hasFilter;
 
   return (
-    <StyledWrapper ref={wrapperRef} role="search" data-testid={testId}>
+    <StyledWrapper ref={wrapperRef} role="search" data-collapsed={collapsed} data-testid={testId}>
       <div className="search-panel" data-open={open} data-testid="search-panel">
         <div className="search-inputrow">
           <span className="search-field-icon">
