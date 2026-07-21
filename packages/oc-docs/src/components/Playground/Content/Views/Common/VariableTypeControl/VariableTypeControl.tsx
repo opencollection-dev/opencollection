@@ -36,6 +36,7 @@ export const VariableTypeControl: React.FC<VariableTypeControlProps> = ({ dataTy
       <MenuDropdown
         selectedItemId={dataType}
         placement="bottom-end"
+        role="listbox"
         testId={`variable-data-type-${index}`}
         items={VARIABLE_DATA_TYPES.map((type) => ({
           id: type,
