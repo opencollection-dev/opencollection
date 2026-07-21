@@ -41,7 +41,7 @@ export const StyledWrapper = styled.div`
   &[data-overlay-sidebar='true'] .sidebar-backdrop {
     position: absolute;
     inset: 0;
-    z-index: 4;
+    z-index: calc(var(--z-sidebar) - 1);
   }
 
   &[data-overlay-sidebar='true'] .sidebar {
@@ -49,7 +49,7 @@ export const StyledWrapper = styled.div`
     top: 0;
     left: 0;
     bottom: 0;
-    z-index: 5;
+    z-index: var(--z-sidebar);
     background-color: var(--oc-background-base);
     border-right: none;
     box-shadow: var(--oc-shadow-md);
