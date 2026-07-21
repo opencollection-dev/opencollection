@@ -225,6 +225,16 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
 
   return (
     <StyledWrapper data-testid="playground-runner" data-overlay-sidebar={dock === 'inline' ? 'true' : undefined}>
+      {sidebarOpen && dock === 'inline' && (
+        // In the inline dock the sidebar overlays the view, so a click outside it
+        // dismisses it, same as the docs navigation drawer's backdrop.
+        <div
+          className="sidebar-backdrop"
+          data-testid="playground-sidebar-backdrop"
+          aria-hidden="true"
+          onClick={onCloseSidebar}
+        />
+      )}
       {sidebarOpen && (
         <aside className="sidebar" data-testid="playground-sidebar-panel">
           <PlaygroundSidebar

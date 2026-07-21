@@ -38,6 +38,12 @@ export const StyledWrapper = styled.div`
     position: relative;
   }
 
+  &[data-overlay-sidebar='true'] .sidebar-backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+  }
+
   &[data-overlay-sidebar='true'] .sidebar {
     position: absolute;
     top: 0;
@@ -45,7 +51,8 @@ export const StyledWrapper = styled.div`
     bottom: 0;
     z-index: 5;
     background-color: var(--oc-background-base);
-    box-shadow: 2px 0 8px color-mix(in srgb, var(--oc-text) 12%, transparent);
+    border-right: none;
+    box-shadow: var(--oc-shadow-md);
   }
 
   &[data-overlay-sidebar='true'] .view {

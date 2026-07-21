@@ -183,6 +183,19 @@ test.describe('playground docks (desktop)', () => {
     expect(viewBox!.x).toBeLessThanOrEqual(sideBox!.x + 5);
   });
 
+  test('inline dock: clicking outside the overlay sidebar closes it', async ({ page, playground }) => {
+    await page.goto(openAt('inline'));
+    await playground.sidebarToggle.click();
+    await expect(playground.sidebarPanel).toBeVisible();
+    // Click the view area outside the sidebar (its backdrop), mirroring the docs
+    // navigation drawer: an outside click dismisses the overlay. The backdrop
+    // spans the whole dock from its left edge, so click just past the sidebar's
+    // right edge to land on the exposed view area, not the panel.
+    const side = await playground.sidebarPanel.boundingBox();
+    await playground.sidebarBackdrop.click({ position: { x: side!.width + 40, y: 30 } });
+    await expect(playground.sidebarPanel).toHaveCount(0);
+  });
+
   test('inline dock: selecting a request auto-closes the overlay sidebar', async ({ page, playground }) => {
     await page.goto(openAt('inline'));
     await playground.sidebarToggle.click();
