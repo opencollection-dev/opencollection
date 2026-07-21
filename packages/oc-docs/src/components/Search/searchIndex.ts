@@ -9,10 +9,11 @@
  * Pure + React-free so it can be unit tested and memoized by the caller.
  */
 
+import Fuse from 'fuse.js';
+import type { IFuseOptions, FuseResultMatch } from 'fuse.js';
 import type { NavEntry } from '../../routing/types';
-import { getItemDocs, getItemDescription, getRequestUrl, getHttpParams } from '../../utils/schemaHelpers';
+import { getRequestUrl } from '../../utils/schemaHelpers';
 import { getItemUuid } from '../../utils/itemUtils';
-import { fuzzyScore } from '../../utils/fuzzyMatch';
 
 export interface SearchRecord {
   /** Item UUID (the matchingItemIds contract + sidebar key). */
@@ -21,13 +22,11 @@ export interface SearchRecord {
   slug: string;
   name: string;
   method?: string;
-  /** Folder chain for display, e.g. "Hotels / Browse & search". */
+  /** Folder chain, searchable + displayed, e.g. "Hotels / Browse & search". */
   breadcrumb: string;
   /** Ancestor folder slugs, for the folder filter chip. */
   ancestorSlugs: string[];
   url: string;
-  params: string;
-  description: string;
 }
 
 /** A folder offered in the palette's folder filter dropdown. */
@@ -35,21 +34,6 @@ export interface FolderOption {
   slug: string;
   name: string;
 }
-
-const paramsToText = (item: NavEntry['item']): string => {
-  const params = getHttpParams(item as never) as Array<{ name?: string; value?: string }> | undefined;
-  if (!Array.isArray(params)) return '';
-  return params
-    .map((p) => [p?.name, p?.value].filter(Boolean).join(' '))
-    .filter(Boolean)
-    .join(' ');
-};
-
-const descriptionOf = (item: NavEntry['item']): string => {
-  const docs = getItemDocs(item) || '';
-  const infoDesc = getItemDescription(item);
-  return [infoDesc, docs].filter(Boolean).join(' ');
-};
 
 /** Build the searchable records (request nodes only) from the nav model. */
 export const buildSearchRecords = (entries: NavEntry[]): SearchRecord[] => {
@@ -66,8 +50,6 @@ export const buildSearchRecords = (entries: NavEntry[]): SearchRecord[] => {
       breadcrumb: entry.ancestors.map((a) => a.name).join(' / '),
       ancestorSlugs: entry.ancestors.map((a) => a.slug),
       url: getRequestUrl(entry.item as never),
-      params: paramsToText(entry.item),
-      description: descriptionOf(entry.item),
     });
   }
   return records;
@@ -104,39 +86,111 @@ export const collectMethods = (entries: NavEntry[]): string[] => {
   });
 };
 
-/** Field weights: name dominates, then url, params, description. */
-const FIELD_WEIGHTS: Array<[keyof Pick<SearchRecord, 'name' | 'url' | 'params' | 'description'>, number]> = [
-  ['name', 10],
-  ['url', 4],
-  ['params', 2],
-  ['description', 1],
-];
+/** Searchable + highlightable fields, in weight order (name dominates). */
+type SearchField = 'name' | 'url' | 'breadcrumb';
 
-/** Best weighted fuzzy score across a record's searchable fields, or null. */
-export const scoreRecord = (query: string, rec: SearchRecord): number | null => {
-  let best: number | null = null;
-  for (const [field, weight] of FIELD_WEIGHTS) {
-    const s = fuzzyScore(query, rec[field]);
-    if (s === null) continue;
-    const weighted = s * weight;
-    best = best === null ? weighted : Math.max(best, weighted);
+/** Matched character ranges per field, as inclusive [start, end] pairs. */
+export type FieldMatches = Partial<Record<SearchField, Array<[number, number]>>>;
+
+/** A ranked result plus the ranges that matched, so the row can bold them. */
+export interface SearchHit {
+  record: SearchRecord;
+  matches: FieldMatches;
+}
+
+/**
+ * Fuse options tuned for endpoint search. Bitap gives typo tolerance
+ * (`bikling` → `billing`) while matching a *contiguous* window, so a query
+ * never stitches characters across separate words the way a subsequence would.
+ * `ignoreLocation` is required because URLs are long and the match can sit
+ * anywhere in them; `threshold` trades typo tolerance against noise.
+ */
+const FUSE_OPTIONS: IFuseOptions<SearchRecord> = {
+  includeMatches: true,
+  includeScore: true,
+  ignoreLocation: true,
+  threshold: 0.3,
+  minMatchCharLength: 2,
+  keys: [
+    { name: 'name', weight: 3 },
+    { name: 'url', weight: 2 },
+    { name: 'breadcrumb', weight: 1 }
+  ]
+};
+
+/** Build the Fuse index once per record set (memoize at the call site). */
+export const createSearchIndex = (records: SearchRecord[]): Fuse<SearchRecord> =>
+  new Fuse(records, FUSE_OPTIONS);
+
+const collectMatches = (matches: readonly FuseResultMatch[] | undefined): FieldMatches => {
+  const byField: FieldMatches = {};
+  for (const m of matches ?? []) {
+    const field = m.key as SearchField | undefined;
+    if (!field) continue;
+    byField[field] = m.indices.map(([start, end]) => [start, end] as [number, number]);
   }
-  return best;
+  return byField;
 };
 
 /**
- * Rank records against a query (text only; filters are applied separately by
- * the caller so they stay out of the shared slice). Empty query → [] (the
- * palette shows its initial empty state, not the whole collection).
+ * Adjacent-character swaps of `query`, e.g. "hotles" → ["ohtles", "htoles",
+ * "holtes", "hotels", "hotlse"]. Bitap scores a transposition as two edits, so
+ * a swap-typo on a short word ("hotles" → "hotels") busts the threshold and is
+ * missed. Searching these variants restores the correction as a near-exact hit
+ * without loosening the threshold (which would reopen prefix-bleed matches).
+ * Swaps of equal neighbours are skipped (they reproduce the original). Long
+ * queries are not expanded: they are far more likely a pasted string than a
+ * mistyped word, and expansion is one Fuse pass per character position.
  */
-export const searchRecords = (query: string, records: SearchRecord[]): SearchRecord[] => {
+const MAX_SWAP_QUERY_LENGTH = 24;
+
+const adjacentSwaps = (query: string): string[] => {
+  if (query.length > MAX_SWAP_QUERY_LENGTH) return [];
+  const variants: string[] = [];
+  for (let i = 0; i < query.length - 1; i++) {
+    if (query[i] === query[i + 1]) continue;
+    variants.push(query.slice(0, i) + query[i + 1] + query[i] + query.slice(i + 2));
+  }
+  return variants;
+};
+
+/**
+ * A swap variant must come back near-exact to count: a genuine de-typo lands at
+ * ~0 (the corrected word is really there), whereas a variant that only fuzzily
+ * grazes an unrelated record scores higher and is noise. This gate only applies
+ * to records the original query did NOT already surface.
+ */
+const TRANSPOSITION_MAX_SCORE = 0.1;
+
+/**
+ * Rank records against a query (text only; filters are applied separately by
+ * the caller). Empty query → [] (the palette shows its initial empty state,
+ * not the whole collection). The original query runs at the normal threshold;
+ * adjacent-swap variants back-fill transposition typos the threshold misses.
+ * Each record is kept at its best (lowest) score, so a variant that corrects a
+ * typo also improves the row's rank and highlight.
+ */
+export const searchHits = (fuse: Fuse<SearchRecord>, query: string): SearchHit[] => {
   const q = query.trim();
   if (!q) return [];
-  const scored: Array<{ rec: SearchRecord; score: number }> = [];
-  for (const rec of records) {
-    const score = scoreRecord(q, rec);
-    if (score !== null) scored.push({ rec, score });
-  }
-  scored.sort((a, b) => b.score - a.score);
-  return scored.map((s) => s.rec);
+
+  const bestById = new Map<string, { record: SearchRecord; matches: FieldMatches; score: number }>();
+  const ingest = (results: ReturnType<Fuse<SearchRecord>['search']>, isOriginal: boolean) => {
+    for (const r of results) {
+      const score = r.score ?? 1;
+      const seen = bestById.get(r.item.id);
+      // A variant may only introduce a new record when it matched near-exactly.
+      if (!isOriginal && !seen && score > TRANSPOSITION_MAX_SCORE) continue;
+      if (!seen || score < seen.score) {
+        bestById.set(r.item.id, { record: r.item, matches: collectMatches(r.matches), score });
+      }
+    }
+  };
+
+  ingest(fuse.search(q), true);
+  for (const variant of adjacentSwaps(q)) ingest(fuse.search(variant), false);
+
+  return [...bestById.values()]
+    .sort((a, b) => a.score - b.score)
+    .map(({ record, matches }) => ({ record, matches }));
 };

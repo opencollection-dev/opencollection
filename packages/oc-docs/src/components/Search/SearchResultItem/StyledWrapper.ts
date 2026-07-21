@@ -51,12 +51,16 @@ export const StyledWrapper = styled.button`
 
   .search-result-name {
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 400;
     line-height: 1.3;
     color: var(--oc-text);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  .search-hl {
+    font-weight: 700;
   }
 
   .search-result-breadcrumb {

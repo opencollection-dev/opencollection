@@ -72,6 +72,7 @@
     "@types/prismjs": "^1.26.5",
     "ajv": "^8.12.0",
     "codemirror": "^6.0.2",
+    "fuse.js": "^7.5.0",
     "js-yaml": "^4.1.0",
     "jshint": "^2.13.6",
     "markdown-it": "^14.1.0",

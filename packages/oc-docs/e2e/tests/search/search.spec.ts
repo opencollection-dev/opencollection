@@ -63,7 +63,7 @@ test.describe('Search palette', () => {
     await search.field.click();
 
     await expect(search.panel).toContainText('Search the collection');
-    await expect(search.panel).toContainText('Find any request by name, endpoint, or description.');
+    await expect(search.panel).toContainText('Find any request by name, endpoint, or folder.');
   });
 
   test('typing fuzzy-matches over request names', async ({ page, search }) => {
@@ -74,6 +74,36 @@ test.describe('Search palette', () => {
 
     await expect(search.results.first()).toBeVisible();
     await expect(search.panel).toContainText('Login');
+  });
+
+  test('corrects a typo (adjacent letter swap) to the intended request', async ({ page, search }) => {
+    await page.setViewportSize(DESKTOP);
+    await page.goto(FIXTURE);
+    await search.field.click();
+    await search.field.fill('lgoin'); // "login" with the o/g swapped
+
+    await expect(search.results.first()).toBeVisible();
+    await expect(search.panel).toContainText('Login');
+  });
+
+  test('matches on the folder chain typed as text (not only the filter dropdown)', async ({ page, search }) => {
+    await page.setViewportSize(DESKTOP);
+    await page.goto(FIXTURE);
+    await search.field.click();
+    await search.field.fill('authentication'); // the folder Login lives under
+
+    await expect(search.results.first()).toBeVisible();
+    await expect(search.panel).toContainText('Login');
+  });
+
+  test('a single character keeps the initial prompt (below the match threshold)', async ({ page, search }) => {
+    await page.setViewportSize(DESKTOP);
+    await page.goto(FIXTURE);
+    await search.field.click();
+    await search.field.fill('l');
+
+    await expect(search.panel).toContainText('Search the collection');
+    await expect(search.resultsList).toHaveCount(0);
   });
 
   test('selecting a result navigates and closes the panel', async ({ page, search }) => {

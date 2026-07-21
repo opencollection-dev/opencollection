@@ -5,7 +5,9 @@ import {
   buildSearchRecords,
   collectTopLevelFolders,
   collectMethods,
-  searchRecords,
+  createSearchIndex,
+  searchHits,
+  type SearchHit,
   type SearchRecord,
 } from '../searchIndex';
 import { SearchIcon, CloseIcon } from '../../../assets/icons';
@@ -15,6 +17,11 @@ import SearchResultItem from '../SearchResultItem/SearchResultItem';
 import { StyledWrapper } from './StyledWrapper';
 
 const RESULTS_ID = 'search-listbox';
+
+// A single character can't clear Fuse's `minMatchCharLength`, so treat a query
+// shorter than this as "not typing yet": keep the initial prompt rather than
+// flashing "no matching requests" after the first keystroke.
+const MIN_QUERY_LENGTH = 2;
 
 interface SearchBarProps {
   /** Open state, controlled by the shell so it is shared with the Topbar's
@@ -33,9 +40,9 @@ interface SearchBarProps {
 }
 
 /**
- * Header-anchored endpoint search. Fuzzy text search over name/url/params/
- * description plus palette-local method + folder filters. Results render in the
- * palette itself and selecting one navigates via the slug route.
+ * Header-anchored endpoint search. Typo-tolerant (Fuse/Bitap) search over name,
+ * URL and folder chain plus palette-local method + folder filters. Results
+ * render in the palette itself and selecting one navigates via the slug route.
  *
  * Expands in place (a combobox whose listbox drops directly below the field)
  * rather than opening a centered modal. Open state is controlled so the Topbar
@@ -46,6 +53,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ open, onOpenChange, focusN
   const model = useNavModel();
 
   const records = useMemo(() => buildSearchRecords(model.ordered), [model]);
+  const fuse = useMemo(() => createSearchIndex(records), [records]);
   const folders = useMemo(() => collectTopLevelFolders(model.ordered), [model]);
   // One chip per method present in the collection (canonical order).
   const methodOptions = useMemo(() => collectMethods(model.ordered), [model]);
@@ -63,17 +71,21 @@ export const SearchBar: React.FC<SearchBarProps> = ({ open, onOpenChange, focusN
 
   const optionId = (i: number) => `${RESULTS_ID}-opt-${i}`;
 
-  const hasQuery = query.trim().length > 0;
+  const hasQuery = query.trim().length >= MIN_QUERY_LENGTH;
   const hasFilter = methods.size > 0 || folder !== null;
 
-  const results = useMemo(() => {
-    const base = hasQuery ? searchRecords(query, records) : hasFilter ? records : [];
+  const results = useMemo<SearchHit[]>(() => {
+    const base: SearchHit[] = hasQuery
+      ? searchHits(fuse, query)
+      : hasFilter
+        ? records.map((record) => ({ record, matches: {} }))
+        : [];
     return base.filter(
-      (r) =>
+      ({ record: r }) =>
         (methods.size === 0 || (r.method ? methods.has(r.method.toUpperCase()) : false)) &&
         (folder === null || r.ancestorSlugs.includes(folder)),
     );
-  }, [query, methods, folder, records, hasQuery, hasFilter]);
+  }, [query, methods, folder, records, fuse, hasQuery, hasFilter]);
 
   useEffect(() => setActiveIdx(-1), [results]);
 
@@ -165,10 +177,10 @@ export const SearchBar: React.FC<SearchBarProps> = ({ open, onOpenChange, focusN
     }
     if (e.key === 'Enter') {
       // Enter selects the highlighted row, or the first result if none navigated.
-      const rec = activeIdx >= 0 ? results[activeIdx] : results[0];
-      if (rec) {
+      const hit = activeIdx >= 0 ? results[activeIdx] : results[0];
+      if (hit) {
         e.preventDefault();
-        handleSelect(rec);
+        handleSelect(hit.record);
       }
     }
   };
@@ -230,7 +242,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ open, onOpenChange, focusN
                     <SearchIcon />
                   </span>
                   <p className="search-empty-title">Search the collection</p>
-                  <p className="search-empty-text">Find any request by name, endpoint, or description.</p>
+                  <p className="search-empty-text">Find any request by name, endpoint, or folder.</p>
                 </div>
               ) : results.length === 0 ? (
                 <div className="search-empty">
@@ -257,9 +269,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({ open, onOpenChange, focusN
                   aria-label="Search results"
                   data-testid="search-results"
                 >
-                  {results.map((rec, i) => (
+                  {results.map((hit, i) => (
                     <li
-                      key={rec.id}
+                      key={hit.record.id}
                       id={optionId(i)}
                       role="option"
                       aria-selected={i === activeIdx}
@@ -269,7 +281,12 @@ export const SearchBar: React.FC<SearchBarProps> = ({ open, onOpenChange, focusN
                         if (e.movementX !== 0 || e.movementY !== 0) setActiveIdx(i);
                       }}
                     >
-                      <SearchResultItem record={rec} active={i === activeIdx} onSelect={handleSelect} />
+                      <SearchResultItem
+                        record={hit.record}
+                        matches={hit.matches}
+                        active={i === activeIdx}
+                        onSelect={handleSelect}
+                      />
                     </li>
                   ))}
                 </ul>
