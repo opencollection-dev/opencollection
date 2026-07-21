@@ -116,22 +116,20 @@ const Topbar: React.FC<TopbarProps> = ({
         {/* Flex-1 middle: inline search on desktop, else a spacer that keeps the
             right-hand controls pinned to the right edge (search collapses to an
             icon below desktop, and may be empty). */}
-        {hasSearch && isDesktop ? (
+        {hasSearch && (isDesktop ? (
           <div className="topbar-search">{searchInner}</div>
         ) : (
-          <div className="topbar-spacer" />
-        )}
-
-        {/* Below desktop: search toggle reveals the full-width search row below. */}
-        {hasSearch && !isDesktop && (
-          <IconButton
-            label="Search"
-            aria-expanded={searchOpen}
-            onClick={() => setSearchOpen(!searchOpen)}
-          >
-            <SearchIcon />
-          </IconButton>
-        )}
+          <>
+            <div className="topbar-spacer" />
+            <IconButton
+              label="Search"
+              aria-expanded={searchOpen}
+              onClick={() => setSearchOpen(!searchOpen)}
+            >
+              <SearchIcon />
+            </IconButton>
+          </>
+        ))}
 
         {/* Secondary controls (env switcher + show-vars): inline at every
             breakpoint; the controls condense their own labels when narrow. */}
