@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import SidebarNavLink from './SidebarNavLink/SidebarNavLink';
 import SidebarTree from './SidebarTree/SidebarTree';
-import SidebarFooter from './SidebarFooter/SidebarFooter';
 import { CubeIcon, GlobeIcon } from '../../../assets/icons';
 import { StyledWrapper } from './StyledWrapper';
 import { computeAutoReveal } from './autoReveal';
@@ -105,8 +104,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onNavigate, testId = 'sidebar' }) => 
           />
         ) : null}
       </div>
-
-      <SidebarFooter />
     </StyledWrapper>
   );
 };

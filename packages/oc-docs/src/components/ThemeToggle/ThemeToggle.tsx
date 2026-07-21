@@ -10,7 +10,6 @@ const Button = styled.button`
   flex: none;
   width: 26px;
   height: 26px;
-  padding: 0;
   background: transparent;
   color: var(--oc-colors-text-muted, var(--oc-text));
   border: 1px solid var(--oc-border-border0);

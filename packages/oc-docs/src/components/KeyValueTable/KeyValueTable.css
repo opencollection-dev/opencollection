@@ -217,6 +217,10 @@
   min-width: 0;
 }
 
+.key-value-table .col-value .secret-value {
+  padding: 0.625rem;
+}
+
 .key-value-table .value-cell-trailing {
   flex: none;
   display: flex;

@@ -1,9 +1,10 @@
 import { test, expect } from '../../playwright';
 
 /**
- * The page header (sticky top navigation bar): brand cluster + Open-in-Bruno
- * CTA. These tests cover what the mounted app actually renders — the search and
- * env-switcher slots ship empty here, so they aren't exercised in this suite.
+ * The page header (sticky top navigation bar): brand cluster, Open-in-Bruno
+ * CTA and theme toggle. These tests cover what the mounted app actually
+ * renders — the search and env-switcher slots ship empty here, so they aren't
+ * exercised in this suite.
  */
 test.use({ colorScheme: 'light' });
 
@@ -22,7 +23,7 @@ test.describe('Page header', () => {
     // Sticky: header stays at the top after the page scrolls.
     await page.mouse.wheel(0, 600);
     const box = await pageHeader.root.boundingBox();
-    if (!box) throw new Error('header has no bounding box');
+    if (box === null) throw new Error('header has no bounding box');
     expect(box.y).toBeLessThanOrEqual(1);
   });
 
@@ -35,7 +36,14 @@ test.describe('Page header', () => {
     await expect(pageHeader.brandInitials).toHaveText('BT');
   });
 
-  test('Open-in-Bruno CTA links to the Fetch-in-Bruno page (new tab) and is pinned right', async ({ page, pageHeader }) => {
+  test('shows the theme toggle in the header', async ({ page, themeToggle }) => {
+    await page.setViewportSize(DESKTOP);
+    await page.goto('/');
+
+    await expect(themeToggle.button).toBeVisible();
+  });
+
+  test('shows the Open-in-Bruno CTA linking to Fetch-in-Bruno when the collection has a git url', async ({ page, pageHeader }) => {
     await page.setViewportSize(DESKTOP);
     await page.goto('/');
 
@@ -44,13 +52,6 @@ test.describe('Page header', () => {
     expect(href).toMatch(/^https:\/\/fetch\.usebruno\.com\?url=/);
     expect(await pageHeader.openInBruno.getAttribute('target')).toBe('_blank');
     expect(await pageHeader.openInBruno.getAttribute('rel')).toContain('noopener');
-
-    // CTA hugs the right edge (within the 20px bar padding), not the brand.
-    const headerBox = await pageHeader.root.boundingBox();
-    const ctaBox = await pageHeader.openInBruno.boundingBox();
-    const brandBox = await pageHeader.brand.boundingBox();
-    expect((headerBox!.x + headerBox!.width) - (ctaBox!.x + ctaBox!.width)).toBeLessThanOrEqual(24);
-    expect(ctaBox!.x).toBeGreaterThan(brandBox!.x + brandBox!.width + 100);
   });
 
   test('mobile condenses: hamburger shows, Open-in-Bruno becomes a glyph, brand compact', async ({ page, pageHeader }) => {
