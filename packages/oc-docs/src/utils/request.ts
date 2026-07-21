@@ -21,7 +21,7 @@ import {
   getRequestVariables
 } from './schemaHelpers';
 import { getItemUuid } from './itemUtils';
-import { isSecretVariable } from './variableResolution';
+import { isSecretVariable, unwrapVariableValue } from './variableResolution';
 import { COLLECTION_ROOT_CRUMB } from './common';
 
 export const humanizeAuthMode = (auth: Auth | undefined, labels: Record<string, string>): string => {
@@ -101,10 +101,8 @@ export const getVariableType = (variable?: Variable | SecretVariable): VariableV
   return typeOfVariableValue(value);
 };
 
-export const getVariableTypeLabel = (variable?: Variable | SecretVariable): string | undefined => {
-  if (!variable) return undefined;
-  return getVariableType(variable) ?? 'string';
-};
+export const getVariableTypeLabel = (variable?: Variable | SecretVariable): string =>
+  getVariableType(variable) ?? 'string';
 
 export interface BodyTableRow {
   name: string;
@@ -426,21 +424,11 @@ export interface PostResponseRowInput {
   description?: unknown;
 }
 
-const flattenValue = (value: Variable['value']): string => {
-  if (value == null) return '';
-  if (typeof value === 'string') return value;
-  if (Array.isArray(value)) {
-    const selected = value.find((v) => v.selected) ?? value[0];
-    return selected ? flattenValue(selected.value) : '';
-  }
-  return typeof value.data === 'string' ? value.data : '';
-};
-
 // Shared row-builders. Request items keep vars/actions under `runtime`; collection
 // and folder defaults keep them under `request` — but both map to the same rows.
 const toPreRequestVarRow = (variable: Variable): PreRequestVarRow => ({
   name: variable.name,
-  value: flattenValue(variable.value),
+  value: unwrapVariableValue(variable.value),
   type: getVariableTypeLabel(variable),
   description: getDescription(variable),
   disabled: variable.disabled

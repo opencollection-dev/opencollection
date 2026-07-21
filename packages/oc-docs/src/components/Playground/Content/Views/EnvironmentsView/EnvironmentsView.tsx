@@ -8,6 +8,7 @@ import { EmptyState } from '../../../../../ui/EmptyState/EmptyState';
 import { StyledWrapper } from './StyledWrapper';
 import { EnvironmentLabel } from '../../../../EnvironmentLabel/EnvironmentLabel';
 import EnvVarCards from './EnvVarCards/EnvVarCards';
+import { variableTypeColumn } from '../Common/VariableTypeControl/variableTypeColumn';
 import { GlobeIcon } from '../../../../../assets/icons';
 import { useAppDispatch } from '../../../../../store/hooks';
 import { cx } from '../../../../../utils/cx';
@@ -131,15 +132,24 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection, compact
   interface RenderVarsOptions {
     makeNewRow?: () => Partial<KeyValueRow>;
     disableNewRow?: boolean;
+    editableDataType?: boolean;
   }
 
   const renderVars = (
     rows: KeyValueRow[],
     onChange: (rows: KeyValueRow[]) => void,
-    { makeNewRow, disableNewRow = false }: RenderVarsOptions = {}
+    { makeNewRow, disableNewRow = false, editableDataType = false }: RenderVarsOptions = {}
   ): React.ReactNode =>
     compact ? (
-      <EnvVarCards rows={rows} onChange={onChange} makeNewRow={makeNewRow} disableNewRow={disableNewRow} addWhenComplete testId="env-var-cards" />
+      <EnvVarCards
+        rows={rows}
+        onChange={onChange}
+        makeNewRow={makeNewRow}
+        disableNewRow={disableNewRow}
+        editableDataType={editableDataType}
+        addWhenComplete
+        testId="env-var-cards"
+      />
     ) : (
       <KeyValueTable
         data={rows}
@@ -148,18 +158,19 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection, compact
         valuePlaceholder="Value"
         showEnabled={true}
         multilineValues
+        inlineActions={editableDataType}
         disableNewRow={disableNewRow}
         makeNewRow={makeNewRow}
         addWhenComplete
         disableDelete={false}
-        additionalColumns={[{ key: 'dataType', label: 'Data Type', render: (row) => <span className="text-readonly">{row.dataType || ''}</span> }]}
+        additionalColumns={editableDataType ? [variableTypeColumn] : []}
       />
     );
 
   const panels: Record<EnvTabId, { contentIndicator: number; content: React.ReactNode }> = {
     variables: {
       contentIndicator: plainRows.length,
-      content: renderVars(plainRows, (rows) => commit(rows, secretRows))
+      content: renderVars(plainRows, (rows) => commit(rows, secretRows), { editableDataType: true })
     },
     secrets: {
       contentIndicator: secretRows.length,

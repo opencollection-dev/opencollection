@@ -76,11 +76,9 @@ export const StyledWrapper = styled.div`
     opacity: 0.6;
   }
 
-  .env-card .datatype {
+  .env-card .value .var-type {
     flex-shrink: 0;
     margin-left: auto;
-    font-size: var(--oc-font-size-sm);
-    color: var(--oc-colors-text-subtext1);
   }
 
   .env-card .delete {

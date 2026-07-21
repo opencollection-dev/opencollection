@@ -2,8 +2,10 @@ import { describe, it, expect } from 'vitest';
 import reducer, {
   setPlaygroundCollection,
   updateCollectionEnvironments,
+  updatePlaygroundItem,
   resetPlaygroundEnvironments,
   selectHydratedCollection,
+  selectPlaygroundCollection,
   setViewMode,
   setSelectedExampleIndex,
   clearPlaygroundCollection,
@@ -12,6 +14,7 @@ import reducer, {
 } from './playground';
 import { createOpenCollectionStore } from '../store';
 import type { OpenCollection as OpenCollectionCollection } from '@opencollection/types';
+import type { HttpRequest } from '@opencollection/types/requests/http';
 
 const makeCollection = () =>
   ({
@@ -66,6 +69,30 @@ describe('playground example view', () => {
     expect(set.selectedExampleIndex).toBe(3);
     const cleared = reducer(set, clearPlaygroundCollection());
     expect(cleared.selectedExampleIndex).toBeNull();
+  });
+});
+
+describe('updatePlaygroundItem', () => {
+  const withRequest = () =>
+    ({
+      info: { name: 'Test', version: '1.0.0' },
+      items: [{ type: 'http', uuid: 'r1', name: 'Req', http: { url: 'old', method: 'GET' } }]
+    }) as unknown as OpenCollectionCollection;
+
+  const firstItem = (store: ReturnType<typeof createOpenCollectionStore>, select: typeof selectHydratedCollection) =>
+    select(store.getState())!.items![0] as unknown as { uuid: string; http: { url: string } };
+
+  it('updates the item in the hydrated collection (what the UI renders) as well as the base collection', () => {
+    const store = createOpenCollectionStore();
+    store.dispatch(setPlaygroundCollection(withRequest()));
+
+    const updated = { type: 'http', uuid: 'r1', name: 'Req', http: { url: 'new', method: 'GET' } };
+    store.dispatch(updatePlaygroundItem({ uuid: 'r1', item: updated as unknown as HttpRequest }));
+
+    // The tree the UI reads must reflect the edit, with the uuid preserved so findItemByUuid resolves.
+    expect(firstItem(store, selectHydratedCollection).http.url).toBe('new');
+    expect(firstItem(store, selectHydratedCollection).uuid).toBe('r1');
+    expect(firstItem(store, selectPlaygroundCollection).http.url).toBe('new');
   });
 });
 

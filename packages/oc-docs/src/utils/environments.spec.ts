@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getEnvironmentVariables, writeBackValue, envVariableToRow, envRowToVariable } from './environments';
-import { unwrapVariableValue } from './variableResolution';
+import { getEnvironmentVariables, envVariableToRow, envRowToVariable } from './environments';
 
 describe('getEnvironmentVariables', () => {
   it('splits regular and secret variables', () => {
@@ -153,42 +152,6 @@ describe('getEnvironmentVariables', () => {
   });
 });
 
-describe('writeBackValue', () => {
-  it('keeps a plain string a string', () => {
-    expect(writeBackValue('old', 'new')).toBe('new');
-    expect(writeBackValue(undefined, 'new')).toBe('new');
-  });
-
-  it('preserves a typed value wrapper and only swaps the data', () => {
-    expect(writeBackValue({ type: 'number', data: '30' }, '42')).toEqual({ type: 'number', data: '42' });
-  });
-
-  it('preserves the variant array and edits only the selected variant', () => {
-    const variants = [
-      { title: 'dev', value: 'https://dev.api.local', selected: true },
-      { title: 'prod', value: 'https://prod.api.local' }
-    ];
-    expect(writeBackValue(variants, 'https://edited.local')).toEqual([
-      { title: 'dev', value: 'https://edited.local', selected: true },
-      { title: 'prod', value: 'https://prod.api.local' }
-    ]);
-  });
-
-  it('edits the first variant when none is marked selected', () => {
-    const variants = [{ title: 'a', value: 'x' }, { title: 'b', value: 'y' }];
-    expect(writeBackValue(variants, 'z')).toEqual([{ title: 'a', value: 'z' }, { title: 'b', value: 'y' }]);
-  });
-
-  it('round-trips the shapes that get flattened for display', () => {
-    const cases = ['plain', { type: 'number', data: '30' }, [{ title: 'dev', value: 'v', selected: true }]] as const;
-    for (const original of cases) {
-      const flat = unwrapVariableValue(original);
-      // no edit → writing the flattened value back leaves the original shape intact
-      expect(writeBackValue(original, flat)).toEqual(original);
-    }
-  });
-});
-
 describe('envVariableToRow / envRowToVariable round-trip', () => {
   const roundTrip = (variable: any, index = 0) => envRowToVariable(envVariableToRow(variable, index)) as any;
 
@@ -234,5 +197,25 @@ describe('envVariableToRow / envRowToVariable round-trip', () => {
     }) as any;
     expect(out.secret).toBe(true);
     expect(out.value).toBe('real-token');
+  });
+
+  it('wraps the value as a typed { type, data } when the row data type is switched to a non-string type', () => {
+    const row = { ...envVariableToRow({ name: 'port', value: '8080' }, 0), dataType: 'number' };
+    expect(envRowToVariable(row).value).toEqual({ type: 'number', data: '8080' });
+  });
+
+  it('flattens a typed value back to a plain string when the row data type is switched to string', () => {
+    const row = { ...envVariableToRow({ name: 'port', value: { type: 'number', data: '8080' } }, 0), dataType: 'string' };
+    expect(envRowToVariable(row).value).toBe('8080');
+  });
+
+  it('keeps the declared type when only the value is edited', () => {
+    const row = { ...envVariableToRow({ name: 'port', value: { type: 'number', data: '8080' } }, 0), value: '9090' };
+    expect(envRowToVariable(row).value).toEqual({ type: 'number', data: '9090' });
+  });
+
+  it('builds a typed value for a brand-new row that has no source variable', () => {
+    const out = envRowToVariable({ id: 'var-0', name: 'retries', value: '3', enabled: true, dataType: 'number' });
+    expect(out).toEqual({ name: 'retries', value: { type: 'number', data: '3' }, disabled: false });
   });
 });

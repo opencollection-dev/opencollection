@@ -1,18 +1,11 @@
 import React, { useMemo } from 'react';
 import type { Variable } from '@opencollection/types/common/variables';
 import KeyValueTable, { type KeyValueRow } from '../../../../../../components/KeyValueTable/KeyValueTable';
-import { Tooltip } from '../../../../../../ui/Tooltip/Tooltip';
 import { InfoTip } from '../../../../../../components/InfoTip/InfoTip';
 import { unwrapVariableTyped } from '../../../../../../utils/variableResolution';
-import {
-  VARIABLE_DATA_TYPES,
-  parseValueByDataType,
-  validateDataTypeValue,
-  type VariableDataType
-} from '../../../../../../utils/variableDataType';
+import { toDataType } from '../../../../../../utils/variableDataType';
 import { VARIABLE_NAME_REGEX } from '../../../../../../constants/regex';
-import { CaretIcon, WarningIcon } from '../../../../../../assets/icons';
-import MenuDropdown from '../../../../../../ui/MenuDropdown';
+import { variableTypeColumn } from '../VariableTypeControl/variableTypeColumn';
 import type { PostResponseVar } from '../../../../../../utils/request';
 import { StyledWrapper } from './StyledWrapper';
 
@@ -26,9 +19,6 @@ interface VariablesTabProps {
   description?: string;
 }
 
-const toDataType = (dataType?: string): VariableDataType =>
-  dataType && (VARIABLE_DATA_TYPES as string[]).includes(dataType) ? (dataType as VariableDataType) : 'string';
-
 const getVariableError = (row: KeyValueRow, _index: number, field: 'name' | 'value'): string | null => {
   if (field !== 'name') return null;
   if (!row.name || row.name.trim() === '') return null;
@@ -38,47 +28,7 @@ const getVariableError = (row: KeyValueRow, _index: number, field: 'name' | 'val
   return null;
 };
 
-const typeColumn = {
-  key: 'datatype',
-  label: '',
-  render: (row: KeyValueRow, index: number, updateField: (field: string, value: unknown) => void) => {
-    const dataType = toDataType(row.dataType);
-    const warning = validateDataTypeValue(parseValueByDataType(row.value, dataType), dataType);
-    return (
-      <div className="var-type">
-        {warning && (
-          <Tooltip content={warning}>
-            <span className="var-type-warning" role="img" aria-label={warning}>
-              <WarningIcon />
-            </span>
-          </Tooltip>
-        )}
-        <MenuDropdown
-          selectedItemId={dataType}
-          placement="bottom-end"
-          role="listbox"
-          testId={`variable-data-type-${index}`}
-          items={VARIABLE_DATA_TYPES.map((type) => ({
-            id: type,
-            label: type,
-            onClick: () => updateField('dataType', type)
-          }))}
-        >
-          <button type="button" className="var-type-control" aria-label="Variable data type">
-            <span className="var-type-label" aria-hidden="true">
-              {dataType}
-            </span>
-            <span className="var-type-caret" aria-hidden="true">
-              <CaretIcon />
-            </span>
-          </button>
-        </MenuDropdown>
-      </div>
-    );
-  }
-};
-
-const dataTypeColumns = [typeColumn];
+const dataTypeColumns = [variableTypeColumn];
 
 export const VariablesTab: React.FC<VariablesTabProps> = ({
   variables,

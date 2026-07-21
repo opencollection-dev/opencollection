@@ -61,6 +61,10 @@ export const StyledWrapper = styled.div`
     color: var(--text-primary);
     font-size: 0.75rem;
   }
+ 
+  .code-content .var {
+    color: var(--primary-text);
+  }
 
   .code-content-numbered {
     display: flex;
