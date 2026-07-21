@@ -1,7 +1,11 @@
 import React from 'react';
 import { StyledWrapper } from './StyledWrapper';
 
-const PoweredByFooter: React.FC<{ testId?: string }> = ({ testId = 'powered-by-footer' }) => (
+interface PoweredByFooterProps {
+  testId?: string;
+}
+
+export const PoweredByFooter: React.FC<PoweredByFooterProps> = ({ testId = 'powered-by-footer' }) => (
   <StyledWrapper data-testid={testId}>
     Powered by{' '}
     <a

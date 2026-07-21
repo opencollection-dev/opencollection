@@ -41,7 +41,7 @@ test.describe('Page header', () => {
     await expect(pageHeader.brandInitials).toHaveText('BT');
   });
 
-  test('Open-in-Bruno CTA links to the Fetch-in-Bruno page (new tab) and is pinned right', async ({ page, pageHeader }) => {
+  test('Open-in-Bruno CTA links to the Fetch-in-Bruno page (new tab) and pins right, before the theme toggle', async ({ page, pageHeader }) => {
     await page.setViewportSize(DESKTOP);
     await page.goto('/');
 
