@@ -22,7 +22,7 @@ export const writeStored = (storage: Storage | null, key: string, value: unknown
   }
 };
 
-const areaFor = (area: StorageArea): Storage | null => {
+export const areaFor = (area: StorageArea): Storage | null => {
   if (typeof window === 'undefined') return null;
   return area === 'local' ? window.localStorage : window.sessionStorage;
 };

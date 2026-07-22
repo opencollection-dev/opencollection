@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDockResize } from './useDockResize';
-import { readStored, writeStored } from './useStorage';
+import { areaFor, readStored, writeStored } from './useStorage';
 
 export const SIDEBAR_MIN_WIDTH = 200;
 export const SIDEBAR_MAX_WIDTH = 480;
@@ -14,8 +14,6 @@ interface ResizableSidebarApi {
   dragging: boolean;
   startDrag: (event: React.PointerEvent) => void;
 }
-
-const sessionArea = (): Storage | null => (typeof window === 'undefined' ? null : window.sessionStorage);
 
 /**
  * Width state for a left-docked sidebar the user can drag-resize. Backs the
@@ -31,10 +29,17 @@ export const useResizableSidebar = (
   onCollapse?: () => void,
   onExpand?: () => void
 ): ResizableSidebarApi => {
+  // Read the stored width once (not on every render, which during a drag would
+  // be a sessionStorage read + parse per pointer move); useDockResize seeds its
+  // state from it lazily.
+  const initialWidth = useMemo(
+    () => readStored(areaFor('session'), storageKey, SIDEBAR_DEFAULT_WIDTH),
+    [storageKey]
+  );
   const { size, dragging, startDrag } = useDockResize({
     axis: 'x',
     edge: 'leading',
-    initial: readStored(sessionArea(), storageKey, SIDEBAR_DEFAULT_WIDTH),
+    initial: initialWidth,
     min: SIDEBAR_MIN_WIDTH,
     max: SIDEBAR_MAX_WIDTH,
     onCollapse,
@@ -45,7 +50,7 @@ export const useResizableSidebar = (
   // Persist once the drag settles (and on any re-clamp), so the width survives a
   // reload within the session without writing on every pointer move.
   useEffect(() => {
-    if (!dragging) writeStored(sessionArea(), storageKey, size);
+    if (!dragging) writeStored(areaFor('session'), storageKey, size);
   }, [dragging, size, storageKey]);
 
   return { width: size, dragging, startDrag };

@@ -22,7 +22,7 @@ export const StyledWrapper = styled.div`
     left: var(--sidebar-width);
     width: 9px;
     transform: translateX(-4px);
-    z-index: 6;
+    z-index: calc(var(--z-sidebar, 5) + 1);
     cursor: col-resize;
     touch-action: none;
   }
