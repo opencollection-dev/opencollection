@@ -26,7 +26,7 @@ export const StyledWrapper = styled.div`
     z-index: calc(var(--z-overlay, 50) + 1);
     background-color: var(--oc-background-base);
     border-right: 1px solid var(--oc-border-border0);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--oc-shadow-md);
     transform: translateX(-100%);
     visibility: hidden;
     pointer-events: none;

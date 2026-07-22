@@ -15,6 +15,7 @@ export class PlaygroundComponent extends BaseComponent {
   readonly runner = this.page.getByTestId('playground-runner');
   readonly loadError = this.page.getByTestId('playground-load-error');
   readonly sidebarPanel = this.page.getByTestId('playground-sidebar-panel');
+  readonly sidebarBackdrop = this.page.getByTestId('playground-sidebar-backdrop');
   readonly collectionNode = this.page.getByTestId('sidebar-collection-root');
   readonly collectionCollapseToggle = this.collectionNode.getByRole('button', {
     name: /Collapse collection|Expand collection/,
