@@ -20,8 +20,8 @@ export const StyledWrapper = styled.div`
     top: 0;
     bottom: 0;
     left: var(--sidebar-width);
-    width: 9px;
-    transform: translateX(-4px);
+    width: 0.5625rem;
+    transform: translateX(-0.25rem);
     z-index: calc(var(--z-sidebar, 5) + 1);
     cursor: col-resize;
     touch-action: none;
@@ -33,14 +33,14 @@ export const StyledWrapper = styled.div`
     top: 0;
     bottom: 0;
     left: 50%;
-    width: 1px;
+    width: 0.0625rem;
     transform: translateX(-50%);
     background-color: transparent;
   }
 
   .sidebar-resizer:hover::before,
   .sidebar-resizer[data-dragging='true']::before {
-    width: 2px;
+    width: 0.125rem;
     background-color: var(--oc-border-border2);
   }
 
