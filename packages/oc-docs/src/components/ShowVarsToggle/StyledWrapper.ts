@@ -3,14 +3,14 @@ import styled from '@emotion/styled';
 export const StyledWrapper = styled.button`
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   flex: none;
   padding: 0;
   background: transparent;
   border: none;
   cursor: pointer;
   font-family: var(--font-sans);
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 500;
   color: var(--text-secondary);
   transition: color 0.12s ease;
@@ -27,8 +27,8 @@ export const StyledWrapper = styled.button`
 
   .show-vars-track {
     position: relative;
-    width: 30px;
-    height: 16px;
+    width: 1.875rem;
+    height: 1rem;
     flex: none;
     border-radius: 999px;
     background: var(--oc-border-border2);
@@ -37,10 +37,10 @@ export const StyledWrapper = styled.button`
 
   .show-vars-thumb {
     position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 12px;
-    height: 12px;
+    top: 0.125rem;
+    left: 0.125rem;
+    width: 0.75rem;
+    height: 0.75rem;
     border-radius: 50%;
     background: var(--oc-background-base);
     transition: transform 0.16s ease;
@@ -51,12 +51,12 @@ export const StyledWrapper = styled.button`
   }
 
   &[aria-checked='true'] .show-vars-thumb {
-    transform: translateX(14px);
+    transform: translateX(0.875rem);
   }
 
   &:focus-visible {
-    outline: 2px solid var(--oc-brand);
-    outline-offset: 2px;
+    outline: 0.125rem solid var(--oc-brand);
+    outline-offset: 0.125rem;
     border-radius: var(--oc-border-radius-base);
   }
 `;

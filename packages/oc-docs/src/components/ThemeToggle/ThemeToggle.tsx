@@ -8,18 +8,18 @@ const Button = styled.button`
   align-items: center;
   justify-content: center;
   flex: none;
-  width: 26px;
-  height: 26px;
+  width: 1.75rem;
+  height: 1.75rem;
   background: transparent;
   color: var(--oc-colors-text-muted, var(--oc-text));
-  border: 1px solid var(--oc-border-border0);
+  border: 0.0625rem solid var(--oc-border-border0);
   border-radius: var(--oc-radius);
   cursor: pointer;
   transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease;
 
   svg {
-    width: 14px;
-    height: 14px;
+    width: 0.875rem;
+    height: 0.875rem;
   }
 
   &:hover {
