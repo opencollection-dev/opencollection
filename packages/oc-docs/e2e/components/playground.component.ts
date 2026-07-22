@@ -15,6 +15,8 @@ export class PlaygroundComponent extends BaseComponent {
   readonly runner = this.page.getByTestId('playground-runner');
   readonly loadError = this.page.getByTestId('playground-load-error');
   readonly sidebarPanel = this.page.getByTestId('playground-sidebar-panel');
+  readonly sidebarResizer = this.page.getByTestId('playground-sidebar-resizer');
+  private dragY = 0;
   readonly sidebarBackdrop = this.page.getByTestId('playground-sidebar-backdrop');
   readonly collectionNode = this.page.getByTestId('sidebar-collection-root');
   readonly collectionCollapseToggle = this.collectionNode.getByRole('button', {
@@ -120,5 +122,27 @@ export class PlaygroundComponent extends BaseComponent {
 
   async toggleCollapse(): Promise<void> {
     await this.collapseButton.click();
+  }
+
+  async sidebarWidth(): Promise<number> {
+    const box = await this.sidebarPanel.boundingBox();
+    return box?.width ?? 0;
+  }
+
+  /** Press the pointer on the resize handle; the drag y is kept for later moves. */
+  async grabSidebarResizer(): Promise<void> {
+    const box = await this.sidebarResizer.boundingBox();
+    this.dragY = (box?.y ?? 0) + (box?.height ?? 0) / 2;
+    await this.sidebarResizer.hover();
+    await this.page.mouse.down();
+  }
+
+  /** Move the held pointer to an absolute x (keeps the grabbed y). */
+  async movePointerToX(x: number): Promise<void> {
+    await this.page.mouse.move(x, this.dragY, { steps: 10 });
+  }
+
+  async releasePointer(): Promise<void> {
+    await this.page.mouse.up();
   }
 }

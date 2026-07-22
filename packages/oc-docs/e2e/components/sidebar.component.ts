@@ -8,6 +8,8 @@ export class SidebarComponent extends BaseComponent {
   readonly environments = this.page.getByTestId('sidebar-environments');
   readonly collapseButton = this.page.getByTestId('sidebar-collapse');
   readonly expandButton = this.page.getByTestId('sidebar-expand');
+  readonly resizer = this.page.getByTestId('sidebar-resizer');
+  private dragY = 0;
   readonly drawer = this.page.getByTestId('sidebar-drawer');
   readonly backdrop = this.page.getByTestId('sidebar-backdrop');
   readonly hamburger = this.page.getByTestId('topbar-menu');
@@ -40,6 +42,28 @@ export class SidebarComponent extends BaseComponent {
     for (const name of paths) {
       await this.item(name).first().click();
     }
+  }
+
+  async width(): Promise<number> {
+    const box = await this.inline.boundingBox();
+    return box?.width ?? 0;
+  }
+
+  /** Press the pointer on the resize handle; the drag y is kept for later moves. */
+  async grabResizer(): Promise<void> {
+    const box = await this.resizer.boundingBox();
+    this.dragY = (box?.y ?? 0) + (box?.height ?? 0) / 2;
+    await this.resizer.hover();
+    await this.page.mouse.down();
+  }
+
+  /** Move the held pointer to an absolute x (keeps the grabbed y). */
+  async movePointerToX(x: number): Promise<void> {
+    await this.page.mouse.move(x, this.dragY, { steps: 10 });
+  }
+
+  async releasePointer(): Promise<void> {
+    await this.page.mouse.up();
   }
 
   async collapse(): Promise<void> {
