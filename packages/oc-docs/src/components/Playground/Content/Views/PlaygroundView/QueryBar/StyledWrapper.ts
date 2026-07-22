@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 export const StyledWrapper = styled.div`
-  gap: 0.5rem;
+  gap: 0.25rem;
   padding: 0.25rem 0.375rem;
   border: 1px solid var(--border-color);
   border-radius: var(--oc-radius);
@@ -42,7 +42,7 @@ export const StyledWrapper = styled.div`
     position: relative;
     display: flex;
     align-items: center;
-    padding-left: 0.375rem;
+    padding-left: 0.125rem;
   }
 
   .method-select {

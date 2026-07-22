@@ -4,7 +4,7 @@ import { StyledWrapper } from './StyledWrapper';
 import MenuDropdown from '../../../../../../ui/MenuDropdown';
 import { getHttpMethod, getRequestUrl, getHttpParams } from '../../../../../../utils/schemaHelpers';
 import { syncPathParams, syncQueryParams } from '../../../../../../utils/pathParams';
-import { availableMethods, getMethodColorVar } from '../../../../../../theme/methodColors';
+import { availableMethods } from '../../../../../../theme/methodColors';
 import { MethodBadge } from '../../../../../MethodBadge/MethodBadge';
 import { CopyButton } from '../../../../../../ui/CopyButton/CopyButton';
 
@@ -59,17 +59,19 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
         <MenuDropdown
           selectedItemId={method}
           placement="bottom-start"
+          offset={[-9, 13]}
           testId="method-select"
           role="listbox"
+          className="method-menu-dropdown"
           items={availableMethods.map((m) => ({
             id: m,
-            label: <span style={{ color: getMethodColorVar(m) }}>{m}</span>,
+            label: <MethodBadge method={m} />,
             ariaLabel: m,
             onClick: () => handleMethodChange(m)
           }))}
         >
           <button type="button" className="method-select" aria-label="HTTP method">
-            <MethodBadge method={method} />
+            <MethodBadge method={method} short />
           </button>
         </MenuDropdown>
       </div>
@@ -79,7 +81,7 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
         value={url}
         onChange={(e) => handleUrlChange(e.target.value)}
         placeholder="Enter request URL"
-        className="flex-1 px-3 text-xs font-normal"
+        className="flex-1 pr-3 text-xs font-normal"
         style={{
           fontFamily: 'var(--font-mono)',
           fontSize: '12px',
