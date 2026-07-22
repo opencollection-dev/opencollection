@@ -44,6 +44,18 @@ export const StyledWrapper = styled.div`
     background-color: var(--oc-background-base);
   }
 
+  .appshell-sidebar-resizer {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--sidebar-width);
+    width: 9px;
+    transform: translateX(-4px);
+    z-index: calc(var(--z-sidebar, 5) + 1);
+    cursor: col-resize;
+    touch-action: none;
+  }
+
   .appshell-content {
     flex: 1;
     min-width: 0;

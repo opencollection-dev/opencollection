@@ -11,7 +11,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from '../../assets/icons';
 import PageRouter from '../PageRouter/PageRouter';
 import Playground from '../Playground/Playground';
 import SearchBar from '../Search/SearchBar/SearchBar';
-import { useSearchHotkey, usePlaygroundUrlState, useElementWidth } from '../../hooks';
+import { useSearchHotkey, usePlaygroundUrlState, useElementWidth, useResizableSidebar } from '../../hooks';
 import { useAppSelector } from '../../store/hooks';
 import { selectDocsCollection } from '../../store/slices/docs';
 import { selectGitCollectionUrl } from '../../store/slices/app';
@@ -56,6 +56,11 @@ const AppShell: React.FC<AppShellProps> = ({ logo, testId = 'app-shell' }) => {
   const isDesktop = mode === 'desktop';
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+  const { width: sidebarWidth, startDrag: startSidebarResize } = useResizableSidebar(
+    'oc-docs:docsSidebarWidth',
+    () => setSidebarCollapsed(true),
+    () => setSidebarCollapsed(false)
+  );
   const { pathname } = useLocation();
 
   const { open: playgroundOpen, dock: playgroundDock, openPlayground, setRequestExample } = usePlaygroundUrlState();
@@ -104,7 +109,11 @@ const AppShell: React.FC<AppShellProps> = ({ logo, testId = 'app-shell' }) => {
       data-testid={testId}
       data-dock={playgroundOpen ? playgroundDock : 'none'}
     >
-      <div className="appshell-body" ref={bodyRef}>
+      <div
+        className="appshell-body"
+        ref={bodyRef}
+        style={{ '--sidebar-width': `${sidebarWidth}px` } as React.CSSProperties}
+      >
         <Topbar
           layoutMode={mode}
           collectionName={collection?.info?.name || 'API Collection'}
@@ -138,6 +147,14 @@ const AppShell: React.FC<AppShellProps> = ({ logo, testId = 'app-shell' }) => {
                 <aside className="appshell-sidebar" data-testid="app-sidebar">
                   <Sidebar />
                 </aside>
+                <div
+                  className="appshell-sidebar-resizer"
+                  data-testid="sidebar-resizer"
+                  role="separator"
+                  aria-orientation="vertical"
+                  aria-label="Resize sidebar"
+                  onPointerDown={startSidebarResize}
+                />
                 <IconButton
                   className="appshell-collapse"
                   label="Collapse sidebar"

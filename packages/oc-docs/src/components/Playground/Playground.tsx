@@ -81,6 +81,7 @@ const Playground: React.FC<PlaygroundProps> = ({ openNonce }) => {
           sidebarOpen={sidebarOpen}
           dock={effectiveDock}
           onCloseSidebar={() => setSidebarOpen(false)}
+          onOpenSidebar={() => setSidebarOpen(true)}
           appliedSlugRef={appliedSlugRef}
         />
       </Suspense>

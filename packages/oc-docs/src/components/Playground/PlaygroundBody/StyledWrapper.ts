@@ -4,6 +4,7 @@ export const StyledWrapper = styled.div`
   display: flex;
   height: 100%;
   min-height: 0;
+  position: relative;
 
   .sidebar {
     width: var(--sidebar-width);
@@ -12,6 +13,18 @@ export const StyledWrapper = styled.div`
     min-height: 0;
     border-right: 1px solid var(--oc-border-border0);
     overflow: hidden;
+  }
+
+  .sidebar-resizer {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--sidebar-width);
+    width: 9px;
+    transform: translateX(-4px);
+    z-index: 6;
+    cursor: col-resize;
+    touch-action: none;
   }
 
   .view {

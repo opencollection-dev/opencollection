@@ -16,7 +16,7 @@ import {
 import { selectActiveEnvName } from '../../../store/slices/env';
 import type { ExampleHighlight } from '../../Docs/Sidebar/SidebarTree/SidebarTree';
 import { useNavModel } from '../../../routing/hooks';
-import { usePlaygroundUrlState, useElementWidth } from '../../../hooks';
+import { usePlaygroundUrlState, useElementWidth, useResizableSidebar } from '../../../hooks';
 import { getItemUuid, findItemByUuid } from '../../../utils/itemUtils';
 import { isFolder } from '../../../utils/schemaHelpers';
 import { exampleIndexForSlug, exampleSlugForIndex } from '../../../routing/slug';
@@ -48,6 +48,7 @@ interface PlaygroundBodyProps {
   sidebarOpen: boolean;
   dock: DockMode;
   onCloseSidebar: () => void;
+  onOpenSidebar: () => void;
   // Tracks the applied request (+example) key across dock-switch remounts; owned
   // by Playground so it survives a dock switch but resets on close (see there).
   appliedSlugRef: React.MutableRefObject<string | null>;
@@ -59,6 +60,7 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
   sidebarOpen,
   dock,
   onCloseSidebar,
+  onOpenSidebar,
   appliedSlugRef,
 }) => {
   const dispatch = useAppDispatch();
@@ -99,6 +101,8 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
 
   const viewRef = useRef<HTMLDivElement>(null);
   const viewWidth = useElementWidth(viewRef);
+  const { width: sidebarWidth, startDrag: startSidebarResize } =
+    useResizableSidebar('oc-docs:playgroundSidebarWidth', onCloseSidebar, onOpenSidebar);
   const orientation = viewWidth > 0 && viewWidth < ORIENTATION_BREAKPOINT ? 'vertical' : 'horizontal';
 
   // Reopen whatever the URL says was last open. `pgReq` holds a request, a
@@ -224,24 +228,38 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
   })();
 
   return (
-    <StyledWrapper data-testid="playground-runner" data-overlay-sidebar={dock === 'inline' ? 'true' : undefined}>
+    <StyledWrapper
+      data-testid="playground-runner"
+      data-overlay-sidebar={dock === 'inline' ? 'true' : undefined}
+      style={{ '--sidebar-width': `${sidebarWidth}px` } as React.CSSProperties}
+    >
       {sidebarOpen && (
-        <aside className="sidebar" data-testid="playground-sidebar-panel">
-          <PlaygroundSidebar
-            collection={collection}
-            activeSlug={activeSlug}
-            uuidToSlug={uuidToSlug}
-            onNavigate={handleNavigate}
-            onToggleFolder={handleToggleFolder}
-            onExpandFolder={handleExpandFolder}
-            onOpenEnvironments={openEnvironments}
-            environmentsActive={viewMode === 'environments'}
-            onOpenCollection={openCollection}
-            collectionActive={viewMode === 'collection-settings'}
-            activeExample={activeExample}
-            onExampleClick={handleExampleClick}
+        <>
+          <aside className="sidebar" data-testid="playground-sidebar-panel">
+            <PlaygroundSidebar
+              collection={collection}
+              activeSlug={activeSlug}
+              uuidToSlug={uuidToSlug}
+              onNavigate={handleNavigate}
+              onToggleFolder={handleToggleFolder}
+              onExpandFolder={handleExpandFolder}
+              onOpenEnvironments={openEnvironments}
+              environmentsActive={viewMode === 'environments'}
+              onOpenCollection={openCollection}
+              collectionActive={viewMode === 'collection-settings'}
+              activeExample={activeExample}
+              onExampleClick={handleExampleClick}
+            />
+          </aside>
+          <div
+            className="sidebar-resizer"
+            data-testid="playground-sidebar-resizer"
+            role="separator"
+            aria-orientation="vertical"
+            aria-label="Resize sidebar"
+            onPointerDown={startSidebarResize}
           />
-        </aside>
+        </>
       )}
       <div className="view" data-testid="playground-view" ref={viewRef}>
         {view}
