@@ -5,7 +5,7 @@ import Tabs from '../../../../../../ui/Tabs/Tabs';
 import { KeyValueRow } from '../../../../../../components/KeyValueTable/KeyValueTable';
 import { rowToVariable } from '../../../../../../utils/variableDataType';
 import HeadersTab from '../../Common/HeadersTab/HeadersTab';
-import ParamsTab from '../../Common/ParamsTab';
+import ParamsTab from '../../Common/ParamsTab/ParamsTab';
 import BodyTab from '../../Common/BodyTab';
 import BodyModeSelector from '../../Common/BodyModeSelector/BodyModeSelector';
 import AuthTab from '../../Common/AuthTab/AuthTab';

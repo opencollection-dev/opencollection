@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
-import KeyValueTable, { type KeyValueRow } from '../../../../../components/KeyValueTable/KeyValueTable';
+import KeyValueTable, { type KeyValueRow } from '../../../../../KeyValueTable/KeyValueTable';
+import { StyledWrapper } from './StyledWrapper';
 
 interface ParamsTabProps {
   params: Array<{ name?: string; value?: string; disabled?: boolean; type?: string }>;
@@ -38,11 +39,11 @@ const ParamsSection: React.FC<ParamsSectionProps> = React.memo(({
 }) => (
   <div className="space-y-3">
     <div className="flex items-center justify-between mb-2">
-      <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+      <span className="params-section-title">
         {title}
       </span>
       {description && (
-        <span className="text-xs leading-tight" style={{ color: 'var(--text-secondary)' }}>
+        <span className="text-xs leading-tight description">
           {description}
         </span>
       )}
@@ -108,7 +109,7 @@ export const ParamsTab: React.FC<ParamsTabProps> = ({
   const hasPath = pathData.length > 0;
 
   return (
-    <div className="space-y-4">
+    <StyledWrapper className="space-y-4">
       {/* Query table: always shown so query params can be viewed/added
           regardless of whether the request currently has any. */}
       <ParamsSection
@@ -131,7 +132,7 @@ export const ParamsTab: React.FC<ParamsTabProps> = ({
           readOnlyKey={true}
         />
       )}
-    </div>
+    </StyledWrapper>
   );
 };
 
