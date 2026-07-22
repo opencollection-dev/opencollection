@@ -24,20 +24,6 @@ export const StyledWrapper = styled.div`
   max-width: unset !important;
   padding: 0.25rem;
 
-  &.method-menu-dropdown {
-    min-width: 6.875rem;
-    max-width: 9.375rem !important;
-    padding: 0.125rem;
-    background-color: var(--oc-background-base);
-    border-color: var(--border-color);
-
-    .dropdown-item {
-      padding: 0.25rem 0.6rem 0.25rem 0.25rem;
-      margin: 1px 0;
-      line-height: 1;
-    }
-  }
-
   .menu-dropdown-list {
     outline: none;
     &:focus {

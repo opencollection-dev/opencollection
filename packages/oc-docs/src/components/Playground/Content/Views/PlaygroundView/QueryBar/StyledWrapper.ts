@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { css } from '@emotion/react';
 
 export const StyledWrapper = styled.div`
   gap: 0.25rem;
@@ -86,5 +87,21 @@ export const StyledWrapper = styled.div`
       opacity: 0.5;
       cursor: not-allowed;
     }
+  }
+`;
+
+export const methodDropdownStyles = css`
+  .dropdown.method-menu-dropdown {
+    min-width: 6.875rem;
+    max-width: 9.375rem !important;
+    padding: 0.125rem;
+    background-color: var(--oc-background-base);
+    border-color: var(--border-color);
+  }
+
+  .method-menu-dropdown .dropdown-item {
+    padding: 0.25rem 0.6rem 0.25rem 0.25rem;
+    margin: 1px 0;
+    line-height: 1;
   }
 `;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Global } from '@emotion/react';
 import type { HttpRequest } from '@opencollection/types/requests/http';
-import { StyledWrapper } from './StyledWrapper';
+import { StyledWrapper, methodDropdownStyles } from './StyledWrapper';
 import MenuDropdown from '../../../../../../ui/MenuDropdown';
 import { getHttpMethod, getRequestUrl, getHttpParams } from '../../../../../../utils/schemaHelpers';
 import { syncPathParams, syncQueryParams } from '../../../../../../utils/pathParams';
@@ -55,6 +56,7 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
 
   return (
     <StyledWrapper className="flex items-center">
+      <Global styles={methodDropdownStyles} />
       <div className="method-select-wrapper">
         <MenuDropdown
           selectedItemId={method}
