@@ -572,9 +572,13 @@ tr.themed-row:nth-child(even) {
 }
 
 .oc-playground ::-webkit-scrollbar-thumb {
-  background-color: var(--oc-scrollbar-color);
+  background-color: transparent;
   border: none;
   border-radius: 20px;
+}
+
+.oc-playground :hover::-webkit-scrollbar-thumb {
+  background-color: var(--oc-scrollbar-color);
 }
 
 .oc-playground ::-webkit-scrollbar-thumb:hover {

@@ -4,24 +4,15 @@ const clamp = (value: number, min: number, max: number): number => Math.min(max,
 
 export type SplitOrientation = 'horizontal' | 'vertical';
 
-interface Rect {
-  left: number;
-  top: number;
-  width: number;
-  height: number;
-}
-
 export const computeSplitPercent = (
-  rect: Rect,
-  clientX: number,
-  clientY: number,
-  orientation: SplitOrientation
+  axisSize: number,
+  startPos: number,
+  currentPos: number,
+  startPercent: number
 ): number => {
-  const raw =
-    orientation === 'vertical'
-      ? ((clientY - rect.top) / rect.height) * 100
-      : ((clientX - rect.left) / rect.width) * 100;
-  return clamp(raw, 20, 80);
+  if (axisSize <= 0) return startPercent;
+  const delta = ((currentPos - startPos) / axisSize) * 100;
+  return clamp(startPercent + delta, 20, 80);
 };
 
 export const useSplitPane = (orientation: SplitOrientation = 'horizontal', initialSize = 50) => {
@@ -39,15 +30,20 @@ export const useSplitPane = (orientation: SplitOrientation = 'horizontal', initi
   const startResize = useCallback(
     (event: React.PointerEvent) => {
       event.preventDefault();
+      const el = containerRef.current;
+      if (!el) return;
       const handle = event.currentTarget as HTMLElement;
       const pointerId = event.pointerId;
+      const rect = el.getBoundingClientRect();
+      const axisSize = orientation === 'vertical' ? rect.height : rect.width;
+      const startPos = orientation === 'vertical' ? event.clientY : event.clientX;
+      const startPercent = sizesRef.current[orientation];
       handle.setPointerCapture?.(pointerId);
       setIsResizing(true);
 
       const onMove = (moveEvent: PointerEvent) => {
-        const el = containerRef.current;
-        if (!el) return;
-        const percent = computeSplitPercent(el.getBoundingClientRect(), moveEvent.clientX, moveEvent.clientY, orientation);
+        const currentPos = orientation === 'vertical' ? moveEvent.clientY : moveEvent.clientX;
+        const percent = computeSplitPercent(axisSize, startPos, currentPos, startPercent);
         cancelAnimationFrame(rafRef.current);
         rafRef.current = requestAnimationFrame(() => {
           sizesRef.current[orientation] = percent;

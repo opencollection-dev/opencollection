@@ -8,6 +8,8 @@ interface SecretValueProps {
   value?: React.ReactNode;
   align?: 'between' | 'start';
   readOnly?: boolean;
+  editByDefault?: boolean;
+  multiline?: boolean;
   onChange?: (value: string) => void;
   placeholder?: string;
   className?: string;
@@ -18,6 +20,8 @@ export const SecretValue: React.FC<SecretValueProps> = ({
   value = '',
   align = 'between',
   readOnly = false,
+  editByDefault = false,
+  multiline = false,
   onChange,
   placeholder,
   className,
@@ -36,19 +40,35 @@ export const SecretValue: React.FC<SecretValueProps> = ({
       data-testid={testId}
     >
       {editable ? (
-        <input
-          className="secret-value-input"
-          type={isRevealed ? 'text' : 'password'}
-          value={typeof value === 'string' ? value : ''}
-          placeholder={placeholder}
-          readOnly={!isRevealed}
-          onChange={(e) => onChange?.(e.target.value)}
-          data-testid={testId && `${testId}-input`}
-          autoComplete="off"
-          autoCorrect="off"
-          autoCapitalize="off"
-          spellCheck={false}
-        />
+        multiline ? (
+          <textarea
+            className={cx('secret-value-input', { 'secret-value-input--masked': !isRevealed })}
+            value={typeof value === 'string' ? value : ''}
+            placeholder={placeholder}
+            readOnly={!editByDefault && !isRevealed}
+            onChange={(e) => onChange?.(e.target.value)}
+            data-testid={testId && `${testId}-input`}
+            rows={1}
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck={false}
+          />
+        ) : (
+          <input
+            className="secret-value-input"
+            type={isRevealed ? 'text' : 'password'}
+            value={typeof value === 'string' ? value : ''}
+            placeholder={placeholder}
+            readOnly={!editByDefault && !isRevealed}
+            onChange={(e) => onChange?.(e.target.value)}
+            data-testid={testId && `${testId}-input`}
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck={false}
+          />
+        )
       ) : (
         <span className="secret-value-text" aria-hidden={!isValueVisible} data-testid={testId && `${testId}-text`}>
           {isValueVisible ? value : SECRET_MASK}

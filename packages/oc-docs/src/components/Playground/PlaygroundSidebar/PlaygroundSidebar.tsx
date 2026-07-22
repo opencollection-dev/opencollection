@@ -7,6 +7,7 @@ import { SettingsIcon } from '../../../assets/icons';
 import { useAutoHideScrollbar, useIsMobileDevice } from '../../../hooks';
 import type { ExampleHighlight } from '../../Docs/Sidebar/SidebarTree/SidebarTree';
 import { StyledWrapper } from './StyledWrapper';
+import Tooltip from '../../../ui/Tooltip/Tooltip';
 
 interface PlaygroundSidebarProps {
   collection: OpenCollectionCollection | null;
@@ -53,15 +54,19 @@ const PlaygroundSidebar: React.FC<PlaygroundSidebarProps> = ({
     <StyledWrapper className={isMobileDevice ? 'mobile' : undefined} data-testid={testId}>
       <div className="controls">
         <EnvSwitcher testId="playground-env-switcher" />
+        <Tooltip
+          content='Configure Environments'
+        >
         <IconButton
           className={`env-settings${environmentsActive ? ' active' : ''}`}
           label="Environment settings"
-          title="Environments"
+          aria-label='Environment settings'
           data-testid="playground-env-settings"
           onClick={onOpenEnvironments}
         >
           <SettingsIcon />
         </IconButton>
+        </Tooltip>
       </div>
 
       <div className="tree" ref={treeRef}>

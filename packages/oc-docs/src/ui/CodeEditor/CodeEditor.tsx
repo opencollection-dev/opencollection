@@ -100,7 +100,15 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           detectIndentation: false,
           lineNumbers: 'on',
           roundedSelection: false,
-          scrollbar: { vertical: 'auto', horizontal: 'auto', verticalScrollbarSize: 5, horizontalScrollbarSize: 5 },
+          // Don't swallow the wheel when the editor has nothing (more) to scroll — let it bubble to
+          // the surrounding pane so hovering a code editor doesn't trap page/drag-select scrolling.
+          scrollbar: {
+            vertical: 'auto',
+            horizontal: 'auto',
+            verticalScrollbarSize: 5,
+            horizontalScrollbarSize: 5,
+            alwaysConsumeMouseWheel: false
+          },
           wordWrap: 'on',
           folding: true,
           showFoldingControls: 'always',
