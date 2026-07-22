@@ -21,7 +21,7 @@ export const AuthTab: React.FC<AuthTabProps> = ({
   onAuthChange,
   onItemChange,
   item,
-  title = 'Authentication',
+  title,
   description,
   showInherit = false,
   showFullAuth = false
@@ -151,7 +151,7 @@ export const AuthTab: React.FC<AuthTabProps> = ({
     <StyledWrapper className="auth-tab">
       {(Boolean(title) || Boolean(description)) && (
         <div className="auth-header flex items-center justify-between">
-          {Boolean(title) && <span className="title text-sm font-semibold">{title}</span>}
+          {title && <span className="title text-sm font-semibold">{title}</span>}
           {description && <span className="description text-xs leading-tight">{description}</span>}
         </div>
       )}

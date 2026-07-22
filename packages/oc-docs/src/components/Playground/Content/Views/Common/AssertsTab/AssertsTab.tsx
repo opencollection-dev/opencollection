@@ -104,7 +104,7 @@ interface AssertsTabProps {
 export const AssertsTab: React.FC<AssertsTabProps> = ({
   assertions,
   onAssertionsChange,
-  title = 'Assertions',
+  title,
   description
 }) => {
   const assertionsData: KeyValueRow[] = (assertions || []).map((assertion, index) => ({
@@ -141,7 +141,7 @@ export const AssertsTab: React.FC<AssertsTabProps> = ({
   return (
     <StyledWrapper className="space-y-3">
       <div className="flex items-center justify-between mb-2">
-        <span className="asserts-title text-sm font-semibold">{title}</span>
+        {title && <span className="asserts-title text-sm font-semibold">{title}</span>}
         {description && <span className="asserts-description text-xs leading-tight">{description}</span>}
       </div>
       <KeyValueTable

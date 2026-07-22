@@ -93,7 +93,6 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
         <HeadersTab
           headers={headers}
           onHeadersChange={handleHeadersChange}
-          title=""
           description="Add request headers that will be sent with every request in this collection."
         />
       )
@@ -109,7 +108,6 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
           postResponseVars={postResponseVars}
           onPostResponseVarsChange={handlePostResponseVarsChange}
           exprHelp="You can write any valid JS Template Literal here"
-          title=""
         />
       )
     },
@@ -122,7 +120,6 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
           onAuthChange={handleAuthChange}
           onItemChange={handleCollectionChange}
           item={collection}
-          title=""
           description="Configures authentication for the entire collection. This applies to all requests using the Inherit option in the Auth tab."
           showInherit={false}
           showFullAuth={true}
@@ -137,7 +134,6 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
         <ScriptsTab
           scripts={scripts}
           onScriptChange={handleScriptChange}
-          title=""
           description="Write pre and post-request scripts that will run before and after any request in this collection is sent."
           showTests={false}
         />

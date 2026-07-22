@@ -138,7 +138,6 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({ folder, onFolderChange 
     <HeadersTab
       headers={folder.request?.headers || []}
       onHeadersChange={handleHeadersChange}
-      title=""
       description="Request headers that will be sent with every request inside this folder."
     />
   );
@@ -147,7 +146,6 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({ folder, onFolderChange 
     <VariablesTab
       variables={folder.request?.variables || []}
       onVariablesChange={handleVariablesChange}
-      title=""
       description="Variables available to every request inside this folder."
     />
   );
@@ -158,7 +156,6 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({ folder, onFolderChange 
       onAuthChange={handleAuthChange}
       onItemChange={handleFolderAuthChange}
       item={folder}
-      title=""
       description="Configures authentication for this folder. This applies to all requests using the Inherit option in the Auth tab."
       showInherit={true}
       showFullAuth={true}
@@ -171,7 +168,6 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({ folder, onFolderChange 
     <ScriptsTab
       scripts={scripts}
       onScriptChange={handleScriptChange}
-      title=""
       description="Pre and post-request scripts that will run before and after any request inside this folder is sent."
       showTests={false}
     />
@@ -181,7 +177,6 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({ folder, onFolderChange 
     <TestsTab
       scripts={scripts}
       onScriptChange={handleScriptChange}
-      title=""
       description="These tests will run any time a request in this folder is sent."
     />
   );

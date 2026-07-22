@@ -51,7 +51,6 @@ const ParamsSection: React.FC<ParamsSectionProps> = React.memo(({
       data={data}
       onChange={onChange}
       keyPlaceholder={keyLabel}
-      valuePlaceholder="Value"
       showEnabled={showEnabled}
       showActions={showActions}
       disableNewRow={disableNewRow}

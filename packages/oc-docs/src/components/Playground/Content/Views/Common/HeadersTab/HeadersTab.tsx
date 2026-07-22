@@ -72,7 +72,7 @@ export const HeadersTab: React.FC<HeadersTabProps> = ({ headers, onHeadersChange
   return (
     <StyledWrapper className="space-y-3">
       <div className="flex items-center justify-between mb-4">
-        {Boolean(title) && <span className="title text-sm font-semibold">{title}</span>}
+        {title && <span className="title text-sm font-semibold">{title}</span>}
         {description && <span className="description text-xs leading-tight">{description}</span>}
       </div>
       <HeadersDisplay headers={headers} onHeadersChange={onHeadersChange} />
