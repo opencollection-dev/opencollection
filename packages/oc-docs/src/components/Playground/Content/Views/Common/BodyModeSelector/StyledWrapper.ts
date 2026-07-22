@@ -7,12 +7,13 @@ import styled from '@emotion/styled';
 export const TriggerButton = styled.button`
   display: inline-flex;
   align-items: center;
-  padding: 0.25rem 0;
+  padding: 0 0 0.25rem;
   background: transparent;
   border: none;
   font-family: inherit;
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: 0.75rem;
+  line-height: 1.125rem;
+  letter-spacing: 0;
   color: var(--oc-primary-text);
   cursor: pointer;
   user-select: none;
