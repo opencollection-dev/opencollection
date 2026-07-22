@@ -80,6 +80,8 @@ export const useDockResize = ({
   const [dragging, setDragging] = useState<boolean>(false);
   // Teardown for the in-flight drag, so it can be cancelled on unmount.
   const endDragRef = useRef<null | (() => void)>(null);
+  // Pending width frame, so pointermoves coalesce to one setSize per paint.
+  const rafRef = useRef(0);
 
   const startDrag = useCallback(
     (event: React.PointerEvent) => {
@@ -108,13 +110,21 @@ export const useDockResize = ({
       let collapsed = false;
       setDragging(true);
 
+      // Coalesce width writes to one per frame: a pointermove can fire several
+      // times per paint and each setSize re-renders, so schedule at most one.
+      // Collapse/expand stay synchronous below (rare, and their timing matters).
+      const commitSize = (value: number) => {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = requestAnimationFrame(() => setSize(value));
+      };
+
       const onMove = (moveEvent: PointerEvent) => {
         const current = axis === 'x' ? moveEvent.clientX : moveEvent.clientY;
         const intended = startSize + computeResizeDelta(edge, startPos, current);
         const { onCollapse: collapse, onExpand: expand, collapseThreshold: threshold } = collapseRef.current;
         if (collapse != null && threshold != null && !collapsed && intended < min - threshold) {
           collapsed = true;
-          setSize(min);
+          commitSize(min);
           collapse();
           return;
         }
@@ -124,11 +134,11 @@ export const useDockResize = ({
           if (intended >= min) {
             collapsed = false;
             expand?.();
-            setSize(clamp(intended, min, resolveMax()));
+            commitSize(clamp(intended, min, resolveMax()));
           }
           return;
         }
-        setSize(clamp(intended, min, resolveMax()));
+        commitSize(clamp(intended, min, resolveMax()));
       };
       // Listen on `window` (not the handle) so the drag survives the handle
       // unmounting when the panel collapses mid-gesture; move/up keep firing
@@ -163,7 +173,13 @@ export const useDockResize = ({
 
   // Cancel an in-flight drag if the dock unmounts, so listeners never outlive
   // the element and no state update fires after unmount.
-  useEffect(() => () => endDragRef.current?.(), []);
+  useEffect(
+    () => () => {
+      endDragRef.current?.();
+      cancelAnimationFrame(rafRef.current);
+    },
+    []
+  );
 
   return { size, dragging, startDrag, setSize };
 };
