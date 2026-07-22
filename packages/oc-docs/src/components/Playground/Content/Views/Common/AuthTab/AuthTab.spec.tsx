@@ -2,7 +2,7 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { parse } from 'node-html-parser';
 import { describe, it, expect } from 'vitest';
-import { query } from '../../../../../../test-utils/dom';
+import { getByTestId, query } from '../../../../../../test-utils/dom';
 import { AUTH_DEFAULTS, AUTH_MODE_LABELS, PLACEMENT_OPTIONS } from '../../../../../../constants';
 import { AuthTab } from './AuthTab';
 
@@ -48,12 +48,12 @@ describe('AuthTab', () => {
     const { root, byTestId } = renderAuth(undefined);
     expect(root.querySelector('.auth-form')).toBeNull();
     expect(byTestId('auth-username')).toBeNull();
-    expect(query(root, '.auth-empty').text.trim()).toBe('No authentication configured.');
+    expect(getByTestId(root, 'no-content-text').text.trim()).toBe('No authentication configured.');
   });
 
   it('shows an inherit note for inherited auth', () => {
     const { root } = renderAuth('inherit', { showInherit: true });
-    expect(query(root, '.auth-empty').text.trim()).toBe('Inherits auth from parent collection.');
+    expect(getByTestId(root, 'no-content-text').text.trim()).toBe('Inherits auth from parent collection.');
   });
 
   it('renders basic auth with a plain username and a masked, revealable password', () => {

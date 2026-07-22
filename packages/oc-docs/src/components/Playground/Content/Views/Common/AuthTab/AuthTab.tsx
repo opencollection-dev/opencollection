@@ -3,6 +3,7 @@ import { Field, type SelectOption } from '../../../../../../ui/Field';
 import { AUTH_DEFAULTS, AUTH_MODE_LABELS, PLACEMENT_OPTIONS } from '../../../../../../constants';
 import { REQUEST_PROTOCOL_KEYS } from '../../../../../../utils/schemaHelpers';
 import { StyledWrapper } from './StyledWrapper';
+import NoContentText from '../../../../../../ui/NoContentText/NoContentText';
 
 interface AuthTabProps {
   auth: any;
@@ -135,15 +136,15 @@ export const AuthTab: React.FC<AuthTabProps> = ({
 
   const renderBody = () => {
     if (!auth) {
-      return <p className="auth-empty">No authentication configured.</p>;
+      return <NoContentText text='No authentication configured.' />
     }
     if (auth === 'inherit') {
-      return <p className="auth-empty">Inherits auth from parent collection.</p>;
+      return <NoContentText text='Inherits auth from parent collection.' />
     }
     if (showFullAuth) {
       return <div className="auth-form">{renderForm()}</div>;
     }
-    return <p className="auth-empty">{title} auth is configured elsewhere.</p>;
+    return <NoContentText text='{title} auth is configured elsewhere.' />
   };
 
   return (
