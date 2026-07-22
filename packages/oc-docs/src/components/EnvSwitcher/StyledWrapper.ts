@@ -8,14 +8,15 @@ export const StyledWrapper = styled.div`
     display: inline-flex;
     align-items: center;
     gap: 0.4375rem;
-    padding: 0.21875rem 0.5rem;
+    height: 1.75rem;
+    padding: 0 0.5rem;
     box-sizing: border-box;
     background: var(--oc-app-collection-toolbar-environment-selector-bg);
-    border: 1px solid var(--oc-border-border1);
+    border: 0.0625rem solid var(--oc-border-border1);
     border-radius: var(--oc-radius);
     cursor: pointer;
     font-family: var(--font-sans);
-    font-size: 12px;
+    font-size: 0.75rem;
     font-weight: 500;
     color: var(--oc-app-collection-toolbar-environment-selector-text);
     transition: border-color 0.12s ease;
@@ -39,12 +40,12 @@ export const StyledWrapper = styled.div`
   }
 
   .env-switcher-trigger-name {
-    max-width: 160px;
+    max-width: 10rem;
   }
 
   @media (max-width: 640px) {
     .env-switcher-trigger-name {
-      max-width: 72px;
+      max-width: 4.5rem;
     }
   }
 `;

@@ -45,6 +45,7 @@ interface KeyValueTableProps {
   valueHeader?: React.ReactNode;
   inlineActions?: boolean;
   multilineValues?: boolean;
+  secretEditByDefault?: boolean;
   testId?: string;
 }
 
@@ -73,6 +74,7 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
   valueHeader,
   inlineActions = false,
   multilineValues = false,
+  secretEditByDefault = false,
   testId = 'key-value-table'
 }) => {
   const { isFound, names } = useResolvedVariables();
@@ -149,6 +151,8 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                 <SecretValue
                   value={row.value}
                   placeholder={valuePlaceholder}
+                  editByDefault={secretEditByDefault}
+                  multiline={multilineValues}
                   onChange={(v) => updateField(index, 'value', v)}
                 />
               ) : (

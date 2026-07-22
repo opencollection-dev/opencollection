@@ -5,11 +5,12 @@ export const StyledWrapper = styled.div`
   flex: 0 0 auto;
   align-self: stretch;
   touch-action: none;
-  background: var(--border-color);
-  transition: background-color 0.15s;
+  background: transparent;
 
-  &:hover {
-    background: var(--oc-border-border2);
+  &::after {
+    content: '';
+    position: absolute;
+    background-color: var(--oc-border-border0);
   }
 
   &::before {
@@ -18,31 +19,46 @@ export const StyledWrapper = styled.div`
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    border-radius: 0.125rem;
-    background: var(--oc-border-border2);
-    transition: background-color 0.15s;
-  }
-  &:hover::before {
-    background: var(--text-muted);
+    border-radius: 999px;
+    z-index: 1;
   }
 
   &[data-orientation='horizontal'] {
-    width: 0.3125rem;
-    margin: 0 0.625rem;
+    width: 0.75rem;
     cursor: col-resize;
+  }
+  &[data-orientation='horizontal']::after {
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0.0625rem;
   }
   &[data-orientation='horizontal']::before {
     width: 0.25rem;
-    height: 2rem;
+    height: 2.5rem;
+    background-color: var(--oc-border-border1);
   }
 
   &[data-orientation='vertical'] {
-    height: 0.3125rem;
-    margin: 0.625rem 0;
+    height: 0.75rem;
     cursor: row-resize;
   }
+  &[data-orientation='vertical']::after {
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 0.0625rem;
+  }
   &[data-orientation='vertical']::before {
-    width: 2rem;
+    width: 2.5rem;
     height: 0.25rem;
+    background-color: var(--oc-border-border2);
+  }
+
+  &[data-active='true']::after,
+  &[data-active='true']::before {
+    background-color: var(--oc-border-border2);
   }
 `;

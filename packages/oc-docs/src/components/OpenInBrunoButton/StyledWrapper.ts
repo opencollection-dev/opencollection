@@ -4,8 +4,8 @@ export const StyledWrapper = styled.span`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  height: 28px;
+  gap: 0.375rem;
+  height: 1.75rem;
   box-sizing: border-box;
   font-family: var(--font-sans);
   font-size: var(--oc-font-size-sm);
@@ -15,13 +15,13 @@ export const StyledWrapper = styled.span`
   cursor: pointer;
   color: var(--oc-brand);
   background: var(--oc-background-base);
-  border: 1px solid var(--oc-brand);
+  border: 0.0625rem solid var(--oc-brand);
   border-radius: var(--oc-radius);
   transition: background-color 0.12s ease, opacity 0.12s ease;
 
   svg {
-    width: 16px;
-    height: 16px;
+    width: 1rem;
+    height: 1rem;
     flex: none;
   }
 
@@ -30,11 +30,11 @@ export const StyledWrapper = styled.span`
   }
 
   &.is-full {
-    padding: 5px 10px;
+    padding: 0.3125rem 0.625rem;
   }
 
   &.is-icon {
-    width: 28px;
+    width: 1.75rem;
     padding: 0;
   }
 `;
