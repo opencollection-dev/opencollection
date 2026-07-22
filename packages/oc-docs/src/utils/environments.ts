@@ -3,7 +3,7 @@ import type { Variable, VariableValueType } from '@opencollection/types/common/v
 import { MANAGER_LABELS } from '../constants';
 import { getDescription, getVariableTypeLabel } from './request';
 import { isSecretVariable, unwrapVariableValue } from './variableResolution';
-import { rowToVariable } from './variableDataType';
+import { rowToVariable, toDataType } from './variableDataType';
 
 const humanizeManager = (type: string | undefined): string => {
   if (!type) return 'External';
@@ -40,7 +40,10 @@ export const envVariableToRow = (variable: Variable, index: number): EnvVarRow =
 export const envRowToVariable = (row: EnvVarRow): Variable => {
   const source = row.source ?? ({} as Variable);
   if (row.secret) {
-    const secret = { ...source, name: row.name, disabled: !row.enabled, secret: true } as Variable & { value?: string };
+    const secret = { ...source, name: row.name, disabled: !row.enabled, secret: true } as Variable & { value?: string; type?: VariableValueType };
+    const dataType = toDataType(row.dataType);
+    if (dataType !== 'string') secret.type = dataType;
+    else delete secret.type;
     if (row.value) secret.value = row.value;
     else delete secret.value;
     return secret;

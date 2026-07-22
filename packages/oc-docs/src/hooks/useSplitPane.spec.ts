@@ -1,23 +1,25 @@
 import { describe, it, expect } from 'vitest';
 import { computeSplitPercent } from './useSplitPane';
 
-const rect = { left: 100, top: 50, width: 400, height: 200 };
-
+// computeSplitPercent(axisSize, startPos, currentPos, startPercent)
 describe('computeSplitPercent', () => {
-  it('maps X within the container to a percentage in horizontal mode', () => {
-    expect(computeSplitPercent(rect, 300, 0, 'horizontal')).toBe(50);
-    expect(computeSplitPercent(rect, 200, 0, 'horizontal')).toBe(25);
+  it('moves the split by the pointer delta relative to the grab point', () => {
+    // 400px axis, grabbed at 50%, pointer moves +40px → +10% → 60%
+    expect(computeSplitPercent(400, 300, 340, 50)).toBe(60);
+    // pointer moves -40px → -10% → 40%
+    expect(computeSplitPercent(400, 300, 260, 50)).toBe(40);
   });
 
-  it('maps Y within the container to a percentage in vertical mode', () => {
-    expect(computeSplitPercent(rect, 0, 150, 'vertical')).toBe(50);
-    expect(computeSplitPercent(rect, 0, 100, 'vertical')).toBe(25);
+  it('keeps the split unchanged when the pointer has not moved', () => {
+    expect(computeSplitPercent(400, 300, 300, 50)).toBe(50);
   });
 
   it('clamps below 20% and above 80%', () => {
-    expect(computeSplitPercent(rect, 100, 0, 'horizontal')).toBe(20);
-    expect(computeSplitPercent(rect, 500, 0, 'horizontal')).toBe(80);
-    expect(computeSplitPercent(rect, 0, 50, 'vertical')).toBe(20);
-    expect(computeSplitPercent(rect, 0, 250, 'vertical')).toBe(80);
+    expect(computeSplitPercent(400, 300, 0, 50)).toBe(20);
+    expect(computeSplitPercent(400, 300, 800, 50)).toBe(80);
+  });
+
+  it('returns the starting percent when the axis has no size', () => {
+    expect(computeSplitPercent(0, 300, 340, 50)).toBe(50);
   });
 });

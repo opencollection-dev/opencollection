@@ -147,6 +147,7 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection, compact
         makeNewRow={makeNewRow}
         disableNewRow={disableNewRow}
         editableDataType={editableDataType}
+        secretEditByDefault
         addWhenComplete
         testId="env-var-cards"
       />
@@ -163,6 +164,7 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection, compact
         makeNewRow={makeNewRow}
         addWhenComplete
         disableDelete={false}
+        secretEditByDefault
         additionalColumns={editableDataType ? [variableTypeColumn] : []}
       />
     );
@@ -174,7 +176,7 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection, compact
     },
     secrets: {
       contentIndicator: secretRows.length,
-      content: renderVars(secretRows, (rows) => commit(plainRows, rows), { makeNewRow: () => ({ secret: true }) })
+      content: renderVars(secretRows, (rows) => commit(plainRows, rows), { makeNewRow: () => ({ secret: true }), editableDataType: true })
     },
     external: {
       contentIndicator: externalRows.length,

@@ -14,6 +14,7 @@ interface EnvVarCardsProps {
   makeNewRow?: () => Partial<KeyValueRow>;
   disableNewRow?: boolean;
   editableDataType?: boolean;
+  secretEditByDefault?: boolean;
   addWhenComplete?: boolean;
   testId?: string;
 }
@@ -24,6 +25,7 @@ const EnvVarCards: React.FC<EnvVarCardsProps> = ({
   makeNewRow,
   disableNewRow = false,
   editableDataType = false,
+  secretEditByDefault = false,
   addWhenComplete = false,
   testId
 }) => {
@@ -45,26 +47,40 @@ const EnvVarCards: React.FC<EnvVarCardsProps> = ({
               />
             )}
             <div className="body">
-              <input
-                className="name"
-                data-testid={testId ? `${testId}-name-${index}` : undefined}
-                placeholder="Name"
-                value={row.name}
-                onChange={(e) => updateRow(index, { name: e.target.value })}
-              />
+              <div className="name-row">
+                <input
+                  className="name"
+                  data-testid={testId ? `${testId}-name-${index}` : undefined}
+                  placeholder="Name"
+                  value={row.name}
+                  onChange={(e) => updateRow(index, { name: e.target.value })}
+                />
+                {!isBlankRow && (
+                  <button
+                    type="button"
+                    className="delete"
+                    aria-label="Delete variable"
+                    title="Delete"
+                    onClick={() => removeRow(index)}
+                  >
+                    <TrashIcon />
+                  </button>
+                )}
+              </div>
               <div className="value">
                 {row.secret ? (
-                  <SecretValue value={row.value} placeholder="Value" onChange={(v) => updateRow(index, { value: v })} className="value-secret" />
+                  <SecretValue value={row.value} placeholder="Value" editByDefault={secretEditByDefault} multiline={editableDataType} onChange={(v) => updateRow(index, { value: v })} className="value-secret" />
                 ) : (
-                  <input
+                  <textarea
                     className="value-input"
                     data-testid={testId ? `${testId}-value-${index}` : undefined}
                     placeholder="Value"
+                    rows={1}
                     value={row.value}
                     onChange={(e) => updateRow(index, { value: e.target.value })}
                   />
                 )}
-                {editableDataType && !row.secret && !isBlankRow ? (
+                {editableDataType && !isBlankRow ? (
                   <VariableTypeControl
                     dataType={toDataType(row.dataType)}
                     value={row.value}
@@ -74,17 +90,6 @@ const EnvVarCards: React.FC<EnvVarCardsProps> = ({
                 ) : null}
               </div>
             </div>
-            {!isBlankRow && (
-              <button
-                type="button"
-                className="delete"
-                aria-label="Delete variable"
-                title="Delete"
-                onClick={() => removeRow(index)}
-              >
-                <TrashIcon />
-              </button>
-            )}
           </div>
         );
       })}

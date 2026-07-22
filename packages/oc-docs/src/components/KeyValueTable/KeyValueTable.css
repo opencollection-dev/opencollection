@@ -221,16 +221,29 @@
   padding: 0.625rem;
 }
 
+.key-value-table .col-value .secret-value .secret-value-input {
+  font-size: 0.8125rem;
+}
+
 .key-value-table .value-cell-trailing {
   flex: none;
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: 0.5rem;
   padding-left: 0.625rem;
 }
 
 .key-value-table .value-cell-trailing .delete-button {
   margin-right: 1.25rem;
+}
+
+.key-value-table .value-cell:has(.secret-value) .value-cell-trailing {
+  gap: 0.625rem;
+  padding-left: 0;
+}
+
+.key-value-table .value-cell:has(.secret-value) .value-cell-trailing .delete-button {
+  margin-right: 0.625rem;
 }
 
 .key-value-table .delete-button {
