@@ -101,7 +101,7 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
 
   const viewRef = useRef<HTMLDivElement>(null);
   const viewWidth = useElementWidth(viewRef);
-  const { width: sidebarWidth, startDrag: startSidebarResize } =
+  const { width: sidebarWidth, dragging: sidebarDragging, startDrag: startSidebarResize } =
     useResizableSidebar('oc-docs:playgroundSidebarWidth', onCloseSidebar, onOpenSidebar);
   const orientation = viewWidth > 0 && viewWidth < ORIENTATION_BREAKPOINT ? 'vertical' : 'horizontal';
 
@@ -254,6 +254,7 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
           <div
             className="sidebar-resizer"
             data-testid="playground-sidebar-resizer"
+            data-dragging={sidebarDragging ? 'true' : undefined}
             role="separator"
             aria-orientation="vertical"
             aria-label="Resize sidebar"

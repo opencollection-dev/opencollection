@@ -56,7 +56,7 @@ const AppShell: React.FC<AppShellProps> = ({ logo, testId = 'app-shell' }) => {
   const isDesktop = mode === 'desktop';
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
-  const { width: sidebarWidth, startDrag: startSidebarResize } = useResizableSidebar(
+  const { width: sidebarWidth, dragging: sidebarDragging, startDrag: startSidebarResize } = useResizableSidebar(
     'oc-docs:docsSidebarWidth',
     () => setSidebarCollapsed(true),
     () => setSidebarCollapsed(false)
@@ -150,6 +150,7 @@ const AppShell: React.FC<AppShellProps> = ({ logo, testId = 'app-shell' }) => {
                 <div
                   className="appshell-sidebar-resizer"
                   data-testid="sidebar-resizer"
+                  data-dragging={sidebarDragging ? 'true' : undefined}
                   role="separator"
                   aria-orientation="vertical"
                   aria-label="Resize sidebar"
