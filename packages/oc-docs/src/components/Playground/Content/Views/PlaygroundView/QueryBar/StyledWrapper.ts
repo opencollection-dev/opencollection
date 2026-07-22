@@ -104,7 +104,7 @@ export const methodDropdownStyles = css`
     border-color: var(--border-color);
   }
 
-  .method-menu-dropdown .dropdown-item {
+  .dropdown.method-menu-dropdown .dropdown-item {
     padding: 0.25rem 0.6rem 0.25rem 0.25rem;
     margin: 1px 0;
     line-height: 1;
