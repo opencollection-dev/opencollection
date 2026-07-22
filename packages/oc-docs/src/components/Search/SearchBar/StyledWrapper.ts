@@ -16,7 +16,7 @@ export const StyledWrapper = styled.div`
     display: flex;
     flex-direction: column;
     background: var(--oc-background-mantle);
-    border: 1px solid var(--oc-border-border0);
+    border: 0.0625rem solid var(--oc-border-border0);
     border-radius: var(--oc-radius);
     overflow: hidden;
   }
@@ -118,7 +118,7 @@ export const StyledWrapper = styled.div`
     padding: 0 0.75rem;
     box-sizing: border-box;
     flex-shrink: 0;
-    border-bottom: 1px solid var(--oc-border-border0);
+    border-bottom: 0.0625rem solid var(--oc-border-border0);
   }
   [data-testid='search-folder-filter'],
   .search-clear {
