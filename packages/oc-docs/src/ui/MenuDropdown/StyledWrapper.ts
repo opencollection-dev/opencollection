@@ -16,7 +16,10 @@ export const StyledWrapper = styled.div`
   box-shadow: var(--oc-dropdown-shadow);
   border-radius: var(--oc-border-radius-base);
   border: 1px solid var(--oc-dropdown-border);
-  max-height: 90vh;
+  /* Cap the surface height so a long list (e.g. the assertion operators) scrolls
+     instead of spilling past the embedded component; min() keeps it within small
+     viewports too. */
+  max-height: min(20rem, 90vh);
   overflow-y: auto;
   max-width: unset !important;
   padding: 0.25rem;

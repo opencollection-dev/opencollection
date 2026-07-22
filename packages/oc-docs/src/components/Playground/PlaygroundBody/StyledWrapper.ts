@@ -68,14 +68,21 @@ export const StyledWrapper = styled.div`
     position: relative;
   }
 
+  &[data-overlay-sidebar='true'] .sidebar-backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: calc(var(--z-sidebar) - 1);
+  }
+
   &[data-overlay-sidebar='true'] .sidebar {
     position: absolute;
     top: 0;
     left: 0;
     bottom: 0;
-    z-index: 5;
+    z-index: var(--z-sidebar);
     background-color: var(--oc-background-base);
-    box-shadow: 2px 0 8px color-mix(in srgb, var(--oc-text) 12%, transparent);
+    border-right: none;
+    box-shadow: var(--oc-shadow-md);
   }
 
   &[data-overlay-sidebar='true'] .view {

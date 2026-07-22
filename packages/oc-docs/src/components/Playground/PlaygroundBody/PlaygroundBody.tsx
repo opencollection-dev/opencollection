@@ -16,7 +16,7 @@ import {
 import { selectActiveEnvName } from '../../../store/slices/env';
 import type { ExampleHighlight } from '../../Docs/Sidebar/SidebarTree/SidebarTree';
 import { useNavModel } from '../../../routing/hooks';
-import { usePlaygroundUrlState, useElementWidth, useResizableSidebar } from '../../../hooks';
+import { usePlaygroundUrlState, useElementWidth, useResizableSidebar, useClickOutside } from '../../../hooks';
 import { getItemUuid, findItemByUuid } from '../../../utils/itemUtils';
 import { isFolder } from '../../../utils/schemaHelpers';
 import { exampleIndexForSlug, exampleSlugForIndex } from '../../../routing/slug';
@@ -104,6 +104,20 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
   const { width: sidebarWidth, dragging: sidebarDragging, startDrag: startSidebarResize } =
     useResizableSidebar('oc-docs:playgroundSidebarWidth', onCloseSidebar, onOpenSidebar);
   const orientation = viewWidth > 0 && viewWidth < ORIENTATION_BREAKPOINT ? 'vertical' : 'horizontal';
+
+  // Close the inline-dock overlay when the pointer goes down anywhere outside
+  // the sidebar, including outside the playground. The backdrop still handles
+  // clicks over the view (so they don't reach a control underneath); this adds
+  // the rest of the page. The toggle is excluded so closing via it isn't undone
+  // by its own click reopening the sidebar; the resize handle sits just outside
+  // the sidebar too, so grabbing it must not dismiss the overlay mid-drag.
+  const sidebarRef = useRef<HTMLElement>(null);
+  useClickOutside(
+    sidebarRef,
+    onCloseSidebar,
+    sidebarOpen && dock === 'inline',
+    '[data-testid="playground-sidebar-toggle"], [data-testid="playground-sidebar-resizer"]'
+  );
 
   // Reopen whatever the URL says was last open. `pgReq` holds a request, a
   // folder, or the environments / collection-settings view, so a deep link, a
@@ -233,9 +247,19 @@ const PlaygroundBody: React.FC<PlaygroundBodyProps> = ({
       data-overlay-sidebar={dock === 'inline' ? 'true' : undefined}
       style={{ '--sidebar-width': `${sidebarWidth}px` } as React.CSSProperties}
     >
+      {sidebarOpen && dock === 'inline' && (
+        // In the inline dock the sidebar overlays the view, so a click outside it
+        // dismisses it, same as the docs navigation drawer's backdrop.
+        <div
+          className="sidebar-backdrop"
+          data-testid="playground-sidebar-backdrop"
+          aria-hidden="true"
+          onClick={onCloseSidebar}
+        />
+      )}
       {sidebarOpen && (
         <>
-          <aside className="sidebar" data-testid="playground-sidebar-panel">
+          <aside className="sidebar" data-testid="playground-sidebar-panel" ref={sidebarRef}>
             <PlaygroundSidebar
               collection={collection}
               activeSlug={activeSlug}
