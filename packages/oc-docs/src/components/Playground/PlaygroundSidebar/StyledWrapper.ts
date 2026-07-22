@@ -55,7 +55,7 @@ export const StyledWrapper = styled.div`
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    padding: 0.25rem 0.5rem 0.75rem;
+    padding: 0.25rem 0.75rem 0.75rem;
   }
 
   &.mobile .navlink-main {
