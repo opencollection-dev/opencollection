@@ -6,6 +6,7 @@ import { PropertyTable } from '../../../../PropertyTable/PropertyTable';
 import { RequestParams } from '../../../../Request/RequestParams/RequestParams';
 import { RequestBody } from '../../../../Request/RequestBody/RequestBody';
 import { Code } from '../../../../Code/Code';
+import { VariableText } from '../../../../VariableText/VariableText';
 import { SplitDivider } from '../../../../SplitDivider/SplitDivider';
 import { resolvePathAndQueryParams } from '../../../../../utils/pathParams';
 import { getBodyView, getDescription, headerRows } from '../../../../../utils/request';
@@ -74,7 +75,7 @@ export const ExampleView: React.FC<ExampleViewProps> = ({ request, example, orie
 
       <div className="example-view-urlbar">
         <MethodBadge method={method} />
-        <span className="example-view-url">{url}</span>
+        <VariableText className="example-view-url" value={url} />
         <CopyButton text={url} />
         {statusBadge}
       </div>

@@ -7,6 +7,8 @@ import { syncPathParams, syncQueryParams } from '../../../../../../utils/pathPar
 import { availableMethods, getMethodColorVar } from '../../../../../../theme/methodColors';
 import { MethodBadge } from '../../../../../MethodBadge/MethodBadge';
 import { CopyButton } from '../../../../../../ui/CopyButton/CopyButton';
+import { HighlightedInput } from '../../../../../HighlightedInput/HighlightedInput';
+import { useResolvedVariables } from '../../../../../../hooks';
 import { SendIcon } from '../../../../../../assets/icons';
 
 interface QueryBarProps {
@@ -17,6 +19,7 @@ interface QueryBarProps {
 }
 
 const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onItemChange }) => {
+  const { isFound, names } = useResolvedVariables();
   const [url, setUrl] = useState(getRequestUrl(item));
   const [method, setMethod] = useState(getHttpMethod(item));
 
@@ -75,13 +78,15 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
         </MenuDropdown>
       </div>
 
-      <input
-        type="text"
+      <HighlightedInput
         value={url}
-        onChange={(e) => handleUrlChange(e.target.value)}
+        onValueChange={handleUrlChange}
         placeholder="Enter request URL"
-        onKeyPress={(e) => {
-          if (e.key === 'Enter' && url.trim() && !isLoading) {
+        isFound={isFound}
+        names={names}
+        testId="query-bar-url"
+        onEnter={() => {
+          if (url.trim() && !isLoading) {
             onSendRequest();
           }
         }}

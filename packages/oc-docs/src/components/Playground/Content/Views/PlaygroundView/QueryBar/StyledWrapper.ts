@@ -9,23 +9,38 @@ export const StyledWrapper = styled.div`
   border-radius: var(--oc-radius);
   background-color: var(--bg-primary);
 
-  input {
+  && .highlight-input {
     flex: 1;
     min-width: 0;
-    outline: none;
-    border: none;
-    border-radius: 0;
-    background-color: transparent;
+    padding: 0;
     font-family: var(--font-mono);
-    font-weight: 400;
+  }
+
+  && .highlight-input .text-input,
+  && .highlight-input .highlight-input-mirror {
+    padding: 0;
     font-size: 0.75rem;
     line-height: 1.125rem;
-    color: var(--text-primary);
+  }
 
-    &::placeholder {
-      color: var(--text-secondary);
-      opacity: 0.6;
-    }
+  && .highlight-input .highlight-input-mirror {
+    right: 0;
+    left: 0;
+    color: var(--text-primary);
+  }
+
+  && .highlight-input .highlight-input-mirror .variable-valid,
+  && .highlight-input .highlight-input-mirror .variable-invalid {
+    color: var(--primary-text);
+    background-color: var(--brand-soft);
+    border-radius: 0.1875rem;
+    padding: 0 0.1875rem;
+    margin: 0 -0.1875rem;
+  }
+
+  && .highlight-input .text-input::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.6;
   }
 
   .method-select-wrapper {
