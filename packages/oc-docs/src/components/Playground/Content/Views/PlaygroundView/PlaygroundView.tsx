@@ -108,7 +108,7 @@ const HttpRequestPlaygroundView: React.FC<PlaygroundViewProps> = ({ item, collec
       
       <div
         ref={containerRef}
-        className={`flex flex-1 overflow-hidden pt-2 ${orientation === 'vertical' ? 'flex-col' : 'flex-row'}`}
+        className={`flex flex-1 overflow-hidden pt-4 ${orientation === 'vertical' ? 'flex-col' : 'flex-row'}`}
         style={{ userSelect: isResizing ? 'none' : undefined }}
       >
         <div
