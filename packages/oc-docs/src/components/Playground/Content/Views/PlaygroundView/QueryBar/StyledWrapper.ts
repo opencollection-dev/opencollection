@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { css } from '@emotion/react';
 
 export const StyledWrapper = styled.div`
   display: flex;
@@ -29,12 +28,6 @@ export const StyledWrapper = styled.div`
     }
   }
 
-  .method-select-wrapper {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-  }
-
   .method-select {
     appearance: none;
     display: inline-flex;
@@ -45,6 +38,8 @@ export const StyledWrapper = styled.div`
     border: none;
     outline: none;
     cursor: pointer;
+    padding-left: 0.5rem;
+    margin-left: -0.5rem;
   }
 
   .method-select .method-badge {
@@ -92,21 +87,5 @@ export const StyledWrapper = styled.div`
       opacity: 0.5;
       cursor: not-allowed;
     }
-  }
-`;
-
-export const methodDropdownStyles = css`
-  .dropdown.method-menu-dropdown {
-    min-width: 6.875rem;
-    max-width: 9.375rem !important;
-    padding: 0.125rem;
-    background-color: var(--oc-background-base);
-    border-color: var(--border-color);
-  }
-
-  .dropdown.method-menu-dropdown .dropdown-item {
-    padding: 0.25rem 0.6rem 0.25rem 0.25rem;
-    margin: 1px 0;
-    line-height: 1;
   }
 `;
