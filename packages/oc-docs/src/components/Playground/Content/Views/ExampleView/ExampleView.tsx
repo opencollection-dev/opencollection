@@ -54,6 +54,8 @@ export const ExampleView: React.FC<ExampleViewProps> = ({ request, example, orie
     resHeaderRows, resBody, hasResBody
   } = model;
 
+  const hasRequestData = hasParams || reqHeaderRows.length > 0 || hasReqBody;
+
   const { size: paneSize, isResizing, containerRef, startResize } = useSplitPane(orientation);
   const paneStyle = orientation === 'vertical' ? { height: `${paneSize}%` } : { width: `${paneSize}%` };
   const statusBadge = status ? (
@@ -68,7 +70,10 @@ export const ExampleView: React.FC<ExampleViewProps> = ({ request, example, orie
   return (
     <StyledWrapper data-testid="example-view">
       <div className="example-view-head">
-        <span className="example-view-name">{example.name || 'Example'}</span>
+        <span className="example-view-name">
+          {example.name || 'Example'}
+          {example.name && <span className="example-view-name-suffix">/ Example</span>}
+        </span>
         {description && <span className="example-view-desc">{description}</span>}
       </div>
 
@@ -102,6 +107,11 @@ export const ExampleView: React.FC<ExampleViewProps> = ({ request, example, orie
             <div className="example-view-section">
               <div className="example-view-section-label">BODY</div>
               <RequestBody body={reqBody} showContentType={false} />
+            </div>
+          )}
+          {!hasRequestData && (
+            <div className="example-view-empty" data-testid="example-view-request-empty">
+              No header, body, params, or auth configured for the request.
             </div>
           )}
         </div>
