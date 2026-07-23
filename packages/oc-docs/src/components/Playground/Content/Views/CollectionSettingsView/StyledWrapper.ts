@@ -4,20 +4,12 @@ export const StyledWrapper = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 0.75rem 1rem;
+  padding: 1.25rem 1.25rem 0;
 
   .collection-settings-header {
     display: flex;
     align-items: baseline;
     gap: 0.5rem;
-  }
-
-  .collection-settings-title {
-    color: var(--text-primary);
-    font-size: 0.875rem;
-    font-weight: 500;
-    line-height: 1;
-    letter-spacing: 0;
   }
 
   .collection-settings-version {
@@ -32,7 +24,6 @@ export const StyledWrapper = styled.div`
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    margin-top: 1.25rem;
 
     .tabs {
       gap: 1rem;

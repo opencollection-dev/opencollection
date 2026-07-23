@@ -70,10 +70,7 @@ export const ExampleView: React.FC<ExampleViewProps> = ({ request, example, orie
   return (
     <StyledWrapper data-testid="example-view">
       <div className="example-view-head">
-        <span className="example-view-name">
-          {example.name || 'Example'}
-          {example.name && <span className="example-view-name-suffix">/ Example</span>}
-        </span>
+        <span className="example-view-name">{example.name || 'Example'}</span>
         {description && <span className="example-view-desc">{description}</span>}
       </div>
 

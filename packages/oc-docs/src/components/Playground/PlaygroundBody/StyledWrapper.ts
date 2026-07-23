@@ -55,6 +55,14 @@ export const StyledWrapper = styled.div`
     background-color: var(--oc-background-base);
   }
 
+  .view .oc-tabs .tab-panel {
+    padding-bottom: 1rem;
+  }
+
+  .view .oc-tabs .oc-tabs .tab-panel {
+    padding-bottom: 0;
+  }
+
   .prompt {
     display: flex;
     align-items: center;

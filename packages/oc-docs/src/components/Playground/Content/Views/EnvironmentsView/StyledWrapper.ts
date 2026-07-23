@@ -9,15 +9,8 @@ export const StyledWrapper = styled.div`
   background-color: var(--oc-background-base);
 
   .env-header {
-    padding: 1rem 1.5rem 0;
+    padding: 1.25rem 1.25rem 0;
     flex-shrink: 0;
-  }
-
-  .env-title {
-    font-size: 1.125rem;
-    font-weight: 600;
-    font-size: 0.8125rem;
-    color: var(--oc-text);
   }
 
   .env-message {
@@ -34,7 +27,7 @@ export const StyledWrapper = styled.div`
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
+    padding: 0.5rem 1.25rem 1rem 1.25rem;
   }
 
   .env-pill {
@@ -68,7 +61,7 @@ export const StyledWrapper = styled.div`
     display: flex;
     flex-direction: column;
     min-height: 0;
-    padding: 0 1.5rem 1.5rem;
+    padding: 0 1.25rem 1.25rem;
   }
 
   .env-tabs-area .tab-content {
