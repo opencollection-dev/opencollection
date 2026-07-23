@@ -15,6 +15,7 @@ import type {
   MenuGroupStyle,
   MenuItemExtraProps
 } from './types';
+import cx from '../../utils/cx';
 
 const NAVIGATION_KEYS = ['ArrowDown', 'ArrowUp', 'Home', 'End', 'Escape'];
 const ACTION_KEYS = ['Enter', ' '];
@@ -48,6 +49,8 @@ export interface MenuDropdownProps extends Omit<
   placement?: Placement;
   /** Optional className for the dropdown surface. */
   className?: string;
+  /** Surface size variant: `'lg'` (default) or `'sm'` (compact, e.g. the method picker). */
+  size?: 'sm' | 'lg';
   /** ID of the selected/active item to focus on open and mark active. */
   selectedItemId?: MenuItemId | null;
   /** ARIA role family: 'menu' (default) for action menus; 'listbox' for single-select value pickers. */
@@ -93,6 +96,7 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
       children,
       placement = 'bottom-end',
       className,
+      size = 'lg',
       selectedItemId,
       role = 'menu',
       opened,
@@ -556,7 +560,7 @@ const MenuDropdown = forwardRef<MenuDropdownHandle, MenuDropdownProps>(
         onCreate={onDropdownCreate}
         icon={triggerElement}
         placement={placement}
-        className={className}
+        className={cx(className,  { 'menu-dropdown-sm': size === 'sm' })}
         visible={isOpen}
         onClickOutside={handleClickOutside}
         {...dropdownProps}
