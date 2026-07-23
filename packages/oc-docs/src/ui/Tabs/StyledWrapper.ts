@@ -64,11 +64,15 @@ export const StyledWrapper = styled.div`
     border-radius: 2px;
   }
   .tab-count {
-    margin-left: 0.1875rem;
+    display: inline-flex;
+    align-items: center;
+    vertical-align: baseline;
+    margin-left: 0.125rem;
     font-size: 0.625rem;
+    font-weight: 500;
     line-height: 1;
     letter-spacing: 0;
-    color: var(--text-secondary);
+    color: inherit;
   }
   .tab-status-dot {
     display: inline-flex;
