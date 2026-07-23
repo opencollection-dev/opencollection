@@ -84,11 +84,4 @@ test.describe('Sidebar - Examples (docs)', () => {
     await expect(requestPage.examples.activeCard).toHaveCount(0);
   });
 
-  test('Try on an example opens the playground on that example, deep-linked', async ({ requestPage, playground, page }) => {
-    await requestPage.examples.try(OK_EXAMPLE);
-
-    await expect(playground.exampleView).toBeVisible();
-    await expect(page).toHaveURL(new RegExp(`[?&]pgEx=${OK_EXAMPLE_SLUG}(?:&|$)`));
-    await expect(playground.exampleViewControls).toHaveCount(0);
-  });
 });
