@@ -1,4 +1,5 @@
 import React from 'react';
+import cx from '../../utils/cx';
 import { getMethodColorVar } from '../../theme/methodColors';
 import { getShortMethod } from '../../utils/request';
 import { StyledWrapper } from './StyledWrapper';
@@ -14,7 +15,7 @@ export const MethodBadge: React.FC<MethodBadgeProps> = ({ method, className, sho
   const resolvedMethod = method || 'GET';
   return (
     <StyledWrapper
-      className={['method-badge', className].filter(Boolean).join(' ')}
+      className={cx('method-badge', className)}
       style={{ color: getMethodColorVar(method) }}
     >
       {short ? getShortMethod(resolvedMethod) : resolvedMethod.toUpperCase()}
