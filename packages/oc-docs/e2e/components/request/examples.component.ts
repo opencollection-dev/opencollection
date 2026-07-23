@@ -29,10 +29,6 @@ export class ExamplesComponent extends BaseComponent {
     await this.example(name).getByTestId('example-toggle').click();
   }
 
-  async try(name: string): Promise<void> {
-    await this.example(name).getByTestId('example-try').click();
-  }
-
   async selectRequestTab(name: string, tab: string): Promise<void> {
     await this.example(name).getByTestId(`example-request-pane-tab-${tab}`).click();
   }

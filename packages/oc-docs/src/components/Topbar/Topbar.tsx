@@ -43,12 +43,13 @@ export interface TopbarProps {
  *
  * No routing, data fetching, or store access — everything arrives via props.
  * Composes small reusable subcomponents and exposes slots (search,
- * env-switcher, and a trailing theme-toggle pinned right of the CTA) that
- * render whatever node is passed and degrade gracefully when empty.
+ * env-switcher, and a theme-toggle sitting just left of the trailing
+ * Open-in-Bruno CTA) that render whatever node is passed and degrade gracefully
+ * when empty.
  * Responsive layout:
- * - desktop (>=1024): full bar — brand · centered search · env switcher · Open-in-Bruno.
- * - tablet (768-1023): hamburger · brand · search icon · env switcher inline · Bruno glyph CTA.
- * - mobile (<768): hamburger · brand · search icon · env switcher · Bruno glyph CTA.
+ * - desktop (>=1024): full bar — brand · centered search · env switcher · theme toggle · Open-in-Bruno.
+ * - tablet (768-1023): hamburger · brand · search icon · env switcher inline · theme toggle · Bruno glyph CTA.
+ * - mobile (<768): hamburger · brand · search icon · env switcher · theme toggle · Bruno glyph CTA.
  * Below desktop the search collapses to an icon that expands a full-width row.
  *
  * Open-in-Bruno needs a device that can run the Bruno desktop app (capability
@@ -135,15 +136,15 @@ const Topbar: React.FC<TopbarProps> = ({
             breakpoint; the controls condense their own labels when narrow. */}
         {hasSecondary && <div className="topbar-secondary">{envSwitcherSlot}</div>}
 
-        {/* Open-in-Bruno: shown on any device that can run the Bruno desktop app
-            (capability check, hidden on large touch tablets like iPad Pro). It
-            condenses to the Bruno glyph only on mobile; tablet and up show the
-            full icon + label since there is room for it. */}
+        {themeToggleSlot}
+
+        {/* Open-in-Bruno: pinned to the right edge, after the theme toggle. Shown on any
+            device that can run the Bruno desktop app (capability check, hidden on large
+            touch tablets like iPad Pro). It condenses to the Bruno glyph only on mobile;
+            tablet and up show the full icon + label since there is room for it. */}
         {canRunBrunoApp && hasCta && (
           <OpenInBrunoButton href={openInBrunoHref} onClick={onOpenInBruno} iconOnly={isMobile} />
         )}
-
-        {themeToggleSlot}
       </div>
 
       {hasSearch && !isDesktop && searchOpen && (

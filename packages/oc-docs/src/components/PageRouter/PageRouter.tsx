@@ -24,11 +24,10 @@ import { useDocsNavigate } from '../../hooks';
 
 interface PageRouterProps {
   onOpenPlayground?: () => void;
-  onTryExample?: (index: number) => void;
   testId?: string;
 }
 
-const PageRouter: React.FC<PageRouterProps> = ({ onOpenPlayground, onTryExample, testId = 'page' }) => {
+const PageRouter: React.FC<PageRouterProps> = ({ onOpenPlayground, testId = 'page' }) => {
   const resolution = useActiveResolution();
   const model = useNavModel();
   const collection = useAppSelector(selectDocsCollection);
@@ -93,7 +92,6 @@ const PageRouter: React.FC<PageRouterProps> = ({ onOpenPlayground, onTryExample,
               onTryClick={onOpenPlayground}
               onBreadcrumbClick={goToUuid}
               highlightedExampleIndex={resolution.example?.index}
-              onTryExample={onTryExample}
             />
           </ItemVariableResolverProvider>
         ) : null;

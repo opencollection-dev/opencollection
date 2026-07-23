@@ -1,5 +1,6 @@
 import React from 'react';
 import InitialsAvatar from '../../InitialsAvatar/InitialsAvatar';
+import TruncatedText from '../../TruncatedText/TruncatedText';
 import { StyledWrapper } from './StyledWrapper';
 
 export interface BrandProps {
@@ -49,9 +50,7 @@ const Brand: React.FC<BrandProps> = ({
         <span className="topbar-brand-name" data-testid={`${testId}-name`}>{PRODUCT_LABEL}</span>
       ) : (
         <span className="topbar-brand-text">
-          <span className="topbar-brand-name" data-testid={`${testId}-name`} title={collectionName}>
-            {collectionName}
-          </span>
+          <TruncatedText text={collectionName} className="topbar-brand-name" testId={`${testId}-name`} />
           {version && (
             <span className="topbar-brand-version" data-testid={`${testId}-version`}>
               {`Version : ${version}`}

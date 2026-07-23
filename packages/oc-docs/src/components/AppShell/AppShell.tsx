@@ -16,8 +16,6 @@ import { useAppSelector } from '../../store/hooks';
 import { selectDocsCollection } from '../../store/slices/docs';
 import { selectGitCollectionUrl } from '../../store/slices/app';
 import { useActiveResolution } from '../../routing/hooks';
-import { exampleSlugForIndex } from '../../routing/slug';
-import type { HttpRequest } from '@opencollection/types/requests/http';
 import { layoutModeForWidth } from '../../hooks/useTopbarLayout';
 import { buildFetchInBrunoUrl } from '../../utils/buildFetchInBrunoUrl';
 import { StyledWrapper } from './StyledWrapper';
@@ -63,7 +61,7 @@ const AppShell: React.FC<AppShellProps> = ({ logo, testId = 'app-shell' }) => {
   );
   const { pathname } = useLocation();
 
-  const { open: playgroundOpen, dock: playgroundDock, openPlayground, setRequestExample } = usePlaygroundUrlState();
+  const { open: playgroundOpen, dock: playgroundDock, openPlayground } = usePlaygroundUrlState();
   // Bumped on every Try click so the bottom sheet re-expands from collapsed even
   // when the requested slug is unchanged (a slug change alone wouldn't signal it).
   const [playgroundOpenNonce, setPlaygroundOpenNonce] = useState(0);
@@ -93,15 +91,6 @@ const AppShell: React.FC<AppShellProps> = ({ logo, testId = 'app-shell' }) => {
     openPlayground(resolution?.entry.slug);
     setPlaygroundOpenNonce((nonce) => nonce + 1);
   }, [openPlayground, resolution]);
-
-  // Open the playground on a specific example of the current request (its Try
-  // action): pgReq keeps the request, pgEx the example, so a share/reload lands
-  // on the same read-only example view.
-  const handleTryExample = (index: number) => {
-    const entry = resolution?.entry;
-    if (!entry) return;
-    setRequestExample(entry.slug, exampleSlugForIndex(entry.item as HttpRequest | null, index));
-  };
 
   return (
     <StyledWrapper
@@ -179,7 +168,7 @@ const AppShell: React.FC<AppShellProps> = ({ logo, testId = 'app-shell' }) => {
               </IconButton>
             )}
             <main className="appshell-content" ref={contentRef}>
-              <PageRouter onOpenPlayground={handleOpenPlayground} onTryExample={handleTryExample} />
+              <PageRouter onOpenPlayground={handleOpenPlayground} />
             </main>
           </div>
         </div>

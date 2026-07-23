@@ -7,6 +7,7 @@ import { cx } from '../../../../../../utils/cx';
 import { toDataType } from '../../../../../../utils/variableDataType';
 import { VariableTypeControl } from '../../Common/VariableTypeControl/VariableTypeControl';
 import { StyledWrapper } from './StyledWrapper';
+import Checkbox from '../../../../../../ui/Checkbox/Checkbox';
 
 interface EnvVarCardsProps {
   rows: KeyValueRow[];
@@ -38,11 +39,10 @@ const EnvVarCards: React.FC<EnvVarCardsProps> = ({
         return (
           <div key={row.id} className={cx('env-card', { disabled: !row.enabled })}>
             {!isBlankRow && (
-              <input
-                type="checkbox"
+              <Checkbox
                 className="enabled"
                 checked={row.enabled}
-                aria-label={row.name ? `Enable ${row.name}` : 'Enable variable'}
+                ariaLabel={row.name ? `Enable ${row.name}` : 'Enable variable'}
                 onChange={(e) => updateRow(index, { enabled: e.target.checked })}
               />
             )}
@@ -69,7 +69,14 @@ const EnvVarCards: React.FC<EnvVarCardsProps> = ({
               </div>
               <div className="value">
                 {row.secret ? (
-                  <SecretValue value={row.value} placeholder="Value" editByDefault={secretEditByDefault} multiline={editableDataType} onChange={(v) => updateRow(index, { value: v })} className="value-secret" />
+                  <SecretValue 
+                    value={row.value} 
+                    placeholder="Value" 
+                    editByDefault={secretEditByDefault} 
+                    multiline={editableDataType} 
+                    onChange={(v) => updateRow(index, { value: v })} 
+                    className="value-secret" 
+                  />
                 ) : (
                   <textarea
                     className="value-input"
@@ -80,14 +87,14 @@ const EnvVarCards: React.FC<EnvVarCardsProps> = ({
                     onChange={(e) => updateRow(index, { value: e.target.value })}
                   />
                 )}
-                {editableDataType && !isBlankRow ? (
+                {editableDataType && !isBlankRow && row.value && (
                   <VariableTypeControl
                     dataType={toDataType(row.dataType)}
                     value={row.value}
                     index={index}
                     onChange={(type) => updateRow(index, { dataType: type })}
                   />
-                ) : null}
+                )}
               </div>
             </div>
           </div>

@@ -17,12 +17,23 @@ export const StyledWrapper = styled.div`
     margin-bottom: 0.75rem;
   }
   .example-view-name {
+    font-size: 0.8125rem;
     font-weight: 600;
     color: var(--text-primary);
+  }
+  .example-view-name-suffix {
+    margin-left: 0.375rem;
+    font-weight: 400;
+    color: var(--text-tertiary);
   }
   .example-view-desc {
     color: var(--text-secondary);
     font-size: 0.8125rem;
+  }
+  .example-view-empty {
+    color: var(--text-secondary);
+    font-size: 0.8125rem;
+    line-height: 1.4;
   }
   .example-view-urlbar {
     flex: 0 0 auto;

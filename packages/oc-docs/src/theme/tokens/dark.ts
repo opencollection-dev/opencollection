@@ -227,6 +227,12 @@ export const dark: Theme = {
     }
   },
 
+  checkbox: {
+    border: p.border.BORDER1,
+    checkedBg: p.primary.SOLID,
+    checkColor: p.utility.BLACK
+  },
+
   sidebar: {
     color: p.text.BASE,
     muted: p.text.SUBTEXT1,
