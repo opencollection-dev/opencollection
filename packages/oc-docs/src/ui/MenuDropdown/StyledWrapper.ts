@@ -30,6 +30,7 @@ export const StyledWrapper = styled.div`
     padding: 0.125rem;
     background-color: var(--oc-background-base);
     border-color: var(--border-color);
+    margin-top: 2px;
 
     .dropdown-item {
       padding: 0.25rem 0.6rem 0.25rem 0.25rem;
