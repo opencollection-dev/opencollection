@@ -147,6 +147,7 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
       onVariablesChange={handleRequestVariablesChange}
       postResponseVars={postResponseVars}
       onPostResponseVarsChange={handlePostResponseVarsChange}
+      description="These variables will be available to this request."
     />
   );
 
@@ -154,6 +155,7 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
     <HeadersTab
       headers={headers}
       onHeadersChange={handleHeadersChange}
+      description="Headers sent with this request."
     />
   );
 
@@ -172,6 +174,7 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
       onItemChange={onItemChange}
       item={item}
       showFullAuth={true}
+      description="Configures authentication for this request."
     />
   );
 
@@ -180,6 +183,7 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
       scripts={scriptsObj}
       onScriptChange={handleScriptChange}
       showTests={false}
+      description="Pre and post-request scripts that run before and after this request is sent."
     />
   );
 
