@@ -109,7 +109,6 @@
 .key-value-table .checkbox-slot {
   flex: none;
   display: inline-flex;
-  align-items: center;
   width: 1rem;
   height: 1rem;
 }
@@ -138,26 +137,6 @@
 .key-value-table .col-actions {
   text-align: center;
   vertical-align: middle;
-}
-
-.key-value-table .checkbox-input {
-  appearance: none;
-  -webkit-appearance: none;
-  margin: 0;
-  width: 1rem;
-  height: 1rem;
-  border: 0.0625rem solid var(--oc-table-border);
-  border-radius: 0.1875rem;
-  background-color: transparent;
-  background-repeat: no-repeat;
-  background-position: center;
-  cursor: pointer;
-}
-
-.key-value-table .checkbox-input:checked {
-  background-color: var(--primary-color);
-  border-color: var(--primary-color);
-  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='12'%20height='12'%20viewBox='0%200%2012%2012'%3E%3Cpath%20fill='none'%20stroke='%23fff'%20stroke-width='1.67'%20stroke-linecap='round'%20stroke-linejoin='round'%20d='M3%206.2%205%208.4%209%203.8'/%3E%3C/svg%3E");
 }
 
 .key-value-table .text-input {

@@ -19,4 +19,9 @@ export class KeyValueTableComponent extends BaseComponent {
     this.cellErrors = page.getByTestId(`${testId}-error`);
     this.autocomplete = page.getByTestId('variable-autocomplete');
   }
+
+  /** The per-row enable/disable checkbox, addressed by the row name via its aria-label. */
+  enableToggle(name: string): Locator {
+    return this.table.getByRole('checkbox', { name: `Enable ${name}` });
+  }
 }
