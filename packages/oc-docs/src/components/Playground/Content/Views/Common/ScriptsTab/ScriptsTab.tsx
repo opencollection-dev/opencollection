@@ -20,7 +20,7 @@ interface ScriptsTabProps {
 export const ScriptsTab: React.FC<ScriptsTabProps> = ({
   scripts,
   onScriptChange,
-  title = 'Scripts',
+  title,
   description,
   showTests = true
 }) => {
@@ -65,10 +65,12 @@ export const ScriptsTab: React.FC<ScriptsTabProps> = ({
 
   return (
     <StyledWrapper className="space-y-4">
-      <div className="flex items-center justify-between mb-4">
-        {Boolean(title) && <span className="title text-sm font-semibold">{title}</span>}
-        {description && <span className="description text-xs leading-tight">{description}</span>}
-      </div>
+      {(Boolean(title) || Boolean(description)) && (
+        <div className="flex items-center justify-between mb-4">
+          {title && <span className="title text-sm font-semibold">{title}</span>}
+          {description && <span className="description text-xs leading-tight">{description}</span>}
+        </div>
+      )}
 
       <div className="space-y-4">
         <Tabs

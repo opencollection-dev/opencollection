@@ -104,7 +104,7 @@ interface AssertsTabProps {
 export const AssertsTab: React.FC<AssertsTabProps> = ({
   assertions,
   onAssertionsChange,
-  title = 'Assertions',
+  title,
   description
 }) => {
   const assertionsData: KeyValueRow[] = (assertions || []).map((assertion, index) => ({

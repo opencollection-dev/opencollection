@@ -25,8 +25,8 @@ export const StyledWrapper = styled.div`
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: 2rem;
-    margin-top: 2rem;
-    padding-top: 2rem;
+    margin-top: 1.75rem;
+    padding-top: 1.625rem;
     border-top: 1px solid var(--border-color);
   }
 

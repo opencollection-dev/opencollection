@@ -59,7 +59,7 @@ const SidebarNavLink: React.FC<SidebarNavLinkProps> = ({
       // indent step). Right margin keeps the highlight short of the edge: 8px at root,
       // 4px when nested.
       style={{
-        marginLeft: `${(level * 19 + 4) / 16}rem`,
+        marginLeft: `${(level * 19) / 16}rem`,
         paddingLeft: '0.5rem',
         marginRight: level === 0 ? '0.5rem' : '0.25rem'
       }}

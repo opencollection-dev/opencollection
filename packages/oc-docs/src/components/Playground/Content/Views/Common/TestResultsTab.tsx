@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { TestResultsResponse, AssertionResultsResponse } from '../../../../../runner';
+import NoContentText from '../../../../../ui/NoContentText/NoContentText';
 
 interface TestResultsTabProps {
   testResults?: TestResultsResponse;
@@ -15,16 +16,7 @@ const TestResultsTab: React.FC<TestResultsTabProps> = ({ testResults, assertionR
 
   if (!hasTests && !hasAssertions) {
     return (
-      <div className="h-full flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
-        <div className="text-center py-12">
-          <div className="w-16 h-16 mx-auto mb-4 opacity-50">
-            <svg fill="currentColor" viewBox="0 0 24 24" style={{ color: 'var(--text-secondary)' }}>
-              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-            </svg>
-          </div>
-          <p style={{ color: 'var(--text-secondary)' }}>No tests or assertions were run</p>
-        </div>
-      </div>
+      <NoContentText text='No tests or assertions were run' />
     );
   }
 

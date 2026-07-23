@@ -70,7 +70,6 @@ export const StyledWrapper = styled.div`
   .env-card .value-input {
     flex: 0 1 auto;
     field-sizing: content;
-    min-width: 40px;
     max-width: 100%;
     border: none;
     outline: none;
@@ -94,7 +93,6 @@ export const StyledWrapper = styled.div`
 
   .env-card .value .var-type {
     flex-shrink: 0;
-    margin-left: auto;
   }
 
   .env-card .delete {

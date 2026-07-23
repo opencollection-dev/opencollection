@@ -3,10 +3,18 @@ import { useMemo } from 'react';
 import { StyledWrapper } from './StyledWrapper';
 import { EmptyState } from '../../../../../../ui/EmptyState/EmptyState';
 import { BookIcon } from '../../../../../../assets/icons';
+import NoContentText from '../../../../../../ui/NoContentText/NoContentText';
 
-const OverviewTab: React.FC<{ docs?: string; emptyStateSubheading: string }> = ({
+interface OverviewTabProps {
+  docs?: string;
+  emptyStateSubheading: string;
+  displayEmptyStateBox?: boolean;
+}
+
+const OverviewTab: React.FC<OverviewTabProps> = ({
   docs,
-  emptyStateSubheading
+  emptyStateSubheading,
+  displayEmptyStateBox = true
 }) => {
   const md = useMarkdownRenderer();
   const docsHtml = useMemo(() => {
@@ -14,13 +22,15 @@ const OverviewTab: React.FC<{ docs?: string; emptyStateSubheading: string }> = (
   }, [md, docs]);
 
   if (!docsHtml) {
-    return (
+    return displayEmptyStateBox ? (
       <EmptyState
         testId="overview-empty"
         icon={<BookIcon />}
         heading="No overview content yet"
         subheading={emptyStateSubheading}
       />
+    ) : (
+      <NoContentText text="No overview content yet" />
     );
   }
 

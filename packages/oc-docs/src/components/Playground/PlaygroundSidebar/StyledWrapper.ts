@@ -10,9 +10,9 @@ export const StyledWrapper = styled.div`
   .controls {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.5rem;
     flex-shrink: 0;
-    padding: 12px;
+    padding: 0.75rem;
   }
 
   .controls > :first-child {
@@ -22,9 +22,9 @@ export const StyledWrapper = styled.div`
 
   .controls .env-switcher-trigger {
     width: 100%;
-    height: 28px;
+    height: 1.75rem;
     justify-content: space-between;
-    padding: 5px 8px;
+    padding: 0.3125rem 0.5rem;
     border-radius: var(--oc-radius);
   }
 
@@ -34,8 +34,8 @@ export const StyledWrapper = styled.div`
 
   .env-settings {
     flex: none;
-    width: 28px;
-    height: 28px;
+    width: 1.75rem;
+    height: 1.75rem;
     border: 1px solid var(--oc-border-border2);
     border-radius: var(--oc-radius);
     color: var(--text-secondary);
@@ -55,7 +55,7 @@ export const StyledWrapper = styled.div`
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    padding: 4px 6px 12px;
+    padding: 0.25rem 0.75rem 0.75rem;
   }
 
   &.mobile .navlink-main {
