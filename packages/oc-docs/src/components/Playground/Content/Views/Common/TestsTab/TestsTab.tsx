@@ -28,6 +28,7 @@ export const TestsTab: React.FC<TestsTabProps> = ({ scripts, onScriptChange, tit
           language="javascript"
           height={fillHeight ? '100%' : '400px'}
           hintsFor={['req', 'res', 'bru']}
+          testId="tests-editor"
         />
       </div>
     </StyledWrapper>

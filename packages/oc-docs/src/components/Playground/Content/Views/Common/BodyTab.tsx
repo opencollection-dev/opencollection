@@ -84,6 +84,7 @@ export const BodyTab: React.FC<BodyTabProps> = ({
                     : 'text'
             }
             height={fillHeight ? '100%' : '300px'}
+            testId="body-editor"
           />
         </div>
       ) : Array.isArray(body) || (body?.type === 'form-urlencoded' && Array.isArray(body?.data)) ? (
