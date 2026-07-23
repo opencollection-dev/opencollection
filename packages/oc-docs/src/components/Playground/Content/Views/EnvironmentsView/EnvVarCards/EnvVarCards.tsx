@@ -69,7 +69,14 @@ const EnvVarCards: React.FC<EnvVarCardsProps> = ({
               </div>
               <div className="value">
                 {row.secret ? (
-                  <SecretValue value={row.value} placeholder="Value" editByDefault={secretEditByDefault} multiline={editableDataType} onChange={(v) => updateRow(index, { value: v })} className="value-secret" />
+                  <SecretValue 
+                    value={row.value} 
+                    placeholder="Value" 
+                    editByDefault={secretEditByDefault} 
+                    multiline={editableDataType} 
+                    onChange={(v) => updateRow(index, { value: v })} 
+                    className="value-secret" 
+                  />
                 ) : (
                   <textarea
                     className="value-input"
@@ -80,14 +87,14 @@ const EnvVarCards: React.FC<EnvVarCardsProps> = ({
                     onChange={(e) => updateRow(index, { value: e.target.value })}
                   />
                 )}
-                {editableDataType && !isBlankRow ? (
+                {editableDataType && !isBlankRow && row.value && (
                   <VariableTypeControl
                     dataType={toDataType(row.dataType)}
                     value={row.value}
                     index={index}
                     onChange={(type) => updateRow(index, { dataType: type })}
                   />
-                ) : null}
+                )}
               </div>
             </div>
           </div>

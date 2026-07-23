@@ -93,6 +93,7 @@ export const StyledWrapper = styled.div`
 
   .env-card .value .var-type {
     flex-shrink: 0;
+    margin-left: auto;
   }
 
   .env-card .delete {
