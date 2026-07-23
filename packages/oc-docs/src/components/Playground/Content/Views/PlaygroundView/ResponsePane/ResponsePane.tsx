@@ -4,15 +4,20 @@ import ResponseBodyTab from '../../Common/ResponseBodyTab';
 import ResponseHeadersTab from '../../Common/ResponseHeadersTab';
 import TestResultsTab from '../../Common/TestResultsTab';
 import ErrorBanner from '../../../../../../ui/ErrorBanner/ErrorBanner';
+import ResponseFormatSelector from './ResponseFormatter';
+import { useResponseFormatter } from './ResponseFormatter/useResponseFormatter';
+import { RunRequestResponse } from '../../../../../../runner';
+import type { ResponseBodyFormat } from '../../../../../../utils/response';
 import { StyledWrapper } from './StyledWrapper';
 
 interface ResponsePaneProps {
-  response: any;
+  response: RunRequestResponse;
   isLoading: boolean;
 }
 
 const ResponsePane: React.FC<ResponsePaneProps> = ({ response, isLoading }) => {
   const [activeTab, setActiveTab] = useState('response');
+  const { selectedFormat, showPreview, handleFormatChange, handleViewChange } = useResponseFormatter(response);
 
   const getStatusColor = (status?: number) => {
     if (!status) return 'var(--oc-request-tab-panel-response-status)';
@@ -56,13 +61,15 @@ const ResponsePane: React.FC<ResponsePaneProps> = ({ response, isLoading }) => {
     <div className="p-4">
       <ErrorBanner
         title={response.errorTitle || 'Request Failed'}
-        message={response.error}
+        message={response.error ?? ''}
       />
     </div>
   );
 
   const renderResponseBody = () =>
-    response.error ? renderErrorBanner() : <ResponseBodyTab response={response} />;
+    response.error ? renderErrorBanner() : (
+      <ResponseBodyTab response={response} selectedFormat={selectedFormat} showPreview={showPreview} />
+    );
   const renderHeaders = () => <ResponseHeadersTab headers={response.headers} />;
   const renderTestResults = () => (
     <TestResultsTab 
@@ -99,6 +106,12 @@ const ResponsePane: React.FC<ResponsePaneProps> = ({ response, isLoading }) => {
 
   const statusInfo = (
     <div className="flex items-center gap-3 flex-wrap text-xs">
+      <ResponseFormatSelector
+        selectedFormat={selectedFormat}
+        handleSelection={(value: ResponseBodyFormat) => handleFormatChange(value)}
+        showPreview={showPreview}
+        onPreviewToggle={handleViewChange}
+      />
       <div className="flex items-center gap-2">
         <span style={{ color: 'var(--text-secondary)' }}>Status:</span>
         <span 
