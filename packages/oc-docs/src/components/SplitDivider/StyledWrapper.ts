@@ -6,6 +6,7 @@ export const StyledWrapper = styled.div`
   align-self: stretch;
   touch-action: none;
   background: transparent;
+  padding: 0 1rem;
 
   &::after {
     content: '';
