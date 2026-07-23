@@ -15,6 +15,7 @@ export class PlaygroundComponent extends BaseComponent {
   readonly runner = this.page.getByTestId('playground-runner');
   readonly loadError = this.page.getByTestId('playground-load-error');
   readonly sidebarPanel = this.page.getByTestId('playground-sidebar-panel');
+  readonly sidebarResizer = this.page.getByTestId('playground-sidebar-resizer');
   readonly sidebarBackdrop = this.page.getByTestId('playground-sidebar-backdrop');
   readonly collectionNode = this.page.getByTestId('sidebar-collection-root');
   readonly collectionCollapseToggle = this.collectionNode.getByRole('button', {
@@ -120,5 +121,14 @@ export class PlaygroundComponent extends BaseComponent {
 
   async toggleCollapse(): Promise<void> {
     await this.collapseButton.click();
+  }
+
+  async sidebarWidth(): Promise<number> {
+    const box = await this.sidebarPanel.boundingBox();
+    return box?.width ?? 0;
+  }
+
+  async grabSidebarResizer(): Promise<void> {
+    await this.grabHandle(this.sidebarResizer);
   }
 }

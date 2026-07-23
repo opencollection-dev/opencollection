@@ -44,6 +44,35 @@ export const StyledWrapper = styled.div`
     background-color: var(--oc-background-base);
   }
 
+  .appshell-sidebar-resizer {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--sidebar-width);
+    width: 0.5625rem;
+    transform: translateX(-0.25rem);
+    z-index: calc(var(--z-sidebar, 5) + 1);
+    cursor: col-resize;
+    touch-action: none;
+  }
+
+  .appshell-sidebar-resizer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 0.0625rem;
+    transform: translateX(-50%);
+    background-color: transparent;
+  }
+
+  .appshell-sidebar-resizer:hover::before,
+  .appshell-sidebar-resizer[data-dragging='true']::before {
+    width: 0.125rem;
+    background-color: var(--oc-border-border2);
+  }
+
   .appshell-content {
     flex: 1;
     min-width: 0;

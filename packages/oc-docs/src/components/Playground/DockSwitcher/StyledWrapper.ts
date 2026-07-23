@@ -4,7 +4,7 @@ export const StyledWrapper = styled.div`
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  padding: 3px;
+  padding: 1px;
   border: 1px solid var(--oc-border-border0);
   border-radius: var(--oc-radius);
   background-color: var(--oc-background-surface-bright);
