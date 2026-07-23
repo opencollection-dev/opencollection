@@ -9,7 +9,7 @@ export const StyledWrapper = styled.span`
   flex: none;
   border-radius: var(--oc-radius);
   background: linear-gradient(135deg, #d37f17 0%, #dc9741 100%);
-  color: #fff;
+  color: var(--oc-background-base);
   font-family: var(--font-mono);
   font-size: var(--oc-font-size-xs);
   font-weight: 700;

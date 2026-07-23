@@ -179,13 +179,25 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                       {showEnabled && (
                         <span className="checkbox-slot">
                           {!isLastEmptyRow && (
-                            <input
-                              type="checkbox"
-                              className="checkbox-input"
-                              checked={row.enabled}
-                              aria-label={row.name ? `Enable ${row.name}` : 'Enable row'}
-                              onChange={(e) => updateField(index, 'enabled', e.target.checked)}
-                            />
+                            <>
+                              <input
+                                type="checkbox"
+                                className="checkbox-input"
+                                checked={row.enabled}
+                                aria-label={row.name ? `Enable ${row.name}` : 'Enable row'}
+                                onChange={(e) => updateField(index, 'enabled', e.target.checked)}
+                              />
+                              <svg className="checkbox-check" viewBox="0 0 12 12" aria-hidden="true">
+                                <path
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="1.67"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M3 6.2 5 8.4 9 3.8"
+                                />
+                              </svg>
+                            </>
                           )}
                         </span>
                       )}
