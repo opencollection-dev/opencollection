@@ -30,6 +30,11 @@ export const StyledWrapper = styled.header`
     gap: 0.5rem;
   }
 
+  &[data-mode='desktop'] .topbar-brand,
+  &[data-mode='tablet'] .topbar-brand {
+    max-width: 17.5rem;
+  }
+
   .topbar-menu {
     margin-left: -0.25rem;
   }
