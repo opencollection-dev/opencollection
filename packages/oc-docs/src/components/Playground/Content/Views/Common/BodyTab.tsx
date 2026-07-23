@@ -8,12 +8,14 @@ interface BodyTabProps {
   body: RequestBody;
   onItemChange: (item: HttpRequest) => void;
   item: HttpRequest;
+  fillHeight?: boolean;
 }
 
 export const BodyTab: React.FC<BodyTabProps> = ({
   body,
   onItemChange,
-  item
+  item,
+  fillHeight = false
 }) => {
   const handleFormBodyChange = (formData: KeyValueRow[]) => {
     const updatedBody = {
@@ -52,36 +54,38 @@ export const BodyTab: React.FC<BodyTabProps> = ({
   };
 
   return (
-    <div className="space-y-3">
+    <div className={`space-y-3${fillHeight ? ' h-full flex flex-col' : ''}`}>
       {!body ? (
         <div data-testid="body-empty" className="text-center py-6 border-2 border-dashed rounded" style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}>
           No body content. Select a body type to add content.
         </div>
       ) : 'data' in body && typeof body.data === 'string' ? (
-        <CodeEditor
-          value={body.data}
-          onChange={(value) => {
-            if ('data' in body && typeof body.data === 'string') {
-              onItemChange({
-                ...item,
-                http: {
-                  ...item.http,
-                  body: { ...body, data: value } as typeof body
-                }
-              });
+        <div className={fillHeight ? 'flex-1 min-h-0' : undefined}>
+          <CodeEditor
+            value={body.data}
+            onChange={(value) => {
+              if ('data' in body && typeof body.data === 'string') {
+                onItemChange({
+                  ...item,
+                  http: {
+                    ...item.http,
+                    body: { ...body, data: value } as typeof body
+                  }
+                });
+              }
+            }}
+            language={
+              body.type === 'json'
+                ? 'jsonc'
+                : body.type === 'xml'
+                  ? 'xml'
+                  : body.type === 'sparql'
+                    ? 'sparql'
+                    : 'text'
             }
-          }}
-          language={
-            body.type === 'json'
-              ? 'jsonc'
-              : body.type === 'xml'
-                ? 'xml'
-                : body.type === 'sparql'
-                  ? 'sparql'
-                  : 'text'
-          }
-          height="300px"
-        />
+            height={fillHeight ? '100%' : '300px'}
+          />
+        </div>
       ) : Array.isArray(body) || (body?.type === 'form-urlencoded' && Array.isArray(body?.data)) ? (
         (() => {
           const formDataArray = Array.isArray(body) ? body : (body?.data || []);

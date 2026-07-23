@@ -5,6 +5,15 @@ export const StyledWrapper = styled.div`
   overflow-y: auto;
   background-color: var(--bg-primary);
 
+  .oc-tabs {
+    height: 100%;
+  }
+
+  .oc-tabs .tab-panel {
+    min-height: 0;
+    overflow-y: auto;
+  }
+
   .description,
   .asserts-description {
     font-size: 0.8125rem;
