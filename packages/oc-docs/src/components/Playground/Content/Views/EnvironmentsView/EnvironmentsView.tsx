@@ -217,7 +217,7 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection, compact
 
       <div className="env-tabs-area">
         {selectedEnvironment ? (
-          <Tabs defaultActiveTab="variables" tabs={tabs} />
+          <Tabs variant="responsive" testId="environment-tabs" defaultActiveTab="variables" tabs={tabs} />
         ) : (
           <div className="env-message">
             <p>Select an environment to view its variables</p>

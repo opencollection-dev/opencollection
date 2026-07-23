@@ -279,6 +279,7 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
   return (
     <StyledWrapper>
       <Tabs
+        variant="responsive"
         tabs={tabs}
         activeTab={activeTab}
         onTabChange={setActiveTab}

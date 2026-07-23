@@ -1,4 +1,8 @@
 import React, { useCallback, useRef, useState, type ReactNode } from 'react';
+import MenuDropdown from '../MenuDropdown/MenuDropdown';
+import type { MenuDropdownHandle } from '../MenuDropdown/types';
+import { ChevronsRightIcon, DotIcon } from '../../assets/icons';
+import { useResponsiveTabs } from './useResponsiveTabs';
 import { StyledWrapper } from './StyledWrapper';
 
 export interface Tab {
@@ -17,12 +21,23 @@ interface TabsProps {
   defaultActiveTab?: string;
   onTabChange?: (id: string) => void;
   rightElement?: ReactNode;
-  variant?: 'underline' | 'button';
+  variant?: 'underline' | 'button' | 'responsive';
   className?: string;
   testId?: string;
   ariaLabel?: string;
   keepMounted?: boolean;
 }
+
+const renderIndicator = (tab: Tab): ReactNode => {
+  const indicator = tab.count ?? tab.contentIndicator;
+  if (indicator === undefined) return null;
+  if (typeof indicator === 'number') return <sup className="tab-count">{indicator}</sup>;
+  return (
+    <sup className="tab-status-dot" aria-hidden="true">
+      <DotIcon />
+    </sup>
+  );
+};
 
 export const Tabs: React.FC<TabsProps> = ({
   tabs,
@@ -38,9 +53,21 @@ export const Tabs: React.FC<TabsProps> = ({
 }) => {
   const [internalActive, setInternalActive] = useState(defaultActiveTab ?? tabs[0]?.id ?? '');
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const moreRef = useRef<MenuDropdownHandle>(null);
 
   const requested = activeTab ?? internalActive;
   const current = tabs.some((tab) => tab.id === requested) ? requested : (tabs[0]?.id ?? '');
+
+  const isResponsive = variant === 'responsive';
+  const { containerRef, rightRef, setMeasureRef, visibleIds, overflowIds } = useResponsiveTabs(
+    tabs.map((tab) => tab.id),
+    current,
+    isResponsive
+  );
+
+  const visibleTabs = isResponsive ? tabs.filter((tab) => visibleIds.includes(tab.id)) : tabs;
+  const overflowTabs = isResponsive ? tabs.filter((tab) => overflowIds.includes(tab.id)) : [];
+  const navTabs = visibleTabs;
 
   const activate = useCallback(
     (id: string) => {
@@ -52,17 +79,17 @@ export const Tabs: React.FC<TabsProps> = ({
 
   const focusSibling = useCallback(
     (fromIndex: number, step: number) => {
-      const total = tabs.length;
+      const total = navTabs.length;
       for (let i = 1; i <= total; i += 1) {
-        const tab = tabs[(fromIndex + step * i + total) % total];
-        if (!tab.disabled) {
+        const tab = navTabs[(fromIndex + step * i + total) % total];
+        if (tab && !tab.disabled) {
           activate(tab.id);
           tabRefs.current[tab.id]?.focus();
           return;
         }
       }
     },
-    [tabs, activate]
+    [navTabs, activate]
   );
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
@@ -84,38 +111,89 @@ export const Tabs: React.FC<TabsProps> = ({
   const tabButtonId = (id: string) => `${testId}-tab-${id}`;
   const panelId = (id: string) => `${testId}-panel-${id}`;
 
+  const renderTabButton = (tab: Tab, navIndex: number) => {
+    const isActive = tab.id === current;
+    return (
+      <button
+        key={tab.id}
+        ref={(el) => {
+          tabRefs.current[tab.id] = el;
+        }}
+        id={tabButtonId(tab.id)}
+        type="button"
+        role="tab"
+        aria-selected={isActive}
+        aria-controls={panelId(tab.id)}
+        tabIndex={isActive ? 0 : -1}
+        disabled={tab.disabled}
+        className={['tab', isActive ? 'is-active' : '', tab.disabled ? 'disabled' : ''].filter(Boolean).join(' ')}
+        onClick={() => activate(tab.id)}
+        onKeyDown={(event) => onKeyDown(event, navIndex)}
+        data-testid={tabButtonId(tab.id)}
+      >
+        {tab.label}
+        {renderIndicator(tab)}
+      </button>
+    );
+  };
+
+  const overflowItems = overflowTabs.map((tab) => ({
+    id: tab.id,
+    label: (
+      <span className="tabs-more-item">
+        {tab.label}
+        {renderIndicator(tab)}
+      </span>
+    ),
+    ariaLabel: tab.label,
+    onClick: () => {
+      activate(tab.id);
+      moreRef.current?.hide();
+    }
+  }));
+
   return (
-    <StyledWrapper className={['oc-tabs', className, `tabs-variant-${variant}`].filter(Boolean).join(' ')} data-testid={testId}>
+    <StyledWrapper
+      className={['oc-tabs', className, `tabs-variant-${variant}`].filter(Boolean).join(' ')}
+      data-testid={testId}
+      ref={isResponsive ? containerRef : undefined}
+    >
       <div className="tabs-header">
         <div className="tabs" role="tablist" aria-label={ariaLabel}>
-          {tabs.map((tab, index) => {
-            const isActive = tab.id === current;
-            const indicator = tab.count ?? tab.contentIndicator;
-            return (
-              <button
-                key={tab.id}
-                ref={(el) => {
-                  tabRefs.current[tab.id] = el;
-                }}
-                id={tabButtonId(tab.id)}
-                type="button"
-                role="tab"
-                aria-selected={isActive}
-                aria-controls={panelId(tab.id)}
-                tabIndex={isActive ? 0 : -1}
-                disabled={tab.disabled}
-                className={['tab', isActive ? 'is-active' : '', tab.disabled ? 'disabled' : ''].filter(Boolean).join(' ')}
-                onClick={() => activate(tab.id)}
-                onKeyDown={(event) => onKeyDown(event, index)}
-                data-testid={`${testId}-tab-${tab.id}`}
-              >
-                {tab.label}
-                {indicator !== undefined && <sup className="tab-count">{indicator}</sup>}
+          {isResponsive && (
+            <div className="tabs-measure" aria-hidden="true" data-testid={`${testId}-measure`}>
+              {tabs.map((tab) => (
+                <span
+                  key={tab.id}
+                  ref={setMeasureRef(tab.id)}
+                  className={['tab', tab.id === current ? 'is-active' : ''].filter(Boolean).join(' ')}
+                >
+                  {tab.label}
+                  {renderIndicator(tab)}
+                </span>
+              ))}
+            </div>
+          )}
+          {visibleTabs.map((tab, index) => renderTabButton(tab, index))}
+          {overflowTabs.length > 0 && (
+            <MenuDropdown
+              ref={moreRef}
+              items={overflowItems}
+              placement="bottom-start"
+              selectedItemId={current}
+              testId={`${testId}-more`}
+            >
+              <button type="button" className="tabs-more" aria-label="More tabs">
+                <ChevronsRightIcon />
               </button>
-            );
-          })}
+            </MenuDropdown>
+          )}
         </div>
-        {rightContent !== undefined && <div className="tabs-right">{rightContent}</div>}
+        {rightContent !== undefined && (
+          <div className="tabs-right" ref={isResponsive ? rightRef : undefined}>
+            {rightContent}
+          </div>
+        )}
       </div>
       {keepMounted
         ? tabs.map((tab) => (

@@ -163,6 +163,7 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
 
       <div className="collection-settings-tabs">
         <Tabs
+          variant="responsive"
           tabs={tabs.map((tab) => ({
             ...tab,
             content: <div className="collection-settings-tab-content">{tab.content}</div>

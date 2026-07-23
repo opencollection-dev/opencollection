@@ -70,6 +70,13 @@ export const StyledWrapper = styled.div`
     letter-spacing: 0;
     color: var(--text-secondary);
   }
+  .tab-status-dot {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 0.125rem;
+    line-height: 0;
+    opacity: 0.8;
+  }
 
   &.tabs-variant-button .tabs {
     gap: 0.5rem;
@@ -103,6 +110,76 @@ export const StyledWrapper = styled.div`
 
   &.tabs-variant-button .tab-panel {
     margin-top: 0.75rem;
+  }
+
+  &.tabs-variant-responsive .tabs-header {
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+  &.tabs-variant-responsive .tabs {
+    position: relative;
+    flex: 1 1 auto;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 1.2rem;
+    min-width: 0;
+    overflow: hidden;
+  }
+  &.tabs-variant-responsive .tabs-measure {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    gap: 1.2rem;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  &.tabs-variant-responsive .tab {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    white-space: nowrap;
+    padding: 0.375rem 0;
+    border-bottom: 0.125rem solid transparent;
+    color: var(--oc-colors-text-subtext0);
+    font-size: var(--oc-font-size-sm);
+    font-weight: 400;
+    line-height: 1.125rem;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  &.tabs-variant-responsive .tab::after {
+    display: none;
+  }
+  &.tabs-variant-responsive .tab:hover:not(.is-active):not(:disabled) {
+    color: var(--text-primary);
+  }
+  &.tabs-variant-responsive .tab.is-active {
+    color: var(--text-primary);
+    font-weight: 400;
+    border-bottom-color: var(--primary-color);
+  }
+  &.tabs-variant-responsive .tabs-more {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.125rem;
+    border: none;
+    background: none;
+    color: var(--oc-colors-text-subtext0);
+    cursor: pointer;
+    line-height: 0;
+  }
+  &.tabs-variant-responsive .tabs-more:hover {
+    color: var(--text-primary);
+  }
+  .tabs-more-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
   }
 
   .tabs-right {
