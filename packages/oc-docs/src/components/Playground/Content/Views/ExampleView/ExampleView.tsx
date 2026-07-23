@@ -106,7 +106,7 @@ export const ExampleView: React.FC<ExampleViewProps> = ({ request, example, orie
           )}
         </div>
 
-        <SplitDivider orientation={orientation} onPointerDown={startResize} testId="example-view-divider" />
+        <SplitDivider orientation={orientation} onPointerDown={startResize} active={isResizing} testId="example-view-divider" />
 
         <div className="example-view-pane example-view-pane-response" data-testid="example-view-response">
           <div className="example-view-pane-title">

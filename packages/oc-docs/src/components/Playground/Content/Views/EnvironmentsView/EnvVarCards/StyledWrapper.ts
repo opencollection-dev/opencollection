@@ -33,7 +33,15 @@ export const StyledWrapper = styled.div`
     gap: 4px;
   }
 
+  .env-card .name-row {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+  }
+
   .env-card .name {
+    flex: 1;
+    min-width: 0;
     border: none;
     outline: none;
     background: transparent;
@@ -55,6 +63,10 @@ export const StyledWrapper = styled.div`
     flex: 1;
   }
 
+  .env-card .value .value-secret .secret-value-input {
+    font-size: var(--oc-font-size-sm);
+  }
+
   .env-card .value-input {
     flex: 0 1 auto;
     field-sizing: content;
@@ -66,6 +78,11 @@ export const StyledWrapper = styled.div`
     font-family: var(--font-mono);
     font-size: var(--oc-font-size-sm);
     color: var(--oc-text);
+    resize: none;
+    overflow: hidden;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    line-height: 1.5;
   }
 
   .env-card .name::placeholder,
@@ -79,7 +96,6 @@ export const StyledWrapper = styled.div`
   }
 
   .env-card .delete {
-    margin-top: 2px;
     flex-shrink: 0;
     display: inline-flex;
     align-items: center;

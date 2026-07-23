@@ -7,6 +7,7 @@ import { syncPathParams, syncQueryParams } from '../../../../../../utils/pathPar
 import { availableMethods, getMethodColorVar } from '../../../../../../theme/methodColors';
 import { MethodBadge } from '../../../../../MethodBadge/MethodBadge';
 import { CopyButton } from '../../../../../../ui/CopyButton/CopyButton';
+import { SendIcon } from '../../../../../../assets/icons';
 
 interface QueryBarProps {
   item: HttpRequest;
@@ -54,7 +55,7 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
   };
 
   return (
-    <StyledWrapper className="flex items-center">
+    <StyledWrapper>
       <div className="method-select-wrapper">
         <MenuDropdown
           selectedItemId={method}
@@ -79,12 +80,6 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
         value={url}
         onChange={(e) => handleUrlChange(e.target.value)}
         placeholder="Enter request URL"
-        className="flex-1 px-3 text-xs font-normal"
-        style={{
-          fontFamily: 'var(--font-mono)',
-          fontSize: '12px',
-          fontWeight: 400
-        }}
         onKeyPress={(e) => {
           if (e.key === 'Enter' && url.trim() && !isLoading) {
             onSendRequest();
@@ -98,10 +93,12 @@ const QueryBar: React.FC<QueryBarProps> = ({ item, onSendRequest, isLoading, onI
           type="button"
           onClick={onSendRequest}
           disabled={isLoading || !url.trim()}
-          className="send font-semibold text-white disabled:cursor-not-allowed flex items-center gap-2 transition-all"
+          className="send"
         >
-          {isLoading && (
-            <div className="w-2.5 h-2.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          {isLoading ? (
+            <div className="w-2.5 h-2.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+          ) : (
+            <SendIcon />
           )}
           {isLoading ? 'Sending' : 'Send'}
         </button>

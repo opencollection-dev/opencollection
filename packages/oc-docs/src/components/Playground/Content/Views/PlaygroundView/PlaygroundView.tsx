@@ -1,7 +1,10 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import type { OpenCollection as OpenCollectionCollection } from '@opencollection/types';
+import type { Item } from '@opencollection/types/collection/item';
 import { requestRunner } from '../../../../../runner';
+import { getAncestorsByUuid } from '../../../../../utils/fileUtils';
+import { ItemVariableResolverProvider } from '../../../../../hooks';
 import TitleLabel from '../../../../TitleLabel/TitleLabel';
 import QueryBar from './QueryBar/QueryBar';
 import RequestPane from './RequestPane/RequestPane';
@@ -32,6 +35,10 @@ const HttpRequestPlaygroundView: React.FC<PlaygroundViewProps> = ({ item, collec
   // orientation: horizontal layout resizes width, vertical layout resizes height.
   const { size: paneSize, isResizing, containerRef, startResize } = useSplitPane(orientation);
   const runner = useMemo(() => requestRunner, []);
+  const ancestry = useMemo(
+    () => (collection && itemUuid ? getAncestorsByUuid(collection, itemUuid) : []),
+    [collection, itemUuid]
+  );
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pendingSaveRef = useRef<{ uuid: string; item: HttpRequest } | null>(null);
 
@@ -96,6 +103,7 @@ const HttpRequestPlaygroundView: React.FC<PlaygroundViewProps> = ({ item, collec
   }, [collection, editableItem, runner, selectedEnvironment, itemUuid]);
 
   return (
+    <ItemVariableResolverProvider collection={collection} ancestry={ancestry} item={editableItem as unknown as Item}>
     <div className="request-runner-container h-full flex flex-col px-4" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <TitleLabel className="truncate mb-2 mt-3">{itemName}</TitleLabel>
       
@@ -122,13 +130,14 @@ const HttpRequestPlaygroundView: React.FC<PlaygroundViewProps> = ({ item, collec
           <RequestPane item={editableItem} onItemChange={handleItemChange} />
         </div>
 
-        <SplitDivider orientation={orientation} onPointerDown={startResize} testId="playground-divider" />
+        <SplitDivider orientation={orientation} onPointerDown={startResize} active={isResizing} testId="playground-divider" />
 
         <div className="flex-1 overflow-hidden min-h-0">
           <ResponsePane response={response} isLoading={isLoading} />
         </div>
       </div>
     </div>
+    </ItemVariableResolverProvider>
   );
 };
 

@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 export const StyledWrapper = styled.h2`
   font-family: var(--font-sans);
   font-weight: 500;
-  font-size: 0.8125rem;
   line-height: 1;
+  font-size: var(--oc-font-size-base);
   letter-spacing: 0;
-  color: var(--text-secondary);
+  color: var(--text-primary);
 `;

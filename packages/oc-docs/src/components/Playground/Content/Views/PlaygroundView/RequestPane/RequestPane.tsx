@@ -14,6 +14,7 @@ import TestsTab from '../../Common/TestsTab/TestsTab';
 import AssertsTab from '../../Common/AssertsTab/AssertsTab';
 import VariablesTab from '../../Common/VariablesTab/VariablesTab';
 import OverviewTab from '../../Common/OverviewTab/OverviewTab';
+import { StyledWrapper } from './StyledWrapper';
 import {
   getHttpParams,
   getHttpHeaders,
@@ -146,6 +147,7 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
       onVariablesChange={handleRequestVariablesChange}
       postResponseVars={postResponseVars}
       onPostResponseVarsChange={handlePostResponseVarsChange}
+      description="These variables will be available to this request."
     />
   );
 
@@ -153,6 +155,7 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
     <HeadersTab
       headers={headers}
       onHeadersChange={handleHeadersChange}
+      description="Headers sent with this request."
     />
   );
 
@@ -170,6 +173,7 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
       onAuthChange={() => {}} // Not used for full auth
       onItemChange={onItemChange}
       item={item}
+      description="Configures authentication for this request."
       showFullAuth={true}
     />
   );
@@ -178,6 +182,7 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
     <ScriptsTab
       scripts={scriptsObj}
       onScriptChange={handleScriptChange}
+      description="Pre and post-request scripts that run before and after this request is sent."
       showTests={false}
     />
   );
@@ -186,6 +191,8 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
     <AssertsTab
       assertions={assertions}
       onAssertionsChange={handleAssertionsChange}
+      title=""
+      description="Assertions that validate the response of this request."
     />
   );
 
@@ -193,6 +200,7 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
     <TestsTab
       scripts={scriptsObj}
       onScriptChange={handleScriptChange}
+      description="These tests run every time this request is sent."
     />
   );
 
@@ -212,74 +220,72 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
       id: 'overview',
       label: 'Overview',
       content: (
-        <div className="pb-3">
-          <OverviewTab
-            docs={getItemDocs(item)}
-            emptyStateSubheading="This request has no docs. Add one in Bruno to introduce your API to readers: what it does, who it's for, and how to authenticate."
-            displayEmptyStateBox={false}
-          />
-        </div>
+        <OverviewTab
+          docs={getItemDocs(item)}
+          emptyStateSubheading="This request has no docs. Add one in Bruno to introduce your API to readers: what it does, who it's for, and how to authenticate."
+          displayEmptyStateBox={false}
+        />
       )
     },
     {
       id: 'params',
       label: 'Params',
       contentIndicator: params?.length || undefined, 
-      content: <div className="pb-3">{renderParams()}</div> 
+      content: renderParams()
     },
     { 
       id: 'variables', 
       label: 'Variables', 
       contentIndicator: variables?.length || undefined,
-      content: <div className="pb-3">{renderVariables()}</div>
+      content: renderVariables()
     },
     { 
       id: 'headers', 
       label: 'Headers', 
       contentIndicator: headers?.length || undefined, 
-      content: <div className="pb-3">{renderHeaders()}</div> 
+      content: renderHeaders()
     },
     {
       id: 'body',
       label: 'Body',
       contentIndicator: hasBody ? '•' : undefined,
       rightElement: <BodyModeSelector body={body} onItemChange={onItemChange} item={item} />,
-      content: <div className="pb-3">{renderBody()}</div>
+      content: renderBody()
     },
     { 
       id: 'auth', 
       label: 'Auth',
       contentIndicator: auth ? '•' : undefined,
-      content: <div className="pb-3">{renderAuth()}</div> 
+      content: renderAuth()
     },
     { 
       id: 'scripts', 
       label: 'Scripts',
       contentIndicator: hasScripts ? '•' : undefined,
-      content: <div className="pb-3">{renderScripts()}</div> 
+      content: renderScripts()
     },
     { 
       id: 'assertions', 
       label: 'Assertions', 
       contentIndicator: assertions?.length || undefined, 
-      content: <div className="pb-3">{renderAssertions()}</div> 
+      content: renderAssertions()
     },
     { 
       id: 'tests', 
       label: 'Tests',
       contentIndicator: hasTests ? '•' : undefined,
-      content: <div className="pb-3">{renderTests()}</div> 
+      content: renderTests()
     }
   ];
 
   return (
-    <div className="h-full overflow-y-auto" style={{ backgroundColor: 'var(--bg-primary)' }}>
+    <StyledWrapper>
       <Tabs
         tabs={tabs}
         activeTab={activeTab}
         onTabChange={setActiveTab}
       />
-    </div>
+    </StyledWrapper>
   );
 };
 

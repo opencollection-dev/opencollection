@@ -30,8 +30,8 @@ export const StyledWrapper = styled.div`
 
   .resize-handle::after {
     content: '';
-    width: 40px;
-    height: 4px;
+    width: 2.5rem;
+    height: 0.25rem;
     border-radius: 999px;
     background-color: var(--oc-border-border2);
   }

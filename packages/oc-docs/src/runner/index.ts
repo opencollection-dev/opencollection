@@ -6,7 +6,7 @@ import ScriptRuntime from '../scripting/runtime/script-runtime';
 import AssertRuntime, { type AssertionResult } from '../scripting/runtime/assert-runtime';
 import { getTreePathFromCollectionToItem, mergeHeaders, mergeScripts, mergeAuth, interpolateVars } from './utils';
 import { getCollectionFolderRequestVariables } from './utils/variable-merger';
-import { coerceVariableValue } from '../utils/variableDataType';
+import { coerceVariableValue, parseValueByDataType } from '../utils/variableDataType';
 import { getRequestScripts, getRequestAssertions, scriptsArrayToObject } from '../utils/schemaHelpers';
 
 export interface RunRequestOptions {
@@ -213,7 +213,11 @@ export class RequestRunner {
       const name = variable.name;
       if (name && !variable.disabled) {
         // Coerce typed values (number/boolean/object) to native, like folder/collection/request vars.
-        vars[name] = coerceVariableValue(variable.value);
+        // A secret carries its data type as a sibling `type` (value is a plain string), whereas a
+        // non-secret nests it inside the value — so coerce each from the right place.
+        vars[name] = variable.secret
+          ? parseValueByDataType(variable.value, variable.type)
+          : coerceVariableValue(variable.value);
       }
       return vars;
     }, {} as Record<string, any>);

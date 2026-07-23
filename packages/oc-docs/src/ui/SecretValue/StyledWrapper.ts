@@ -29,7 +29,21 @@ export const StyledWrapper = styled.span`
     padding: 0;
   }
   .secret-value-input::placeholder {
-    color: var(--text-tertiary);
+    color: var(--oc-colors-text-subtext0);
+    opacity: 0.6;
+  }
+
+  textarea.secret-value-input {
+    resize: none;
+    field-sizing: content;
+    overflow: hidden;
+    white-space: pre-wrap;
+    word-break: break-all;
+    line-height: 1.5;
+  }
+
+  .secret-value-input--masked {
+    -webkit-text-security: disc;
   }
 
   &.secret-value--readonly .secret-value-text {

@@ -179,11 +179,15 @@ describe('envVariableToRow / envRowToVariable round-trip', () => {
     expect(out.value).toEqual({ type: 'number', data: '30' });
   });
 
-  it('never writes a value onto a secret with no value and keeps its type', () => {
-    const out = roundTrip({ name: 'bearer_auth_token', secret: true, type: 'string' });
-    expect(out.secret).toBe(true);
-    expect(out.type).toBe('string');
-    expect('value' in out).toBe(false);
+  it('never writes a value onto a secret with no value; normalizes string type but keeps a non-string one', () => {
+    const stringSecret = roundTrip({ name: 'bearer_auth_token', secret: true, type: 'string' });
+    expect(stringSecret.secret).toBe(true);
+    expect(stringSecret.type).toBeUndefined();
+    expect('value' in stringSecret).toBe(false);
+
+    const numberSecret = roundTrip({ name: 'retryCount', secret: true, type: 'number' });
+    expect(numberSecret.type).toBe('number');
+    expect('value' in numberSecret).toBe(false);
   });
 
   it('keeps an entered secret value so the request can resolve it on send', () => {
