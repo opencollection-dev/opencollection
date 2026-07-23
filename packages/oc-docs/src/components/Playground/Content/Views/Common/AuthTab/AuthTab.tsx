@@ -138,7 +138,11 @@ export const AuthTab: React.FC<AuthTabProps> = ({
       return <p className="auth-empty">No authentication configured.</p>;
     }
     if (auth === 'inherit') {
-      return <p className="auth-empty">Inherits auth from parent collection.</p>;
+      return (
+        <p className="auth-empty" data-testid="auth-inherit-notice">
+          Inherits authentication from the parent folder or collection.
+        </p>
+      );
     }
     if (showFullAuth) {
       return <div className="auth-form">{renderForm()}</div>;

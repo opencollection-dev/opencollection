@@ -53,7 +53,7 @@ describe('AuthTab', () => {
 
   it('shows an inherit note for inherited auth', () => {
     const { root } = renderAuth('inherit', { showInherit: true });
-    expect(query(root, '.auth-empty').text.trim()).toBe('Inherits auth from parent collection.');
+    expect(query(root, '.auth-empty').text.trim()).toBe('Inherits authentication from the parent folder or collection.');
   });
 
   it('renders basic auth with a plain username and a masked, revealable password', () => {

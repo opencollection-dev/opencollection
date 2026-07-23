@@ -1,10 +1,9 @@
 import type { OpenCollection } from '@opencollection/types';
 import type { HttpRequest, HttpRequestHeader } from '@opencollection/types/requests/http';
 import type { Item } from '@opencollection/types/collection/item';
-import type { Scripts, Script, ScriptType } from '@opencollection/types/common/scripts';
-import type { Auth } from '@opencollection/types/common/auth';
-import { 
-  isFolder, 
+import type { Scripts } from '@opencollection/types/common/scripts';
+import {
+  isFolder,
   getHttpHeaders, 
   getRequestAuth, 
   getHttpMethod,
@@ -12,11 +11,9 @@ import {
   getRequestScripts,
   scriptsArrayToObject,
   scriptsObjectToArray,
-  getPreRequestScript,
-  getPostResponseScript,
-  getTestsScript,
   type ScriptsObject
 } from '../../utils/schemaHelpers';
+import type { Auth } from '@opencollection/types/common/auth';
 
 /**
  * Merge headers from collection and folder hierarchy into the request
@@ -70,35 +67,44 @@ export const mergeHeaders = (collection: OpenCollection, request: HttpRequest, r
   });
 };
 
+// A concrete auth is a configured mode (basic/bearer/apikey/…), as opposed to the
+// `inherit` sentinel or an absent value (No Auth).
+const isConcreteAuth = (auth: Auth | undefined): auth is Exclude<Auth, 'inherit'> => !!auth && auth !== 'inherit';
+
 /**
- * Merge authentication from collection and folder hierarchy into the request
+ * Resolve inherited authentication into the request, matching the desktop app's send path
+ * (bruno-electron `mergeAuth`). Only an explicit `inherit` resolves; a request with its own
+ * concrete auth — or an explicit No Auth — is left untouched, so a parent never overrides an
+ * explicit choice (acceptance: an explicit No Auth is respected).
+ *
+ * Walking the chain outward-in, the closest level that made an explicit auth choice wins: a
+ * folder set to a concrete mode supplies it, a folder set to No Auth blocks a parent's auth,
+ * and a folder left on `inherit` is transparent. This intentionally differs from the display
+ * resolver (`utils/request.ts` resolveInheritedAuth, which — like the app's UI — skips
+ * No-Auth folders); the send path mirrors what the app actually puts on the wire.
  */
 export const mergeAuth = (collection: OpenCollection, request: HttpRequest, requestTreePath: Item[] = []): void => {
-  const requestAuth = getRequestAuth(request);
-  
-  // If request already has auth that's not 'inherit', don't override
-  if (requestAuth && requestAuth !== 'inherit') {
+  if (getRequestAuth(request) !== 'inherit') {
     return;
   }
-  
+
+  // The collection is the base; folders nearer the request override it.
+  const collectionAuth = collection.request?.auth as Auth | undefined;
+  let effective: Exclude<Auth, 'inherit'> | undefined = isConcreteAuth(collectionAuth) ? collectionAuth : undefined;
+
+  for (const item of requestTreePath) {
+    if (!isFolder(item)) continue;
+    const folderAuth = (item as { request?: { auth?: Auth } }).request?.auth;
+    if (folderAuth === 'inherit') continue; // transparent — keep looking outward-in
+    effective = isConcreteAuth(folderAuth) ? folderAuth : undefined; // concrete applies; No Auth blocks
+  }
+
   // Auth lives on the protocol-detail block (request.http.auth); ensure it exists.
   if (!request.http) {
     request.http = {};
   }
-
-  // Look for auth in reverse order (closest to request wins)
-  for (let i = requestTreePath.length - 1; i >= 0; i--) {
-    const item = requestTreePath[i];
-    if (isFolder(item) && item.request?.auth && item.request.auth !== 'inherit') {
-      request.http.auth = item.request.auth;
-      return;
-    }
-  }
-
-  // Finally, check collection-level auth
-  if (collection.request?.auth && collection.request.auth !== 'inherit') {
-    request.http.auth = collection.request.auth;
-  }
+  // Clone so the per-run request never aliases the shared collection/folder auth object.
+  request.http.auth = effective ? { ...effective } : undefined;
 };
 
 /**
@@ -185,7 +191,7 @@ export const mergeScripts = (
     mergedScriptsObj.tests = testsParts.length > 0 ? testsParts.join('\n\n') : undefined;
   } else {
     // Sequential flow: collection -> folders -> request (each overrides previous)
-    let currentScripts = { ...collectionScriptsObj };
+    const currentScripts = { ...collectionScriptsObj };
     
     folderScriptsObjs.forEach((scripts) => {
       if (scripts.preRequest) currentScripts.preRequest = scripts.preRequest;

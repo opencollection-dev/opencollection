@@ -177,6 +177,7 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
       item={item}
       title=""
       description="Configures authentication for this request."
+      showInherit={true}
       showFullAuth={true}
     />
   );
