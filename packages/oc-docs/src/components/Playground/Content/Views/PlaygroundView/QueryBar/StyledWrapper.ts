@@ -29,15 +29,6 @@ export const StyledWrapper = styled.div`
     color: var(--text-primary);
   }
 
-  && .highlight-input .highlight-input-mirror .variable-valid,
-  && .highlight-input .highlight-input-mirror .variable-invalid {
-    color: var(--primary-text);
-    background-color: var(--brand-soft);
-    border-radius: 0.1875rem;
-    padding: 0 0.1875rem;
-    margin: 0 -0.1875rem;
-  }
-
   && .highlight-input .text-input::placeholder {
     color: var(--text-secondary);
     opacity: 0.6;

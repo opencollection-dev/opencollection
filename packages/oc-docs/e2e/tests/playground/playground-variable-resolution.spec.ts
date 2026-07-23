@@ -38,3 +38,29 @@ test.describe('Playground - variable resolution in URLs', () => {
     await expect(queryBar.option('host')).toBeVisible();
   });
 });
+
+// Regression for a QA-reported bug: request-scoped and folder-scoped variables
+// referenced in the playground were painted red (treated as undefined) even
+// though they are defined, because the resolver in scope must include the open
+// request and its ancestor folders, not just collection + environment.
+test.describe('Playground - request/folder scoped variables resolve', () => {
+  test.beforeEach(async ({ page, playground }) => {
+    await page.goto('/?fixture=vars#/?pg=1&dock=bottom');
+    await playground.environmentSwitcher.selectEnvironment('Dev');
+    await playground.openTreeItem(['Customers', 'Variables Demo']);
+    await expect(playground.queryBar.url).toBeVisible();
+  });
+
+  test('a request-scoped variable in the URL is valid, not undefined', async ({ playground }) => {
+    // userId is defined in the request runtime variables (req-42).
+    await expect(playground.queryBar.validToken('userId')).toHaveCount(1);
+    await expect(playground.queryBar.invalidToken('userId')).toHaveCount(0);
+  });
+
+  test('a folder-scoped variable in a header is valid, not undefined', async ({ playground }) => {
+    // folderScope is defined on the parent Customers folder (from-folder).
+    await playground.selectTab('headers');
+    await expect(playground.queryBar.validToken('folderScope')).toHaveCount(1);
+    await expect(playground.queryBar.invalidToken('folderScope')).toHaveCount(0);
+  });
+});
