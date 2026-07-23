@@ -43,6 +43,6 @@ describe('ExampleView', () => {
     const root = useRenderToDom(<ExampleView request={request} example={{ ...example, request: {} }} />);
     const empty = root.querySelector('[data-testid="example-view-request-empty"]');
     expect(empty).not.toBeNull();
-    expect(empty!.textContent).toContain('No headers, body, auth, variables, or scripts configured for this request.');
+    expect(empty!.textContent).toContain('No params, headers, or body configured for this request.');
   });
 });

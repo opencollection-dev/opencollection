@@ -24,16 +24,16 @@ describe('HeadersTab', () => {
     expect(values).toContain('text/html');
   });
 
-  it('renders a provided title and description', () => {
+  it('renders the provided description with no standalone title heading', () => {
     const root = useRenderToDom(
       <HeadersTab
         headers={[]}
         onHeadersChange={noop}
-        title="Headers"
         description="Request headers sent with the call"
       />
     );
-    expect(query(root, '.title').text.trim()).toBe('Headers');
+    // With no title prop, the tab shows only the description — no separate title heading.
+    expect(root.querySelector('.title')).toBeNull();
     expect(query(root, '.description').text.trim()).toBe('Request headers sent with the call');
     expect(root.querySelector('[data-testid="bulk-edit-toggle"]')).toBeTruthy();
   });

@@ -52,10 +52,11 @@ describe('SidebarNavLink', () => {
     expect(html).not.toContain('navlink-label mono');
   });
 
-  it('indents by level via margin (chevron + gap step of 19px) with a uniform 8px inner pad', () => {
+  it('indents by level via margin (one 19px chevron+gap step per level) with a uniform 8px inner pad', () => {
     const html = renderToStaticMarkup(<SidebarNavLink label="Nested" level={2} />);
-    // level*19 = 38px -> 38/16 = 2.375rem margin; the 8px (0.5rem) pad is uniform
-    // across folders and leaves so glyphs line up under their parent.
+    // Each level is one 19px chevron+gap step: level*19 = 38px -> 38/16 = 2.375rem margin.
+    // The 8px (0.5rem) pad is uniform across folders and leaves so glyphs line up
+    // under their parent.
     expect(html).toContain('margin-left:2.375rem');
     expect(html).toContain('padding-left:0.5rem');
   });

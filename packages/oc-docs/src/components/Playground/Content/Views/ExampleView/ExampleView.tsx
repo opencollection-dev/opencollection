@@ -111,7 +111,7 @@ export const ExampleView: React.FC<ExampleViewProps> = ({ request, example, orie
           )}
           {!hasRequestData && (
             <div className="example-view-empty" data-testid="example-view-request-empty">
-              No header, body, params, or auth configured for the request.
+              No params, headers, or body configured for this request.
             </div>
           )}
         </div>

@@ -131,6 +131,8 @@ const ResponsePane: React.FC<ResponsePaneProps> = ({ response, isLoading }) => {
   return (
     <StyledWrapper>
       <Tabs
+        variant="responsive"
+        testId="response-tabs"
         className='h-full'
         tabs={tabs}
         activeTab={activeTab}

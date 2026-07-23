@@ -112,7 +112,13 @@ export class PlaygroundComponent extends BaseComponent {
   }
 
   async selectTab(id: string): Promise<void> {
-    await this.tab(id).click();
+    const direct = this.tab(id);
+    if ((await direct.count()) > 0 && (await direct.isVisible())) {
+      await direct.click();
+      return;
+    }
+    await this.page.getByTestId('tabs-more').click();
+    await this.page.getByTestId(`tabs-more-${id}`).click();
   }
 
   async close(): Promise<void> {
