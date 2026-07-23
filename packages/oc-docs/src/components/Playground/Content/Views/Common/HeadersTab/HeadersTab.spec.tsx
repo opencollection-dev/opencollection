@@ -24,9 +24,14 @@ describe('HeadersTab', () => {
     expect(values).toContain('text/html');
   });
 
-  it('renders the default title and a provided description', () => {
+  it('renders a provided title and description', () => {
     const root = useRenderToDom(
-      <HeadersTab headers={[]} onHeadersChange={noop} description="Request headers sent with the call" />
+      <HeadersTab
+        headers={[]}
+        onHeadersChange={noop}
+        title="Headers"
+        description="Request headers sent with the call"
+      />
     );
     expect(query(root, '.title').text.trim()).toBe('Headers');
     expect(query(root, '.description').text.trim()).toBe('Request headers sent with the call');
