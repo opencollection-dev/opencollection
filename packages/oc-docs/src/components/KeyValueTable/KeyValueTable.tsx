@@ -2,7 +2,7 @@ import React from 'react';
 import { useResolvedVariables } from '../../hooks/useVariableResolver';
 import { useEditableRows } from '../../hooks/useEditableRows';
 import { Tooltip } from '../../ui/Tooltip/Tooltip';
-import { WarningIcon } from '../../assets/icons';
+import { CheckIcon, WarningIcon } from '../../assets/icons';
 import HighlightedInput from '../HighlightedInput/HighlightedInput';
 import { SecretValue } from '../../ui/SecretValue/SecretValue';
 import './KeyValueTable.css';
@@ -187,16 +187,7 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                                 aria-label={row.name ? `Enable ${row.name}` : 'Enable row'}
                                 onChange={(e) => updateField(index, 'enabled', e.target.checked)}
                               />
-                              <svg className="checkbox-check" viewBox="0 0 12 12" aria-hidden="true">
-                                <path
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth="1.67"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M3 6.2 5 8.4 9 3.8"
-                                />
-                              </svg>
+                              <CheckIcon className='checkbox-check' width={12} height={12} />
                             </>
                           )}
                         </span>
