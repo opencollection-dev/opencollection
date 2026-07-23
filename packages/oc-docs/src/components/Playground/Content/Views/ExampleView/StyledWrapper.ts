@@ -6,7 +6,7 @@ export const StyledWrapper = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: 1rem 1rem 0;
+  padding: 1.25rem 1.25rem 0;
   background: var(--bg-primary);
 
   .example-view-head {
@@ -17,14 +17,10 @@ export const StyledWrapper = styled.div`
     margin-bottom: 0.75rem;
   }
   .example-view-name {
-    font-size: 0.8125rem;
+    font-size: var(--oc-font-size-md);
+    line-height: 1.4;
     font-weight: 600;
     color: var(--text-primary);
-  }
-  .example-view-name-suffix {
-    margin-left: 0.375rem;
-    font-weight: 400;
-    color: var(--text-tertiary);
   }
   .example-view-desc {
     color: var(--text-secondary);

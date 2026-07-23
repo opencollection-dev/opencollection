@@ -80,7 +80,7 @@ export const UnsupportedRequest: React.FC<UnsupportedRequestProps> = ({
       <BreadcrumbWrapper showBreadcrumbs={Boolean(breadcrumbs)} name={name} {...(breadcrumbs ?? {})} />
 
       {titleVariant === 'label' ? (
-        <TitleLabel className='mt-3' testId="unsupported-request-title">{name}</TitleLabel>
+        <TitleLabel className='mt-5' testId="unsupported-request-title">{name}</TitleLabel>
       ) : (
         <Heading size="md" style={{ marginTop: '0.25rem' }} testId="unsupported-request-title">
           {name}

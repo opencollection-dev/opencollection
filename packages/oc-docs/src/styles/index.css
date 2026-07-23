@@ -818,6 +818,10 @@ tr.themed-row:nth-child(even) {
   border-radius: 0 6px 6px 0 !important;
 }
 
+.markdown-documentation blockquote p:last-child {
+  margin-bottom: 0 !important;
+}
+
 .markdown-documentation hr {
   margin: 1.5em 0 !important;
   border: none !important;

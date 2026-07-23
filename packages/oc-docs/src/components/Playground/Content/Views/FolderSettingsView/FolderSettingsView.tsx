@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { Folder } from '@opencollection/types/collection/item';
 import type { OpenCollection } from '@opencollection/types';
 import Tabs from '../../../../../ui/Tabs/Tabs';
+import TitleLabel from '../../../../TitleLabel/TitleLabel';
 import { type KeyValueRow } from '../../../../../components/KeyValueTable/KeyValueTable';
 import { rowToVariable } from '../../../../../utils/variableDataType';
 import HeadersTab from '../Common/HeadersTab/HeadersTab';
@@ -218,13 +219,9 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({ folder, onFolderChange 
 
   return (
     <div className="h-full flex flex-col px-5 mt-5">
-      <div style={{ borderColor: 'var(--border-color)' }}>
-        <h2 className="text-lg font-semibold leading-tight" style={{ color: 'var(--text-primary)' }}>
-          {getItemName(folder) || 'Folder Settings'}
-        </h2>
-      </div>
+      <TitleLabel className="mb-2">{getItemName(folder) || 'Folder Settings'}</TitleLabel>
 
-      <div className="flex-1 min-h-0 overflow-y-auto mt-4">
+      <div className="flex-1 min-h-0 overflow-y-auto">
         <Tabs variant="responsive" testId="folder-settings-tabs" tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
     </div>
