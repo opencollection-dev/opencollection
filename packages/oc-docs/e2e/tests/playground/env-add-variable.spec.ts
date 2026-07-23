@@ -18,4 +18,24 @@ test.describe('Environment variables — adding rows (card view)', () => {
     await expect(envEditor.nameInputs.nth(before - 1)).toHaveValue('newVariable');
     await expect(envEditor.valueInputs.nth(before - 1)).toHaveValue('newValue');
   });
+
+  test('toggling a variable checkbox enables/disables its card', async ({ playground, envEditor }) => {
+    await playground.open('inline');
+    await playground.openEnvironments();
+
+    const toggle = envEditor.enableToggle('host');
+    const card = envEditor.cardFor('host');
+    const disabled = /(^|\s)disabled(\s|$)/;
+
+    await expect(toggle).toBeChecked();
+    await expect(card).not.toHaveClass(disabled);
+
+    await toggle.uncheck();
+    await expect(toggle).not.toBeChecked();
+    await expect(card).toHaveClass(disabled);
+
+    await toggle.check();
+    await expect(toggle).toBeChecked();
+    await expect(card).not.toHaveClass(disabled);
+  });
 });

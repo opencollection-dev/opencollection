@@ -2,10 +2,11 @@ import React from 'react';
 import { useResolvedVariables } from '../../hooks/useVariableResolver';
 import { useEditableRows } from '../../hooks/useEditableRows';
 import { Tooltip } from '../../ui/Tooltip/Tooltip';
-import { CheckIcon, WarningIcon } from '../../assets/icons';
+import { WarningIcon } from '../../assets/icons';
 import HighlightedInput from '../HighlightedInput/HighlightedInput';
 import { SecretValue } from '../../ui/SecretValue/SecretValue';
 import './KeyValueTable.css';
+import Checkbox from '../../ui/Checkbox/Checkbox';
 
 export interface KeyValueRow {
   id: string;
@@ -179,16 +180,11 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                       {showEnabled && (
                         <span className="checkbox-slot">
                           {!isLastEmptyRow && (
-                            <>
-                              <input
-                                type="checkbox"
-                                className="checkbox-input"
-                                checked={row.enabled}
-                                aria-label={row.name ? `Enable ${row.name}` : 'Enable row'}
-                                onChange={(e) => updateField(index, 'enabled', e.target.checked)}
-                              />
-                              <CheckIcon className='checkbox-check' width={12} height={12} />
-                            </>
+                            <Checkbox
+                              checked={row.enabled}
+                              ariaLabel={row.name ? `Enable ${row.name}` : 'Enable row'}
+                              onChange={(e) => updateField(index, 'enabled', e.target.checked)}
+                            />
                           )}
                         </span>
                       )}

@@ -220,6 +220,12 @@ export const light: Theme = {
     }
   },
 
+  checkbox: {
+    border: p.border.BORDER1,
+    checkedBg: p.primary.SOLID,
+    checkColor: p.utility.WHITE
+  },
+
   sidebar: {
     color: p.text.BASE,
     muted: p.text.SUBTEXT1,

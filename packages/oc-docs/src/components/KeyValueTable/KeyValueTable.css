@@ -109,10 +109,8 @@
 .key-value-table .checkbox-slot {
   flex: none;
   display: inline-flex;
-  align-items: center;
   width: 1rem;
   height: 1rem;
-  position: relative;
 }
 
 .key-value-table .key-cell .highlight-input,
@@ -139,40 +137,6 @@
 .key-value-table .col-actions {
   text-align: center;
   vertical-align: middle;
-}
-
-.key-value-table .checkbox-input {
-  appearance: none;
-  -webkit-appearance: none;
-  margin: 0;
-  width: 1rem;
-  height: 1rem;
-  border: 0.0625rem solid var(--oc-table-border);
-  border-radius: 0.1875rem;
-  background-color: transparent;
-  background-repeat: no-repeat;
-  background-position: center;
-  cursor: pointer;
-}
-
-.key-value-table .checkbox-input:checked {
-  background-color: var(--primary-color);
-  border-color: var(--primary-color);
-}
-
-.key-value-table .checkbox-check {
-  position: absolute;
-  inset: 0;
-  width: 0.75rem;
-  height: 0.75rem;
-  margin: auto;
-  pointer-events: none;
-  color: var(--oc-background-base);
-  opacity: 0;
-}
-
-.key-value-table .checkbox-input:checked + .checkbox-check {
-  opacity: 1;
 }
 
 .key-value-table .text-input {

@@ -82,6 +82,9 @@
   --oc-input-focus-border: #8b8b8b;
   --oc-input-placeholder-color: #B0B0B0;
   --oc-input-placeholder-opacity: 0.8;
+  --oc-checkbox-border: #e5e5e5;
+  --oc-checkbox-checked-bg: hsl(33, 80%, 46%);
+  --oc-checkbox-check-color: #ffffff;
   --oc-sidebar-color: #343434;
   --oc-sidebar-muted: #838383;
   --oc-sidebar-bg: #f8f8f8;
@@ -402,6 +405,9 @@
   --oc-input-focus-border: rgba(228,174,73,0.8);
   --oc-input-placeholder-color: #aaa;
   --oc-input-placeholder-opacity: 0.6;
+  --oc-checkbox-border: #333333;
+  --oc-checkbox-checked-bg: hsl(39, 74%, 59%);
+  --oc-checkbox-check-color: #000000;
   --oc-sidebar-color: hsl(0deg 0% 80%);
   --oc-sidebar-muted: #aaa;
   --oc-sidebar-bg: hsl(0deg 0% 10%);

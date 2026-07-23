@@ -20,9 +20,6 @@ export const StyledWrapper = styled.div`
 
   .env-card .enabled {
     margin-top: 2px;
-    cursor: pointer;
-    accent-color: var(--oc-colors-accent);
-    flex-shrink: 0;
   }
 
   .env-card .body {

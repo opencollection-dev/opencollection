@@ -7,6 +7,7 @@ import { cx } from '../../../../../../utils/cx';
 import { toDataType } from '../../../../../../utils/variableDataType';
 import { VariableTypeControl } from '../../Common/VariableTypeControl/VariableTypeControl';
 import { StyledWrapper } from './StyledWrapper';
+import Checkbox from '../../../../../../ui/Checkbox/Checkbox';
 
 interface EnvVarCardsProps {
   rows: KeyValueRow[];
@@ -38,11 +39,10 @@ const EnvVarCards: React.FC<EnvVarCardsProps> = ({
         return (
           <div key={row.id} className={cx('env-card', { disabled: !row.enabled })}>
             {!isBlankRow && (
-              <input
-                type="checkbox"
+              <Checkbox
                 className="enabled"
                 checked={row.enabled}
-                aria-label={row.name ? `Enable ${row.name}` : 'Enable variable'}
+                ariaLabel={row.name ? `Enable ${row.name}` : 'Enable variable'}
                 onChange={(e) => updateRow(index, { enabled: e.target.checked })}
               />
             )}
