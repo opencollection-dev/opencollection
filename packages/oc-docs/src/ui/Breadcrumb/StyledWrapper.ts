@@ -12,7 +12,7 @@ export const StyledWrapper = styled.nav`
     font-family: var(--font-sans);
     font-weight: 400;
     font-size: 0.75rem;
-    line-height: 1;
+    line-height: 1.2;
     letter-spacing: 0;
   }
   li {
@@ -23,6 +23,14 @@ export const StyledWrapper = styled.nav`
   .breadcrumb-sep {
     font-size: 0.75rem;
     color: var(--oc-breadcrumb-color-segments, var(--text-muted));
+  }
+  .breadcrumb-link,
+  .breadcrumb-current {
+    display: block;
+    max-width: 18rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .breadcrumb-link {
     border: none;

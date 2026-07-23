@@ -7,14 +7,12 @@ interface ExamplesProps {
   examples?: HttpRequestExample[];
   method: string;
   url: string;
-  // Open the playground on a given example (its Try action).
-  onTryExample?: (index: number) => void;
   highlightedIndex?: number;
   className?: string;
   testId?: string;
 }
 
-export const Examples: React.FC<ExamplesProps> = ({ examples, method, url, onTryExample, highlightedIndex, className, testId = 'request-examples' }) => {
+export const Examples: React.FC<ExamplesProps> = ({ examples, method, url, highlightedIndex, className, testId = 'request-examples' }) => {
   if (!examples || examples.length === 0) return null;
 
   // A highlight that no longer resolves (out of range) falls back to the
@@ -30,7 +28,6 @@ export const Examples: React.FC<ExamplesProps> = ({ examples, method, url, onTry
           example={example}
           method={method}
           url={url}
-          onTry={onTryExample ? () => onTryExample(index) : undefined}
           defaultExpanded={validHighlight ? highlightedIndex === index : index === 0}
           active={validHighlight && highlightedIndex === index}
         />

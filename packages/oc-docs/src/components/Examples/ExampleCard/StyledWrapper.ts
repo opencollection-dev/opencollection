@@ -79,28 +79,6 @@ export const StyledWrapper = styled.div`
     text-overflow: ellipsis;
   }
 
-  .example-try {
-    flex: 0 0 auto;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    height: 24px;
-    padding: 0 9px;
-    box-sizing: border-box;
-    background: var(--brand-soft);
-    color: var(--primary-text);
-    border: 1px solid var(--primary-color);
-    border-radius: var(--oc-radius);
-    font-family: var(--font-sans);
-    font-size: 11.5px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  .example-try:focus-visible {
-    outline: 2px solid var(--primary-color);
-    outline-offset: 2px;
-  }
-
   .example-detail {
     display: grid;
     grid-template-rows: 0fr;

@@ -10,7 +10,6 @@ import { Description } from '../../Description/Description';
 import { RequestParams } from '../../Request/RequestParams/RequestParams';
 import { RequestBody } from '../../Request/RequestBody/RequestBody';
 import { Code } from '../../Code/Code';
-import { PlayIcon } from '../../../assets/icons';
 import { resolvePathAndQueryParams } from '../../../utils/pathParams';
 import { getBodyView, getDescription, headerRows } from '../../../utils/request';
 import { computeBodySize, formatBytes, responseBodyLanguage, responseBodyContentType, statusCodePhrase } from '../../../utils/exampleResponse';
@@ -21,7 +20,6 @@ interface ExampleCardProps {
   example: HttpRequestExample;
   method: string;
   url: string;
-  onTry?: () => void;
   defaultExpanded?: boolean;
   active?: boolean;
   testId?: string;
@@ -165,7 +163,7 @@ const Pane: React.FC<{
   );
 };
 
-export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, onTry, defaultExpanded, active, testId = 'example-card' }) => {
+export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, defaultExpanded, active, testId = 'example-card' }) => {
   const [expanded, setExpanded] = useState(Boolean(defaultExpanded));
   const [mounted, setMounted] = useState(Boolean(defaultExpanded));
   const detailId = useId();
@@ -284,12 +282,6 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
     </span>
   ) : undefined;
 
-  const handleTry = () => {
-    setMounted(true);
-    setExpanded(true);
-    onTry?.();
-  };
-
   return (
     <StyledWrapper
       ref={rootRef}
@@ -318,12 +310,6 @@ export const ExampleCard: React.FC<ExampleCardProps> = ({ example, method, url, 
           ) : null}
           <span className="example-name" data-testid="example-name">{name}</span>
         </button>
-        {onTry && (
-          <button type="button" className="example-try" data-testid="example-try" onClick={handleTry}>
-            <PlayIcon />
-            Try
-          </button>
-        )}
       </div>
 
       {/* Grid-rows 0fr→1fr animates the height open/close with no fixed max-height. */}
