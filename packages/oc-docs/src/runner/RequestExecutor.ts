@@ -6,7 +6,7 @@ import { classifyRequestError, DEFAULT_TIMEOUT_MS } from './classifyRequestError
 import stripJsonComments from 'strip-json-comments';
 
 export const applyApiKeyToUrl = (url: string, auth: Record<string, unknown> | undefined): string => {
-  if (auth?.type !== 'apikey' || auth.placement !== 'query' || !auth.key) {
+  if (auth?.type !== 'apikey' || auth.placement !== 'query' || !auth.key || !auth.value) {
     return url;
   }
 
