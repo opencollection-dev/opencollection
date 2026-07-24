@@ -262,6 +262,10 @@
         "passphrase": {
           "type": "string",
           "description": "Passphrase for the private key (optional)"
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Disables this client certificate"
         }
       },
       "required": ["domain", "type", "certificateFilePath", "privateKeyFilePath"],
@@ -286,6 +290,10 @@
         "passphrase": {
           "type": "string",
           "description": "Passphrase for the PKCS#12 file (optional)"
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Disables this client certificate"
         }
       },
       "required": ["domain", "type", "pkcs12FilePath"],
