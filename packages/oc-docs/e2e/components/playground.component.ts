@@ -2,10 +2,13 @@ import type { Locator } from '@playwright/test';
 import { BaseComponent } from './base.component';
 import { KeyValueTableComponent } from './key-value-table/key-value-table.component';
 import { CodeEditorComponent } from './code-editor/code-editor.component';
+import { RequestAuthComponent } from './playground/auth.component';
 import type { DockMode } from '../../src/utils/playgroundDock';
 
 export class PlaygroundComponent extends BaseComponent {
   readonly keyValueTable = new KeyValueTableComponent(this.page);
+  // The Auth tab lives inside the playground request pane; open it with selectTab('auth').
+  readonly auth = new RequestAuthComponent(this.page);
   readonly preRequestScriptEditor = new CodeEditorComponent(this.page, 'scripts-editor-pre-request');
   readonly postResponseScriptEditor = new CodeEditorComponent(this.page, 'scripts-editor-post-response');
 
