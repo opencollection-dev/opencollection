@@ -4,6 +4,7 @@ export const StyledWrapper = styled.div`
   display: flex;
   height: 100%;
   min-height: 0;
+  position: relative;
 
   .sidebar {
     width: var(--sidebar-width);
@@ -12,6 +13,35 @@ export const StyledWrapper = styled.div`
     min-height: 0;
     border-right: 1px solid var(--oc-border-border0);
     overflow: hidden;
+  }
+
+  .sidebar-resizer {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--sidebar-width);
+    width: 0.5625rem;
+    transform: translateX(-0.25rem);
+    z-index: calc(var(--z-sidebar, 5) + 1);
+    cursor: col-resize;
+    touch-action: none;
+  }
+
+  .sidebar-resizer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 0.0625rem;
+    transform: translateX(-50%);
+    background-color: transparent;
+  }
+
+  .sidebar-resizer:hover::before,
+  .sidebar-resizer[data-dragging='true']::before {
+    width: 0.125rem;
+    background-color: var(--oc-border-border2);
   }
 
   .view {
@@ -23,6 +53,14 @@ export const StyledWrapper = styled.div`
     flex-direction: column;
     overflow: hidden;
     background-color: var(--oc-background-base);
+  }
+
+  .view .oc-tabs .tab-panel {
+    padding-bottom: 1rem;
+  }
+
+  .view .oc-tabs .oc-tabs .tab-panel {
+    padding-bottom: 0;
   }
 
   .prompt {

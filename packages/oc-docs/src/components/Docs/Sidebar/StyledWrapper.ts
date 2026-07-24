@@ -9,7 +9,7 @@ export const StyledWrapper = styled.div`
   color: var(--oc-sidebar-color);
 
   .sidebar-items::-webkit-scrollbar {
-    width: 6px;
+    width: 0.375rem;
   }
   .sidebar-items::-webkit-scrollbar-track {
     background: transparent;
@@ -18,7 +18,7 @@ export const StyledWrapper = styled.div`
   .sidebar-items::-webkit-scrollbar-thumb {
     background-color: transparent;
     border: none;
-    border-radius: 20px;
+    border-radius: 1.25rem;
     transition: background-color 0.4s ease;
   }
   .sidebar-items.scrolling::-webkit-scrollbar-thumb {
@@ -30,13 +30,13 @@ export const StyledWrapper = styled.div`
     display: flex;
     flex-direction: column;
     gap: 1px;
-    padding: 10px 6px 0 6px;
+    padding: 0.625rem 0.75rem 0 0.75rem;
   }
 
   .sidebar-divider {
     flex-shrink: 0;
     height: 1px;
-    margin: 8px 0;
+    margin: 0.5rem 0;
     background-color: var(--oc-border-border0);
   }
 
@@ -48,6 +48,6 @@ export const StyledWrapper = styled.div`
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    padding: 0 0 0 0.375rem;
+    padding: 0 0 0 0.75rem;
   }
 `;

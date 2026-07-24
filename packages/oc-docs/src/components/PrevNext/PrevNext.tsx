@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import type { SeqNeighbor } from '../../routing/types';
+import type { PageType, SeqNeighbor } from '../../routing/types';
 import { getMethodColorVar } from '../../theme/methodColors';
 import { getShortMethod } from '../../utils/request';
 import { ChevronLeftIcon, ChevronRightIcon } from '../../assets/icons';
@@ -8,12 +8,14 @@ import { StyledWrapper } from './StyledWrapper';
 
 const toPath = (slug: string) => `/${slug}`;
 
-const MethodTag: React.FC<{ method?: string }> = ({ method }) =>
+const MethodTag: React.FC<{ method?: string, type: PageType }> = ({ method, type }) =>
   method ? (
     <span className="prevnext-method" style={{ color: getMethodColorVar(method) }}>
       {getShortMethod(method)}
     </span>
-  ) : null;
+  ) : type === 'script' ? (
+    <span className="prevnext-method" style={{ color: 'var(--oc-primary-text)' }}>JS</span>
+  ): null;
 
 const Card: React.FC<{ dir: 'prev' | 'next'; neighbor: SeqNeighbor; search: string }> = ({ dir, neighbor, search }) => (
   <Link
@@ -29,7 +31,7 @@ const Card: React.FC<{ dir: 'prev' | 'next'; neighbor: SeqNeighbor; search: stri
     <span className="prevnext-textcol">
       <span className="prevnext-label">{dir === 'prev' ? 'Previous' : 'Next'}</span>
       <span className="prevnext-name">
-        <MethodTag method={neighbor.method} />
+        <MethodTag method={neighbor.method} type={neighbor.type} />
         <span className="prevnext-name-text">{neighbor.name}</span>
       </span>
     </span>

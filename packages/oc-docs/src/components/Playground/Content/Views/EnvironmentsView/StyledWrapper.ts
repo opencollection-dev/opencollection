@@ -9,14 +9,8 @@ export const StyledWrapper = styled.div`
   background-color: var(--oc-background-base);
 
   .env-header {
-    padding: 16px 24px 0;
+    padding: 1.25rem 1.25rem 0;
     flex-shrink: 0;
-  }
-
-  .env-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--oc-text);
   }
 
   .env-message {
@@ -32,14 +26,14 @@ export const StyledWrapper = styled.div`
   .env-pills {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    padding: 16px 24px;
+    gap: 0.5rem;
+    padding: 0.5rem 1.25rem 1rem 1.25rem;
   }
 
   .env-pill {
     display: inline-flex;
     align-items: center;
-    padding: 6px 12px;
+    padding: 0.25rem 0.5rem;
     border: 1px solid var(--oc-border-border2);
     border-radius: var(--oc-border-radius-md);
     background: transparent;
@@ -58,8 +52,7 @@ export const StyledWrapper = styled.div`
 
   .env-pill.active {
     color: var(--oc-text);
-    border-color: var(--oc-text-link);
-    background: color-mix(in srgb, var(--oc-text-link) 8%, transparent);
+    border-color: var(--primary-color);
   }
 
   .env-tabs-area {
@@ -68,10 +61,10 @@ export const StyledWrapper = styled.div`
     display: flex;
     flex-direction: column;
     min-height: 0;
-    padding: 0 24px 24px;
+    padding: 0 1.25rem 1.25rem;
   }
 
   .env-tabs-area .tab-content {
-    margin-top: 16px;
+    margin-top: 1rem;
   }
 `;

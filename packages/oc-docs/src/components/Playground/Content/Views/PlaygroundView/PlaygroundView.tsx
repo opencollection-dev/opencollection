@@ -109,8 +109,8 @@ const HttpRequestPlaygroundView: React.FC<PlaygroundViewProps> = ({ item, collec
 
   return (
     <ItemVariableResolverProvider collection={collection} ancestry={ancestry} item={editableItem as unknown as Item}>
-    <div className="request-runner-container h-full flex flex-col px-4" style={{ backgroundColor: 'var(--bg-primary)' }}>
-      <TitleLabel className="truncate mb-2 mt-3">{itemName}</TitleLabel>
+    <div className="request-runner-container h-full flex flex-col px-5" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <TitleLabel className="truncate mb-2 mt-5">{itemName}</TitleLabel>
       
       <QueryBar 
         item={editableItem}
@@ -150,7 +150,7 @@ const PlaygroundView: React.FC<PlaygroundViewProps> = ({ item, ...otherProps }) 
   if (isUnsupportedRequest(item)) {
     return (
       <UnsupportedRequest
-        className='px-4'
+        className='px-5'
         item={item}
         titleVariant="label"
         showRequestDocs={false}

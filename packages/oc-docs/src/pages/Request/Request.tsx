@@ -61,8 +61,6 @@ interface RequestProps {
   onBreadcrumbClick?: (uuid: string) => void;
   // Which example (by index) to flash/scroll to, derived from the route.
   highlightedExampleIndex?: number;
-  // Open the playground on a specific example (its Try action).
-  onTryExample?: (index: number) => void;
   testId?: string;
 }
 
@@ -77,7 +75,6 @@ const RequestContent: React.FC<RequestContentProps> = ({
   onTryClick,
   onBreadcrumbClick,
   highlightedExampleIndex,
-  onTryExample,
   testId = 'request-page'
 }) => {
   const md = useMarkdownRenderer();
@@ -217,7 +214,6 @@ const RequestContent: React.FC<RequestContentProps> = ({
               examples={examples}
               method={method}
               url={url}
-              onTryExample={onTryExample}
               highlightedIndex={highlightedExampleIndex}
             />
           </Section>
@@ -263,8 +259,7 @@ export const Request: React.FC<RequestProps> = ({
   collection,
   onTryClick,
   onBreadcrumbClick,
-  highlightedExampleIndex,
-  onTryExample
+  highlightedExampleIndex
 }) => {
   if (isUnsupportedRequest(item)) {
     return (
@@ -295,7 +290,6 @@ export const Request: React.FC<RequestProps> = ({
       onTryClick={onTryClick}
       onBreadcrumbClick={onBreadcrumbClick}
       highlightedExampleIndex={highlightedExampleIndex}
-      onTryExample={onTryExample}
     />
   );
 };

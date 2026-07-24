@@ -11,13 +11,11 @@ import { ChevronLeftIcon, ChevronRightIcon } from '../../assets/icons';
 import PageRouter from '../PageRouter/PageRouter';
 import Playground from '../Playground/Playground';
 import SearchBar from '../Search/SearchBar/SearchBar';
-import { useSearchHotkey, usePlaygroundUrlState, useElementWidth } from '../../hooks';
+import { useSearchHotkey, usePlaygroundUrlState, useElementWidth, useResizableSidebar } from '../../hooks';
 import { useAppSelector } from '../../store/hooks';
 import { selectDocsCollection } from '../../store/slices/docs';
 import { selectGitCollectionUrl } from '../../store/slices/app';
 import { useActiveResolution } from '../../routing/hooks';
-import { exampleSlugForIndex } from '../../routing/slug';
-import type { HttpRequest } from '@opencollection/types/requests/http';
 import { layoutModeForWidth } from '../../hooks/useTopbarLayout';
 import { buildFetchInBrunoUrl } from '../../utils/buildFetchInBrunoUrl';
 import { StyledWrapper } from './StyledWrapper';
@@ -56,9 +54,14 @@ const AppShell: React.FC<AppShellProps> = ({ logo, testId = 'app-shell' }) => {
   const isDesktop = mode === 'desktop';
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+  const { width: sidebarWidth, dragging: sidebarDragging, startDrag: startSidebarResize } = useResizableSidebar(
+    'oc-docs:docsSidebarWidth',
+    () => setSidebarCollapsed(true),
+    () => setSidebarCollapsed(false)
+  );
   const { pathname } = useLocation();
 
-  const { open: playgroundOpen, dock: playgroundDock, openPlayground, setRequestExample } = usePlaygroundUrlState();
+  const { open: playgroundOpen, dock: playgroundDock, openPlayground } = usePlaygroundUrlState();
   // Bumped on every Try click so the bottom sheet re-expands from collapsed even
   // when the requested slug is unchanged (a slug change alone wouldn't signal it).
   const [playgroundOpenNonce, setPlaygroundOpenNonce] = useState(0);
@@ -89,22 +92,17 @@ const AppShell: React.FC<AppShellProps> = ({ logo, testId = 'app-shell' }) => {
     setPlaygroundOpenNonce((nonce) => nonce + 1);
   }, [openPlayground, resolution]);
 
-  // Open the playground on a specific example of the current request (its Try
-  // action): pgReq keeps the request, pgEx the example, so a share/reload lands
-  // on the same read-only example view.
-  const handleTryExample = (index: number) => {
-    const entry = resolution?.entry;
-    if (!entry) return;
-    setRequestExample(entry.slug, exampleSlugForIndex(entry.item as HttpRequest | null, index));
-  };
-
   return (
     <StyledWrapper
       className="appshell"
       data-testid={testId}
       data-dock={playgroundOpen ? playgroundDock : 'none'}
     >
-      <div className="appshell-body" ref={bodyRef}>
+      <div
+        className="appshell-body"
+        ref={bodyRef}
+        style={{ '--sidebar-width': `${sidebarWidth}px` } as React.CSSProperties}
+      >
         <Topbar
           layoutMode={mode}
           collectionName={collection?.info?.name || 'API Collection'}
@@ -138,6 +136,15 @@ const AppShell: React.FC<AppShellProps> = ({ logo, testId = 'app-shell' }) => {
                 <aside className="appshell-sidebar" data-testid="app-sidebar">
                   <Sidebar />
                 </aside>
+                <div
+                  className="appshell-sidebar-resizer"
+                  data-testid="sidebar-resizer"
+                  data-dragging={sidebarDragging ? 'true' : undefined}
+                  role="separator"
+                  aria-orientation="vertical"
+                  aria-label="Resize sidebar"
+                  onPointerDown={startSidebarResize}
+                />
                 <IconButton
                   className="appshell-collapse"
                   label="Collapse sidebar"
@@ -161,7 +168,7 @@ const AppShell: React.FC<AppShellProps> = ({ logo, testId = 'app-shell' }) => {
               </IconButton>
             )}
             <main className="appshell-content" ref={contentRef}>
-              <PageRouter onOpenPlayground={handleOpenPlayground} onTryExample={handleTryExample} />
+              <PageRouter onOpenPlayground={handleOpenPlayground} />
             </main>
           </div>
         </div>

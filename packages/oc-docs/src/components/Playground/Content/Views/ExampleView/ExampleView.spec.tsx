@@ -33,4 +33,11 @@ describe('ExampleView', () => {
     expect(root.querySelector('input')).toBeNull();
     expect(root.querySelector('textarea')).toBeNull();
   });
+
+  it('shows an empty message when the request has no params, headers or body', () => {
+    const root = useRenderToDom(<ExampleView request={request} example={{ ...example, request: {} }} />);
+    const empty = root.querySelector('[data-testid="example-view-request-empty"]');
+    expect(empty).not.toBeNull();
+    expect(empty!.textContent).toContain('No params, headers, or body configured for this request.');
+  });
 });

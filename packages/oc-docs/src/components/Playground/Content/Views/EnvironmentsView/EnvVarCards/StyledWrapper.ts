@@ -20,9 +20,6 @@ export const StyledWrapper = styled.div`
 
   .env-card .enabled {
     margin-top: 2px;
-    cursor: pointer;
-    accent-color: var(--oc-colors-accent);
-    flex-shrink: 0;
   }
 
   .env-card .body {
@@ -70,7 +67,6 @@ export const StyledWrapper = styled.div`
   .env-card .value-input {
     flex: 0 1 auto;
     field-sizing: content;
-    min-width: 40px;
     max-width: 100%;
     border: none;
     outline: none;

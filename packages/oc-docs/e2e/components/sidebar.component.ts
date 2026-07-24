@@ -8,6 +8,7 @@ export class SidebarComponent extends BaseComponent {
   readonly environments = this.page.getByTestId('sidebar-environments');
   readonly collapseButton = this.page.getByTestId('sidebar-collapse');
   readonly expandButton = this.page.getByTestId('sidebar-expand');
+  readonly resizer = this.page.getByTestId('sidebar-resizer');
   readonly drawer = this.page.getByTestId('sidebar-drawer');
   readonly backdrop = this.page.getByTestId('sidebar-backdrop');
   readonly hamburger = this.page.getByTestId('topbar-menu');
@@ -40,6 +41,15 @@ export class SidebarComponent extends BaseComponent {
     for (const name of paths) {
       await this.item(name).first().click();
     }
+  }
+
+  async width(): Promise<number> {
+    const box = await this.inline.boundingBox();
+    return box?.width ?? 0;
+  }
+
+  async grabResizer(): Promise<void> {
+    await this.grabHandle(this.resizer);
   }
 
   async collapse(): Promise<void> {

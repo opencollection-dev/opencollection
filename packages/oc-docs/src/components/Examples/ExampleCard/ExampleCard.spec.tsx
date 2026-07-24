@@ -22,11 +22,10 @@ const example: HttpRequestExample = {
 };
 
 describe('ExampleCard', () => {
-  it('shows the name, status and a Try button when collapsed', () => {
-    const html = renderToStaticMarkup(<ExampleCard example={example} method="post" url="{{baseUrl}}/auth/login" onTry={() => {}} />);
+  it('shows the name and status when collapsed', () => {
+    const html = renderToStaticMarkup(<ExampleCard example={example} method="post" url="{{baseUrl}}/auth/login" />);
     expect(html).toContain('Successful login');
     expect(html).toContain('200');
-    expect(html).toContain('>Try<');
     expect(html).toContain('--oc-status-success-text');
     expect(html).not.toContain('REQUEST');
   });
@@ -43,11 +42,10 @@ describe('ExampleCard', () => {
     expect(html).toContain('B');
   });
 
-  it('falls back to a default name and omits Try without a handler', () => {
+  it('falls back to a default name when the example has none', () => {
     const html = renderToStaticMarkup(<ExampleCard example={{ response: { status: 500 } }} method="get" url="/x" />);
     expect(html).toContain('Example');
     expect(html).toContain('--oc-status-danger-text');
-    expect(html).not.toContain('>Try<');
   });
 
   it('colours the status badge by tone: danger for 4xx/5xx, info for 3xx redirects', () => {
@@ -171,13 +169,11 @@ describe('ExampleCard', () => {
         }}
         method="post"
         url="/x"
-        onTry={() => {}}
         defaultExpanded
       />
     );
     expect(html).toContain('A described example');
     expect(html).toContain('class="example-toggle"');
-    expect(html).toContain('class="example-try"');
     expect(html).toContain('aria-expanded="true"');
     // WAI-ARIA tabs.
     expect(html).toContain('role="tablist"');

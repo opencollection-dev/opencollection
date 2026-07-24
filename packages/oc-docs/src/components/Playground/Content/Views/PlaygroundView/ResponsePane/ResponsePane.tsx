@@ -4,7 +4,8 @@ import ResponseBodyTab from '../../Common/ResponseBodyTab';
 import ResponseHeadersTab from '../../Common/ResponseHeadersTab';
 import TestResultsTab from '../../Common/TestResultsTab';
 import ErrorBanner from '../../../../../../ui/ErrorBanner/ErrorBanner';
-import { StyledWrapper } from './StyledWrapper';
+import { SendIconWrapper, StyledWrapper } from './StyledWrapper';
+import { SendIcon } from '../../../../../../assets/icons';
 
 interface ResponsePaneProps {
   response: any;
@@ -37,15 +38,11 @@ const ResponsePane: React.FC<ResponsePaneProps> = ({ response, isLoading }) => {
 
   if (!response) {
     return (
-      <div className="h-full flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
-        <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-4 opacity-50">
-            <svg fill="currentColor" viewBox="0 0 24 24" style={{ color: 'var(--text-secondary)' }}>
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-            </svg>
-          </div>
-          <p style={{ color: 'var(--text-secondary)' }}>Click Send to make a request</p>
-        </div>
+      <div className="h-full flex flex-col items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
+        <SendIconWrapper className="mb-4 send-icon">
+          <SendIcon width={26} height={24} />
+        </SendIconWrapper>
+        <p style={{ color: 'var(--oc-tabs-secondary-inactive-color)' }}>Click Send to make a request</p>
       </div>
     );
   }
@@ -134,6 +131,8 @@ const ResponsePane: React.FC<ResponsePaneProps> = ({ response, isLoading }) => {
   return (
     <StyledWrapper>
       <Tabs
+        variant="responsive"
+        testId="response-tabs"
         className='h-full'
         tabs={tabs}
         activeTab={activeTab}

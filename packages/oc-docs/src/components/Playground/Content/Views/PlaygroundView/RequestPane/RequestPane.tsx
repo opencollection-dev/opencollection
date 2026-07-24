@@ -5,7 +5,7 @@ import Tabs from '../../../../../../ui/Tabs/Tabs';
 import { KeyValueRow } from '../../../../../../components/KeyValueTable/KeyValueTable';
 import { rowToVariable } from '../../../../../../utils/variableDataType';
 import HeadersTab from '../../Common/HeadersTab/HeadersTab';
-import ParamsTab from '../../Common/ParamsTab';
+import ParamsTab from '../../Common/ParamsTab/ParamsTab';
 import BodyTab from '../../Common/BodyTab';
 import BodyModeSelector from '../../Common/BodyModeSelector/BodyModeSelector';
 import AuthTab from '../../Common/AuthTab/AuthTab';
@@ -148,7 +148,6 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange, inherited
       onVariablesChange={handleRequestVariablesChange}
       postResponseVars={postResponseVars}
       onPostResponseVarsChange={handlePostResponseVarsChange}
-      title=""
       description="These variables will be available to this request."
     />
   );
@@ -157,7 +156,6 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange, inherited
     <HeadersTab
       headers={headers}
       onHeadersChange={handleHeadersChange}
-      title=""
       description="Headers sent with this request."
     />
   );
@@ -167,6 +165,7 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange, inherited
       body={body}
       onItemChange={onItemChange}
       item={item}
+      fillHeight
     />
   );
 
@@ -188,9 +187,9 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange, inherited
     <ScriptsTab
       scripts={scriptsObj}
       onScriptChange={handleScriptChange}
-      title=""
-      description="Pre and post-request scripts that run before and after this request is sent."
       showTests={false}
+      description="Pre and post-request scripts that run before and after this request is sent."
+      fillHeight
     />
   );
 
@@ -199,7 +198,6 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange, inherited
       assertions={assertions}
       onAssertionsChange={handleAssertionsChange}
       title=""
-      description="Assertions that validate the response of this request."
     />
   );
 
@@ -207,7 +205,7 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange, inherited
     <TestsTab
       scripts={scriptsObj}
       onScriptChange={handleScriptChange}
-      description="These tests run every time this request is sent."
+      fillHeight
     />
   );
 
@@ -230,6 +228,7 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange, inherited
         <OverviewTab
           docs={getItemDocs(item)}
           emptyStateSubheading="This request has no docs. Add one in Bruno to introduce your API to readers: what it does, who it's for, and how to authenticate."
+          displayEmptyStateBox={false}
         />
       )
     },
@@ -287,6 +286,7 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange, inherited
   return (
     <StyledWrapper>
       <Tabs
+        variant="responsive"
         tabs={tabs}
         activeTab={activeTab}
         onTabChange={setActiveTab}

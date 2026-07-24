@@ -3,6 +3,7 @@ import type { Folder } from '@opencollection/types/collection/item';
 import type { OpenCollection } from '@opencollection/types';
 import type { HttpRequest } from '@opencollection/types/requests/http';
 import Tabs from '../../../../../ui/Tabs/Tabs';
+import TitleLabel from '../../../../TitleLabel/TitleLabel';
 import { type KeyValueRow } from '../../../../../components/KeyValueTable/KeyValueTable';
 import { rowToVariable } from '../../../../../utils/variableDataType';
 import HeadersTab from '../Common/HeadersTab/HeadersTab';
@@ -148,7 +149,6 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({ folder, collection, onF
     <HeadersTab
       headers={folder.request?.headers || []}
       onHeadersChange={handleHeadersChange}
-      title=""
       description="Request headers that will be sent with every request inside this folder."
     />
   );
@@ -157,7 +157,6 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({ folder, collection, onF
     <VariablesTab
       variables={folder.request?.variables || []}
       onVariablesChange={handleVariablesChange}
-      title=""
       description="Variables available to every request inside this folder."
     />
   );
@@ -168,7 +167,6 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({ folder, collection, onF
       onAuthChange={handleAuthChange}
       onItemChange={handleFolderAuthChange}
       item={folder}
-      title=""
       description="Configures authentication for this folder. This applies to all requests using the Inherit option in the Auth tab."
       showInherit={true}
       showFullAuth={true}
@@ -182,7 +180,6 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({ folder, collection, onF
     <ScriptsTab
       scripts={scripts}
       onScriptChange={handleScriptChange}
-      title=""
       description="Pre and post-request scripts that will run before and after any request inside this folder is sent."
       showTests={false}
     />
@@ -192,7 +189,6 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({ folder, collection, onF
     <TestsTab
       scripts={scripts}
       onScriptChange={handleScriptChange}
-      title=""
       description="These tests will run any time a request in this folder is sent."
     />
   );
@@ -234,14 +230,10 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({ folder, collection, onF
 
   return (
     <div className="h-full flex flex-col px-5 mt-5">
-      <div style={{ borderColor: 'var(--border-color)' }}>
-        <h2 className="text-lg font-semibold leading-tight" style={{ color: 'var(--text-primary)' }}>
-          {getItemName(folder) || 'Folder Settings'}
-        </h2>
-      </div>
+      <TitleLabel className="mb-2">{getItemName(folder) || 'Folder Settings'}</TitleLabel>
 
-      <div className="flex-1 min-h-0 overflow-y-auto mt-4">
-        <Tabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
+      <div className="flex-1 min-h-0 overflow-y-auto">
+        <Tabs variant="responsive" testId="folder-settings-tabs" tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
     </div>
   );

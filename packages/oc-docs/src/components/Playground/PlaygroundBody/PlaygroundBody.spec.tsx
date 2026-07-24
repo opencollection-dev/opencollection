@@ -44,6 +44,7 @@ describe('PlaygroundBody example view', () => {
             sidebarOpen={false}
             dock="modal"
             onCloseSidebar={() => {}}
+            onOpenSidebar={() => {}}
             appliedSlugRef={ref as any}
           />
         </MemoryRouter>

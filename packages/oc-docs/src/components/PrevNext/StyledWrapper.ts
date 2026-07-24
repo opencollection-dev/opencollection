@@ -23,7 +23,7 @@ export const StyledWrapper = styled.nav`
     width: 100%;
     max-width: 20rem;
     min-height: 4.0625rem;
-    padding: 0.875rem 1.125rem;
+    padding: 0.5rem;
     border-radius: 0.375rem;
     border: 0.0625rem solid var(--oc-border-border0, var(--border-color));
     text-decoration: none;
@@ -74,7 +74,7 @@ export const StyledWrapper = styled.nav`
     max-width: 100%;
     min-width: 0;
     font-size: 0.8125rem;
-    line-height: 1;
+    line-height: 1.4;
     font-weight: 600;
     color: var(--oc-text);
   }
@@ -98,7 +98,7 @@ export const StyledWrapper = styled.nav`
   @container docs (max-width: 1024px) {
     .prevnext-card {
       min-height: 3.5rem;
-      padding: 0.625rem 0.875rem;
+      padding: 0.5rem;
     }
   }
 
@@ -108,7 +108,7 @@ export const StyledWrapper = styled.nav`
 
     .prevnext-card {
       min-height: 3rem;
-      padding: 0.5rem 0.625rem;
+      padding: 0.5rem;
       gap: 0.375rem;
     }
     .prevnext-label,

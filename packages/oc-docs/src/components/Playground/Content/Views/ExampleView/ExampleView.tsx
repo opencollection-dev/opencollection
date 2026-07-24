@@ -54,6 +54,8 @@ export const ExampleView: React.FC<ExampleViewProps> = ({ request, example, orie
     resHeaderRows, resBody, hasResBody
   } = model;
 
+  const hasRequestData = hasParams || reqHeaderRows.length > 0 || hasReqBody;
+
   const { size: paneSize, isResizing, containerRef, startResize } = useSplitPane(orientation);
   const paneStyle = orientation === 'vertical' ? { height: `${paneSize}%` } : { width: `${paneSize}%` };
   const statusBadge = status ? (
@@ -102,6 +104,11 @@ export const ExampleView: React.FC<ExampleViewProps> = ({ request, example, orie
             <div className="example-view-section">
               <div className="example-view-section-label">BODY</div>
               <RequestBody body={reqBody} showContentType={false} />
+            </div>
+          )}
+          {!hasRequestData && (
+            <div className="example-view-empty" data-testid="example-view-request-empty">
+              No params, headers, or body configured for this request.
             </div>
           )}
         </div>

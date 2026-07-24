@@ -6,6 +6,7 @@ import { WarningIcon } from '../../assets/icons';
 import HighlightedInput from '../HighlightedInput/HighlightedInput';
 import { SecretValue } from '../../ui/SecretValue/SecretValue';
 import './KeyValueTable.css';
+import Checkbox from '../../ui/Checkbox/Checkbox';
 
 export interface KeyValueRow {
   id: string;
@@ -179,11 +180,9 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                       {showEnabled && (
                         <span className="checkbox-slot">
                           {!isLastEmptyRow && (
-                            <input
-                              type="checkbox"
-                              className="checkbox-input"
+                            <Checkbox
                               checked={row.enabled}
-                              aria-label={row.name ? `Enable ${row.name}` : 'Enable row'}
+                              ariaLabel={row.name ? `Enable ${row.name}` : 'Enable row'}
                               onChange={(e) => updateField(index, 'enabled', e.target.checked)}
                             />
                           )}

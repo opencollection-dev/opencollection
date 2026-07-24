@@ -27,3 +27,6 @@ export * from './SidebarToggleIcon';
 export * from './SettingsIcon';
 export * from './TrashIcon';
 export * from './ExampleIcon';
+export * from './DotIcon';
+export * from './ChevronsRightIcon';
+export * from './CheckIcon';

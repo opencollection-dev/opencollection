@@ -56,4 +56,19 @@ test.describe('KeyValueTable — tooltips & mobile scroll', () => {
     await expect(error).toBeVisible();
     await expect(error).toHaveAttribute('aria-label', 'Header name cannot contain spaces or newlines');
   });
+
+  test('a named row can be enabled and disabled via its checkbox', async ({ playground }) => {
+    const { keyValueTable } = playground;
+    // The trailing blank row has no checkbox; naming a row promotes it to a real row with one.
+    await keyValueTable.nameInputs.last().fill('X-Custom');
+
+    const toggle = keyValueTable.enableToggle('X-Custom');
+    await expect(toggle).toBeChecked();
+
+    await toggle.uncheck();
+    await expect(toggle).not.toBeChecked();
+
+    await toggle.check();
+    await expect(toggle).toBeChecked();
+  });
 });

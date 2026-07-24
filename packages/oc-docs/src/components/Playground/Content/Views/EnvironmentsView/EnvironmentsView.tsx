@@ -4,6 +4,7 @@ import type { Environment } from '@opencollection/types/config/environments';
 import type { Variable } from '@opencollection/types/common/variables';
 import KeyValueTable, { KeyValueRow } from '../../../../../components/KeyValueTable/KeyValueTable';
 import Tabs from '../../../../../ui/Tabs/Tabs';
+import TitleLabel from '../../../../TitleLabel/TitleLabel';
 import { EmptyState } from '../../../../../ui/EmptyState/EmptyState';
 import { StyledWrapper } from './StyledWrapper';
 import { EnvironmentLabel } from '../../../../EnvironmentLabel/EnvironmentLabel';
@@ -198,7 +199,7 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection, compact
   return (
     <StyledWrapper>
       <div className="env-header">
-        <h2 className="env-title">Environments</h2>
+        <TitleLabel>Environments</TitleLabel>
       </div>
 
       <div className="env-pills">
@@ -217,7 +218,7 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({ collection, compact
 
       <div className="env-tabs-area">
         {selectedEnvironment ? (
-          <Tabs defaultActiveTab="variables" tabs={tabs} />
+          <Tabs variant="responsive" testId="environment-tabs" defaultActiveTab="variables" tabs={tabs} />
         ) : (
           <div className="env-message">
             <p>Select an environment to view its variables</p>

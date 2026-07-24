@@ -4,6 +4,7 @@ import { AUTH_DEFAULTS, AUTH_MODE_LABELS, PLACEMENT_OPTIONS } from '../../../../
 import { REQUEST_PROTOCOL_KEYS } from '../../../../../../utils/schemaHelpers';
 import type { InheritedAuthSummary } from '../../../../../../utils/request';
 import { StyledWrapper } from './StyledWrapper';
+import NoContentText from '../../../../../../ui/NoContentText/NoContentText';
 
 interface AuthTabProps {
   auth: any;
@@ -22,7 +23,7 @@ export const AuthTab: React.FC<AuthTabProps> = ({
   onAuthChange,
   onItemChange,
   item,
-  title = 'Authentication',
+  title,
   description,
   showInherit = false,
   showFullAuth = false,
@@ -138,7 +139,7 @@ export const AuthTab: React.FC<AuthTabProps> = ({
 
   const renderBody = () => {
     if (!auth) {
-      return <p className="auth-empty">No authentication configured.</p>;
+      return <NoContentText text='No authentication configured.' />
     }
     if (auth === 'inherit') {
       return (
@@ -159,14 +160,14 @@ export const AuthTab: React.FC<AuthTabProps> = ({
     if (showFullAuth) {
       return <div className="auth-form">{renderForm()}</div>;
     }
-    return <p className="auth-empty">{title} auth is configured elsewhere.</p>;
+    return <NoContentText text='{title} auth is configured elsewhere.' />
   };
 
   return (
     <StyledWrapper className="auth-tab">
       {(Boolean(title) || Boolean(description)) && (
         <div className="auth-header flex items-center justify-between">
-          {Boolean(title) && <span className="title text-sm font-semibold">{title}</span>}
+          {title && <span className="title text-sm font-semibold">{title}</span>}
           {description && <span className="description text-xs leading-tight">{description}</span>}
         </div>
       )}

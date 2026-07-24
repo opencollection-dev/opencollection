@@ -52,13 +52,15 @@ const SidebarNavLink: React.FC<SidebarNavLinkProps> = ({
   return (
     <StyledWrapper
       className={classes}
-      // Indent with margin (outside the highlight) plus a small 4px inner pad, so
-      // the highlight starts just left of the chevron instead of filling the empty
-      // indent, while each level's glyph still lines up under its parent. Right
-      // margin keeps the highlight short of the edge: 8px at root, 4px when nested.
+      // Indent with margin (outside the highlight) plus an 8px inner pad, so the
+      // highlight sits a little left of the chevron / method badge instead of filling
+      // the empty indent. The pad is uniform across folders and leaf requests so each
+      // level's glyph still lines up under its parent (the 19px chevron+gap matches one
+      // indent step). Right margin keeps the highlight short of the edge: 8px at root,
+      // 4px when nested.
       style={{
-        marginLeft: `${(level * 19 + 4) / 16}rem`,
-        paddingLeft: '0.25rem',
+        marginLeft: `${(level * 19) / 16}rem`,
+        paddingLeft: '0.5rem',
         marginRight: level === 0 ? '0.5rem' : '0.25rem'
       }}
       data-testid={testId}

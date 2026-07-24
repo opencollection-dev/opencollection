@@ -28,12 +28,6 @@ export const StyledWrapper = styled.div`
     }
   }
 
-  .method-select-wrapper {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-  }
-
   .method-select {
     appearance: none;
     display: inline-flex;
@@ -44,6 +38,8 @@ export const StyledWrapper = styled.div`
     border: none;
     outline: none;
     cursor: pointer;
+    padding-left: 0.5rem;
+    margin-left: -0.5rem;
   }
 
   .method-select .method-badge {

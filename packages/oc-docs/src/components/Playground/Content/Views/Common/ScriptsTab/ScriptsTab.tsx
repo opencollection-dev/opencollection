@@ -15,14 +15,16 @@ interface ScriptsTabProps {
   title?: string;
   description?: string;
   showTests?: boolean;
+  fillHeight?: boolean;
 }
 
 export const ScriptsTab: React.FC<ScriptsTabProps> = ({
   scripts,
   onScriptChange,
-  title = 'Scripts',
+  title,
   description,
-  showTests = true
+  showTests = true,
+  fillHeight = false
 }) => {
   const [activeScriptTab, setActiveScriptTab] = useState<ScriptSubTab>('pre-request');
 
@@ -39,7 +41,7 @@ export const ScriptsTab: React.FC<ScriptsTabProps> = ({
           value={scripts.preRequest || ''}
           onChange={(value: string) => onScriptChange('preRequest', value)}
           language="javascript"
-          height="300px"
+          height={fillHeight ? '100%' : '300px'}
           hintsFor={['req', 'bru']}
           active={activeScriptTab === 'pre-request'}
           testId="scripts-editor-pre-request"
@@ -54,7 +56,7 @@ export const ScriptsTab: React.FC<ScriptsTabProps> = ({
           value={scripts.postResponse || ''}
           onChange={(value: string) => onScriptChange('postResponse', value)}
           language="javascript"
-          height="300px"
+          height={fillHeight ? '100%' : '300px'}
           hintsFor={['req', 'res', 'bru']}
           active={activeScriptTab === 'post-response'}
           testId="scripts-editor-post-response"
@@ -64,13 +66,15 @@ export const ScriptsTab: React.FC<ScriptsTabProps> = ({
   ];
 
   return (
-    <StyledWrapper className="space-y-4">
-      <div className="flex items-center justify-between mb-4">
-        {Boolean(title) && <span className="title text-sm font-semibold">{title}</span>}
-        {description && <span className="description text-xs leading-tight">{description}</span>}
-      </div>
+    <StyledWrapper className={`space-y-4${fillHeight ? ' h-full flex flex-col' : ''}`}>
+      {(Boolean(title) || Boolean(description)) && (
+        <div className="flex items-center justify-between mb-4">
+          {title && <span className="title text-sm font-semibold">{title}</span>}
+          {description && <span className="description text-xs leading-tight">{description}</span>}
+        </div>
+      )}
 
-      <div className="space-y-4">
+      <div className={`space-y-4${fillHeight ? ' flex-1 min-h-0 flex flex-col' : ''}`}>
         <Tabs
           tabs={tabs}
           activeTab={activeScriptTab}
