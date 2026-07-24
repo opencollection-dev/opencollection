@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Field, type SelectOption } from '../../../../../../ui/Field';
 import { AUTH_DEFAULTS, AUTH_MODE_LABELS, PLACEMENT_OPTIONS } from '../../../../../../constants';
 import { REQUEST_PROTOCOL_KEYS } from '../../../../../../utils/schemaHelpers';
+import type { InheritedAuthSummary } from '../../../../../../utils/request';
 import { StyledWrapper } from './StyledWrapper';
 import NoContentText from '../../../../../../ui/NoContentText/NoContentText';
 
@@ -14,6 +15,7 @@ interface AuthTabProps {
   description?: string;
   showInherit?: boolean;
   showFullAuth?: boolean;
+  inheritedAuth?: InheritedAuthSummary;
 }
 
 export const AuthTab: React.FC<AuthTabProps> = ({
@@ -24,7 +26,8 @@ export const AuthTab: React.FC<AuthTabProps> = ({
   title,
   description,
   showInherit = false,
-  showFullAuth = false
+  showFullAuth = false,
+  inheritedAuth
 }) => {
   const authType = typeof auth === 'object' && auth !== null ? auth.type : auth === 'inherit' ? 'inherit' : 'none';
 
@@ -139,7 +142,20 @@ export const AuthTab: React.FC<AuthTabProps> = ({
       return <NoContentText text='No authentication configured.' />
     }
     if (auth === 'inherit') {
-      return <NoContentText text='Inherits auth from parent collection.' />
+      return (
+        <p className="auth-empty" data-testid="auth-inherit-notice">
+          {inheritedAuth ? (
+            <Fragment>
+              Auth inherited from {inheritedAuth.sourceName}:{' '}
+              <span className="auth-inherited-mode" data-testid="inherited-auth-mode">
+                {inheritedAuth.modeLabel}
+              </span>
+            </Fragment>
+          ) : (
+            'Auth inherited from the parent folder or collection.'
+          )}
+        </p>
+      );
     }
     if (showFullAuth) {
       return <div className="auth-form">{renderForm()}</div>;

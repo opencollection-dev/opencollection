@@ -22,6 +22,17 @@ export const StyledWrapper = styled.div`
     gap: 1rem;
   }
 
+  .auth-empty {
+    margin: 0;
+    font-style: italic;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+  }
+
+  .auth-inherited-mode {
+    color: var(--primary-text);
+  }
+
   .auth-form {
     display: flex;
     flex-direction: column;

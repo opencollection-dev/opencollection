@@ -2,10 +2,13 @@ import type { Locator } from '@playwright/test';
 import { BaseComponent } from './base.component';
 import { KeyValueTableComponent } from './key-value-table/key-value-table.component';
 import { CodeEditorComponent } from './code-editor/code-editor.component';
+import { RequestAuthComponent } from './playground/auth.component';
 import type { DockMode } from '../../src/utils/playgroundDock';
 
 export class PlaygroundComponent extends BaseComponent {
   readonly keyValueTable = new KeyValueTableComponent(this.page);
+  // The Auth tab lives inside the playground request pane; open it with selectTab('auth').
+  readonly auth = new RequestAuthComponent(this.page);
   readonly preRequestScriptEditor = new CodeEditorComponent(this.page, 'scripts-editor-pre-request');
   readonly postResponseScriptEditor = new CodeEditorComponent(this.page, 'scripts-editor-post-response');
   readonly bodyEditor = new CodeEditorComponent(this.page, 'body-editor');
@@ -55,10 +58,6 @@ export class PlaygroundComponent extends BaseComponent {
     return this.sidebarPanel.getByTestId('sidebar-example').filter({ hasText: exampleName });
   }
 
-  async open(dock: DockMode = 'bottom'): Promise<void> {
-    await this.page.goto(`/#/?pg=1&dock=${dock}`);
-  }
-
   sidebarItem(name: string): Locator {
     return this.treeItems.filter({ hasText: name }).first();
   }
@@ -89,8 +88,8 @@ export class PlaygroundComponent extends BaseComponent {
     return this.page.getByTestId(`playground-dock-${mode}-panel`);
   }
 
-  async open(mode: DockMode): Promise<void> {
-    await this.page.goto(`/#/?pg=1&dock=${mode}`);
+  async open(dock: DockMode = 'bottom'): Promise<void> {
+    await this.page.goto(`/#/?pg=1&dock=${dock}`);
     await this.runner.waitFor({ state: 'visible' });
   }
 

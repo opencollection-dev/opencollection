@@ -29,14 +29,15 @@ import {
   getItemDocs
 } from '../../../../../../utils/schemaHelpers';
 import { setUrlQueryParams } from '../../../../../../utils/pathParams';
-import { actionsToPostResponseVars, postResponseVarsToActions } from '../../../../../../utils/request';
+import { actionsToPostResponseVars, postResponseVarsToActions, type InheritedAuthSummary } from '../../../../../../utils/request';
 
 interface RequestPaneProps {
   item: HttpRequest;
   onItemChange: (item: HttpRequest) => void;
+  inheritedAuth?: InheritedAuthSummary;
 }
 
-const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
+const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange, inheritedAuth }) => {
   const [activeTab, setActiveTab] = useState('overview');
 
   const handleParamsChange = (params: KeyValueRow[]) => {
@@ -174,8 +175,11 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
       onAuthChange={() => {}} // Not used for full auth
       onItemChange={onItemChange}
       item={item}
-      showFullAuth={true}
+      title=""
       description="Configures authentication for this request."
+      showInherit={true}
+      showFullAuth={true}
+      inheritedAuth={inheritedAuth}
     />
   );
 

@@ -24,6 +24,7 @@ import {
 import { getItemUuid } from './itemUtils';
 import { isSecretVariable, unwrapVariableValue } from './variableResolution';
 import { COLLECTION_ROOT_CRUMB } from './common';
+import { AUTH_MODE_LABELS } from '../constants';
 
 export const humanizeAuthMode = (auth: Auth | undefined, labels: Record<string, string>): string => {
   if (!auth) return 'No Auth';
@@ -49,11 +50,18 @@ export const resolveInheritedAuth = (
   const own = getRequestAuth(item) as Auth | undefined;
   if (own !== 'inherit') return { auth: own };
 
+  // Walk ancestors leaf->root. Only an `inherit` folder is transparent; the first folder that
+  // made an auth choice of its own — concrete OR an explicit No Auth (undefined) — is terminal
+  // and wins. A No-Auth folder therefore blocks a parent's auth rather than being skipped past.
+  // This mirrors the send path (`runner/utils/request-merger.ts` mergeAuth) and the app's
+  // inherited-auth resolver, so the docs show exactly what the playground puts on the wire.
   for (let i = ancestors.length - 1; i >= 0; i -= 1) {
     const auth = folderAuth(ancestors[i]);
-    if (isConcrete(auth)) {
-      return { auth, source: { level: 'folder', name: getItemName(ancestors[i]) || 'Folder' } };
-    }
+    if (auth === 'inherit') continue;
+    return {
+      auth: isConcrete(auth) ? auth : undefined,
+      source: { level: 'folder', name: getItemName(ancestors[i]) || 'Folder' }
+    };
   }
 
   const collectionAuth = collection?.request?.auth as Auth | undefined;
@@ -61,7 +69,32 @@ export const resolveInheritedAuth = (
     return { auth: collectionAuth, source: { level: 'collection', name: collection?.info?.name || 'Collection' } };
   }
 
-  return { auth: 'inherit' };
+  // Nothing concrete anywhere up the chain — the request effectively sends No Auth, not "Inherit".
+  return { auth: undefined };
+};
+
+/** Display summary for an inheriting item: the parent it resolves from and that parent's mode. */
+export interface InheritedAuthSummary {
+  sourceName: string;
+  modeLabel: string;
+}
+
+/**
+ * Resolve the inherited-auth summary an Auth tab shows ("Auth inherited from {name}: {mode}"),
+ * or undefined when the item doesn't inherit. Names the nearest configured parent (falling back
+ * to the collection) and its effective mode, matching the desktop app.
+ */
+export const getInheritedAuthSummary = (
+  collection: OpenCollection | null | undefined,
+  ancestors: Item[],
+  item: HttpRequest
+): InheritedAuthSummary | undefined => {
+  if (getRequestAuth(item) !== 'inherit') return undefined;
+  const resolved = resolveInheritedAuth(collection, ancestors, item);
+  return {
+    sourceName: resolved.source?.name ?? collection?.info?.name ?? 'Collection',
+    modeLabel: humanizeAuthMode(resolved.auth, AUTH_MODE_LABELS)
+  };
 };
 
 export const getDescription = (item: unknown): string | undefined => {
