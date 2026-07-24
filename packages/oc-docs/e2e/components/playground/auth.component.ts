@@ -7,8 +7,7 @@ import { BaseComponent } from '../base.component';
 export class RequestAuthComponent extends BaseComponent {
   readonly modeSelect = this.page.getByTestId('auth-mode-select');
   readonly inheritNotice = this.page.getByTestId('auth-inherit-notice');
-  // Options render as role="option" inside the (listbox) dropdown once it is open.
-  readonly options = this.page.getByRole('option');
+  readonly options = this.page.getByTestId(/^auth-mode-select-(?!dropdown$)/);
 
   option(value: string): Locator {
     return this.page.getByTestId(`auth-mode-select-${value}`);
