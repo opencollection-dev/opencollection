@@ -12,6 +12,7 @@ import ResponsePane from './ResponsePane/ResponsePane';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { updatePlaygroundItem, setPlaygroundResponse, selectPlaygroundResponse } from '../../../../../store/slices/playground';
 import { getItemName, isUnsupportedRequest } from '../../../../../utils/schemaHelpers';
+import { getInheritedAuthSummary } from '../../../../../utils/request';
 import UnsupportedRequest from '../../../../UnsupportedRequest/UnsupportedRequest';
 import { FileNotFoundIcon } from '../../../../../assets/icons';
 import { useSplitPane } from '../../../../../hooks/useSplitPane';
@@ -38,6 +39,10 @@ const HttpRequestPlaygroundView: React.FC<PlaygroundViewProps> = ({ item, collec
   const ancestry = useMemo(
     () => (collection && itemUuid ? getAncestorsByUuid(collection, itemUuid) : []),
     [collection, itemUuid]
+  );
+  const inheritedAuth = useMemo(
+    () => getInheritedAuthSummary(collection, ancestry, editableItem),
+    [collection, ancestry, editableItem]
   );
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pendingSaveRef = useRef<{ uuid: string; item: HttpRequest } | null>(null);
@@ -127,7 +132,7 @@ const HttpRequestPlaygroundView: React.FC<PlaygroundViewProps> = ({ item, collec
               : { width: `${paneSize}%`, borderColor: 'var(--border-color)' }
           }
         >
-          <RequestPane item={editableItem} onItemChange={handleItemChange} />
+          <RequestPane item={editableItem} onItemChange={handleItemChange} inheritedAuth={inheritedAuth} />
         </div>
 
         <SplitDivider orientation={orientation} onPointerDown={startResize} active={isResizing} testId="playground-divider" />

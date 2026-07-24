@@ -43,6 +43,41 @@ describe('requestAuth', () => {
     expect(resolved.auth).toMatchObject({ type: 'bearer' });
     expect(resolved.source).toEqual({ level: 'collection', name: 'C' });
   });
+
+  it('lets an explicit No-Auth folder block a parent folder auth (closest choice wins)', () => {
+    const item: any = { runtime: { auth: 'inherit' } };
+    const outer: any = { info: { type: 'folder', name: 'outer' }, request: { auth: { type: 'bearer', token: 't' } } };
+    const inner: any = { info: { type: 'folder', name: 'inner' }, request: { auth: undefined } }; // No Auth
+    const resolved = resolveInheritedAuth({ info: { name: 'C' } } as any, [outer, inner], item);
+    expect(resolved.auth).toBeUndefined();
+    expect(resolved.source).toEqual({ level: 'folder', name: 'inner' });
+  });
+
+  it('is transparent through an inherit folder to a shallower concrete folder', () => {
+    const item: any = { runtime: { auth: 'inherit' } };
+    const outer: any = { info: { type: 'folder', name: 'outer' }, request: { auth: { type: 'bearer', token: 't' } } };
+    const inner: any = { info: { type: 'folder', name: 'inner' }, request: { auth: 'inherit' } };
+    const resolved = resolveInheritedAuth({ info: { name: 'C' } } as any, [outer, inner], item);
+    expect(resolved.auth).toMatchObject({ type: 'bearer' });
+    expect(resolved.source).toEqual({ level: 'folder', name: 'outer' });
+  });
+
+  it('resolves to No Auth (never the literal "inherit") when nothing up the chain configures auth', () => {
+    const item: any = { runtime: { auth: 'inherit' } };
+    const folder: any = { info: { type: 'folder', name: 'F' }, request: { auth: 'inherit' } };
+    const resolved = resolveInheritedAuth({ info: { name: 'C' }, request: { auth: 'inherit' } } as any, [folder], item);
+    expect(resolved.auth).toBeUndefined();
+  });
+
+  it('resolves and labels an unknown/future auth type without a per-type change (scalable)', () => {
+    const future: any = { type: 'future-scheme-v9', token: 't' };
+    const item: any = { runtime: { auth: 'inherit' } };
+    const folder: any = { info: { type: 'folder', name: 'F' }, request: { auth: future } };
+    const resolved = resolveInheritedAuth({ info: { name: 'C' } } as any, [folder], item);
+    expect(resolved.auth).toMatchObject(future); // resolved through untouched, whatever the type
+    // The label falls back to the raw type when no friendly label exists yet, so it never breaks.
+    expect(humanizeAuthMode(future, AUTH_MODE_LABELS)).toBe('future-scheme-v9');
+  });
 });
 
 describe('requestBody', () => {

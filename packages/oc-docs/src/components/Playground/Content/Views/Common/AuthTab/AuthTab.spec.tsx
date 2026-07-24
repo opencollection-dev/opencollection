@@ -51,9 +51,18 @@ describe('AuthTab', () => {
     expect(query(root, '.auth-empty').text.trim()).toBe('No authentication configured.');
   });
 
-  it('shows an inherit note for inherited auth', () => {
+  it('names the inherited source and its effective mode, matching the app', () => {
+    const { root, getByTestId } = renderAuth('inherit', {
+      showInherit: true,
+      inheritedAuth: { sourceName: 'Users', modeLabel: 'Bearer Token' }
+    });
+    expect(query(root, '.auth-empty').text.replace(/\s+/g, ' ').trim()).toBe('Auth inherited from Users: Bearer Token');
+    expect(getByTestId('inherited-auth-mode').text.trim()).toBe('Bearer Token');
+  });
+
+  it('falls back to a generic inherit note when the source is not resolved', () => {
     const { root } = renderAuth('inherit', { showInherit: true });
-    expect(query(root, '.auth-empty').text.trim()).toBe('Inherits authentication from the parent folder or collection.');
+    expect(query(root, '.auth-empty').text.trim()).toBe('Auth inherited from the parent folder or collection.');
   });
 
   it('renders basic auth with a plain username and a masked, revealable password', () => {

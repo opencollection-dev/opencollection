@@ -52,7 +52,7 @@ export const mergeHeaders = (collection: OpenCollection, request: HttpRequest, r
   if (!request.http.headers) {
     request.http.headers = [];
   }
-  
+
   // Merge with existing request headers (request headers take precedence)
   const requestHeaderMap = new Map<string, HttpRequestHeader>();
   currentHeaders.forEach((header) => {
@@ -79,9 +79,9 @@ const isConcreteAuth = (auth: Auth | undefined): auth is Exclude<Auth, 'inherit'
  *
  * Walking the chain outward-in, the closest level that made an explicit auth choice wins: a
  * folder set to a concrete mode supplies it, a folder set to No Auth blocks a parent's auth,
- * and a folder left on `inherit` is transparent. This intentionally differs from the display
- * resolver (`utils/request.ts` resolveInheritedAuth, which — like the app's UI — skips
- * No-Auth folders); the send path mirrors what the app actually puts on the wire.
+ * and a folder left on `inherit` is transparent. The display resolver (`utils/request.ts`
+ * resolveInheritedAuth) applies the identical rule, so the docs show exactly what the
+ * playground puts on the wire.
  */
 export const mergeAuth = (collection: OpenCollection, request: HttpRequest, requestTreePath: Item[] = []): void => {
   if (getRequestAuth(request) !== 'inherit') {
@@ -103,8 +103,11 @@ export const mergeAuth = (collection: OpenCollection, request: HttpRequest, requ
   if (!request.http) {
     request.http = {};
   }
-  // Clone so the per-run request never aliases the shared collection/folder auth object.
-  request.http.auth = effective ? { ...effective } : undefined;
+  // The whole resolved auth object is copied through untouched, whatever its `type` — this resolver
+  // is deliberately mode-agnostic, so a new auth type inherits with no change here. Deep-clone so
+  // the per-run request never aliases the shared collection/folder auth, including any nested
+  // structure a richer auth type carries (e.g. oauth2 additional-parameter arrays).
+  request.http.auth = effective ? JSON.parse(JSON.stringify(effective)) : undefined;
 };
 
 /**
@@ -132,7 +135,7 @@ export const mergeScripts = (
   
   // Initialize merged scripts as object
   const mergedScriptsObj: Record<string, string | undefined> = {};
-  
+
   if (flow === 'sandwich') {
     // Sandwich flow: collection -> folders -> request -> folders (reverse) -> collection
     const preRequestParts: string[] = [];
@@ -185,7 +188,7 @@ export const mergeScripts = (
     if (requestScriptsObj.tests) {
       testsParts.push(requestScriptsObj.tests);
     }
-    
+
     mergedScriptsObj.preRequest = preRequestParts.length > 0 ? preRequestParts.join('\n\n') : undefined;
     mergedScriptsObj.postResponse = postResponseParts.length > 0 ? postResponseParts.join('\n\n') : undefined;
     mergedScriptsObj.tests = testsParts.length > 0 ? testsParts.join('\n\n') : undefined;

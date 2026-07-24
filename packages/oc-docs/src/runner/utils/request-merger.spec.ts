@@ -86,4 +86,36 @@ describe('mergeAuth (inherited-auth resolution for the playground send path)', (
       expect(coll.request.auth.token).toBe('t'); // mutation does not leak back to the collection
     });
   });
+
+  // The resolver is mode-agnostic: it copies the whole auth object through by reference to its
+  // shape, never switching on `auth.type`. These lock that in so a future auth type inherits with
+  // no change here, and so nobody re-introduces a per-type branch that would break new types.
+  describe('scalability — any auth type inherits without changes to the resolver', () => {
+    it('resolves an unknown/future auth type through the chain, untouched', () => {
+      const future: any = { type: 'future-scheme-v9', apiToken: 't', nested: { region: 'us' } };
+      expect(resolve(httpRequest('inherit'), collection(future))).toMatchObject(future);
+    });
+
+    it('applies closest-folder-wins for an unknown type just like a known one', () => {
+      const outer: any = { type: 'scheme-a', k: '1' };
+      const inner: any = { type: 'scheme-b', k: '2' };
+      const path = [folder('outer', outer), folder('inner', inner)];
+      expect(resolve(httpRequest('inherit'), collection(undefined), path)).toMatchObject(inner);
+    });
+
+    it('deep-clones a nested auth shape so nothing aliases the shared source', () => {
+      const coll = collection({
+        type: 'oauth2',
+        grantType: 'client_credentials',
+        additionalParameters: [{ name: 'scope', value: 'read' }]
+      });
+      const request = httpRequest('inherit');
+      mergeAuth(coll, request, []);
+      const applied = getRequestAuth(request) as any;
+      expect(applied).toMatchObject({ type: 'oauth2', grantType: 'client_credentials' });
+      expect(applied.additionalParameters).not.toBe(coll.request.auth.additionalParameters); // nested array cloned
+      applied.additionalParameters[0].value = 'mutated';
+      expect(coll.request.auth.additionalParameters[0].value).toBe('read'); // no leak into the collection
+    });
+  });
 });

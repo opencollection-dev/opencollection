@@ -29,6 +29,10 @@ export const StyledWrapper = styled.div`
     color: var(--text-muted);
   }
 
+  .auth-inherited-mode {
+    color: var(--primary-text);
+  }
+
   .auth-form {
     display: flex;
     flex-direction: column;
