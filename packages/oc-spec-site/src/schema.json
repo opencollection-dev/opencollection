@@ -270,7 +270,7 @@
         },
         "disabled": {
           "type": "boolean",
-          "description": "Disables this client certificate"
+          "description": "Disables this client certificate (optional)"
         }
       },
       "required": ["domain", "type", "certificateFilePath", "privateKeyFilePath"],
@@ -298,7 +298,7 @@
         },
         "disabled": {
           "type": "boolean",
-          "description": "Disables this client certificate"
+          "description": "Disables this client certificate (optional)"
         }
       },
       "required": ["domain", "type", "pkcs12FilePath"],
