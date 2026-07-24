@@ -58,10 +58,6 @@ export class PlaygroundComponent extends BaseComponent {
     return this.sidebarPanel.getByTestId('sidebar-example').filter({ hasText: exampleName });
   }
 
-  async open(dock: DockMode = 'bottom'): Promise<void> {
-    await this.page.goto(`/#/?pg=1&dock=${dock}`);
-  }
-
   sidebarItem(name: string): Locator {
     return this.treeItems.filter({ hasText: name }).first();
   }
@@ -92,8 +88,8 @@ export class PlaygroundComponent extends BaseComponent {
     return this.page.getByTestId(`playground-dock-${mode}-panel`);
   }
 
-  async open(mode: DockMode): Promise<void> {
-    await this.page.goto(`/#/?pg=1&dock=${mode}`);
+  async open(dock: DockMode = 'bottom'): Promise<void> {
+    await this.page.goto(`/#/?pg=1&dock=${dock}`);
     await this.runner.waitFor({ state: 'visible' });
   }
 
