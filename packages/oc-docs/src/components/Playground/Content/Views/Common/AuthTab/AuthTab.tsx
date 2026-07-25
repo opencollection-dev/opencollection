@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { Field, type SelectOption } from '../../../../../../ui/Field';
 import { AUTH_DEFAULTS, AUTH_MODE_LABELS, PLACEMENT_OPTIONS } from '../../../../../../constants';
 import { REQUEST_PROTOCOL_KEYS } from '../../../../../../utils/schemaHelpers';
@@ -145,12 +145,12 @@ export const AuthTab: React.FC<AuthTabProps> = ({
       return (
         <p className="auth-empty" data-testid="auth-inherit-notice">
           {inheritedAuth ? (
-            <Fragment>
+            <>
               Auth inherited from {inheritedAuth.sourceName}:{' '}
               <span className="auth-inherited-mode" data-testid="inherited-auth-mode">
                 {inheritedAuth.modeLabel}
               </span>
-            </Fragment>
+            </>
           ) : (
             'Auth inherited from the parent folder or collection.'
           )}

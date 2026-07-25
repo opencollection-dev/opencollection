@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import type { Folder } from '@opencollection/types/collection/item';
 import type { OpenCollection } from '@opencollection/types';
-import type { HttpRequest } from '@opencollection/types/requests/http';
 import Tabs from '../../../../../ui/Tabs/Tabs';
 import TitleLabel from '../../../../TitleLabel/TitleLabel';
 import { type KeyValueRow } from '../../../../../components/KeyValueTable/KeyValueTable';
@@ -36,9 +35,10 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({ folder, collection, onF
   const [activeTab, setActiveTab] = useState('overview');
 
   const inheritedAuth = useMemo(() => {
+    if (folder.request?.auth !== 'inherit') return undefined;
     const uuid = getItemUuid(folder);
     const ancestry = uuid ? getAncestorsByUuid(collection, uuid) : [];
-    return getInheritedAuthSummary(collection, ancestry, folder as unknown as HttpRequest);
+    return getInheritedAuthSummary(collection, ancestry, folder);
   }, [folder, collection]);
 
   const handleHeadersChange = (headers: KeyValueRow[]) => {

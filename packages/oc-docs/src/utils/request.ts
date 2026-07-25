@@ -45,9 +45,9 @@ const isConcrete = (auth: Auth | undefined): boolean => !!auth && auth !== 'inhe
 export const resolveInheritedAuth = (
   collection: OpenCollection | null | undefined,
   ancestors: Item[],
-  item: HttpRequest
+  item: Item
 ): ResolvedAuth => {
-  const own = getRequestAuth(item) as Auth | undefined;
+  const own = getRequestAuth(item as HttpRequest) as Auth | undefined;
   if (own !== 'inherit') return { auth: own };
 
   // Walk ancestors leaf->root. Only an `inherit` folder is transparent; the first folder that
@@ -87,12 +87,12 @@ export interface InheritedAuthSummary {
 export const getInheritedAuthSummary = (
   collection: OpenCollection | null | undefined,
   ancestors: Item[],
-  item: HttpRequest
+  item: Item
 ): InheritedAuthSummary | undefined => {
-  if (getRequestAuth(item) !== 'inherit') return undefined;
+  if (getRequestAuth(item as HttpRequest) !== 'inherit') return undefined;
   const resolved = resolveInheritedAuth(collection, ancestors, item);
   return {
-    sourceName: resolved.source?.name ?? collection?.info?.name ?? 'Collection',
+    sourceName: resolved.source?.name || collection?.info?.name || 'Collection',
     modeLabel: humanizeAuthMode(resolved.auth, AUTH_MODE_LABELS)
   };
 };

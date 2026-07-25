@@ -13,7 +13,7 @@ import {
   scriptsObjectToArray,
   type ScriptsObject
 } from '../../utils/schemaHelpers';
-import type { Auth } from '@opencollection/types/common/auth';
+import { resolveInheritedAuth } from '../../utils/request';
 
 /**
  * Merge headers from collection and folder hierarchy into the request
@@ -67,47 +67,28 @@ export const mergeHeaders = (collection: OpenCollection, request: HttpRequest, r
   });
 };
 
-// A concrete auth is a configured mode (basic/bearer/apikey/…), as opposed to the
-// `inherit` sentinel or an absent value (No Auth).
-const isConcreteAuth = (auth: Auth | undefined): auth is Exclude<Auth, 'inherit'> => !!auth && auth !== 'inherit';
-
 /**
- * Resolve inherited authentication into the request, matching the desktop app's send path
- * (bruno-electron `mergeAuth`). Only an explicit `inherit` resolves; a request with its own
- * concrete auth — or an explicit No Auth — is left untouched, so a parent never overrides an
- * explicit choice (acceptance: an explicit No Auth is respected).
- *
- * Walking the chain outward-in, the closest level that made an explicit auth choice wins: a
- * folder set to a concrete mode supplies it, a folder set to No Auth blocks a parent's auth,
- * and a folder left on `inherit` is transparent. The display resolver (`utils/request.ts`
- * resolveInheritedAuth) applies the identical rule, so the docs show exactly what the
- * playground puts on the wire.
+ * Resolve inherited authentication into the request for the send path. Delegates to the shared
+ * resolver (`utils/request.ts` resolveInheritedAuth) so the wire and the docs display can never
+ * drift: only an explicit `inherit` resolves; the closest level that made an auth choice wins (a
+ * concrete mode applies, an explicit No Auth blocks a parent, an `inherit` folder is transparent) —
+ * matching the desktop app (bruno-electron `mergeAuth`).
  */
 export const mergeAuth = (collection: OpenCollection, request: HttpRequest, requestTreePath: Item[] = []): void => {
   if (getRequestAuth(request) !== 'inherit') {
     return;
   }
 
-  // The collection is the base; folders nearer the request override it.
-  const collectionAuth = collection.request?.auth as Auth | undefined;
-  let effective: Exclude<Auth, 'inherit'> | undefined = isConcreteAuth(collectionAuth) ? collectionAuth : undefined;
-
-  for (const item of requestTreePath) {
-    if (!isFolder(item)) continue;
-    const folderAuth = (item as { request?: { auth?: Auth } }).request?.auth;
-    if (folderAuth === 'inherit') continue; // transparent — keep looking outward-in
-    effective = isConcreteAuth(folderAuth) ? folderAuth : undefined; // concrete applies; No Auth blocks
-  }
+  const { auth } = resolveInheritedAuth(collection, requestTreePath, request);
 
   // Auth lives on the protocol-detail block (request.http.auth); ensure it exists.
   if (!request.http) {
     request.http = {};
   }
-  // The whole resolved auth object is copied through untouched, whatever its `type` — this resolver
-  // is deliberately mode-agnostic, so a new auth type inherits with no change here. Deep-clone so
-  // the per-run request never aliases the shared collection/folder auth, including any nested
-  // structure a richer auth type carries (e.g. oauth2 additional-parameter arrays).
-  request.http.auth = effective ? JSON.parse(JSON.stringify(effective)) : undefined;
+  // The resolved auth is copied through untouched whatever its `type` (mode-agnostic). Deep-clone so
+  // the per-run request never aliases the shared collection/folder auth, including nested structure
+  // a richer type carries (e.g. oauth2 additional-parameter arrays).
+  request.http.auth = auth ? JSON.parse(JSON.stringify(auth)) : undefined;
 };
 
 /**
