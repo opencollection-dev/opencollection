@@ -55,6 +55,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
 }) => {
   const mode = useAppSelector((s) => s.theme.mode);
   const editorRef = useRef<EditorInstance | null>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (active && editorRef.current) editorRef.current.layout();
@@ -73,14 +74,29 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyY, () => runAction('editor.foldAll'));
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyJ, () => runAction('editor.action.joinLines'));
 
-    if (!hintsFor?.length) return;
+    const markReady = () => wrapperRef.current?.setAttribute('data-editor-ready', 'true');
+
+    if (!hintsFor?.length) {
+      markReady();
+      return;
+    }
     ensureScriptApiCompletions(monaco);
-    const model = editor.getModel();
-    if (model) setModelHints(model, hintsFor);
+    // An editor first mounted inside a hidden (display:none) tab panel can have its model attached
+    // — or swapped for a fresh one — only when it becomes visible, which drops a tag applied at
+    // mount. Re-tag on every model change so the shared completion provider always resolves this
+    // editor's roots, and signal readiness once the live model carries the tag.
+    const tagModel = () => {
+      const model = editor.getModel();
+      if (!model) return;
+      setModelHints(model, hintsFor);
+      markReady();
+    };
+    tagModel();
+    editor.onDidChangeModel(tagModel);
   };
 
   return (
-    <StyledWrapper data-testid={testId} style={{ height }}>
+    <StyledWrapper ref={wrapperRef} data-testid={testId} style={{ height }}>
       <Editor
         height="100%"
         language={language}
