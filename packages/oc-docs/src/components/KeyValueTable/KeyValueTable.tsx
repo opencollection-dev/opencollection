@@ -46,6 +46,8 @@ interface KeyValueTableProps {
   inlineActions?: boolean;
   multilineValues?: boolean;
   secretEditByDefault?: boolean;
+  /** Render an editable "Description" column (matches the app; a plain string per row). */
+  showDescription?: boolean;
   testId?: string;
 }
 
@@ -75,10 +77,17 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
   inlineActions = false,
   multilineValues = false,
   secretEditByDefault = false,
+  showDescription = false,
   testId = 'key-value-table'
 }) => {
   const { isFound, names } = useResolvedVariables();
   const { rows, updateField, removeRow } = useEditableRows(data, onChange, { disableNewRow, makeNewRow, addWhenComplete });
+
+  // With a description column the delete action must sit in its own trailing column (after
+  // Description) rather than inline in the value cell, so any inline extras (e.g. the variable
+  // type dropdown) still render beside the value while delete stays last — matching the app.
+  const actionsAsColumn = showActions && (!inlineActions || showDescription);
+  const inlineDelete = showActions && !disableDelete && !actionsAsColumn;
 
   const cellError = (row: KeyValueRow, index: number, field: 'name' | 'value') => {
     const message = getRowError?.(row, index, field);
@@ -101,7 +110,8 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
             <col className="col-value" />
             {!inlineActions &&
               additionalColumns.map((col) => <col key={col.key} className={`col-${col.key}`} />)}
-            {!inlineActions && showActions && <col className="col-actions" />}
+            {showDescription && <col className="col-description" />}
+            {actionsAsColumn && <col className="col-actions" />}
           </colgroup>
           <thead>
             <tr>
@@ -113,7 +123,12 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                     {col.label}
                   </th>
                 ))}
-              {!inlineActions && showActions && <th className="col-actions"></th>}
+              {showDescription && (
+                <th className="col-description" data-testid={`${testId}-description-header`}>
+                  Description
+                </th>
+              )}
+              {actionsAsColumn && <th className="col-actions"></th>}
             </tr>
           </thead>
           <tbody>
@@ -214,12 +229,12 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                       <div className="value-cell">
                         <div className="value-cell-field">{valueField}</div>
                         {!isLastEmptyRow && cellError(row, index, 'value')}
-                        {!isLastEmptyRow && (
+                        {!isLastEmptyRow && (additionalColumns.length > 0 || inlineDelete) && (
                           <div className="value-cell-trailing">
                             {additionalColumns.map((col) => (
                               <React.Fragment key={col.key}>{col.render(row, index, updateCell)}</React.Fragment>
                             ))}
-                            {showActions && !disableDelete && deleteButton}
+                            {inlineDelete && deleteButton}
                           </div>
                         )}
                       </div>
@@ -233,7 +248,20 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                         {!isLastEmptyRow && col.render(row, index, updateCell)}
                       </td>
                     ))}
-                  {!inlineActions && showActions && (
+                  {showDescription && (
+                    <td className="col-description">
+                      <HighlightedInput
+                        value={typeof row.description === 'string' ? row.description : ''}
+                        placeholder={isLastEmptyRow ? 'Description' : ''}
+                        onValueChange={(v) => updateField(index, 'description', v)}
+                        isFound={isFound}
+                        names={names}
+                        variablesAutocomplete={false}
+                        testId={`${testId}-description-input`}
+                      />
+                    </td>
+                  )}
+                  {actionsAsColumn && (
                     <td className="col-actions">{!isLastEmptyRow && !disableDelete && deleteButton}</td>
                   )}
                 </tr>

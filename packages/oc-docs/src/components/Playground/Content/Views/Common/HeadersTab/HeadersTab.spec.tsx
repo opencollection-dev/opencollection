@@ -24,11 +24,12 @@ describe('HeadersTab', () => {
     expect(values).toContain('text/html');
   });
 
-  it('renders the default title and a provided description', () => {
+  it('shows the description and bulk-edit toggle, and renders no title when none is given', () => {
     const root = useRenderToDom(
       <HeadersTab headers={[]} onHeadersChange={noop} description="Request headers sent with the call" />
     );
-    expect(query(root, '.title').text.trim()).toBe('Headers');
+    // The tab sits inside a "Headers"-labelled tab, so it renders a title only when one is passed.
+    expect(root.querySelector('.title')).toBeNull();
     expect(query(root, '.description').text.trim()).toBe('Request headers sent with the call');
     expect(root.querySelector('[data-testid="bulk-edit-toggle"]')).toBeTruthy();
   });
@@ -51,5 +52,21 @@ describe('HeadersTab', () => {
       <HeadersTab headers={[{ name: 'Content-Type', value: 'application/json' }]} onHeadersChange={noop} />
     );
     expect(root.querySelector('.cell-error')).toBeNull();
+  });
+
+  it('shows a Description column with authored descriptions (bare string or {content} form)', () => {
+    const root = useRenderToDom(
+      <HeadersTab
+        headers={[
+          { name: 'Authorization', value: 'Bearer x', description: 'The bearer token' },
+          { name: 'Accept', value: 'text/html', description: { content: 'The media type', type: 'text' } }
+        ]}
+        onHeadersChange={noop}
+      />
+    );
+    const columns = root.querySelectorAll('thead th').map((th) => th.text.trim());
+    expect(columns).toContain('Description');
+    expect(root.text).toContain('The bearer token');
+    expect(root.text).toContain('The media type');
   });
 });

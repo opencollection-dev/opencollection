@@ -470,7 +470,7 @@ export const postResponseVarsToActions = (rows: PostResponseRowInput[], actions:
     selector: { expression: row.value ?? '', method: 'jsonq' },
     variable: { name: row.name ?? '', scope: row.scope || 'runtime' },
     disabled: !row.enabled,
-    ...(row.description !== undefined ? { description: row.description } : {})
+    ...(row.description ? { description: row.description } : {})
   }));
   return [...others, ...postActions];
 };

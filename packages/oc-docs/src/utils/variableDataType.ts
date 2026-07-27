@@ -87,7 +87,7 @@ export interface VariableRowInput {
  */
 export const rowToVariable = (row: VariableRowInput): Variable => {
   const dataType = row.dataType && row.dataType !== 'string' ? (row.dataType as VariableValueType) : undefined;
-  const description = row.description !== undefined ? { description: row.description } : {};
+  const description = row.description ? { description: row.description } : {};
 
   const nextValue = dataType ? { type: dataType, data: row.value } : row.value;
 

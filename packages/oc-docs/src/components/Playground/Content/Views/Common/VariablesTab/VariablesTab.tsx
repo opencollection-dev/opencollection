@@ -6,7 +6,7 @@ import { unwrapVariableTyped } from '../../../../../../utils/variableResolution'
 import { toDataType } from '../../../../../../utils/variableDataType';
 import { VARIABLE_NAME_REGEX } from '../../../../../../constants/regex';
 import { variableTypeColumn } from '../VariableTypeControl/variableTypeColumn';
-import type { PostResponseVar } from '../../../../../../utils/request';
+import { getDescription, type PostResponseVar } from '../../../../../../utils/request';
 import { StyledWrapper } from './StyledWrapper';
 
 interface VariablesTabProps {
@@ -49,7 +49,7 @@ export const VariablesTab: React.FC<VariablesTabProps> = ({
           value,
           enabled: !variable.disabled,
           dataType: toDataType(dataType),
-          description: (variable as Variable).description,
+          description: getDescription(variable as Variable),
           originalValue: (variable as Variable).value
         };
       }),
@@ -64,7 +64,7 @@ export const VariablesTab: React.FC<VariablesTabProps> = ({
         value: variable.expr || '',
         enabled: !variable.disabled,
         scope: variable.scope,
-        description: variable.description
+        description: getDescription(variable)
       })),
     [postResponseVars]
   );
@@ -91,6 +91,7 @@ export const VariablesTab: React.FC<VariablesTabProps> = ({
           multilineValues={true}
           additionalColumns={dataTypeColumns}
           getRowError={getVariableError}
+          showDescription
         />
       </section>
 
@@ -112,6 +113,7 @@ export const VariablesTab: React.FC<VariablesTabProps> = ({
             showEnabled={true}
             inlineActions={true}
             getRowError={getVariableError}
+            showDescription
           />
         </section>
       )}

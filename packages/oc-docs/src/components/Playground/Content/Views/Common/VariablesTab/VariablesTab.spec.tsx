@@ -95,4 +95,17 @@ describe('VariablesTab', () => {
     expect(query(root, 'td.col-value textarea').text).toBe('localhost');
     expect(query(root, '.var-type-label').text.trim()).toBe('string');
   });
+
+  it('shows a Description column with the authored variable description', () => {
+    const root = useRenderToDom(
+      <VariablesTab
+        variables={[{ name: 'token', value: 'abc', description: 'The auth token' }]}
+        onVariablesChange={noop}
+      />
+    );
+    const columns = root.querySelectorAll('thead th').map((th) => th.text.trim());
+    expect(columns).toContain('Description');
+    // The description cell is a single-line input (not multiline), so long text scrolls in place.
+    expect(query(root, 'td.col-description input.text-input').getAttribute('value')).toBe('The auth token');
+  });
 });

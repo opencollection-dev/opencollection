@@ -73,8 +73,20 @@
   width: auto;
 }
 
+.key-value-table col.col-description {
+  width: 25%;
+}
+
 .key-value-table col.col-actions {
   width: 3.75rem;
+}
+
+.key-value-table .col-description {
+  vertical-align: middle;
+}
+
+.key-value-table .col-description .highlight-input {
+  width: 100%;
 }
 
 .key-value-table tbody tr {

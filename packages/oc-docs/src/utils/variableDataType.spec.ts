@@ -102,6 +102,15 @@ describe('rowToVariable', () => {
     });
   });
 
+  it('omits an empty or absent description rather than writing an empty string', () => {
+    expect(rowToVariable({ name: 'a', value: 'v', enabled: true, description: '' })).toEqual({
+      name: 'a',
+      value: 'v',
+      disabled: false
+    });
+    expect(rowToVariable({ name: 'a', value: 'v', enabled: true })).not.toHaveProperty('description');
+  });
+
   it('keeps an unsupported-type value verbatim when the display value is unchanged (a sibling-row edit must not flatten it)', () => {
     const original = { type: 'null', data: '' } as never;
     expect(rowToVariable({ name: 'x', value: '', enabled: true, dataType: 'string', originalValue: original })).toEqual({

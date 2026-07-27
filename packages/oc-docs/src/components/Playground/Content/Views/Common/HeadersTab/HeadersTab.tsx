@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import KeyValueTable, { type KeyValueRow } from '../../../../../../components/KeyValueTable/KeyValueTable';
 import { STANDARD_HTTP_HEADERS, MIME_TYPES } from '../../../../../../constants/httpHeaders';
 import { HEADER_NAME_REGEX, HEADER_VALUE_REGEX } from '../../../../../../constants/regex';
+import { getDescription } from '../../../../../../utils/request';
 import BulkEdit from '../BulkEdit/BulkEdit';
 import { StyledWrapper } from './StyledWrapper';
 
@@ -31,7 +32,7 @@ const HeadersDisplay: React.FC<Omit<HeadersTabProps, 'title' | 'description'>> =
     name: header.name || '',
     value: header.value || '',
     enabled: !header.disabled,
-    description: header.description
+    description: getDescription(header)
   }));
 
   const toggleBulkEditView = useCallback(() => {
@@ -51,6 +52,7 @@ const HeadersDisplay: React.FC<Omit<HeadersTabProps, 'title' | 'description'>> =
           keyAutocomplete={STANDARD_HTTP_HEADERS}
           valueAutocomplete={MIME_TYPES}
           getRowError={getHeaderError}
+          showDescription
         />
       ) : (
         <BulkEdit data={headersData} onChange={onHeadersChange} idPrefix="header" />

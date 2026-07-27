@@ -1,9 +1,10 @@
 import React, { useCallback, useMemo } from 'react';
 import KeyValueTable, { type KeyValueRow } from '../../../../../KeyValueTable/KeyValueTable';
+import { getDescription } from '../../../../../../utils/request';
 import { StyledWrapper } from './StyledWrapper';
 
 interface ParamsTabProps {
-  params: Array<{ name?: string; value?: string; disabled?: boolean; type?: string }>;
+  params: Array<{ name?: string; value?: string; disabled?: boolean; type?: string; description?: unknown }>;
   onParamsChange: (params: KeyValueRow[]) => void;
   title?: string;
   description?: string;
@@ -56,6 +57,7 @@ const ParamsSection: React.FC<ParamsSectionProps> = React.memo(({
       showActions={showActions}
       disableNewRow={disableNewRow}
       readOnlyKey={readOnlyKey}
+      showDescription
     />
   </div>
 ));
@@ -80,7 +82,8 @@ export const ParamsTab: React.FC<ParamsTabProps> = ({
         name: param.name || '',
         value: param.value || '',
         enabled: !param.disabled,
-        type: param.type || 'query'
+        type: param.type || 'query',
+        description: getDescription(param)
       };
       (row.type === 'path' ? pathData : queryData).push(row);
     });

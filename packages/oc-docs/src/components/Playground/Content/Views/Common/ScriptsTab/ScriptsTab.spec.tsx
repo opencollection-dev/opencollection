@@ -18,9 +18,10 @@ describe('ScriptsTab', () => {
     expect(query(root, '[data-testid="scripts-tabs-tab-post-response"]').text.trim()).toBe('Post response');
   });
 
-  it('renders the default title and the Tests section', () => {
+  it('shows the Tests section and renders no title when none is given', () => {
     const root = useRenderToDom(<ScriptsTab scripts={{}} onScriptChange={noop} />);
-    expect(query(root, '.title').text.trim()).toBe('Scripts');
+    // The tab sits inside a "Scripts"-labelled tab, so it renders a title only when one is passed.
+    expect(root.querySelector('.title')).toBeNull();
     expect(query(root, '.label').text.trim()).toBe('Tests');
   });
 

@@ -12,6 +12,7 @@ import { useAppDispatch } from '../../../../../store/hooks';
 import { updateCollectionSettings } from '@slices/playground';
 import { countEnabled, getItemDocs, scriptsArrayToObject, scriptsObjectToArray } from '../../../../../utils/schemaHelpers';
 import { rowToVariable } from '../../../../../utils/variableDataType';
+import { keyValueRowToEntry } from '../../../../../utils/keyValueRow';
 import { actionsToPostResponseVars, postResponseVarsToActions } from '../../../../../utils/request';
 import { StyledWrapper } from './StyledWrapper';
 
@@ -28,20 +29,7 @@ const CollectionSettings: React.FC<CollectionSettingsProps> = ({ collection }) =
   };
 
   const handleHeadersChange = (rows: KeyValueRow[]) => {
-    const originals = collection.request?.headers ?? [];
-    const originalByName = new Map(originals.filter((header) => header.name).map((header): [string, typeof header] => [header.name as string, header]));
-    updateRequest({
-      ...collection.request,
-      headers: rows.map((row) => {
-        const description = 'description' in row ? row.description : originalByName.get(row.name)?.description;
-        return {
-          name: row.name,
-          value: row.value,
-          disabled: !row.enabled,
-          ...(description !== undefined ? { description } : {})
-        };
-      })
-    });
+    updateRequest({ ...collection.request, headers: rows.map(keyValueRowToEntry) });
   };
 
   const handleVariablesChange = (rows: KeyValueRow[]) => {

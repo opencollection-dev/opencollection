@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { parseBulkKeyValue, serializeBulkKeyValue } from './bulkKeyValue';
+import type { KeyValueRow } from '../components/KeyValueTable/KeyValueTable';
+import { parseBulkKeyValue, preserveDescriptions, serializeBulkKeyValue } from './bulkKeyValue';
 
 describe('parseBulkKeyValue', () => {
   it('parses `name: value` lines and trims whitespace', () => {
@@ -53,5 +54,53 @@ describe('round-trip', () => {
       { name: 'X-Debug', value: 'true', enabled: false }
     ];
     expect(parseBulkKeyValue(serializeBulkKeyValue(rows))).toEqual(rows);
+  });
+});
+
+describe('preserveDescriptions', () => {
+  const original: KeyValueRow[] = [
+    { id: 'h-0', name: 'Accept', value: 'application/json', enabled: true, description: 'media type' },
+    { id: 'h-1', name: 'Authorization', value: 'Bearer x', enabled: true, description: 'the token' }
+  ];
+
+  it('re-attaches a description to the matching name', () => {
+    const rows = preserveDescriptions(parseBulkKeyValue('Accept:application/json\nAuthorization:Bearer x'), original, 'h');
+    expect(rows[0]).toMatchObject({ name: 'Accept', description: 'media type' });
+    expect(rows[1]).toMatchObject({ name: 'Authorization', description: 'the token' });
+  });
+
+  it('preserves descriptions when the rows are reordered', () => {
+    const rows = preserveDescriptions(parseBulkKeyValue('Authorization:Bearer x\nAccept:application/json'), original, 'h');
+    expect(rows[0]).toMatchObject({ name: 'Authorization', description: 'the token' });
+    expect(rows[1]).toMatchObject({ name: 'Accept', description: 'media type' });
+  });
+
+  it('drops the description when a key is renamed', () => {
+    const rows = preserveDescriptions(parseBulkKeyValue('Accepts:application/json'), original, 'h');
+    expect(rows[0]).not.toHaveProperty('description');
+  });
+
+  it('gives a brand-new entry no description', () => {
+    const rows = preserveDescriptions(parseBulkKeyValue('X-New:1'), original, 'h');
+    expect(rows[0]).not.toHaveProperty('description');
+  });
+
+  it('matches duplicate names by closest index and consumes each original once', () => {
+    const dupes: KeyValueRow[] = [
+      { id: 'd-0', name: 'X', value: 'a', enabled: true, description: 'first' },
+      { id: 'd-1', name: 'X', value: 'b', enabled: true, description: 'second' }
+    ];
+    const rows = preserveDescriptions(parseBulkKeyValue('X:a\nX:b\nX:c'), dupes, 'd');
+    expect(rows[0]).toMatchObject({ description: 'first' });
+    expect(rows[1]).toMatchObject({ description: 'second' });
+    expect(rows[2]).not.toHaveProperty('description');
+  });
+
+  it('does not attach an empty description and never mutates the snapshot', () => {
+    const withEmpty: KeyValueRow[] = [{ id: 'e-0', name: 'A', value: '1', enabled: true, description: '' }];
+    const snapshot = JSON.stringify(withEmpty);
+    const rows = preserveDescriptions(parseBulkKeyValue('A:1'), withEmpty, 'e');
+    expect(rows[0]).not.toHaveProperty('description');
+    expect(JSON.stringify(withEmpty)).toBe(snapshot);
   });
 });

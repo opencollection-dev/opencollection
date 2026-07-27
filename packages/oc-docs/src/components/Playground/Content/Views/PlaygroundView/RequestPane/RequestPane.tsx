@@ -30,6 +30,7 @@ import {
 } from '../../../../../../utils/schemaHelpers';
 import { setUrlQueryParams } from '../../../../../../utils/pathParams';
 import { actionsToPostResponseVars, postResponseVarsToActions } from '../../../../../../utils/request';
+import { keyValueRowToEntry } from '../../../../../../utils/keyValueRow';
 
 interface RequestPaneProps {
   item: HttpRequest;
@@ -40,22 +41,12 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
   const [activeTab, setActiveTab] = useState('overview');
 
   const handleParamsChange = (params: KeyValueRow[]) => {
-    const originals = getHttpParams(item) as Array<{ name?: string }>;
-    const originalByName = new Map(
-      originals.filter((param) => param.name).map((param): [string, typeof param] => [param.name as string, param])
-    );
-    const updatedParams = params.map(p => ({
-      ...(originalByName.get(p?.name) ?? {}),
-      name: p?.name,
-      value: p?.value,
-      disabled: !p?.enabled,
-      type: p?.type
-    }));
+    const updatedParams = params.map((p) => ({ ...keyValueRowToEntry(p), type: p.type }));
     const url = setUrlQueryParams(getRequestUrl(item), updatedParams);
     onItemChange({
-      ...item, 
-      http: { 
-        ...item.http, 
+      ...item,
+      http: {
+        ...item.http,
         params: updatedParams,
         url
       }
@@ -63,25 +54,13 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
   };
 
   const handleHeadersChange = (headers: KeyValueRow[]) => {
-    const originals = getHttpHeaders(item);
-    const originalByName = new Map(
-      originals.filter((header) => header.name).map((header): [string, typeof header] => [header.name as string, header])
-    );
-    const updatedHeaders = headers.map(h => {
-      const description = 'description' in h ? h.description : originalByName.get(h.name)?.description;
-      return {
-        name: h.name,
-        value: h.value,
-        disabled: !h.enabled,
-        ...(description !== undefined ? { description } : {})
-      };
-    });
-    onItemChange({ 
-      ...item, 
-      http: { 
-        ...item.http, 
-        headers: updatedHeaders 
-      } 
+    const updatedHeaders = headers.map(keyValueRowToEntry);
+    onItemChange({
+      ...item,
+      http: {
+        ...item.http,
+        headers: updatedHeaders
+      }
     });
   };
 

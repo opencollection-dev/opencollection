@@ -4,6 +4,7 @@ import type { OpenCollection } from '@opencollection/types';
 import Tabs from '../../../../../ui/Tabs/Tabs';
 import { type KeyValueRow } from '../../../../../components/KeyValueTable/KeyValueTable';
 import { rowToVariable } from '../../../../../utils/variableDataType';
+import { keyValueRowToEntry } from '../../../../../utils/keyValueRow';
 import HeadersTab from '../Common/HeadersTab/HeadersTab';
 import VariablesTab from '../Common/VariablesTab/VariablesTab';
 import AuthTab from '../Common/AuthTab/AuthTab';
@@ -30,101 +31,40 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({ folder, onFolderChange 
   const dispatch = useAppDispatch();
   const [activeTab, setActiveTab] = useState('overview');
 
-  const handleHeadersChange = (headers: KeyValueRow[]) => {
-    const originals = folder.request?.headers ?? [];
-    const originalByName = new Map(
-      originals.filter((header) => header.name).map((header): [string, typeof header] => [header.name as string, header])
-    );
-    const updatedHeaders = headers.map((h) => {
-      const description = 'description' in h ? h.description : originalByName.get(h.name)?.description;
-      return {
-        name: h.name,
-        value: h.value,
-        disabled: !h.enabled,
-        ...(description !== undefined ? { description } : {})
-      };
-    });
-
-    const updatedFolder = {
-      ...folder,
-      request: {
-        ...folder.request,
-        headers: updatedHeaders
-      }
-    };
-
-    const uuid = (folder as any).uuid;
+  // Every edit rebuilds the folder and persists it the same way: push it into the collection (by the
+  // hydrated uuid) and bubble it up. Centralised so the handlers below stay one-liners.
+  const commitFolder = (updatedFolder: Folder) => {
+    const uuid = (updatedFolder as Folder & { uuid?: string }).uuid;
     if (uuid) {
       dispatch(updateFolderInCollection({ uuid, folder: updatedFolder }));
     }
     onFolderChange(updatedFolder);
+  };
+
+  const handleHeadersChange = (headers: KeyValueRow[]) => {
+    commitFolder({ ...folder, request: { ...folder.request, headers: headers.map(keyValueRowToEntry) } });
   };
 
   const handleVariablesChange = (variables: KeyValueRow[]) => {
-    const updatedFolder = {
-      ...folder,
-      request: {
-        ...folder.request,
-        variables: variables.map(rowToVariable)
-      }
-    };
-
-    const uuid = (folder as any).uuid;
-    if (uuid) {
-      dispatch(updateFolderInCollection({ uuid, folder: updatedFolder }));
-    }
-    onFolderChange(updatedFolder);
+    commitFolder({ ...folder, request: { ...folder.request, variables: variables.map(rowToVariable) } });
   };
 
   const handleScriptChange = (scriptType: 'preRequest' | 'postResponse' | 'tests', value: string) => {
-    const currentScriptsObj = scriptsArrayToObject(folder.request?.scripts);
-    const updatedScriptsObj = { ...currentScriptsObj, [scriptType]: value };
-
-    const updatedFolder = {
+    const updatedScriptsObj = { ...scriptsArrayToObject(folder.request?.scripts), [scriptType]: value };
+    commitFolder({
       ...folder,
-      request: {
-        ...folder.request,
-        scripts: scriptsObjectToArray(updatedScriptsObj)
-      }
-    } as Folder;
-
-    const uuid = (folder as any).uuid;
-    if (uuid) {
-      dispatch(updateFolderInCollection({ uuid, folder: updatedFolder }));
-    }
-    onFolderChange(updatedFolder);
+      request: { ...folder.request, scripts: scriptsObjectToArray(updatedScriptsObj) }
+    } as Folder);
   };
 
   const handleAuthChange = (authType: string) => {
     let auth: any = 'inherit';
-
     if (authType !== 'none' && authType !== 'inherit') {
       auth = { type: authType };
     } else if (authType === 'none') {
       auth = undefined;
     }
-
-    const updatedFolder = {
-      ...folder,
-      request: {
-        ...folder.request,
-        auth
-      }
-    };
-
-    const uuid = (folder as any).uuid;
-    if (uuid) {
-      dispatch(updateFolderInCollection({ uuid, folder: updatedFolder }));
-    }
-    onFolderChange(updatedFolder);
-  };
-
-  const handleFolderAuthChange = (updatedFolder: Folder) => {
-    const uuid = (updatedFolder as any).uuid;
-    if (uuid) {
-      dispatch(updateFolderInCollection({ uuid, folder: updatedFolder }));
-    }
-    onFolderChange(updatedFolder);
+    commitFolder({ ...folder, request: { ...folder.request, auth } });
   };
 
   const renderOverview = () => (
@@ -154,7 +94,7 @@ const FolderSettings: React.FC<FolderSettingsProps> = ({ folder, onFolderChange 
     <AuthTab
       auth={folder.request?.auth}
       onAuthChange={handleAuthChange}
-      onItemChange={handleFolderAuthChange}
+      onItemChange={commitFolder}
       item={folder}
       description="Configures authentication for this folder. This applies to all requests using the Inherit option in the Auth tab."
       showInherit={true}
