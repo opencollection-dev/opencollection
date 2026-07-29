@@ -27,6 +27,13 @@ describe('applyApiKeyToUrl', () => {
     const auth = { type: 'apikey', key: 'api_key', value: 'secret123', placement: 'query' };
     expect(applyApiKeyToUrl('api.example.com/data', auth)).toBe('api.example.com/data');
   });
+
+  it('leaves the url untouched when the value is empty', () => {
+    const auth = { type: 'apikey', key: 'api_key', value: '', placement: 'query' };
+    expect(applyApiKeyToUrl('https://api.example.com/data', auth)).toBe(
+      'https://api.example.com/data'
+    );
+  });
 });
 
 describe('RequestExecutor', () => {
