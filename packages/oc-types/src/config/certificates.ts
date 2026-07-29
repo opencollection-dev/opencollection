@@ -8,6 +8,7 @@ export interface PemCertificate {
   certificateFilePath: string;
   privateKeyFilePath: string;
   passphrase?: string;
+  disabled?: boolean;
 }
 
 export interface Pkcs12Certificate {
@@ -15,6 +16,7 @@ export interface Pkcs12Certificate {
   type: 'pkcs12';
   pkcs12FilePath: string;
   passphrase?: string;
+  disabled?: boolean;
 }
 
 export type ClientCertificate = PemCertificate | Pkcs12Certificate;
