@@ -2370,7 +2370,8 @@
             "hashicorp-vault-cloud",
             "hashicorp-vault-server",
             "aws-secrets-manager",
-            "azure-key-vault"
+            "azure-key-vault",
+            "gcp-secrets-manager"
           ],
           "description": "The secret provider that resolves these external secrets"
         },
@@ -2395,6 +2396,9 @@
         },
         {
           "$ref": "#/$defs/AzureKeyVaultExternalSecret"
+        },
+        {
+          "$ref": "#/$defs/GcpSecretsManagerExternalSecret"
         }
       ],
       "description": "An external secret variable, shaped per the secret provider that resolves it"
@@ -2466,6 +2470,29 @@
         }
       },
       "required": ["name", "vaultName"],
+      "additionalProperties": false
+    },
+    "GcpSecretsManagerExternalSecret": {
+      "type": "object",
+      "description": "An external secret resolved from GCP Secrets Manager",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The variable name"
+        },
+        "description": {
+          "$ref": "#/$defs/Description"
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Whether the external secret is disabled"
+        },
+        "projectId": {
+          "type": "string",
+          "description": "The project ID of the GCP Secrets Manager"
+        }
+      },
+      "required": ["name", "projectId"],
       "additionalProperties": false
     },
     "VariableValue": {

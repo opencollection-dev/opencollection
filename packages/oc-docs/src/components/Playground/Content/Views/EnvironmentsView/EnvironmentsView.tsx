@@ -26,13 +26,14 @@ const ENV_TABS = [
 type EnvTabId = (typeof ENV_TABS)[number]['id'];
 
 // Local mirror: @opencollection/types@0.9.2 dist doesn't export SecretProviderType (importing it fails tsc).
-type SecretProviderType = 'hashicorp-vault-cloud' | 'hashicorp-vault-server' | 'aws-secrets-manager' | 'azure-key-vault';
+type SecretProviderType = 'hashicorp-vault-cloud' | 'hashicorp-vault-server' | 'aws-secrets-manager' | 'azure-key-vault' | 'gcp-secrets-manager';
 
-const SECRET_POINTER_FIELD: Record<SecretProviderType, 'path' | 'secretName' | 'vaultName'> = {
+const SECRET_POINTER_FIELD: Record<SecretProviderType, 'path' | 'secretName' | 'vaultName' | 'projectId'> = {
   'hashicorp-vault-cloud': 'path',
   'hashicorp-vault-server': 'path',
   'aws-secrets-manager': 'secretName',
-  'azure-key-vault': 'vaultName'
+  'azure-key-vault': 'vaultName',
+  'gcp-secrets-manager': 'projectId'
 };
 
 interface TabPanelProps {
