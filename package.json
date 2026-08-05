@@ -3,7 +3,6 @@
   "private": true,
   "workspaces": [
     "packages/oc-converters",
-    "packages/oc-docs",
     "packages/oc-schema",
     "packages/oc-schema-explorer",
     "packages/oc-spec",
