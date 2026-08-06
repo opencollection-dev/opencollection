@@ -13,7 +13,8 @@ function ExternalSecrets({ schema }) {
   const secretVariants = [
     { label: 'HashiCorp Vault', def: schema.$defs.HashicorpVaultExternalSecret },
     { label: 'AWS Secrets Manager', def: schema.$defs.AwsSecretsManagerExternalSecret },
-    { label: 'Azure Key Vault', def: schema.$defs.AzureKeyVaultExternalSecret }
+    { label: 'Azure Key Vault', def: schema.$defs.AzureKeyVaultExternalSecret },
+    { label: 'GCP Secrets Manager', def: schema.$defs.GcpSecretsManagerExternalSecret }
   ];
 
   const example = {

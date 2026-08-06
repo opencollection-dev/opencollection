@@ -54,16 +54,22 @@ export interface AzureKeyVaultExternalSecret extends BaseExternalSecretVariable 
   vaultName: string;
 }
 
+export interface GcpSecretsManagerExternalSecret extends BaseExternalSecretVariable {
+  projectId: string;
+}
+
 export type ExternalSecretVariable =
   | HashicorpVaultExternalSecret
   | AwsSecretsManagerExternalSecret
-  | AzureKeyVaultExternalSecret;
+  | AzureKeyVaultExternalSecret
+  | GcpSecretsManagerExternalSecret;
 
 export type SecretProviderType =
   | 'hashicorp-vault-cloud'
   | 'hashicorp-vault-server'
   | 'aws-secrets-manager'
-  | 'azure-key-vault';
+  | 'azure-key-vault'
+  | 'gcp-secrets-manager';
 
 export interface ExternalSecrets {
   type: SecretProviderType;
