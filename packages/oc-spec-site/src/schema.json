@@ -2238,8 +2238,8 @@
       "properties": {
         "type": {
           "type": "string",
-          "enum": ["before-request", "after-response", "tests", "hooks"],
-          "description": "The lifecycle stage when this script executes"
+          "enum": ["before-request", "after-response", "tests", "hooks", "grpc:before-call-start", "grpc:after-call-end", "grpc:before-message-send", "grpc:after-message-receive"],
+          "description": "The lifecycle stage when this script executes. Stages prefixed with 'grpc:' apply only to gRPC requests"
         },
         "code": {
           "type": "string",
