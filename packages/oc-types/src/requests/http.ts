@@ -90,6 +90,7 @@ export interface HttpRequestSettings {
   followRedirects?: boolean | 'inherit';
   forwardAuthorizationHeader?: boolean | 'inherit';
   maxRedirects?: number | 'inherit';
+  omitHeaders?: string[];
 }
 
 export interface HttpRequestExampleRequest {
