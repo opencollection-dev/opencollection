@@ -1598,6 +1598,13 @@
             }
           ],
           "description": "Maximum number of redirects to follow"
+        },
+        "omitHeaders": {
+          "type": "array",
+          "description": "Names of headers to omit from the request",
+          "items": {
+            "type": "string"
+          }
         }
       },
       "additionalProperties": false
