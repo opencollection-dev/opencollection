@@ -1759,7 +1759,7 @@
         },
         "omitHeaders": {
           "type": "array",
-          "description": "Names of default headers to omit from the request",
+          "description": "Names of headers to omit from the request",
           "items": {
             "type": "string"
           }
