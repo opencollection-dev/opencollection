@@ -38,11 +38,7 @@ function ScriptsLifecycle({ schema }) {
     {
       type: "tests",
       code: "// Test response\ntest('Status is 200', () => {\n    expect(res.status).to.equal(200);\n});"
-    },
-    // {
-    //   type: "hooks",
-    //   code: "// Custom lifecycle hooks"
-    // }
+    }
   ];
 
   return (
