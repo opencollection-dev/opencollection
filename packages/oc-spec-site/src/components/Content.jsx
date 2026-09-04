@@ -335,16 +335,18 @@ runtime:
     - name: userId
       value: "123"
   scripts:
-    - type: before-request
+    - type: grpc:before-call-start
       code: |
-        bru.setVar('timestamp', Date.now());
-    - type: after-response
+        bru.grpc.request.metadata.upsert('x-api-key', {{apikey}})
+    - type: grpc:before-message-send
       code: |
-        bru.setVar('user', res.body);
-  assertions:
-    - expression: res.status
-      operator: equals
-      value: "0"
+        bru.setVar('sentCount', (bru.getVar('sentCount') || 0) + 1);
+    - type: grpc:after-message-receive
+      code: |
+        bru.setVar('receivedCount', bru.grpc.response.messages.count());
+    - type: grpc:after-call-end
+      code: |
+        bru.setVar('user', bru.grpc.response.messages.get(0).data.value);
   auth:
     type: bearer
     token: "{{authToken}}"`;
@@ -407,7 +409,7 @@ runtime:
         <h3 className={typography.heading.h3}>Properties</h3>
         <PropertyTable 
           properties={grpcRequestRuntime.properties}
-          order={['variables', 'scripts', 'assertions', 'auth']}
+          order={['variables', 'scripts', 'auth']}
           required={grpcRequestRuntime.required}
         />
         
