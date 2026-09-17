@@ -44,7 +44,7 @@ function ExternalSecrets({ schema }) {
       <p className={`${typography.body.default} ${spacing.element}`}>The <code>type</code> field selects the provider that resolves the secrets.</p>
       <div className={`flex flex-wrap gap-2 ${spacing.element}`}>
         {secretProviders.map(provider => (
-          <span key={provider} className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">{provider}</span>
+          <span key={provider} className="inline-flex items-center px-2 py-1 rounded-sm text-xs font-medium bg-gray-100 text-gray-800">{provider}</span>
         ))}
       </div>
 
