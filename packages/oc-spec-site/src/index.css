@@ -1,27 +1,53 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@theme {
+  --color-sidebar-bg: #ffffff;
+  --color-sidebar-text: #475569;
+  --color-sidebar-hover: #f8fafc;
+  --color-sidebar-active: #eff6ff;
+
+  --spacing-sidebar: 240px;
+
+  --text-2xs: 0.7rem;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
 
 /* Custom scrollbar utilities */
-@layer utilities {
-  .scrollbar-thin {
-    scrollbar-width: thin;
-  }
-  
-  .scrollbar-thin::-webkit-scrollbar {
+
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
     width: 4px;
   }
-  
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background: rgba(255,255,255,0.1);
+
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
   }
-  
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.3);
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
     border-radius: 2px;
   }
-  
-  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background: rgba(255,255,255,0.5);
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
   }
 }
