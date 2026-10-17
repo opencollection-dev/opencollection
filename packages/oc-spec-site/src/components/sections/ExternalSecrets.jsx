@@ -14,7 +14,8 @@ function ExternalSecrets({ schema }) {
     { label: 'HashiCorp Vault', def: schema.$defs.HashicorpVaultExternalSecret },
     { label: 'AWS Secrets Manager', def: schema.$defs.AwsSecretsManagerExternalSecret },
     { label: 'Azure Key Vault', def: schema.$defs.AzureKeyVaultExternalSecret },
-    { label: 'GCP Secrets Manager', def: schema.$defs.GcpSecretsManagerExternalSecret }
+    { label: 'GCP Secrets Manager', def: schema.$defs.GcpSecretsManagerExternalSecret },
+    { label: '1Password', def: schema.$defs.OnePasswordExternalSecret }
   ];
 
   const example = {

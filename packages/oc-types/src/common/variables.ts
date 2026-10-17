@@ -58,18 +58,24 @@ export interface GcpSecretsManagerExternalSecret extends BaseExternalSecretVaria
   projectId: string;
 }
 
+export interface OnePasswordExternalSecret extends BaseExternalSecretVariable {
+  secretReference: string;
+}
+
 export type ExternalSecretVariable =
   | HashicorpVaultExternalSecret
   | AwsSecretsManagerExternalSecret
   | AzureKeyVaultExternalSecret
-  | GcpSecretsManagerExternalSecret;
+  | GcpSecretsManagerExternalSecret
+  | OnePasswordExternalSecret;
 
 export type SecretProviderType =
   | 'hashicorp-vault-cloud'
   | 'hashicorp-vault-server'
   | 'aws-secrets-manager'
   | 'azure-key-vault'
-  | 'gcp-secrets-manager';
+  | 'gcp-secrets-manager'
+  | 'one-password';
 
 export interface ExternalSecrets {
   type: SecretProviderType;

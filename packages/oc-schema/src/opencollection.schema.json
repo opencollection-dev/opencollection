@@ -2634,7 +2634,8 @@
             "hashicorp-vault-server",
             "aws-secrets-manager",
             "azure-key-vault",
-            "gcp-secrets-manager"
+            "gcp-secrets-manager",
+            "one-password"
           ],
           "description": "The secret provider that resolves these external secrets"
         },
@@ -2662,6 +2663,9 @@
         },
         {
           "$ref": "#/$defs/GcpSecretsManagerExternalSecret"
+        },
+        {
+          "$ref": "#/$defs/OnePasswordExternalSecret"
         }
       ],
       "description": "An external secret variable, shaped per the secret provider that resolves it"
@@ -2756,6 +2760,29 @@
         }
       },
       "required": ["name", "projectId"],
+      "additionalProperties": false
+    },
+    "OnePasswordExternalSecret": {
+      "type": "object",
+      "description": "An external secret resolved from 1Password",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The variable name"
+        },
+        "description": {
+          "$ref": "#/$defs/Description"
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Whether the external secret is disabled"
+        },
+        "secretReference": {
+          "type": "string",
+          "description": "The 1Password secret reference to the item field that holds the value"
+        }
+      },
+      "required": ["name", "secretReference"],
       "additionalProperties": false
     },
     "VariableValue": {
