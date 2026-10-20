@@ -2779,7 +2779,7 @@
         },
         "secretReference": {
           "type": "string",
-          "description": "The 1Password secret reference to the item field that holds the value"
+          "description": "The secret reference to the field within 1Password that holds the value"
         }
       },
       "required": ["name", "secretReference"],
