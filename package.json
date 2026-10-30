@@ -9,5 +9,6 @@
     "packages/oc-spec-site",
     "packages/oc-types"
   ],
-  "homepage": "https://www.opencollection.com"
+  "homepage": "https://www.opencollection.com",
+  "version": "0.1.0"
 }
