@@ -54,6 +54,8 @@ A collection can be a single bundled file or a tree of files and folders on disk
 
 [Bruno](https://www.usebruno.com), the open-source, git-native API client used by tens of thousands of teams, reads and writes OpenCollection as a native storage format. Bruno can generate documentation from a collection and import from and export to other formats through the same schema.
 
+[Probe](https://github.com/crizant/probe), an open-source, native API client for macOS, Windows, and Linux built in Rust, uses OpenCollection YAML as its primary workspace format. Its desktop app and CLI read and edit OpenCollection collections in both bundled-file and directory layouts, and Postman and Yaak collections can be imported into OpenCollection.
+
 ## Repository layout
 
 This repository is an npm-workspaces monorepo.
