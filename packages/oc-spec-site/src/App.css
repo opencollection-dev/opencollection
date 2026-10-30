@@ -1,3 +1,5 @@
+@reference "./index.css";
+
 /* Code blocks styling for Prism */
 pre[class*="language-"] {
   @apply rounded-md overflow-x-auto;
@@ -109,7 +111,7 @@ code[class*="language-"] {
 
 /* Inline code */
 code:not([class*="language-"]) {
-  @apply px-1.5 py-0.5 rounded text-xs font-mono;
+  @apply px-1.5 py-0.5 rounded-sm text-xs font-mono;
   background: #f3f4f6;
   color: #4b7bbb;
 }
@@ -171,7 +173,7 @@ code:not([class*="language-"]) {
 
 /* Badge base */
 .badge-base {
-  @apply inline-flex text-2xs leading-3 font-medium rounded px-1 py-0.5;
+  @apply inline-flex text-2xs leading-3 font-medium rounded-sm px-1 py-0.5;
 }
 
 /* Required badge - Muted ruby */

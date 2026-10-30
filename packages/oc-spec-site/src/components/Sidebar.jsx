@@ -107,7 +107,7 @@ function Sidebar({ activeSection, onNavigate }) {
         <a 
           href={`#${item.id}`}
           className={cn(
-            'block px-2 py-1 rounded transition-all duration-150',
+            'block px-2 py-1 rounded-sm transition-all duration-150',
             isGreatGrandChild ? 'text-2xs' : isGrandChild ? 'text-2xs' : isChild ? 'text-xs' : 'text-sm',
             isActive 
               ? `${colors.primary.light} ${colors.primary.text} font-semibold` 
